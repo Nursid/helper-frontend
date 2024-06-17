@@ -1,0 +1,190 @@
+/* ::-webkit-scrollbar {
+  width: 2px;
+} */
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+p {
+  margin-bottom: 0 !important;
+}
+/* Track */
+/* ::-webkit-scrollbar-track {
+  background: #e0e0e0;
+
+} */
+
+/* Handle */
+/* ::-webkit-scrollbar-thumb {
+  background: #ffee2d;
+} */
+
+/* Handle on hover */
+/* ::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} */
+
+.topBarImg {
+  min-width: 3rem;
+  max-height: 3rem;
+  max-width: 3rem;
+  min-height: 3rem;
+}
+
+button.Dash_dropDownBtn.btn.btn-secondary {
+  background: transparent !important;
+  color: #4d4d4d !important;
+  border-color: transparent !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  border-radius: 0;
+}
+button.Dash_dropDownBtn.btn.btn-secondary:hover {
+  background: rgb(17, 44, 133) !important;
+  color: #e7e7e7 !important;
+  border-color: transparent !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  border-radius: 0;
+}
+button.Dash_dropDownBtn_Active.btn.btn-secondary {
+  background: rgb(17, 44, 133) !important;
+  color: #e7e7e7 !important;
+  border-color: transparent !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  border-radius: 0;
+}
+
+.AdjustWidthOfColumn {
+  width: fit-content !important;
+}
+
+button.Dash_dropdown_item.dropdown-item {
+  padding: 6px 12px !important;
+  transition: all 0.1s ease-in-out;
+}
+button.Dash_dropdown_item.dropdown-item:hover {
+  background-color: transparent !important;
+  color: var(--yellow) !important;
+}
+
+.Dash_dropdown_Menu.dropdown-menu.show {
+  border: none !important;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1) !important;
+}
+.headingBelowBorder {
+  position: relative;
+}
+
+.headingBelowBorder::before {
+  content: "";
+  height: 3px;
+  width: 60%;
+  background-color: var(--yellow);
+  position: absolute;
+  bottom: 0;
+  animation: BorderAnimation 1s ease-in-out;
+}
+
+@keyframes BorderAnimation {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 60%;
+  }
+}
+
+.MainAttendenceReportForm {
+  justify-self: center !important;
+  align-self: center !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.MainAttendenceReportForm {
+  width: 75%;
+}
+
+.ReportFormWhole {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  flex-direction: row !important;
+  gap: 1rem !important;
+}
+.ReportFormWhole > div {
+  flex: 1 1 20rem;
+  max-width: 100%;
+}
+
+.AttendenceNavBtn {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.AttendenceNavBtn > div {
+  flex: 1 1 100px;
+  max-width: 16rem;
+  width: 16rem;
+}
+
+.TheAddOrderForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.TheAddOrderForm > div {
+  flex: 1 1 20rem;
+  max-height: 22rem;
+}
+
+@media (max-width: 992px) {
+  .ReportFormWhole > div {
+    flex: 1 1 20rem;
+    max-width: 100%;
+  }
+  .MainAttendenceReportForm {
+    width: 90%;
+  }
+  .AttendenceNavBtn > div {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+
+.AddServiceMan_Main {
+  display: flex;
+  justify-content: center;
+}
+
+.TheServiceProviderForm {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.6rem;
+}
+
+.AddServieProvder_services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.AddServieProvder_services > span {
+  flex: 1 1 auto;
+  max-width: fit-content;
+  min-width: fit-content;
+}
+
+.Nav_hover {
+  transition: 0.3s ease-in-out;
+}
+.Nav_hover:hover {
+  background-color: var(--yellow);
+  color: var(--blue);
+}
+.Nav_hover_active {
+  background-color: var(--yellow);
+  color: var(--blue);
+}
