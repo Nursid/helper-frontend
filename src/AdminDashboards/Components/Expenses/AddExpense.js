@@ -55,13 +55,17 @@ const AddExpense = ({ setActiveAttendance }) => {
 
 
 
-  const HandleChange = (e) => {
+  const HandleChange = (e, maxLength) => {
     const { name, value } = e.target;
+    if (value.length <= maxLength) {
     setFormData(prevState => ({
         ...prevState,
         [name]: value
     }));
+  }
   };
+
+  
 
   // STATIC PAYMENT METHOD
   const PaymentOptions = [
@@ -83,6 +87,14 @@ const AddExpense = ({ setActiveAttendance }) => {
   useEffect(() => {
     dispatch(GetAllHeadExp());
   }, []);
+
+  const handleKeyPress = (e) => {
+    const charCode = e.which || e.keyCode;
+    const charStr = String.fromCharCode(charCode);
+    if (!/^[a-zA-Z]+$/.test(charStr)) {
+        e.preventDefault();
+        }
+    };
 
 
   return (
@@ -128,10 +140,12 @@ const AddExpense = ({ setActiveAttendance }) => {
             <div className="d-flex flex-column   justify-content-center gap-1 w-100">
               <h6>Enter Amount</h6>
               <Input
+              type="number"
                 placeholder="Amount"
                 name="amount"
-                onChange={HandleChange}
+                onChange={(e) => HandleChange(e, 20)}
                 value={formData.amount || ""}
+                
               />
             </div>
             <div className="d-flex flex-column   justify-content-center gap-1 w-100">
@@ -141,26 +155,27 @@ const AddExpense = ({ setActiveAttendance }) => {
                 placeholder="Name"
                 name="personName"
                 value={formData.personName || ""}
-                onChange={HandleChange}
+                oonChange={(e) => HandleChange(e, 50)}
+                onKeyPress={handleKeyPress}
               />
             </div>
-            <div className="d-flex flex-column   justify-content-center gap-1 w-100">
+            <div className="d-flex flex-column justify-content-center gap-1 w-100">
               <h6>Date</h6>
               <Input
                 type="date"
                 name="date"
-                onChange={HandleChange}
+                onChange={(e) => HandleChange(e, 50)}
                 value={formData.date || ""}
               />
             </div>
-            <div className="d-flex flex-column   justify-content-center gap-1 w-100">
+            <div className="d-flex flex-column justify-content-center gap-1 w-100">
               <h6>Remark</h6>
               <Input
                 type="textarea"
                 className="w-100"
                 name="remark"
                 value={formData.remark || ""}
-                onChange={HandleChange}
+                onChange={(e) => HandleChange(e, 200)}
               />
             </div>
           </div>

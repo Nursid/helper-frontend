@@ -133,7 +133,7 @@ const AdminTransactionForm = ({toggleModal,data,AccountListing,TotalBalance}) =>
                 <FormGroup>
                     <Label for="name">Amount Online<span style={{color: "red"}}>*</span></Label>
                     <Input
-                        type="text"
+                        type="number"
                         name="upi"
                         onChange={handleChange}
                         placeholder='Amount balance'
@@ -152,7 +152,7 @@ const AdminTransactionForm = ({toggleModal,data,AccountListing,TotalBalance}) =>
                 <FormGroup>
                     <Label for="name">Amount Cash<span style={{color: "red"}}>*</span></Label>
                     <Input
-                        type="text"
+                        type="number"
                         name="cash"
                         onChange={handleChange}
                         placeholder='Amount balance'

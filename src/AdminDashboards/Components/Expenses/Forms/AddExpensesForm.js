@@ -54,11 +54,19 @@ const AddExpensesForm = ({toggleModal,data}) => {
        
     }
 
+    const handleKeyPress = (e) => {
+        const charCode = e.which || e.keyCode;
+        const charStr = String.fromCharCode(charCode);
+        if (!/^[a-zA-Z]+$/.test(charStr)) {
+            e.preventDefault();
+            }
+        };
+
     return (
         <Fragment>
             <div >
                 <h5>Name</h5>
-                <Input placeholder='Name' className='w-100' value={name} onChange={(e) => { setExpName(e.target.value) }} />
+                <Input placeholder='Name' className='w-100' value={name} onChange={(e) => { setExpName(e.target.value) }} onKeyPress={handleKeyPress} />
                 <Button className='bg-primary mt-3 text-white w-100' onClick={OnSubmit} > {(data.name) ? 'Update': 'Submit' }  </Button>
             </div>
 

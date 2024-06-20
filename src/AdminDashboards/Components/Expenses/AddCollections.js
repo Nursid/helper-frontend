@@ -123,6 +123,16 @@ const AddCollections = ({ setActiveAttendance }) => {
         dispatch(GetAllServices())
         dispatch(GetAllServiceProvider())
     }, [])
+
+
+    const handleKeyPress = (e) => {
+        const charCode = e.which || e.keyCode;
+        const charStr = String.fromCharCode(charCode);
+        if (!/^[a-zA-Z]+$/.test(charStr)) {
+            e.preventDefault();
+            }
+        };
+
     return (
         <Fragment>
             <WaitLoader loading={Loading} offset={[50, 70]} />
@@ -154,11 +164,11 @@ const AddCollections = ({ setActiveAttendance }) => {
                         </div>
                         <div className='d-flex flex-column   justify-content-center gap-1 w-100' >
                             <h6 >Amount</h6>
-                            <Input placeholder='Amount' name='amount' value={formData.amount || ''} onChange={HandleChange} />
+                            <Input placeholder='Amount' name='amount' value={formData.amount || ''} onChange={HandleChange} type='number'/>
                         </div>
                         <div className='d-flex flex-column   justify-content-center gap-1 w-100' >
                             <h6 >Person Name</h6>
-                            <Input type='text' placeholder='Name' name='personName' value={formData.personName || ''} onChange={HandleChange} />
+                            <Input type='text' placeholder='Name' name='personName' value={formData.personName || ''} onChange={HandleChange} onKeyPress={handleKeyPress} />
                         </div>
                         <div className='d-flex flex-column   justify-content-center gap-1 w-100' >
                             <h6 >Date</h6>

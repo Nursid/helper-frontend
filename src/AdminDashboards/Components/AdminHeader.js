@@ -8,6 +8,7 @@ import Swal from 'sweetalert2'
 import { isMobile } from 'react-device-detect'
 import { useNavigate } from 'react-router-dom';
 import AdminProfile from './profile/AdminProfile'
+import { IMG_URL } from '../../config'
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 const AdminHeader = () => {
 
@@ -84,7 +85,10 @@ const AdminHeader = () => {
                         <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                             <DropdownToggle className='dropdownMenu-btn-header' >
                                 <div id="drop-menu" className="AdminDash_UserInfo d-flex align-items-center justify-content-end   gap-3">
-                                    <img width={'100px'} src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="" />
+                                    <img width={'100px'} 
+                                    
+                                    src={IMG_URL+currentUser?.image ?? ''}
+                                    alt="" />
                                     <div className=''>
                                         <h6 className='d-none d-md-block'>{currentUser && currentUser.name ? currentUser.name : "yourName "}</h6>
                                         <small>

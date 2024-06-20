@@ -109,12 +109,15 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
         provider_type: data2.provider_type || "",
     });
 
-    const handleChange = (e) => {
+    const handleChange = (e, maxLength) => {
         const { name, value } = e.target;
+
+        if (value.length <= maxLength) {
         setFormData(prevState => ({
             ...prevState,
             [name]: value
         }));
+        }
     };
 
     
@@ -218,7 +221,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="username"
                                                     id="username"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData.username}
                                                     placeholder='Enter User Name'
                                                 />
@@ -232,7 +235,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="name"
                                                     id="name"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData.name}
                                                     placeholder='Enter Your Name'
                                                     onKeyPress={handleKeyPress}
@@ -247,7 +250,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="first_name"
                                                     id="first_name"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData?.first_name}
                                                     placeholder='Enter First Name'
                                                     onKeyPress={handleKeyPress}
@@ -261,7 +264,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="last_name"
                                                     id="first_name"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData?.last_name}
                                                     placeholder='Enter First Name'
                                                     onKeyPress={handleKeyPress}
@@ -286,7 +289,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="number"
                                                     name="mobile_no"
                                                     id="mobile_no"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 10)}
                                                     value={formData?.mobile_no}
                                                     placeholder='Enter Mobile No'
                                                 />
@@ -299,7 +302,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="number"
                                                     name="aadhar_no"
                                                     id="aadharNo"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 12)}
                                                     value={formData?.aadhar_no}
                                                     placeholder='Enter Aadhar No.'
                                                 />
@@ -312,7 +315,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="pan_no"
                                                     id="pan_no"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 10)}
                                                     value={formData?.pan_no}
                                                     placeholder='Enter Pan No.'
                                                 />
@@ -325,7 +328,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="email"
                                                     name="email"
                                                     id="email"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData?.email}
                                                     placeholder='Enter Email'
                                                 />
@@ -337,7 +340,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                 <Input
                                                     type="date"
                                                     name="doj"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formattedDate}
                                                     id="doj"
                                                     placeholder='Enter Date Of Joining'
@@ -351,7 +354,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="password"
                                                     name="password"
                                                     id="password"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData?.password}
                                                     placeholder='Enter Password'
                                                 />
@@ -363,7 +366,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                 <Input
                                                     type="text"
                                                     name="permanent_address"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 100)}
                                                     value={formData?.permanent_address}
                                                     id="permanent_address"
                                                     placeholder='Enter Parmanent Address'
@@ -378,7 +381,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     name="current_address"
                                                     id="current_address"
                                                     value={formData?.current_address}
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 200)}
                                                     placeholder='Enter Current Address'
                                                 />
                                             </FormGroup>
@@ -391,7 +394,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="ref_name"
                                                     id="referenceName"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData?.ref_name}
                                                     placeholder='Enter Refrence Name '
                                                 />
@@ -404,7 +407,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="ref_address"
                                                     id="referenceAddress"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 200)}
                                                     value={formData?.ref_address}
                                                     placeholder='Enter Address'
                                                 />
@@ -416,7 +419,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                 <Input
                                                     type="text"
                                                     name="ref_aadhar_no"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 12)}
                                                     value={formData.ref_aadhar_no}
                                                     id="ref_aadhar_no"
                                                     placeholder='Enter Ref Aadhar No.'
@@ -430,7 +433,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="ref_mobile_no"
                                                     id="ref_mobile_no"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 10)}
                                                     value={formData.ref_mobile_no}
                                                     placeholder='Enter Ref Mobile No '
                                                 />
@@ -443,7 +446,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     placeholder='City'
                                                     name="ref_city"
                                                     id="ref_city"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData.ref_city}
                                                 />
                                             </FormGroup>
@@ -455,7 +458,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="ref_area"
                                                     id="referenceArea"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData.ref_area}
                                                     placeholder='Enter Referance Area '
                                                 />
@@ -468,7 +471,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="location"
                                                     id="location"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData.location}
                                                     placeholder='Enter Location Area '
                                                 />
@@ -499,7 +502,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="document1_name"
                                                     id="document1_name"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData.document1_name}
                                                 />
                                             </FormGroup>
@@ -521,7 +524,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                 <Label for="documentTwo">Document 2</Label>
                                                 <Input
                                                     type="text"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData.document2_name}
                                                     name="document2_name"
                                                     id="documentTwo"
@@ -547,7 +550,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="text"
                                                     name="documentThree"
                                                     id="documentThree"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData.documentThree}
                                                 />
                                             </FormGroup>
@@ -576,7 +579,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                 <Input
                                                     type="textarea"
                                                     name="about"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 200)}
                                                     value={formData.about}
                                                     placeholder='Enteer About Service'
                                                 />

@@ -92,12 +92,15 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
 			});
     }
 
-    const handleChange = (e) => {
+    const handleChange = (e, maxLength) => {
         const { name, value } = e.target;
+
+        if (value.length <= maxLength) {
         setFormData(prevState => ({
             ...prevState,
             [name]: value
         }));
+        }
     };
 
    
@@ -253,7 +256,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 <Input
                                                    onKeyPress={handleKeyPress}
                                                     name="name"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     
                                                     placeholder='Enter Employee Name'
                                                     value={formData?.name}
@@ -265,14 +268,12 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                             <FormGroup>
                                                 <Label for="mobileno">Mobile No</Label>
                                                 <Input
-                                                    maxLength={12}
+                                                    
                                                     type="number"
                                                     name="mobile_no"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 10)}
                                                     placeholder='Enter Employee Mobile No'
                                                     value={formData?.mobile_no}
-                                                   
-                                                
                                                 />
                                             </FormGroup>
                                         </Col>
@@ -282,7 +283,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 <Input
                                                     type="email"
                                                     name="email"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formData.email}
                                                     id="email"
                                                     placeholder='Enter Employee Email'
@@ -295,7 +296,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 <Input
                                                     type="number"
                                                     name="aadhar_no"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 12)}
                                                     placeholder='Employee Aadhar No'
                                                     value={formData.aadhar_no}
                                                     maxLength={12}
@@ -308,7 +309,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 <Input
                                                     type="text"
                                                     name="pan_no"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 10)}
                                                     value={formData.pan_no}
                                                     placeholder='Employee Pan No'
                                                 />
@@ -320,7 +321,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 <Input
                                                     type="date"
                                                     name="doj"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 50)}
                                                     value={formattedDate}
                                                 />
                                             </FormGroup>
@@ -331,7 +332,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 <Input
                                                     type="text"
                                                     name="address"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 200)}
                                                     placeholder='Employee Address'
                                                     value={formData.address}
                                                 />
@@ -375,7 +376,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 <Input
                                                     type="number"
                                                     name="salary"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 10)}
                                                     placeholder='Salary'
                                                     value={formData.salary}
                                                 />
@@ -387,7 +388,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 <Input
                                                     type="text"
                                                     name="duty_hours"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 10)}
                                                     placeholder='Duty Hours'
                                                     value={formData.duty_hours}
                                                 />
@@ -399,7 +400,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 <Input
                                                     type="text"
                                                     name="week_off"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 10)}
                                                     placeholder='Week Off'
                                                     value={formData.week_off}
                                                 />
@@ -411,7 +412,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 <Input
                                                     type="textarea"
                                                     name="about"
-                                                    onChange={handleChange}
+                                                    onChange={(e) => handleChange(e, 200)}
                                                     placeholder='About Employee'
                                                     value={formData.about}
                                                 />

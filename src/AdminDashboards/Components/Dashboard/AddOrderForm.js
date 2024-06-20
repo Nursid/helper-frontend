@@ -127,7 +127,8 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 				<Col md={6}>
 					<FormGroup>
 						<Label>Mobile Number</Label>
-						<Input onChange={
+						<Input 
+						onChange={
 								(e) => setMobileNumber(e.target.value)
 							}
 							type='number'
