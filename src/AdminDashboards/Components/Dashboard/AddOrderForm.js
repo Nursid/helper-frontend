@@ -18,42 +18,50 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 	const {rows, setRows, Show, setShow} = UseStateManager()
 	const [getAllService, setAllservices] = useState([])
 	const dispatch = useDispatch()
-	const [customerName, setCustomerName] = useState('');
-	const [email, setEmail] = useState('');
-	const [age, setAge] = useState('');
-	const [mobileNumber, setMobileNumber] = useState('');
-	const [memberShipId, setMemberShipId] = useState('');
-	const [service, setService] = useState('')
-	const [serviceDescription, setServiceDescription] = useState('');
-	const [approxDuration, setApproxDuration] = useState('');
-	const [supervisorName, setSupervisorName] = useState('');
-	const [lastDateService, setLastDateService] = useState('');
-	const [lastServiceType, setLastServiceType] = useState('');
-	const [serviceDateTime, setServiceDateTime] = useState('');
-	const [address, setAddress] = useState('');
-	const [city, setCity] = useState('');
-	const [zipCode, setZipCode] = useState('');
-	const [registerId, setRegisterId] = useState('');
-	const [status, setStatus] = useState('Pending');
 
-	useEffect(() => {
-		if (mobileNumber.length === 10) {
-			fetchData();
+	const [formData, setFormData] = useState({
+		name: '',
+		email: '',
+		age: '',
+		mobile: '',
+		membership: '',
+		services: '',
+		service_des: '',
+		approx_duration: '',
+		supervisor_name: '',
+		lst_serv_date: '',
+		lst_serv_type: '',
+		serviceDateTime: '',
+		address: '',
+		city: '',
+		zip_code: '',
+		registered_id: ''
+	  });
+
+	  const [service, setService] = useState('')
+
+	  useEffect(() => {
+		if (formData?.mobile && formData.mobile.length === 10) {
+		  fetchData();
 		}
-	}, [mobileNumber]);
+	  }, [formData?.mobile]);
 
 	const fetchData = async () => {
 		try {
-			const response = await axios.get(API_URL + '/get/customerByMobile/' + mobileNumber);
-			response.data.data.map((item) => {
-				setCustomerName(item.NewCustomer.name)
-				setEmail(item.NewCustomer.email)
-				setAge(item.age)
-				setMemberShipId(item.member_id)
-				setAddress(item.address)
-				setCity(item.location)
-				setRegisterId(item.user_id)
-			})
+			const response = await axios.get(API_URL + '/get/customerByMobile/' + formData?.mobile);
+			response.data.data.forEach(item => {
+				setFormData(prevFormData => ({
+				  ...prevFormData,
+				  name: item.NewCustomer.name,
+				  email: item.NewCustomer.email,
+				  age: item.age,
+				  membership: item.member_id,
+				  address: item.address,
+				  city: item.location,
+				  registered_id: item.user_id
+				}));
+			  });
+
 		} catch (error) {
 			console.error('Error fetching data:', error);
 		}
@@ -72,29 +80,16 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 	}
 
 	const onsubmitDate = () => {
+		
+		const data ={
+			...formData,
+			service_name: service.value,
+			services: service.value
+		}
 
-		const formData = {
-			name: customerName,
-			email: email,
-			age: age,
-			mobile: mobileNumber,
-			membership: memberShipId,
-			services: service.value,
-			service_des: serviceDescription,
-			approx_duration: approxDuration,
-			supervisor_name: supervisorName,
-			lst_serv_date: lastDateService,
-			lst_serv_type: lastServiceType,
-			serviceDateTime: serviceDateTime,
-			address: address,
-			city: city,
-			zip_code: zipCode,
-			registered_id: registerId
-		};
-
-		const apiUrl = `${API_URL}/order/add/${registerId}`;
+		const apiUrl = `${API_URL}/order/add/${formData?.registered_id}`;
 		// Make a POST request using Axios
-		axios.post(apiUrl, formData).then(response => {
+		axios.post(apiUrl, data).then(response => {
 			if (response.status === 200) {
 				prop();
 				Swal.fire('Successfully!', 'Your Order has been Added.', 'success')
@@ -113,10 +108,22 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 	};
 
 
+
+	const handleChange = (e, maxLength) => {
+        const { name, value } = e.target;
+
+        if (value.length <= maxLength) {
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+        }
+    };
+
 	const handleKeyPress = (e) => {
         const charCode = e.which || e.keyCode;
         const charStr = String.fromCharCode(charCode);
-        if (!/^[a-zA-Z]+$/.test(charStr)) {
+        if (!/^[a-zA-Z\s]+$/.test(charStr)) {
             e.preventDefault();
         }
     };
@@ -128,11 +135,10 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 					<FormGroup>
 						<Label>Mobile Number</Label>
 						<Input 
-						onChange={
-								(e) => setMobileNumber(e.target.value)
-							}
+						onChange={(e) => handleChange(e, 10)}
+							name='mobile'
 							type='number'
-							value={mobileNumber}
+							value={formData?.mobile}
 							placeholder='Enter Your Mobile Number'/>
 					</FormGroup>
 				</Col>
@@ -140,12 +146,13 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 				<Col md={6}>
 					<FormGroup>
 						<Label>Customer Name</Label>
-						<Input onChange={
-								(e) => setCustomerName(e.target.value)
-							}
+						<Input 
+						onChange={(e) => handleChange(e, 50)}
 							onKeyPress={handleKeyPress}
-							value={customerName}
-							placeholder='Enter Your Name'/>
+							value={formData?.name}
+							placeholder='Enter Your Name'
+							name='name'
+							/>
 					</FormGroup>
 				</Col>
 
@@ -153,10 +160,9 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 					<FormGroup>
 						<Label>Email</Label>
 						<Input type='email'
-							onChange={
-								(e) => setEmail(e.target.value)
-							}
-							value={email}
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.email}
+							name='email'
 							placeholder='Enter Your Email'/>
 					</FormGroup>
 				</Col>
@@ -164,21 +170,21 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 				<Col md={6}>
 					<FormGroup>
 						<Label>Age</Label>
-						<Input onChange={
-								(e) => setAge(e.target.value)
-							}
+						<Input 
+						onChange={(e) => handleChange(e, 2)}
 							type='number'
-							value={age}
+							value={formData?.age}
+							name='age'
 							placeholder='Enter Your Age'/>
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label>MemberShip Id</Label>
-						<Input onChange={
-								(e) => setMemberShipId(e.target.value)
-							}
-							value={memberShipId}
+						<Input 
+						onChange={(e) => handleChange(e, 10)}
+							value={formData?.membership}
+							name='membership'
 							placeholder='Enter Your MemberShip'/>
 					</FormGroup>
 				</Col>
@@ -195,10 +201,10 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 				<Col md={6}>
 					<FormGroup>
 						<Label>Service Description</Label>
-						<Input onChange={
-								(e) => setServiceDescription(e.target.value)
-							}
-							value={serviceDescription}
+						<Input 
+						onChange={(e) => handleChange(e, 100)}
+							value={formData?.service_des}
+							name='service_des'
 							placeholder='Enter Your Service Description'/>
 					</FormGroup>
 				</Col>
@@ -206,10 +212,10 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 				<Col md={6}>
 					<FormGroup>
 						<Label>Approx Duration</Label>
-						<Input onChange={
-								(e) => setApproxDuration(e.target.value)
-							}
-							value={approxDuration}
+						<Input 
+						onChange={(e) => handleChange(e, 10)}
+							value={formData?.approx_duration}
+							name='approx_duration'
 							placeholder='Enter Your Approx Duration'/>
 					</FormGroup>
 				</Col>
@@ -217,11 +223,11 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 				<Col md={6}>
 					<FormGroup>
 						<Label>Supervisor Name</Label>
-						<Input onChange={
-								(e) => setSupervisorName(e.target.value)
-							}
+						<Input 
+						onChange={(e) => handleChange(e, 50)}
 							onKeyPress={handleKeyPress}
-							value={supervisorName}
+							value={formData?.supervisor_name}
+							name='supervisor_name'
 							placeholder='Enter Your Supervisor Name'/>
 					</FormGroup>
 				</Col>
@@ -229,43 +235,44 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 				<Col md={6}>
 					<FormGroup>
 						<Label>Last Date Service</Label>
-						<Input onChange={
-								(e) => setLastDateService(e.target.value)
-							}
-							value={lastDateService}
+						<Input 
+						onChange={(e) => handleChange(e, 20)}
+							value={formData?.lst_serv_date}
 							placeholder=''
+							name='lst_serv_date'
 							type='date'/>
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label>Last Service Type</Label>
-						<Input onChange={
-								(e) => setLastServiceType(e.target.value)
-							}
+						<Input 
+							onChange={(e) => handleChange(e, 20)}
 							onKeyPress={handleKeyPress}
-							value={lastServiceType}
-							placeholder='Enter Last Service Type'/>
+							value={formData?.lst_serv_type}
+							placeholder='Enter Last Service Type'
+							name='lst_serv_type'
+							/>
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label>
 							Service Date & Time</Label>
-						<Input onChange={
-								(e) => setServiceDateTime(e.target.value)
-							}
-							value={serviceDateTime}
+						<Input 
+							onChange={(e) => handleChange(e, 20)}
+							value={formData?.serviceDateTime}
+							name='serviceDateTime'
 							type='datetime-local'/>
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label>Address</Label>
-						<Input onChange={
-								(e) => setAddress(e.target.value)
-							}
-							value={address}
+						<Input 
+						onChange={(e) => handleChange(e, 20)}
+							value={formData?.address}
+							name='address'
 							placeholder='Enter Your Address'/>
 					</FormGroup>
 				</Col>
@@ -273,10 +280,9 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 					<FormGroup>
 						<Label>City</Label>
 						<Input type='text'
-							onChange={
-								(e) => setCity(e.target.value)
-							}
-							value={city}
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.city}
+							name='city'
 							placeholder='Enter Your City'/>
 					</FormGroup>
 				</Col>
@@ -285,10 +291,9 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 					<FormGroup>
 						<Label>ZipCode</Label>
 						<Input type='number'
-							onChange={
-								(e) => setZipCode(e.target.value)
-							}
-							value={zipCode}
+							onChange={(e) => handleChange(e, 10)}
+							value={formData?.zip_code}
+							name='zip_code'
 							placeholder='Enter Your ZipCode'/>
 					</FormGroup>
 				</Col>
@@ -296,24 +301,12 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 				<Col md={6}>
 					<FormGroup>
 						<Label>Register Id</Label>
-						<Input onChange={
-								(e) => setRegisterId(e.target.value)
-							}
-							value={registerId}
+						<Input 
+							onChange={(e) => handleChange(e, 20)}
+							value={formData?.registered_id}
 							type='number'
+							name='registered_id'
 							placeholder='Enter Your Register Id'/>
-					</FormGroup>
-				</Col>
-
-				<Col md={6}>
-					<FormGroup>
-						<Label>Status</Label>
-						<Input onChange={
-								(e) => setStatus(e.target.value)
-							}
-							value={status}
-							type='text'
-							placeholder='Status'/>
 					</FormGroup>
 				</Col>
 				<Button className='bg-primary text-white'

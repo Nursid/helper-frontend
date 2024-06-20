@@ -47,17 +47,18 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 	// Simulated data for monthly services and hourly time slots
 	const allMonthlyServices = ['Service A', 'Service B', 'Service C'];
 	const allHourlyTimeSlots = ['10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM',"2:00 PM","3:00 PM","4:00 PM"];
-	// Adjust as needed
-
 	
 
 	// Handle change for text inputs and dropdowns
-	const handleChange = (e) => {
+	const handleChange = (e, maxLength) => {
         const { name, value } = e.target;
+
+        if (value.length <= maxLength) {
         setFormData(prevState => ({
             ...prevState,
             [name]: value
         }));
+        }
     };
 
 	const onsubmit=() => {
@@ -97,12 +98,12 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 
 
 	const handleKeyPress = (e) => {
-        const charCode = e.which || e.keyCode;
-        const charStr = String.fromCharCode(charCode);
-        if (!/^[a-zA-Z]+$/.test(charStr)) {
-            e.preventDefault();
-        }
-    };
+		const charCode = e.which || e.keyCode;
+		const charStr = String.fromCharCode(charCode);
+		if (!/^[a-zA-Z\s]+$/.test(charStr)) {
+			e.preventDefault();
+		}
+	};
 
 	return (
 		<Fragment>
@@ -116,7 +117,7 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 									<Input 
 									onKeyPress={handleKeyPress}
 									name="cust_name"
-										onChange={handleChange}
+										onChange={(e) => handleChange(e, 50)}
 										id="cust_name"
 										value={formData?.cust_name}
 										placeholder="Enter Customer Name "/>
@@ -127,7 +128,7 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 								<FormGroup>
 									<Label for="mobile_no">Mobile No</Label>
 									<Input type="number" name="mobile_no"
-										onChange={handleChange}
+										onChange={(e) => handleChange(e, 10)}
 										value={formData?.mobile_no}
 										id="mobile_no"
 										placeholder="Enter Mobile No"/>
@@ -139,7 +140,7 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 									<Input 
 										type="select" 
 										name="monthlyServices"
-										onChange={handleChange}
+										onChange={(e) => handleChange(e, 50)}
 										id="monthlyServices"
 										value={formData?.monthlyServices} 
 									>
@@ -162,10 +163,11 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 								<FormGroup>
 									<Label for="serviceType">Service Type</Label>
 									<Input type="text" name="serviceType"
-										onChange={handleChange}
+										onChange={(e) => handleChange(e, 50)}
 										id="serviceType"
 										placeholder="Enter Service Type"
 										value={formData.serviceType}
+										onKeyPress={handleKeyPress}
 										/>
 								</FormGroup>
 							</Col>
@@ -174,7 +176,7 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 								<FormGroup>
 									<Label for="serviceServeType">Service Serve Type</Label>
 									<Input type="select" name="serviceServeType"
-										onChange={handleChange}
+										onChange={(e) => handleChange(e, 50)}
 										id="serviceServeType" value={formData.serviceServeType}>
 										<option value="">Select Serve Type</option>
 										<option value="After">After</option>
@@ -187,7 +189,7 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 								<FormGroup>
 									<Label for="selectedTimeSlot">Hourly Time Slots</Label>
 									<Input type="select" name="selectedTimeSlot"
-										onChange={handleChange}
+										onChange={(e) => handleChange(e, 50)}
 										id="selectedTimeSlot" value={formData.selectedTimeSlot}>
 										<option value="">Select Time Slot</option>
 										{
@@ -203,7 +205,7 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 								<FormGroup>
 									<Label for="serviceFees">Service Fees</Label>
 									<Input type="number" name="serviceFees"
-										onChange={handleChange}
+										onChange={(e) => handleChange(e, 10)}
 										id="serviceFees"
 										placeholder="Enter service fees"
 										value={formData.serviceFees}
@@ -215,7 +217,7 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 								<FormGroup>
 									<Label for="feesPaidDateTime">Fees Paid Date & Time</Label>
 									<Input type="datetime-local" name="feesPaidDateTime"
-										onChange={handleChange}
+										onChange={(e) => handleChange(e, 50)}
 										id="feesPaidDateTime"
 										value={formattedDateTime}
 										/>
@@ -226,7 +228,7 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 								<FormGroup>
 									<Label for="specialInterest">Special Interest</Label>
 									<Input type="textarea" name="specialInterest"
-										onChange={handleChange}
+										onChange={(e) => handleChange(e, 100)}
 										id="specialInterest"
 										placeholder="Enter special interest description"
 										value={formData.specialInterest}

@@ -192,11 +192,11 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
     };
 
 
-    const handleKeyPress = (e) => {
-        const charCode = e.which || e.keyCode;
-        const charStr = String.fromCharCode(charCode);
-        if (!/^[a-zA-Z]+$/.test(charStr)) {
-            e.preventDefault();
+        const handleKeyPress = (e) => {
+            const charCode = e.which || e.keyCode;
+            const charStr = String.fromCharCode(charCode);
+            if (!/^[a-zA-Z\s]+$/.test(charStr)) {
+                e.preventDefault();
             }
         };
 
