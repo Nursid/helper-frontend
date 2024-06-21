@@ -128,12 +128,10 @@ const AuthProvider = ({ children }) => {
   // };
 
   const sendOtp = async (number) => {
-    console.log(number);
     try {
       const response = await axios.get(API_URL + "/verify/send/otp/" + number);
       if (response.status === 200) {
         setOtpId(response.data.data);
-    
       }
     } catch (error) {
       console.log(error);

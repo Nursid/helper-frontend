@@ -76,6 +76,7 @@ const AddMonthlyMembers = () => {
         const {name, value} = e.target;
         setInputValue({...inputValue, [name]:value})
     }
+   
 
 
     const handleKeyPress = (e) => {

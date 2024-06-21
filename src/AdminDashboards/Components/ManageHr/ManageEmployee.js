@@ -120,7 +120,6 @@ const ManageEmployee = () => {
         setEditData('')
     };
 
-
     const toggleEditMode = (data) => {
         setShowModal(true);
         setEditMode(true);

@@ -31,44 +31,17 @@ import zIndex from '@mui/material/styles/zIndex';
 import {useAuth} from '../../../../Context/userAuthContext';
 
 
-const AddNewCustomerForm = ({prop}) => {
-
+const AddNewCustomerForm = ({prop, data}) => {
 
 	const dispatch = useDispatch()
-  
-	const [name, setName] = useState('')
-	const [gender, setGender] = useState('')
-	const [age, setAge] = useState('')
-	const [memberId, setMemberId] = useState('');
-	const [address, setAddress] = useState('')
-	const [landmark, setLandmark] = useState('')
-	const [email, setEmail] = useState('')
-	const [location, setLocation] = useState('')
-	const [mobileNo, setMobileNo] = useState('')
-	const [telNo, setTelNo] = useState('')
-	const [officeNo, setOfficeNo] = useState('');
-	const [alternateNo, setAlternateNo] = useState('')
-	const [aadhaarNumber, setAadharNumber] = useState('')
-	const [occupation, setOccupation] = useState('')
-	const [designation, setDesignation] = useState('')
+	const [inputValue, setInputValue] = useState([]);
+    const [errors, setErrors]= useState([]);
+    const [isLoading, SetIsLoading]= useState(false)
 	const [house, setHouse] = useState('')
 	const [image, setImage] = useState(null)
-	const [spouseName, setSpouseNames] = useState('')
-	const [spouseName1, setSpouseName1] = useState('')
-	const [spouseName2, setSpouseName2] = useState('')
-	const [dob, setDob] = useState('')
-	const [doa, setDoa] = useState('')
+	const [gender, setGender] = useState('')
 	const [membership, setMembership] = useState('')
-	const [familyMember, setFamilyMember] = useState('')
-	const [refrence, setRefrence] = useState('')
-	const [payment, setPayment] = useState(1000)
-	const [discountAmount, setDiscountAmount] = useState('')
-	const [receivedAmount, setReceivedAmount] = useState('')
-	const [balanceAmount, setBalanceAmount] = useState('');
-	const [paymentMethod, setPaymentMethod] = useState('')
-	const [freeServices1, setFreeServices1] = useState('')
-	const [freeServices2, setFreeServices2] = useState('')
-
+	const [payment_method, setPaymentMethod] = useState('')
 
 	const handleImageChange = (event) => {
 		const file = event.target.files[0];
@@ -132,57 +105,108 @@ const AddNewCustomerForm = ({prop}) => {
 		},
 	];
 
-
-	// const handleFileChange = (e,fileName) => {
-    //     const selectedFile = e.target.files[0];
-	// 	setImage(selectedFile)
-    //   }
-
-	const createCustomer = () => {
-		const formData = new FormData();
-		formData.append('name', name);
-		formData.append('gender', gender.value);
-		formData.append('age', age);
-		formData.append('member_id', memberId);
-		formData.append('address', address);
-		formData.append('land_mark', landmark);
-		formData.append('email', email);
-		formData.append('location', location);
-		formData.append('mobile', mobileNo);
-		formData.append('tel_no', telNo);
-		formData.append('office_no', officeNo);
-		formData.append('alternate_no', alternateNo);
-		formData.append('aadhar_no', aadhaarNumber);
-		formData.append('occupation', occupation);
-		formData.append('designation', designation);
-		formData.append('image',image);
-		formData.append('own_house', house.value); // Assuming imageFile is a file object
-		formData.append('spouse_name', spouseName); 
-		formData.append('spouse_name1', spouseName1); 
-		formData.append('spouse_name2', spouseName2); 
-		formData.append('dob', dob);
-		formData.append('doa', doa);
-		formData.append('membership', membership.value);
-		formData.append('familyMember', familyMember);
-		formData.append('refrence', refrence);
-		formData.append('payment', payment);
-		formData.append('discount_amount', discountAmount);
-		formData.append('received_amount', receivedAmount);
-		formData.append('balance_amount', balanceAmount);
-		formData.append('payment_method', paymentMethod.value);
-		formData.append('service', freeServices1);
-		formData.append('service1', freeServices2);
-		
+	const createCustomer = (e) => {
 	
+		e.preventDefault();
+        SetIsLoading(true)
+        let errors = {};
+
+        if (!inputValue.name) {
+			errors.name = "Name is required";
+		}
+		
+		if (!gender) {
+			errors.gender = "Gender is required";
+		}
+		
+		if (!inputValue.age) {
+			errors.age = "Age is required";
+		}
+
+		if (!membership) {
+			errors.membership = "Membership is required";
+		}
+		
+		if (!inputValue.address) {
+			errors.address = "Address is required";
+		}
+		
+		if (!inputValue.email) {
+			errors.email = "Email is required";
+		} else if (!/\S+@\S+\.\S+/.test(inputValue.email)) {
+			errors.email = "Email is invalid";
+		}
 
 		
+		if (!inputValue.mobile) {
+			errors.mobile = "Mobile number is required";
+		} else if (!/^\d{10}$/.test(inputValue.mobile)) {
+			errors.mobile = "Mobile number should be 10 digits";
+		}
+		
+		if (!inputValue.aadhar_no) {
+			errors.aadhar_no = "Aadhar number is required";
+		} else if (!/^\d{12}$/.test(inputValue.aadhar_no)) {
+			errors.aadhar_no = "Aadhar number should be exactly 12 digits";
+		}
+		
+		if (!inputValue.dob) {
+			errors.dob = "Date of birth is required";
+		}
+		
+		
+		if (!inputValue.payment) {
+			errors.payment = "Payment  is required";
+		}
+		
+		if (!inputValue.discount_amount) {
+			errors.discount_amount = "Discount amount is required";
+		}
+		
+		if (!inputValue.received_amount) {
+			errors.received_amount = "Received amount is required";
+		}
+		
+		if (!inputValue.balance_amount) {
+			errors.balance_amount = "Balance amount is required";
+		}
+		
+		if (!payment_method) {
+			errors.payment_method = "Payment method is required";
+		}
+
+		if (!image) {
+			errors.image = "Image is required";
+		}
+		
+
+		if (errors && Object.keys(errors).length === 0) {
+			console.log("Form submitted successfully!",);
+		  } else {
+			// Form is invalid, display validation errors
+			console.log("Validation Errors:", errors);
+			setErrors(errors);
+			SetIsLoading(false);
+			return false;
+		  }
+		  const data ={
+			...inputValue,
+			image: image,
+			own_house: house?.value,
+			gender: gender?.value,
+			membership: membership?.value,
+			payment_method: payment_method?.value
+		  }
+
+		  const formData = new FormData();
+
+		  for (const key in data) {
+			  formData.append(key, data[key]);
+		  }
 
 		const apiUrl = `${API_URL}/customer/signup`;
-
-		// Make a POST request using Axios
 		axios.post(apiUrl, formData)
 			.then(response => {
-
 				if (response.status === 200) {
 					prop();
 					Swal.fire(
@@ -213,165 +237,191 @@ const AddNewCustomerForm = ({prop}) => {
         };
 
 
+		const handleChange = (e, maxLength) => {
+			const { name, value } = e.target;
+			if (value.length <= maxLength) {
+				setInputValue({...inputValue, [name]:value})
+			}
+		};
+
+
 	return (
 		<Fragment>
 			<Row>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="name">Name</Label>
+						<Label for="name">Name  <span style={{color: "red"}}>*</span></Label>
 						<Input name='name'
-							onChange={
-								(e) => setName(e.target.value)
-							}
-							value={name}
+							onChange={(e) => handleChange(e, 50)}
+							value={inputValue?.name}
 							placeholder='Name'
 							onKeyPress={handleKeyPress}
+							/>
+							{errors?.name && (
+                        <span className='validationError'>
+                            {errors?.name}
+                        </span>
+                    )}
+					</FormGroup>
+				</Col>
+				<Col md={6}>
+					<FormGroup>
+						<Label for="gender">Gender  <span style={{color: "red"}}>*</span></Label>
+						<SelectBox options={gender_option} setSelcted={setGender} initialValue={gender}/>
+
+						{errors?.gender && (
+                        <span className='validationError'>
+                            {errors?.gender}
+                        </span>
+                    )}
+					</FormGroup>
+				</Col>
+				<Col md={6}>
+					<FormGroup>
+						<Label for="age">Age  <span style={{color: "red"}}>*</span></Label>
+						<Input
+						type='number'
+						name='age'
+						onChange={(e) => handleChange(e, 2)}
+						value={inputValue?.age}
+						placeholder='Enter Customer Age'/>
+
+						{errors?.name && (
+                        <span className='validationError'>
+                            {errors?.name}
+                        </span>
+                    )}
+					</FormGroup>
+				</Col>
+				<Col md={6}>
+					<FormGroup>
+						<Label for="memeber">Member Id </Label>
+						<Input name='member_id' placeholder='Member Id'
+							onChange={(e) => handleChange(e, 10)}
+							value={inputValue?.member_id}
 							/>
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="gender">Gender</Label>
-						<SelectBox options={gender_option} setSelcted={setGender} selectOption={gender}/>
-					</FormGroup>
-				</Col>
-				<Col md={6}>
-					<FormGroup>
-						<Label for="age">Age</Label>
+						<Label for="address">Address  <span style={{color: "red"}}>*</span></Label>
 						<Input
-						type='number'
-						name='age'
-							onChange={
-								(e) => setAge(e.target.value)
-							}
-							value={age}
-							placeholder='Enter Customer Age'/>
-					</FormGroup>
-				</Col>
-				<Col md={6}>
-					<FormGroup>
-						<Label for="memeber">Member Id</Label>
-						<Input name='memberid' placeholder='Member Id'
-							onChange={
-								(e) => setMemberId(e.target.value)
-							}
-							value={memberId}/>
-					</FormGroup>
-				</Col>
-				<Col md={6}>
-					<FormGroup>
-						<Label for="address">Address</Label>
-						<Input type='textarea'
-							onChange={
-								(e) => setAddress(e.target.value)
-							}
-							value={address}
+						 type='textarea'
+							onChange={(e) => handleChange(e, 200)}
+							value={inputValue?.address}
 							name='address'
 							placeholder='Address'/>
+
+						{errors?.address && (
+                        <span className='validationError'>
+                            {errors?.address}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label for="landmark">Land Mark</Label>
 						<Input type='type'
-							onChange={
-								(e) => setLandmark(e.target.value)
-							}
-							value={landmark}
-							name='landmark'
+							onChange={(e) => handleChange(e, 100)}
+							value={inputValue?.land_mark}
+							name='land_mark'
 							placeholder='Landmark'/>
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="email">Email</Label>
+						<Label for="email">Email  <span style={{color: "red"}}>*</span></Label>
 						<Input type='email'
-							onChange={
-								(e) => setEmail(e.target.value)
-							}
-							value={email}
+							onChange={(e) => handleChange(e, 50)}
+							value={inputValue?.email}
 							name='email'
 							placeholder='Email'/>
+
+					{errors?.email && (
+                        <span className='validationError'>
+                            {errors?.email}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label for="location">Location</Label>
 						<Input type='text'
-							onChange={
-								(e) => setLocation(e.target.value)
-							}
-							value={location}
+							onChange={(e) => handleChange(e, 100)}
+							value={inputValue?.location}
 							name='location'
 							placeholder='Location'/>
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="mobno">Mobile No.</Label>
+						<Label for="mobno">Mobile No.  <span style={{color: "red"}}>*</span></Label>
 						<Input type='number'
-							onChange={
-								(e) => setMobileNo(e.target.value.slice(0, 10))
-							}
-							value={mobileNo}
-							name='mobno'
+							onChange={(e) => handleChange(e, 10)}
+							value={inputValue?.mobile}
+							name='mobile'
 							placeholder='Mobile No.'/>
+							{errors?.mobile && (
+                        <span className='validationError'>
+                            {errors?.mobile}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label for="telno">Tel No.</Label>
 						<Input type='tel'
-							onChange={
-								(e) => setTelNo(e.target.value.slice(0, 10))
-							}
-							value={telNo}
-							name='telno'
+							onChange={(e) => handleChange(e, 10)}
+							value={inputValue?.tel_no}
+							name='tel_no'
 							placeholder='Tel No'/>
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label for="officeno">Office No</Label>
-						<Input type='number' name='officeno' placeholder='Office No'
-							onChange={
-								(e) => setOfficeNo(e.target.value.slice(0, 10))
-							}
-							value={officeNo}/>
+						<Input type='number' name='office_no' placeholder='Office No'
+							onChange={(e) => handleChange(e, 10)}
+							value={inputValue?.office_no}
+							
+							/>
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label for="alternateno">Alternate No</Label>
 						<Input type='tel'
-							onChange={
-								(e) => setAlternateNo(e.target.value.slice(0, 10))
-							}
-							value={alternateNo}
-							name='alternateno'
+							onChange={(e) => handleChange(e, 10)}
+							value={inputValue?.alternate_no}
+							name='alternate_no'
 							placeholder='Alternate No'/>
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="aadharno">Aadhar No</Label>
+						<Label for="aadharno">Aadhar No  <span style={{color: "red"}}>*</span></Label>
 						<Input type='number'
-							onChange={
-								(e) => setAadharNumber(e.target.value.slice(0,12))
-							}
-							value={aadhaarNumber}
-							name='aadharno'
+							onChange={(e) => handleChange(e, 12)}
+							value={inputValue?.aadhar_no}
+							name='aadhar_no'
 							placeholder='Aadhar No'/>
+
+					{errors?.aadhar_no && (
+                        <span className='validationError'>
+                            {errors?.aadhar_no}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label for="occupation">Occupation</Label>
 						<Input type='text'
-							onChange={
-								(e) => setOccupation(e.target.value)
-							}
-							value={occupation}
+							onChange={(e) => handleChange(e, 50)}
+							value={inputValue?.occupation}
 							name='occupation'
 							placeholder='Occupation'/>
 					</FormGroup>
@@ -380,10 +430,8 @@ const AddNewCustomerForm = ({prop}) => {
 					<FormGroup>
 						<Label for="designation">Designation</Label>
 						<Input type='text'
-							onChange={
-								(e) => setDesignation(e.target.value)
-							}
-							value={designation}
+							onChange={(e) => handleChange(e, 50)}
+							value={inputValue?.designation}
 							name='designation'
 							placeholder='Designation Name'/>
 					</FormGroup>
@@ -396,35 +444,47 @@ const AddNewCustomerForm = ({prop}) => {
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="dob">Date of Birth</Label>
-						<Input onChange={
-								(e) => setDob(e.target.value)
-							}
-							value={dob}
+						<Label for="dob">Date of Birth  <span style={{color: "red"}}>*</span></Label>
+						<Input 
+						onChange={(e) => handleChange(e, 50)}
+						value={inputValue?.dob}
+						name='dob'
 							type="date"/>
+						{errors?.dob && (
+                        <span className='validationError'>
+                            {errors?.dob}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="doa">DOA</Label>
-						<Input type="date"
-							onChange={
-								(e) => setDoa(e.target.value)
-							}
-							value={doa}/>
+						<Label for="doa">DOA </Label>
+						<Input type="date"	
+						onChange={(e) => handleChange(e, 50)}
+						value={inputValue?.doa}
+						name='doa'
+							/>
+						
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="image">Image (Image jpg , jpeg , png , only)</Label>
+						<Label for="image">Image (Image jpg , jpeg , png , only)  <span style={{color: "red"}}>*</span></Label>
 						<Input type="file" name="image" id="image"
 							onChange={
 								(e)=>(handleImageChange(e))
 							}
 						/>
+
+					{errors?.image && (
+                        <span className='validationError'>
+                            {errors?.image}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
-				<Col md={6}>
+				{/* <Col md={6}>
 					<FormGroup>
 						<Label for="sdob">Spouse Name-1</Label>
 						<Input type='text'
@@ -435,20 +495,18 @@ const AddNewCustomerForm = ({prop}) => {
 							name='sdob'
 							placeholder='Spouse Name -1'/>
 					</FormGroup>
-				</Col>
+				</Col> */}
 				<Col md={6}>
 					<FormGroup>
 						<Label for="fom">Family Member</Label>
 						<Input type='text'
-							onChange={
-								(e) => setFamilyMember(e.target.value)
-							}
-							value={familyMember}
-							name='family_member'
+							onChange={(e) => handleChange(e, 50)}
+							value={inputValue?.familyMember}
+							name='familyMember'
 							placeholder='Family Member '/>
 					</FormGroup>
 				</Col>
-				<Col md={6}>
+				{/* <Col md={6}>
 					<FormGroup>
 						<Label for="sdob">Spouse Name-2</Label>
 						<Input type='text' name='sdob'
@@ -459,20 +517,18 @@ const AddNewCustomerForm = ({prop}) => {
 						value={spouseName1}
 						placeholder='Spouse Name -2'/>
 					</FormGroup>
-				</Col>
+				</Col> */}
 				<Col md={6}>
 					<FormGroup>
 						<Label for="ref">Reference By</Label>
 						<Input type='text'
-							onChange={
-								(e) => setRefrence(e.target.value)
-							}
-							value={refrence}
-							name='referanceby'
+							onChange={(e) => handleChange(e, 50)}
+							value={inputValue?.refrence}
+							name='refrence'
 							placeholder='Referance By '/>
 					</FormGroup>
 				</Col>
-				<Col md={6}>
+				{/* <Col md={6}>
 					<FormGroup>
 						<Label for="sdob">Spouse Name-3</Label>
 						<Input type='text' name='sdob'
@@ -483,70 +539,92 @@ const AddNewCustomerForm = ({prop}) => {
 						value={spouseName2}
 						placeholder='Spouse Name - 3'/>
 					</FormGroup>
-				</Col>
+				</Col> */}
 				<Col md={6}>
 					<FormGroup>
-						<Label for="membership">Type of Membership</Label>
+						<Label for="membership">Type of Membership  <span style={{color: "red"}}>*</span></Label>
 						{/* <Input type='date' name='tom' placeholder='Type of Membership ' /> */}
-						<SelectBox options={membershipOptions} setSelcted={setMembership}/>
+						<SelectBox options={membershipOptions} setSelcted={setMembership} initialValue={membership}/>
+						{errors?.membership && (
+                        <span className='validationError'>
+                            {errors?.membership}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
 				<h6 className='fs-5 fw-bold py-3 px-3'>For Payment Section</h6>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="payment">Payment</Label>
+						<Label for="payment">Payment  <span style={{color: "red"}}>*</span></Label>
 						<Input type='number'
-							onChange={
-								(e) => setPayment(e.target.value)
-							}
-							value={payment}
+							onChange={(e) => handleChange(e, 50)}
+							value={inputValue?.payment}
 							name='payment'
-							placeholder='1000'/>
+							placeholder='Your Payment'/>
+							{errors?.payment && (
+                        <span className='validationError'>
+                            {errors?.payment}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="damount">Discount Amount</Label>
+						<Label for="damount">Discount Amount  <span style={{color: "red"}}>*</span></Label>
 						<Input type='number'
-							onChange={
-								(e) => setDiscountAmount(e.target.value)
-							}
-							value={discountAmount}
-							name='damount'
-							placeholder='Please Enter Discount Amount'/>
+							onChange={(e) => handleChange(e, 10)}
+							value={inputValue?.discount_amount}
+							name='discount_amount'
+							placeholder='Enter Discount Amount'/>
+							{errors?.discount_amount && (
+                        <span className='validationError'>
+                            {errors?.discount_amount}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="ramount">Received Amount</Label>
+						<Label for="ramount">Received Amount  <span style={{color: "red"}}>*</span></Label>
 						<Input type='number'
-							onChange={
-								(e) => setReceivedAmount(e.target.value)
-							}
-							value={receivedAmount}
-							name='ramount'
+							onChange={(e) => handleChange(e, 10)}
+							value={inputValue?.received_amount}
+							name='received_amount'
 							placeholder='Please Enter Received Amount'/>
+							{errors?.received_amount && (
+                        <span className='validationError'>
+                            {errors?.received_amount}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="bamount">Blanace Amount</Label>
+						<Label for="bamount">Blanace Amount  <span style={{color: "red"}}>*</span></Label>
 						<Input type='number'
-							onChange={
-								(e) => setBalanceAmount(e.target.value)
-							}
-							value={balanceAmount}
-							name='bamount'
+							onChange={(e) => handleChange(e, 10)}
+							value={inputValue?.balance_amount}
+							name='balance_amount'
 							placeholder='Please Enter Balance Amount'/>
+						{errors?.balance_amount && (
+                        <span className='validationError'>
+                            {errors?.balance_amount}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="pamount">Payment Method</Label>
-						<SelectBox options={payment_options}  setSelcted={setPaymentMethod}/>
+						<Label for="pamount">Payment Method  <span style={{color: "red"}}>*</span></Label>
+						<SelectBox options={payment_options}  setSelcted={setPaymentMethod} initialValue={payment_method}/>
+						{errors?.payment_method && (
+                        <span className='validationError'>
+                            {errors?.payment_method}
+                        </span>
+                    )}
 					</FormGroup>
 				</Col>
-				<Col md={6}>
+				{/* <Col md={6}>
 					<FormGroup>
 						<Label for="freeService1">Free Service - 1</Label>
 						<Input type="text" id="freeService1"
@@ -557,8 +635,8 @@ const AddNewCustomerForm = ({prop}) => {
 							value={freeServices1}
 							/>
 					</FormGroup>
-				</Col>
-
+				</Col> */}
+{/* 
 				<Col md={6}>
 					<FormGroup>
 						<Label for="freeService2">Free Service - 2</Label>
@@ -570,9 +648,11 @@ const AddNewCustomerForm = ({prop}) => {
 							
 							/>
 					</FormGroup>
-				</Col>
+				</Col> */}
 				<Button className='bg-primary h-fit text-blue'
-					onClick={createCustomer}>
+					onClick={createCustomer} 
+					disabled={isLoading}
+					>
 					Submit</Button>
 			</Row>
 

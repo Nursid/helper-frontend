@@ -64,7 +64,7 @@ const ManageCustomer = () => {
             for (let item of data) {
                 let newCustomer = item.NewCustomer;
                 let mergedItem = {...item, ...newCustomer};
-                NewData.push({ ...mergedItem, id: data.indexOf(item), date: moment(item.createdAt).format("D / M / Y") })
+                NewData.push({ ...mergedItem, id: data.indexOf(item), date: moment(item.createdAt).format("DD-MM-YYYY") })
 
             }
         } else {
@@ -123,6 +123,7 @@ const ManageCustomer = () => {
         setUpdate(data);
         setViewModel(!viewModal)
     }
+
     
 
     const column = [
@@ -132,10 +133,9 @@ const ManageCustomer = () => {
         { field: "mobile", headerName: "Mobile No.", minWidth: 120, editable: true },
         { field: "email", headerName: "Email", minWidth: 250, editable: true },
         { field: 'age', headerName: "Age" },
-        { field: "todate", headerName: "To Date.", minWidth: 120, editable: true },
+        { field: "date", headerName: "To Date.", minWidth: 120, editable: true },
         { field: "aadhar_no", headerName: "Aadhaar No.", minWidth: 120, editable: true },
         { field: "address", headerName: "Address", minWidth: 250, editable: true },
-        { field: "password", headerName: "Password", minWidth: 120, editable: true },
         // {
         //     field: "status",
         //     minWidth: 150,

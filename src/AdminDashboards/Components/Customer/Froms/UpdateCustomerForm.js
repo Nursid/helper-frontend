@@ -67,23 +67,6 @@ const UpdateCustomerForm = ({prop,updateData}) => {
     const [freeServices1, setFreeServices1] = useState(updateData.service || '');
     const [freeServices2, setFreeServices2] = useState(updateData.service1 || '');
 
-
-	console.log("membership----",membership)
-
-
-	
-	// "referanceby": "madhu sir ",
-	// "family_member":" sujeet yadav",
-	// "payment": "Debit Card",
-	// "discountAmount": 20,
-	// "receivedAmount": 700,
-	// "balanceAmount": 480,
-	// "paymentMethod": "Online Transfer",
-	// "freeServices": [
-	//     "Service 1",
-	//     "Service 3"
-	// ]
-
 	const payment_options = [
 		{
 			value: 'online_mode',
