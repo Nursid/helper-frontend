@@ -66,7 +66,7 @@ const ManageEmployee = () => {
         const NewData = []
         if (data !== undefined) {
             for (let item of data) {
-                NewData.push({ ...item,design_name:item.designation.name, dept_name:item.department.name , _id: data.indexOf(item), date: moment(item.createdAt).format("D / M / Y") })
+                NewData.push({ ...item,design_name:item.designation?.name, dept_name:item.department?.name , _id: data.indexOf(item), date: moment(item.createdAt).format("DD-MM-YYYY") })
             }
         } else {
             NewData.push({ id: 0 })
@@ -140,10 +140,10 @@ const ManageEmployee = () => {
         { field: "design_name", headerName: "Designation", minWidth: 120, editable: true },
         { field: "dept_name", headerName: "Department", minWidth: 120, editable: true },
         { field: "mobile_no", headerName: "Mobile No.", minWidth: 120, editable: true },
-        { field: "aadhar_no", headerName: "Aadhaar No.", minWidth: 120, editable: true },
-        { field: "pan_no", headerName: "Pan No", minWidth: 250, editable: true },
-        { field: "address", headerName: "Address", minWidth: 120, editable: true },
-        { field: "doj", headerName: "Date Of Join", minWidth: 120, editable: true },
+        { field: "aadhar_no", headerName: "Aadhaar No.", minWidth: 150, editable: true },
+        { field: "pan_no", headerName: "Pan No", minWidth: 120, editable: true },
+        { field: "address", headerName: "Address", minWidth: 250, editable: true },
+        { field: "date", headerName: "Date Of Join", minWidth: 120, editable: true },
         {
             field: "status",
             minWidth: 150,

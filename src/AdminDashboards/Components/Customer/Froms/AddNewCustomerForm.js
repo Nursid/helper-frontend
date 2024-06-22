@@ -123,18 +123,10 @@ const AddNewCustomerForm = ({prop, data}) => {
 			errors.age = "Age is required";
 		}
 
-		if (!membership) {
-			errors.membership = "Membership is required";
-		}
+		
 		
 		if (!inputValue.address) {
 			errors.address = "Address is required";
-		}
-		
-		if (!inputValue.email) {
-			errors.email = "Email is required";
-		} else if (!/\S+@\S+\.\S+/.test(inputValue.email)) {
-			errors.email = "Email is invalid";
 		}
 
 		
@@ -143,42 +135,7 @@ const AddNewCustomerForm = ({prop, data}) => {
 		} else if (!/^\d{10}$/.test(inputValue.mobile)) {
 			errors.mobile = "Mobile number should be 10 digits";
 		}
-		
-		if (!inputValue.aadhar_no) {
-			errors.aadhar_no = "Aadhar number is required";
-		} else if (!/^\d{12}$/.test(inputValue.aadhar_no)) {
-			errors.aadhar_no = "Aadhar number should be exactly 12 digits";
-		}
-		
-		if (!inputValue.dob) {
-			errors.dob = "Date of birth is required";
-		}
-		
-		
-		if (!inputValue.payment) {
-			errors.payment = "Payment  is required";
-		}
-		
-		if (!inputValue.discount_amount) {
-			errors.discount_amount = "Discount amount is required";
-		}
-		
-		if (!inputValue.received_amount) {
-			errors.received_amount = "Received amount is required";
-		}
-		
-		if (!inputValue.balance_amount) {
-			errors.balance_amount = "Balance amount is required";
-		}
-		
-		if (!payment_method) {
-			errors.payment_method = "Payment method is required";
-		}
-
-		if (!image) {
-			errors.image = "Image is required";
-		}
-		
+	
 
 		if (errors && Object.keys(errors).length === 0) {
 			console.log("Form submitted successfully!",);
@@ -286,9 +243,9 @@ const AddNewCustomerForm = ({prop, data}) => {
 						value={inputValue?.age}
 						placeholder='Enter Customer Age'/>
 
-						{errors?.name && (
+						{errors?.age && (
                         <span className='validationError'>
-                            {errors?.name}
+                            {errors?.age}
                         </span>
                     )}
 					</FormGroup>
@@ -331,18 +288,12 @@ const AddNewCustomerForm = ({prop, data}) => {
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="email">Email  <span style={{color: "red"}}>*</span></Label>
+						<Label for="email">Email </Label>
 						<Input type='email'
 							onChange={(e) => handleChange(e, 50)}
 							value={inputValue?.email}
 							name='email'
 							placeholder='Email'/>
-
-					{errors?.email && (
-                        <span className='validationError'>
-                            {errors?.email}
-                        </span>
-                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
@@ -357,17 +308,19 @@ const AddNewCustomerForm = ({prop, data}) => {
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="mobno">Mobile No.  <span style={{color: "red"}}>*</span></Label>
+						<Label for="mobno">Mobile No. <span style={{color: "red"}}>*</span></Label>
 						<Input type='number'
 							onChange={(e) => handleChange(e, 10)}
 							value={inputValue?.mobile}
 							name='mobile'
 							placeholder='Mobile No.'/>
-							{errors?.mobile && (
+
+						{errors?.mobile && (
                         <span className='validationError'>
                             {errors?.mobile}
                         </span>
                     )}
+
 					</FormGroup>
 				</Col>
 				<Col md={6}>
@@ -402,18 +355,12 @@ const AddNewCustomerForm = ({prop, data}) => {
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="aadharno">Aadhar No  <span style={{color: "red"}}>*</span></Label>
+						<Label for="aadharno">Aadhar No </Label>
 						<Input type='number'
 							onChange={(e) => handleChange(e, 12)}
 							value={inputValue?.aadhar_no}
 							name='aadhar_no'
 							placeholder='Aadhar No'/>
-
-					{errors?.aadhar_no && (
-                        <span className='validationError'>
-                            {errors?.aadhar_no}
-                        </span>
-                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
@@ -444,17 +391,12 @@ const AddNewCustomerForm = ({prop, data}) => {
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="dob">Date of Birth  <span style={{color: "red"}}>*</span></Label>
+						<Label for="dob">Date of Birth  </Label>
 						<Input 
 						onChange={(e) => handleChange(e, 50)}
 						value={inputValue?.dob}
 						name='dob'
 							type="date"/>
-						{errors?.dob && (
-                        <span className='validationError'>
-                            {errors?.dob}
-                        </span>
-                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
@@ -470,18 +412,13 @@ const AddNewCustomerForm = ({prop, data}) => {
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="image">Image (Image jpg , jpeg , png , only)  <span style={{color: "red"}}>*</span></Label>
+						<Label for="image">Image (Image jpg , jpeg , png , only)  </Label>
 						<Input type="file" name="image" id="image"
 							onChange={
 								(e)=>(handleImageChange(e))
 							}
 						/>
 
-					{errors?.image && (
-                        <span className='validationError'>
-                            {errors?.image}
-                        </span>
-                    )}
 					</FormGroup>
 				</Col>
 				{/* <Col md={6}>
@@ -542,86 +479,59 @@ const AddNewCustomerForm = ({prop, data}) => {
 				</Col> */}
 				<Col md={6}>
 					<FormGroup>
-						<Label for="membership">Type of Membership  <span style={{color: "red"}}>*</span></Label>
+						<Label for="membership">Type of Membership </Label>
 						{/* <Input type='date' name='tom' placeholder='Type of Membership ' /> */}
 						<SelectBox options={membershipOptions} setSelcted={setMembership} initialValue={membership}/>
-						{errors?.membership && (
-                        <span className='validationError'>
-                            {errors?.membership}
-                        </span>
-                    )}
 					</FormGroup>
 				</Col>
 				<h6 className='fs-5 fw-bold py-3 px-3'>For Payment Section</h6>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="payment">Payment  <span style={{color: "red"}}>*</span></Label>
+						<Label for="payment">Payment </Label>
 						<Input type='number'
 							onChange={(e) => handleChange(e, 50)}
 							value={inputValue?.payment}
 							name='payment'
 							placeholder='Your Payment'/>
-							{errors?.payment && (
-                        <span className='validationError'>
-                            {errors?.payment}
-                        </span>
-                    )}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="damount">Discount Amount  <span style={{color: "red"}}>*</span></Label>
+						<Label for="damount">Discount Amount  </Label>
 						<Input type='number'
 							onChange={(e) => handleChange(e, 10)}
 							value={inputValue?.discount_amount}
 							name='discount_amount'
 							placeholder='Enter Discount Amount'/>
-							{errors?.discount_amount && (
-                        <span className='validationError'>
-                            {errors?.discount_amount}
-                        </span>
-                    )}
+							
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="ramount">Received Amount  <span style={{color: "red"}}>*</span></Label>
+						<Label for="ramount">Received Amount  </Label>
 						<Input type='number'
 							onChange={(e) => handleChange(e, 10)}
 							value={inputValue?.received_amount}
 							name='received_amount'
 							placeholder='Please Enter Received Amount'/>
-							{errors?.received_amount && (
-                        <span className='validationError'>
-                            {errors?.received_amount}
-                        </span>
-                    )}
+							
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="bamount">Blanace Amount  <span style={{color: "red"}}>*</span></Label>
+						<Label for="bamount">Blanace Amount </Label>
 						<Input type='number'
 							onChange={(e) => handleChange(e, 10)}
 							value={inputValue?.balance_amount}
 							name='balance_amount'
 							placeholder='Please Enter Balance Amount'/>
-						{errors?.balance_amount && (
-                        <span className='validationError'>
-                            {errors?.balance_amount}
-                        </span>
-                    )}
+					
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="pamount">Payment Method  <span style={{color: "red"}}>*</span></Label>
+						<Label for="pamount">Payment Method </Label>
 						<SelectBox options={payment_options}  setSelcted={setPaymentMethod} initialValue={payment_method}/>
-						{errors?.payment_method && (
-                        <span className='validationError'>
-                            {errors?.payment_method}
-                        </span>
-                    )}
 					</FormGroup>
 				</Col>
 				{/* <Col md={6}>

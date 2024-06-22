@@ -30,24 +30,64 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
 
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [allDepartments,setAllDepartments]=useState({});
-   
     const [allServices, setAllServices]= useState({})
     const [pan_image, setPanFile] = useState(data?.pan_no || '');
     const [adhar_image, setAadhar] = useState(data?.aadhar_no || '');
     const [image, setImage] = useState(data?.image || '');
-    // const [department, setDepartment] = useState({label:'office',value: "1"})
+    const [errors, setErrors]= useState([]);
+    const [isLoading, SetIsLoading]= useState(false)
     const [department, setDepartment] = useState(data?.department?.id || '');
-    const [slectedDesignation, setSelectedDesignation] = useState(data.designation_id || '')
-    const [uploadedImg, setUploadedImg] = useState({})
+    const [slectedDesignation, setSelectedDesignation] = useState(data?.designation?.id || '')
 
-    // const submitData = useSelector(state => state.GetEmployeeRegReducer)
 
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+
+        e.preventDefault();
+        SetIsLoading(true)
+        let errors = {};
+
+		if (!formData.name) {
+            errors.name = "Name is required";
+        }
+		if (!formData.mobile_no) {
+			errors.mobile_no = "Mobile number is required";
+		} else if (!/^\d{10}$/.test(formData.mobile_no)) {
+			errors.mobile_no = "Mobile number should be 10 digits";
+		}
+
+        if (!department) {
+            errors.department = "Department is required";
+        }
+        
+
+       if (parseInt(department?.value) === 1) {
+            if (!slectedDesignation) {
+                errors.designation = "Designation is required";
+            }
+        } 
+        if(parseInt(department?.value) === 2 || parseInt(department?.value) === 3 ) {
+            if (!selectedOptions || !Array.isArray(selectedOptions) || selectedOptions.length === 0) {
+                errors.designation = "Service is required";
+            }
+        }
+
+
+		if (errors && Object.keys(errors).length === 0) {
+			// Form is valid, handle form submission here
+			console.log("Form submitted successfully!",);
+		  } else {
+			// Form is invalid, display validation errors
+			console.log("Validation Errors:", errors);
+			setErrors(errors);
+			SetIsLoading(false);
+			return false;
+		  }
+
         const serviceValues = selectedOptions.map(option => option.value);
         const newFormData = {
             ...formData,
-            department_id: data.department_id || (department ? department.value : undefined),
-            designation_id: data.designation_id || (slectedDesignation ? slectedDesignation.value : 2),
+            department_id: department?.value,
+            designation_id: slectedDesignation?.value,
             pan_image: pan_image,
             adhar_image: adhar_image, 
             image: image, 
@@ -119,16 +159,14 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
     const Designation = async () => {
 		const response = await axios.get(API_URL + '/designation/getall')
 		if (response.status === 200) {
-            const transformedData = response.data
-            .filter(item => item.id !== 1)  // Exclude items with id=1
-            .map(item => ({
+            const filteredData = response.data.filter(item => item.id !== 1 && item.id !== 7);
+            const transformedData = filteredData.map(item => ({
                 label: item.name,
-                value: item.id 
+                value: item.id
             }));
 			setAllServices(transformedData);
 		}
 	}
-
 
     useEffect(() => {
 		Departments();
@@ -158,14 +196,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
             }
 
             if(deptValue===1){
-                const response = await axios.get(API_URL + '/designation/getall')
-                if (response.status === 200) {
-                      const transformedData = response.data.map(item => ({
-                        label: item.name,
-                        value: item.id 
-                    }));
-                    setAllServices(transformedData);
-                }
+                Designation()
             }
         };
 
@@ -227,16 +258,33 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                         <h6 className='pb-3 fw-bold fs-5'>Personal Info</h6>
                                         <Col md={6}>
                                             <FormGroup>
-                                                <Label for="department">Department Name</Label>
+                                                <Label for="department">Department Name <span style={{color: "red"}}>*</span></Label>
                                                 <SelectBox options={allDepartments} setSelcted={setDepartment} initialValue={department} />
+                                                {errors?.department && (
+                        <span className='validationError'>
+                            {errors?.department}
+                        </span>
+                    )}
                                             </FormGroup>
                                         </Col>  
                                         <Col md={6}>
                                             <FormGroup>
-                                                <Label for="designation"> {department?.value===1 ?   "Designation Name" : "Service Name"}</Label>
-                                                
-                                                { department?.value===1 ?  <SelectBox options={allServices} setSelcted={setSelectedDesignation} initialValue={slectedDesignation}/> 
+                                                <Label for="designation"> {department?.value===1 ?   " Designation Name " : " Service Name "}
+
+                                                <span style={{color: "red"}}>*</span>
+
+                                                </Label>
+                                                { department?.value===1 ? 
+                                                <>
+                                                <SelectBox options={allServices} setSelcted={setSelectedDesignation} initialValue={slectedDesignation}/> 
+                                                {errors?.designation && (
+                                                    <span className='validationError'>
+                                                        {errors?.designation}
+                                                    </span>
+                                                )}
+                                                </>
                                                     :
+                                                    <>
                                                 <Select
                                                 isMulti
                                                 value={selectedOptions}
@@ -245,14 +293,22 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 className="basic-multi-select"
                                                 classNamePrefix="select"
                                                 />
-                                            }
+                                               {errors?.designation && (
+                                                    <span className='validationError'>
+                                                        {errors?.designation}
+                                                    </span>
+                                                )}
+                                                </>
 
+                                                
+                                            }
+                        
                                             </FormGroup>
                                         </Col>
 
                                         <Col md={6}>
                                             <FormGroup>
-                                                <Label for="name">Name</Label>
+                                                <Label for="name">Name <span style={{color: "red"}}>*</span></Label>
                                                 <Input
                                                    onKeyPress={handleKeyPress}
                                                     name="name"
@@ -261,20 +317,29 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                     placeholder='Enter Employee Name'
                                                     value={formData?.name}
                                                 />
+                                                {errors?.name && (
+                                                    <span className='validationError'>
+                                                        {errors?.name}
+                                                    </span>
+                                                )}
                                             </FormGroup>
                                         </Col>
                                         
                                         <Col md={6}>
                                             <FormGroup>
-                                                <Label for="mobileno">Mobile No</Label>
+                                                <Label for="mobileno">Mobile No <span style={{color: "red"}}>*</span></Label>
                                                 <Input
-                                                    
                                                     type="number"
                                                     name="mobile_no"
                                                     onChange={(e) => handleChange(e, 10)}
                                                     placeholder='Enter Employee Mobile No'
                                                     value={formData?.mobile_no}
                                                 />
+                                                {errors?.mobile_no && (
+                                                    <span className='validationError'>
+                                                        {errors?.mobile_no}
+                                                    </span>
+                                                )}
                                             </FormGroup>
                                         </Col>
                                         <Col md={6}>
