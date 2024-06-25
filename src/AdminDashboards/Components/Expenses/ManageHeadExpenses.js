@@ -83,8 +83,12 @@ const ManageHeadExpenses = () => {
         {
             field: "action ", flex: 1, headerName: "Action", minWidth: 50, renderCell: (params) => (
                 <div className='d-flex align-items-center gap-2 justify-content-start'>
-                    <Button variant='contained' color='primary' onClick={(e)=>{toggleEditMode(params.row)}}><BorderColorIcon /></Button>
-                    <Button variant="contained" color="error" onClick={() => { DeleteById(params.row.id) }} ><DeleteForeverIcon /></Button>
+                    <Button variant='contained' color='primary' onClick={(e)=>{toggleEditMode(params.row)}}
+                        style={{minWidth: "40px", maxWidth: "40px"}}
+                        ><BorderColorIcon /></Button>
+                    <Button variant="contained" color="error" onClick={() => { DeleteById(params.row.id) }} 
+                        style={{minWidth: "40px", maxWidth: "40px"}}
+                        ><DeleteForeverIcon /></Button>
                 </div>
             )
         },

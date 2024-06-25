@@ -42,11 +42,30 @@ const ManageServiceProvider = () => {
     }, [data]);
 
     const handleToggleBlock = (userId) => {
-        const newBlockStatus = !blockStatus[userId]; // Toggle the block status
+        const newBlockStatus = !blockStatus[userId]; 
+
+        const actionText = newBlockStatus ? 'Un-Block' : 'Block';
+        
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `You won't be able to ${actionText}!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: `Yes, ${actionText} it!`
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                // Toggle the block status
         // Make API call to update block status on the server
         axios.post(`${API_URL}/service-provider/block/${userId}`, { block_id: newBlockStatus })
             .then(response => {
                 if (response.status === 200) {
+                    Swal.fire(
+                        `${actionText} Successful`,
+                        `User has been ${actionText}ed.`,
+                        'success'
+                    );
                     // Update local state if API call is successful
                     setBlockStatus(prevBlockStatus => ({
                         ...prevBlockStatus,
@@ -54,12 +73,20 @@ const ManageServiceProvider = () => {
                     }));
                 } else {
                     // Handle error if API call fails
+                    Swal.fire({
+                        title: 'failed to delete try again',
+                        icon: "error",
+                    })
                     console.error('Failed to update block status');
                 }
             })
             .catch(error => {
                 console.error('Error updating block status:', error);
             });
+
+               
+            }
+        })
     };
 
 
@@ -134,39 +161,43 @@ const ManageServiceProvider = () => {
 
 
     const column = [
-        { field: "_id", headerName: "Sr No", flex: 1, minWidth: 50, editable: true },
-        { field: "ref_name", headerName: "Ref Name", minWidth: 120, editable: true },
+        { field: "_id", headerName: "Sr No", minWidth: 50, editable: true },
+        { field: "username", headerName: "User Name", minWidth: 120, editable: true },
         { field: "name", headerName: "Name", minWidth: 120, editable: true },
+        { field: "ref_name", headerName: "Ref Name", minWidth: 120, editable: true }, 
         { field: "provider_type", headerName: "Provider Type", minWidth: 120, editable: true },
-        { field: "about", headerName: "Service Name", minWidth: 400, editable: true },
+        { field: "about", headerName: "Service Name", minWidth: 220, editable: true },
         { field: "aadhar_no", headerName: "Aadhaar No.", minWidth: 120, editable: true },
         { field: "mobile_no", headerName: "Mobile No.", minWidth: 120, editable: true },
         { field: "email", headerName: "Email", minWidth: 120, editable: true },
         { field: "current_address", headerName: "Address", minWidth: 250, editable: true },
-        { field: "username", headerName: "User Name", minWidth: 250, editable: true },
-        { field: "password", headerName: "password", minWidth: 250, editable: true },
         {
             field: "status",
             minWidth: 150,
             headerName: "Admin Status",
             renderCell: (params) => (
-                <Button className="text-white bg-green">Approved</Button>
+                <Button className="text-white bg-green" style={{minWidth: "80px", maxWidth: "80px"}}>Approved</Button>
             ),
         },
         {
             field: "action",
             headerName: "Action",
-            minWidth: 220,
+            minWidth: 150,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
-                    <Button variant='contained' onClick={(e)=>{toggleEditMode(params.row)}} color='primary'><BorderColorIcon /></Button>
-                    <Button variant="contained" color="success" onClick={(e)=>{toggleView(params.row)}}>
+                    <Button variant='contained' onClick={(e)=>{toggleEditMode(params.row)}} color='primary'
+                    style={{minWidth: "40px", maxWidth: "40px"}}
+                    ><BorderColorIcon /></Button>
+                    <Button variant="contained" color="success" onClick={(e)=>{toggleView(params.row)}}
+                    style={{minWidth: "40px", maxWidth: "40px"}}
+                    >
                         <VisibilityIcon />
                     </Button>
                     <Button variant="contained" color="error"
                     onClick={(e)=>{
                         GetDeleteByID(params.row.id)
                     }}
+                    style={{minWidth: "40px", maxWidth: "40px"}}
                     >
                         <DeleteForeverIcon />
                     </Button>
@@ -180,9 +211,9 @@ const ManageServiceProvider = () => {
             renderCell: (params) => (
                 <div className="d-flex gap-2">
                     {blockStatus[params.row.id] ?
-                       <Button variant="contained" color="error" onClick={() => handleToggleBlock(params.row.id)}><BlockIcon /></Button>
+                       <Button variant="contained" color="error" onClick={() => handleToggleBlock(params.row.id)} style={{minWidth: "40px", maxWidth: "40px"}}><BlockIcon /></Button>
                         :
-                        <Button className="text-white bg-warning border-warning" onClick={() => handleToggleBlock(params.row.id)}>Un-Block</Button>
+                        <Button className="text-white bg-warning border-warning" onClick={() => handleToggleBlock(params.row.id)} style={{minWidth: "80px", maxWidth: "80px"}}>Un-Block</Button>
                     }
                 </div>
             ),
@@ -218,7 +249,7 @@ const ManageServiceProvider = () => {
             size={"xl"} scrollable={true}
             />
 
-<ModalComponent
+            <ModalComponent
                 data={<ViewServiceProvider
                 data={editData} toggleModal={toggleView} />}
                 modalTitle={"Service Provider Profile"}
@@ -227,13 +258,16 @@ const ManageServiceProvider = () => {
                 size={"xl"} scrollable={true}
             />
 
-            <h4 className='p-3 px-4 mt-3 bg-transparent headingBelowBorder text-white' style={{ maxWidth: "fit-content" }}>Service Provider List</h4>
-            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3'>
+            <div className='flex'>
+                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}>Service Provider List</h4>
 
-                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} onClick={toggleModal} style={{ minWidth: "15rem", maxWidth: "15rem" }} >
+                <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
+                    <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={toggleModal} >
                     Add Service Provider
+                    </div>
                 </div>
             </div>
+
             <div className='p-4'>
                 <AdminDataTable rows={DataWithID(data)} columns={column} CustomToolbar={CustomToolbar} />
             </div>

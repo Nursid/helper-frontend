@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import BlockIcon from '@mui/icons-material/Block'
+import BlockOutlined from "@mui/icons-material/BlockOutlined"
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 import { GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton, GridToolbarQuickFilter } from '@mui/x-data-grid'
 import { Modal, ModalBody, ModalHeader } from 'reactstrap'
@@ -41,11 +42,31 @@ const ManageEmployee = () => {
     }, [data]);
 
     const handleToggleBlock = (userId) => {
-        const newBlockStatus = !blockStatus[userId]; // Toggle the block status
+
+        const newBlockStatus = !blockStatus[userId]; 
+
+        const actionText = newBlockStatus ? 'Un-Block' : 'Block';
+        
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `You won't be able to ${actionText}!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: `Yes, ${actionText} it!`
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                // Toggle the block status
         // Make API call to update block status on the server
         axios.post(`${API_URL}/employee/block/${userId}`, { is_block: newBlockStatus })
             .then(response => {
                 if (response.status === 200) {
+                    Swal.fire(
+                        `${actionText} Successful`,
+                        `User has been ${actionText}ed.`,
+                        'success'
+                    );
                     // Update local state if API call is successful
                     setBlockStatus(prevBlockStatus => ({
                         ...prevBlockStatus,
@@ -53,12 +74,23 @@ const ManageEmployee = () => {
                     }));
                 } else {
                     // Handle error if API call fails
+                    Swal.fire({
+                        title: 'failed to delete try again',
+                        icon: "error",
+                    })
                     console.error('Failed to update block status');
                 }
             })
             .catch(error => {
                 console.error('Error updating block status:', error);
             });
+
+               
+            }
+        })
+
+
+       
     };
 
 
@@ -155,14 +187,15 @@ const ManageEmployee = () => {
         {
             field: "action",
             headerName: "Action",
-            minWidth: 220,
+            minWidth: 150,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
-                    <Button  onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary'><BorderColorIcon /></Button>
-                    <Button variant="contained" color="success" onClick={(e)=>{toggleView(params.row)}}>
+                    <Button  onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary' style={{minWidth: "40px", maxWidth: "40px"}} ><BorderColorIcon /></Button>
+                    <Button variant="contained" color="success" onClick={(e)=>{toggleView(params.row)}} style={{minWidth: "40px", maxWidth: "40px"}}>
                         <VisibilityIcon />
                     </Button>
                     <Button variant="contained" color="error"
+                    style={{minWidth: "40px", maxWidth: "40px"}}
                     onClick={(e) => {
                         GetDeleteByID(params.row.emp_id)
                     }}
@@ -175,13 +208,17 @@ const ManageEmployee = () => {
         {
             field: "block",
             headerName: "Block",
-            minWidth: 100,
+            minWidth: 150,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
                     {blockStatus[params.row.id] ?
-                       <Button variant="contained" color="error" onClick={() => handleToggleBlock(params.row.id)}><BlockIcon /></Button>
+                       <Button variant="contained" color="error" onClick={() => handleToggleBlock(params.row.id)}
+                       style={{minWidth: "40px", maxWidth: "40px"}}
+                       ><BlockIcon /
+                       
+                       ></Button>
                         :
-                        <Button className="text-white bg-warning border-warning" onClick={() => handleToggleBlock(params.row.id)}>Un-Block</Button>
+                        <Button className="text-white bg-warning border-warning" onClick={() => handleToggleBlock(params.row.id)}> Un-Block </Button>
                     }
                 </div>
             ),
@@ -222,15 +259,19 @@ const ManageEmployee = () => {
                 modalTitle={"Employee Profile"}
                 modal={viewModal}
                 toggle={toggleView}
-                size={"xl"} scrollable={true}
+                size={"xl"}
+                scrollable={true}
             />
 
-            <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "fit-content" }}>Employee List</h4>
-            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3'>
-                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={toggleModal} >
-                    Add Employee
-                </div>
+            <div className='flex'>
 
+                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "15rem", minWidth: "15rem" }}>Employee List</h4>
+
+                <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
+                    <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={toggleModal} >
+                        Add Employee
+                    </div>
+                </div>
             </div>
             <div className='p-4'>
                 <AdminDataTable rows={DataWithID(data)} columns={column} CustomToolbar={CustomToolbar} />

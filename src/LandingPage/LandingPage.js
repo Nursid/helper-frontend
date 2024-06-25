@@ -24,10 +24,8 @@ const LandingPage = () => {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
   const images = [
     CarWashingBanner,
     ElectricBanner,
@@ -37,11 +35,9 @@ const LandingPage = () => {
 
   const phoneNumber = '7290900835'; // Replace with the actual phone number
   const whatsappWebURL = `https://web.whatsapp.com/send?phone=${phoneNumber}`;
-
   const handleButtonClick = () => {
     window.open(whatsappWebURL, '_blank');
   };
-
   const [formData, setFormData] = useState({
     name: '',
     mobileNumber: '',

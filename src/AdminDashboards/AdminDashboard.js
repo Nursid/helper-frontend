@@ -475,11 +475,12 @@ const AdminDashboard = () => {
     },
     { field: "cust_id", headerName: "Customer ID", minWidth: 120, editable: true,  },
     { field: "order_no", headerName: "Order Number", minWidth: 120, editable: true },
+    { field: "name", headerName: "Customer Name",minWidth: 150, editable: true },
+    { field: "mobile", headerName: "Mobile",minWidth: 150, editable: true },
     { field: "user_type", headerName: "Type", minWidth: 80, editable: true },
     { field: "service_name", headerName: "Service Type",minWidth: 120, editable: true },
     { field: "booktime", headerName: "Booking Time", minWidth: 120, editable: true },
     { field: "bookdate", headerName: "Booking Date", minWidth: 120, editable: true },
-    { field: "name", headerName: "Customer Name",minWidth: 150, editable: true },
     { field: "problem_des", headerName: "Problem Description ", minWidth: 150, editable: true },
     { field: "suprvisor_id", headerName: "Supervisor",
     renderCell: (params) => ( 

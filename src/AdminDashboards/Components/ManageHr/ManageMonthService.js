@@ -91,14 +91,14 @@ const ManageMonthService = () => {
     };
 
     const column = [
-        { field: "_id", headerName: "Sr No", flex: 1, minWidth: 50, editable: true },
+        { field: "_id", headerName: "Sr No", minWidth: 50, editable: true },
         { field: "cust_name", headerName: "Customer Name", minWidth: 120, editable: true },
         { field: "mobile_no", headerName: "Mobile", minWidth: 120, editable: true },
         { field: "monthlyServices", headerName: "Monthly Services", minWidth: 120, editable: true },
         { field: "serviceType", headerName: "Service Type", minWidth: 120, editable: true },
         { field: "serviceServeType", headerName: "Service Serve Type", minWidth: 120, editable: true },
         { field: "selectedTimeSlot", headerName: "Hourly Time Slot", minWidth: 120, editable: true },
-        { field: "specialInterest", headerName: "Special Interest", minWidth: 120, editable: true },
+        { field: "specialInterest", headerName: "Special Interest", minWidth: 220, editable: true },
         { field: "serviceFees", headerName: "Service Fees", minWidth: 120, editable: true },
         { field: "date", headerName: "Fees Paid Date & Time", minWidth: 120, editable: true },      
         // {
@@ -115,7 +115,7 @@ const ManageMonthService = () => {
             minWidth: 220,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
-                    <Button onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary'><BorderColorIcon /></Button>
+                    <Button onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary' style={{minWidth: "40px", maxWidth: "40px"}}><BorderColorIcon /></Button>
                     {/* <Button variant="contained" color="success">
                         <VisibilityIcon />
                     </Button> */}
@@ -123,6 +123,7 @@ const ManageMonthService = () => {
                     onClick={(e) => {
                         GetDeleteByID(params.row.id)
                     }}
+                    style={{minWidth: "40px", maxWidth: "40px"}}
                     >
                         <DeleteForeverIcon />
                     </Button>
@@ -174,12 +175,15 @@ const ManageMonthService = () => {
                 size={"xl"}
             />
 
-            <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "fit-content" }}> Monthly Service  </h4>
-            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3'>
+                <div className='flex'>
+
+            <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "15rem", minWidth: "15rem" }}>Monthly Service</h4>
+
+            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
                 <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={toggleModal} >
                 Add Monthly Service 
                 </div>
-
+            </div>
             </div>
             <div className='p-4'>
                 <AdminDataTable rows={DataWithID(data)} columns={column} CustomToolbar={CustomToolbar} />

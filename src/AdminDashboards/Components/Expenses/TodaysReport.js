@@ -36,11 +36,11 @@ const TodaysReport = () => {
 
     const all_columns = [
         { field: "id", headerName: "Sr No", flex: 1, minWidth: 50, editable: true },
-        { field: "orderNo", flex: 1, headerName: "Order No", minWidth: 120, editable: true },
-        { field: "personName", flex: 1, headerName: "Customer Name", minWidth: 120, editable: true },
-        { field: "remark", flex: 1, headerName: "Remark", minWidth: 120, editable: true },
-        { field: "amount", flex: 1, headerName: "Collection", minWidth: 120, editable: true },
-        { field: "expenseType", flex: 1, headerName: "Expenses", minWidth: 120, editable: true },
+        { field: "orderNo", headerName: "Order No", minWidth: 120, editable: true },
+        { field: "personName", headerName: "Customer Name", minWidth: 120, editable: true },
+        { field: "remark", headerName: "Remark", minWidth: 120, editable: true },
+        { field: "amount",  headerName: "Collection", minWidth: 120, editable: true },
+        { field: "expenseType", headerName: "Expenses", minWidth: 120, editable: true },
        
     ]
 

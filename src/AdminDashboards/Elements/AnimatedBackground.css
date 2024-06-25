@@ -1,11 +1,9 @@
 .header {
   position: relative;
   text-align: center;
-  background: linear-gradient(
-    60deg,
-    rgba(84, 58, 183, 1) 0%,
-    rgba(0, 172, 193, 1) 100%
-  );
+  background: linear-gradient(60deg,
+      rgba(84, 58, 183, 1) 0%,
+      rgba(0, 172, 193, 1) 100%);
   color: white;
 }
 
@@ -28,7 +26,8 @@
   position: relative;
   width: 100%;
   height: 15vh;
-  margin-bottom: -7px; /*Fix for safari gap*/
+  margin-bottom: -7px;
+  /*Fix for safari gap*/
   min-height: 100px;
   max-height: 150px;
 }
@@ -42,64 +41,94 @@
 
 /* Animation */
 
-.parallax > use {
+.parallax>use {
   animation: move-forever 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
 }
-.parallax > use:nth-child(1) {
+
+.parallax>use:nth-child(1) {
   animation-delay: -2s;
   animation-duration: 7s;
 }
-.parallax > use:nth-child(2) {
+
+.parallax>use:nth-child(2) {
   animation-delay: -3s;
   animation-duration: 10s;
 }
-.parallax > use:nth-child(3) {
+
+.parallax>use:nth-child(3) {
   animation-delay: -4s;
   animation-duration: 13s;
 }
-.parallax > use:nth-child(4) {
+
+.parallax>use:nth-child(4) {
   animation-delay: -5s;
   animation-duration: 20s;
 }
+
 @keyframes move-forever {
   0% {
     transform: translate3d(-90px, 0, 0);
   }
+
   100% {
     transform: translate3d(85px, 0, 0);
   }
 }
+
 /*Shrinking for mobile*/
 @media (max-width: 768px) {
   .waves {
     height: 40px;
     min-height: 40px;
   }
+
   .content {
     height: 30vh;
   }
 }
-.running-cell{
+
+.running-cell {
   background-color: #f1c40f !important;
   color: #ffff;
 }
-.complete-cell{
+
+.complete-cell {
   background-color: #27ae60 !important;
   color: #ffff;
 }
-.cancel-cell{
+
+.cancel-cell {
   background-color: #95a5a6 !important;
   color: #ffff;
 }
-.hold-cell{
+
+.hold-cell {
   background-color: #e74c3c !important;
   color: #ffff;
 }
-.due-cell{
+
+.due-cell {
   background-color: #a29bfe !important;
   color: #ffff;
 }
-.pending-cell{
-  background-color:#e67e22 !important;
+
+.pending-cell {
+  background-color: #e67e22 !important;
   color: #ffff;
+}
+
+.css-wop1k0-MuiDataGrid-footerContainer {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  min-height: 35px;
+  border-top: 1px solid;
 }

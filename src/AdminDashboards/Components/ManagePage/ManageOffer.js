@@ -12,7 +12,7 @@ import BlockIcon from '@mui/icons-material/Block'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 import { Button } from '@mui/material';
 
-
+import { IMG_URL } from '../../../config';
 import { GetAllOfferAction } from '../../../Store/Actions/Dashboard/ManageWebsite/OfferAction';
 import moment from 'moment';
 import axios from 'axios';
@@ -91,43 +91,98 @@ const ManageOffer = () => {
     const handleToggleBlock = (userId) => {
         const newBlockStatus = !blockStatus[userId]; // Toggle the block status
         // Make API call to update block status on the server
+
+        const actionText = newBlockStatus ? 'Un-Block' : 'Block';
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `You won't be able to ${actionText}!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: `Yes, ${actionText} it!`
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                // Toggle the block status
+        // Make API call to update block status on the server
         axios.put(`${API_URL}/manage-website/offer/block/${userId}`, { block: newBlockStatus })
             .then(response => {
                 if (response.status === 200) {
+                    Swal.fire(
+                        `${actionText} Successful`,
+                        `User has been ${actionText}ed.`,
+                        'success'
+                    );
                     // Update local state if API call is successful
-                    setBlockStatus(prevBlockStatus => ({
+                   setBlockStatus(prevBlockStatus => ({
                         ...prevBlockStatus,
                         [userId]: newBlockStatus,
                     }));
                 } else {
                     // Handle error if API call fails
+                    Swal.fire({
+                        title: 'failed to delete try again',
+                        icon: "error",
+                    })
                     console.error('Failed to update block status');
                 }
             })
             .catch(error => {
                 console.error('Error updating block status:', error);
             });
+
+               
+            }
+        })
     };
 
     const handleToggleApprove = (userId) => {
         const newApproveStatus = !isApprove[userId]; // Toggle the block status
         // Make API call to update block status on the server
+
+
+        const actionText = newApproveStatus ? 'Un-Block' : 'Block';
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `You won't be able to ${actionText}!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: `Yes, ${actionText} it!`
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                // Toggle the block status
+        // Make API call to update block status on the server
         axios.put(`${API_URL}/manage-website/offer/approve/${userId}`, { is_approved: newApproveStatus })
             .then(response => {
                 if (response.status === 200) {
+                    Swal.fire(
+                        `${actionText} Successful`,
+                        `User has been ${actionText}ed.`,
+                        'success'
+                    );
                     // Update local state if API call is successful
-                    setIsApprove(prevApproveStatus => ({
-                        ...prevApproveStatus,
+                   setBlockStatus(prevBlockStatus => ({
+                        ...prevBlockStatus,
                         [userId]: newApproveStatus,
                     }));
                 } else {
                     // Handle error if API call fails
+                    Swal.fire({
+                        title: 'failed to delete try again',
+                        icon: "error",
+                    })
                     console.error('Failed to update block status');
                 }
             })
             .catch(error => {
                 console.error('Error updating block status:', error);
             });
+
+               
+            }
+        })
     };
 
 
@@ -135,7 +190,13 @@ const ManageOffer = () => {
         { field: "_id", headerName: "Sr No", minWidth: 10, editable: true },
         { field: "date", headerName: "Date", minWidth: 120, editable: true },
         { field: "description", headerName: "Description", minWidth: 400, editable: true },
-        { field: "image", headerName: "Image", minWidth: 120, editable: true },
+        { field: "image", headerName: "Image", minWidth: 120,
+            renderCell: (params) => (
+                <>
+                <img src={IMG_URL+params.row.image} className='rounded-circle' alt="Image" style={{width: 100, height: 50 }} />
+                </>
+            )
+         },
         {
             field: "issapproved",
             minWidth: 150,
@@ -153,17 +214,22 @@ const ManageOffer = () => {
         {
             field: "action",
             headerName: "Action",
-            minWidth: 220,
+            minWidth: 150,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
-                    <Button variant='contained' color='primary' onClick={(e)=>{toggleEditMode(params.row)}}><BorderColorIcon /></Button>
-                    <Button variant="contained" color="success">
+                    <Button variant='contained' color='primary' onClick={(e)=>{toggleEditMode(params.row)}}
+                        style={{minWidth: "40px", maxWidth: "40px"}}
+                        ><BorderColorIcon /></Button>
+                    <Button variant="contained" color="success"
+                    style={{minWidth: "40px", maxWidth: "40px"}}
+                    >
                         <VisibilityIcon />
                     </Button>
                     <Button variant="contained" color="error"
                     onClick={(e) => {
                         GetDeleteByID(params.row.id)
                     }}
+                    style={{minWidth: "40px", maxWidth: "40px"}}
                     >
                         <DeleteForeverIcon />
                     </Button>
@@ -230,12 +296,18 @@ const ManageOffer = () => {
             
             />
             {/* <DashHeader /> */}
-            <h4 className='p-3 px-4 mt-3 bg-transparent headingBelowBorder text-white' style={{ maxWidth: "fit-content" }}>All Offers Details </h4>
-            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3'>
-                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={toggleModal}>
-                    Add New Offer
+
+            <div className='flex'>
+            <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}> All Offers Details </h4>
+
+            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
+                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "18rem", maxWidth: "18rem" }} onClick={toggleModal} >
+                Add New Offer
                 </div>
             </div>
+            </div>
+
+
             <div className='p-4'>
                 <AdminDataTable rows={DataWithID(data)} columns={column} CustomToolbar={CustomToolbar} />
             </div>

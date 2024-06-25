@@ -86,26 +86,54 @@ const ManageCustomer = () => {
         }
     }, [data]);
 
-
     const handleToggleBlock = (userId) => {
-        const newBlockStatus = !blockStatus[userId]; // Toggle the block status
+
+        const newBlockStatus = !blockStatus[userId]; 
+
+        const actionText = newBlockStatus ? 'Un-Block' : 'Block';
+        
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `You won't be able to ${actionText}!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: `Yes, ${actionText} it!`
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                // Toggle the block status
         // Make API call to update block status on the server
         axios.post(`${API_URL}/customer/block/${userId}`, { is_block: newBlockStatus })
             .then(response => {
                 if (response.status === 200) {
+                    Swal.fire(
+                        `${actionText} Successful`,
+                        `User has been ${actionText}ed.`,
+                        'success'
+                    );
                     // Update local state if API call is successful
-                    setBlockStatus(prevBlockStatus => ({
+                   setBlockStatus(prevBlockStatus => ({
                         ...prevBlockStatus,
                         [userId]: newBlockStatus,
                     }));
                 } else {
                     // Handle error if API call fails
+                    Swal.fire({
+                        title: 'failed to delete try again',
+                        icon: "error",
+                    })
                     console.error('Failed to update block status');
                 }
             })
             .catch(error => {
                 console.error('Error updating block status:', error);
             });
+
+               
+            }
+        })
+       
     };
 
 
@@ -136,32 +164,29 @@ const ManageCustomer = () => {
         { field: "date", headerName: "To Date.", minWidth: 120, editable: true },
         { field: "aadhar_no", headerName: "Aadhaar No.", minWidth: 120, editable: true },
         { field: "address", headerName: "Address", minWidth: 250, editable: true },
-        // {
-        //     field: "status",
-        //     minWidth: 150,
-        //     headerName: "Admin Status",
-        //     renderCell: (params) => (
-        //         <Button className="text-white bg-green">Approved</Button>
-        //     ),
-        // },
         {
             field: "action",
             headerName: "Action",
-            minWidth: 220,
+            minWidth: 150,
             renderCell: (params) => (
 
                 <div className="d-flex gap-2">
-                <Button variant='contained' color='primary' onClick={(e)=>{GetUpdateCustomer(params.row)}}><BorderColorIcon /></Button>
+                <Button variant='contained' color='primary' onClick={(e)=>{GetUpdateCustomer(params.row)}}
+                    style={{minWidth: "40px", maxWidth: "40px"}}
+                    ><BorderColorIcon /></Button>
 
                 <Button variant="contained" color="success" 
                 onClick={(e)=>{toggleView(params.row)}}
+                style={{minWidth: "40px", maxWidth: "40px"}}
                 >
                     <VisibilityIcon />
                 </Button>
 
                 <Button  onClick={(e) => {
                         GetDeleteByID(params.row.user_id)
-                    }} variant="contained" color="error">
+                    }} variant="contained" color="error"
+                    style={{minWidth: "40px", maxWidth: "40px"}}
+                    >
                     <DeleteForeverIcon />
                 </Button>
             </div>
@@ -174,7 +199,9 @@ const ManageCustomer = () => {
             renderCell: (params) => (
                 <div className="d-flex gap-2">
                     {blockStatus[params.row.user_id] ?
-                       <Button variant="contained" color="error" onClick={() => handleToggleBlock(params.row.user_id)}><BlockIcon /></Button>
+                       <Button variant="contained" color="error" onClick={() => handleToggleBlock(params.row.user_id)} 
+                       style={{minWidth: "40px", maxWidth: "40px"}}
+                       ><BlockIcon /></Button>
                         :
                         <Button className="text-white bg-warning border-warning" onClick={() => handleToggleBlock(params.row.user_id)}>Un-Block</Button>
                     }
@@ -217,12 +244,14 @@ const ManageCustomer = () => {
 
             <ModalComponent modal={updateCustomer} toggle={ToggleUpdateCustomer} data={<UpdateCustomerForm  prop={ToggleUpdateCustomer } updateData={update} />} modalTitle={"Update Customer"} size={"xl"} scrollable={true} />
 
-            <h4 className='p-3 px-4 mt-3 bg-transparent headingBelowBorder text-white' style={{ maxWidth: "fit-content" }}>Customer List</h4>
-            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3'>
+            <div className='flex'>
+            <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "15rem", minWidth: "15rem" }}> Customer List </h4>
 
-                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} onClick={ToggleAddCustomer} style={{ minWidth: "15rem", maxWidth: "15rem" }} >
-                    Add New Customer
+            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
+                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={ToggleAddCustomer} >
+                Add New Customer
                 </div>
+            </div>
             </div>
             <div className='p-4'>
                 <AdminDataTable rows={DataWithID(data.data)} columns={column} CustomToolbar={CustomToolbar} loading={isLoading} />
