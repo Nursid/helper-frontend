@@ -19,16 +19,10 @@ import { API_URL } from '../../../config'
 import axios from 'axios'
 import AddMonthlyServices from './Forms/AddMonthlyServices'
 
-
 const ManageMonthService = () => {
-
     const navigate = useNavigate()
-
-
     const dispatch = useDispatch()
-
     const { data } = useSelector(state => state.GetAllMonthlyServiceDataReducer)
-    // const dispatch = useDispatch()
 
     const DataWithID = (data) => {
         const NewData = []
@@ -175,8 +169,7 @@ const ManageMonthService = () => {
                 size={"xl"}
             />
 
-                <div className='flex'>
-
+            <div className='flex'>
             <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "15rem", minWidth: "15rem" }}>Monthly Service</h4>
 
             <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>

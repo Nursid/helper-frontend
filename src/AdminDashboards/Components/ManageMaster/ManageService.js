@@ -17,7 +17,8 @@ import BlockIcon from '@mui/icons-material/Block';
 import axios from 'axios';
 
 // import PlumberService from '../assets/img/'
-import PlumberService from "../../../assets/img/CarService.png"
+import PlumberService from "../../../assets/img/CarServicing.png"
+
 const ManageService = () => {
 
     const [Block, setBlock] = useState(false)
@@ -29,9 +30,6 @@ const ManageService = () => {
     const { data } = useSelector(pre => pre.GetAllServicesReducer)
     // service reducere
     // const DeletResult = useSelector(pre => pre.DeleterTheServiceReducer)
-
-
-
 
     const DataWithID = (data) => {
         const NewData = []
@@ -148,7 +146,7 @@ const ManageService = () => {
     }
 
     const column = [
-        { field: "_id", headerName: "Sr No", flex: 1, minWidth: 50 },
+        { field: "_id", headerName: "Sr No", minWidth: 50 },
         // { field: "refName", headerName: "Ref Name", minWidth: 120, editable: true },
         { field: "date", headerName: "Date", minWidth: 160 },
         { field: "serviceName", headerName: "Service Name", minWidth: 200, editable: true },
@@ -160,7 +158,7 @@ const ManageService = () => {
         {
             field: "image", headerName: "Image", minWidth: 120, renderCell: (params) => (
                 <div>
-                    <img src={PlumberService} alt="Image" style={{ width: 100, height: 50 }} />
+                   <img src={PlumberService} alt="Image" style={{ width: 100, height: 50 }} />
                 </div>
             )
         },

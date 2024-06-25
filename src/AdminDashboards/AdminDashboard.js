@@ -88,7 +88,6 @@ const AdminDashboard = () => {
             booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
             userRole:userRole
           })
-
         }
     } else {
         NewData.push({ id: 0 })
@@ -341,7 +340,7 @@ const AdminDashboard = () => {
   }
 
   const Inventrycolumns = [
-    { field: "id", headerName: "Sr No.", minWidth: 200, editable: true},
+    { field: "_id", headerName: "Sr No.", minWidth: 200, editable: true},
     { field: "item", headerName: "Name", minWidth: 220, editable: true },
     { field: "qty", headerName: "Quantity", minWidth: 220, editable: true },
     {
@@ -371,7 +370,7 @@ const AdminDashboard = () => {
   },
   ]
   const AllotedItemsCollums = [
-    { field: "id", headerName: "Sr No.  ", minWidth: 200, editable: true },
+    { field: "_id", headerName: "Sr No.  ", minWidth: 200, editable: true },
     { field: "allotdate", headerName: "Date", minWidth: 220, editable: true },
     { field: "spname", headerName: "Item", minWidth: 220, editable: true },
     { field: "item", headerName: "Alloted To", minWidth: 220, editable: true },

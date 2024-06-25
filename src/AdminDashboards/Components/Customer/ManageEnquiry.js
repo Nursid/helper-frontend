@@ -17,13 +17,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { API_URL } from '../../../config';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-
+import CustomerView from './View/CustomerView';
 const ManageEnquiry = () => {
     const navigate = useNavigate()
 
     const [Block, setBlock] = useState(false)
     const { data, isLoading } = useSelector(state => state.GetAllEnquiryReducer)
     const dispatch = useDispatch()
+    const [update, setUpdate]=useState([]);
+    const [viewModal, setViewModel] = useState(false)
 
 
     useEffect(() => {
@@ -138,6 +140,13 @@ const ManageEnquiry = () => {
     };
 
 
+    
+    const toggleView = (data) =>{
+        setUpdate(data);
+        setViewModel(!viewModal)
+    }
+
+
 
 
 
@@ -174,6 +183,8 @@ const ManageEnquiry = () => {
                     ><BorderColorIcon /></Button>
                     <Button variant="contained" color="success"
                     style={{minWidth: "40px", maxWidth: "40px"}}
+                    onClick={(e)=>{toggleView(params.row)}}
+
                     >
                         <VisibilityIcon />
                     </Button>
@@ -241,6 +252,15 @@ const ManageEnquiry = () => {
     return (
         <Fragment>
             <ModalComponent modal={addCustomer} toggle={ToggleAddCustomer} data={<AddNewCustomerForm />} modalTitle={"Add New Customer"} size={"xl"} scrollable={true} />
+
+            <ModalComponent
+                data={<CustomerView 
+                data={update} toggleModal={toggleView} />}
+                modalTitle={"Customer Profile"}
+                modal={viewModal}
+                toggle={toggleView}
+                size={"xl"} scrollable={true}
+            />
 
             <div className='flex'>
             <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "15rem", minWidth: "15rem" }}> Enquiry List </h4>
