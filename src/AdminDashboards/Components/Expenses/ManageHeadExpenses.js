@@ -129,17 +129,25 @@ const ManageHeadExpenses = () => {
                 modalTitle={editMode ? "Edit Expense Head" : "Add Expence Head"}
                 modal={showModal}
                 toggle={toggleModal}
- />
-
-
+            />
 
             {/* <DashHeader /> */}
-            <h5 className='pt-4 pb-3 px-4 text-white headingBelowBorder d-flex flex-nowrap ' style={{ width: "fit-content" }}>Expense Head List </h5>
-            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3'>
-                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} onClick={toggleModal} style={{ minWidth: "15rem", maxWidth: "15rem" }} >
-                    Add Expense Head
+        
+
+        <div className='flex'>
+            <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}> Expense Head List</h4>
+
+            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
+                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={toggleModal} >
+                Add Expense Head
                 </div>
             </div>
+            </div>
+
+
+
+
+
             <div className='p-4'>
                 <AdminDataTable rows={DataWithID(allHeadExpenses.data)} columns={column} CustomToolbar={CustomToolbar} loading={loading} />
             </div>

@@ -711,7 +711,6 @@ onClick={()=>AssignAmount(params.row.order_no)}
                 setInventry(false);
                 setSummary(false);
                 setComplain(false);
-
                 if(role){
                   const status =undefined
                   dispatch(GetAllOrders(status,currentUser.id , role))
@@ -769,26 +768,25 @@ onClick={()=>AssignAmount(params.row.order_no)}
               color={"black"}
             />
 
-            <ColoredBtn
-              onClick={() => {
-                GetFilterOrder(0);
-              }}
-              btnName={"Pending Order"}
-              bg={"#e67e22"}
-              color={"black"}
-            />
-
+          <ColoredBtn
+            onClick={() => {
+              GetFilterOrder(0);
+            }}
+            btnName={"Pending Order"}
+            bg={"#e67e22"}
+            color={"black"}
+          />
             
           <ColoredBtn
-              onClick={() =>{
-                AddNewComplain()
-              }}
-              btnName={"New Complain"}
-              bg={"#f08080"}
-              color={"black"}
-            />
+            onClick={() =>{
+              AddNewComplain()
+            }}
+            btnName={"New Complain"}
+            bg={"#f08080"}
+            color={"black"}
+          />
 
-    {(role !== "service" && role !== "supervisor") ?
+            {(role !== "service" && role !== "supervisor") ?
             <> 
             <ColoredBtn
               onClick={() => {

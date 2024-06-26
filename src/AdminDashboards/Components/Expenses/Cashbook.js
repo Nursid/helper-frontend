@@ -216,13 +216,16 @@ const Cashbook = () => {
                   </Row>
                   </div>
 
-                  <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "fit-content" }}>Cashbook </h4>
-            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3'>
+            <div className='flex'>
+            <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}> Cashbook</h4>
+
+            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
                 <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={toggleModal} >
-                    Add Transaction
+                Add Transaction
                 </div>
             </div>
-
+            </div>
+            
             <div className='p-4'>
                 <AdminDataTable rows={DataWithID(data)} columns={column} CustomToolbar={CustomToolbar} pageSizeOptions={[10]} />
             </div>

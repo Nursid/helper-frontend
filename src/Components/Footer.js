@@ -7,7 +7,8 @@ import { BsCheckCircle, BsCircleFill } from "react-icons/bs";
 import { IoMdSend, IoSend } from "react-icons/io";
 import SeventhSection from './SeventhSection';
 import { Button, InputAdornment, TextField } from '@mui/material';
-
+import { useService } from '../Store/context/serviceProvider';
+import { useNavigate } from 'react-router-dom';
 const Footer = ({ hide, reqrem, paddingForm }) => {
 
     const [message, setMessage] = useState('');
@@ -16,10 +17,12 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
         setMessage(event.target.value);
     };
 
-    const handleSendClick = () => {
-        // Handle sending the message here
+    const navigate = useNavigate()
+    const { setItems } = useService();
 
-        // Clear the input field after sending
+
+    const handleSendClick = () => {
+
         setMessage('');
     };
 
@@ -41,6 +44,12 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
     const handleSubmit = (event) => {
         event.preventDefault();
     };
+
+    const ServicePage = (id) =>{
+        console.log(id)
+        setItems(id);
+        navigate('/ServicePage');
+    }
 
     return (
         <footer style={{ background: '#3d5ce8' }} className={`text-center text-lg-start text-white ${paddingForm}`}>
@@ -187,29 +196,29 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
                         <Col md="2" lg="2" xl="2" className='mx-auto mb-4'>
                             <h6 className='text-uppercase fw-bold mb-4'>Services</h6>
                             <p>
-                                <a href={`ServicePage?serviceName=Electrician`} className='text-reset'>
+                                <p onClick={()=> ServicePage(1)} className='text-reset service-page-footer'>
                                     Electrician
-                                </a>
+                                </p>
                             </p>
                             <p>
-                                <a href={`ServicePage?serviceName=Plumber`} className='text-reset'>
+                                <p  onClick={()=> ServicePage(2)} className='text-reset service-page-footer'>
                                     Plumber
-                                </a>
+                                </p>
                             </p>
                             <p>
-                                <a href={`ServicePage?serviceName=Car Washing`} className='text-reset'>
+                                <p onClick={()=> ServicePage(3)} className='text-reset service-page-footer'>
                                     Car Washing
-                                </a>
+                                </p>
                             </p>
                             <p>
-                                <a href={`ServicePage?serviceName=Travels & Driver`} className='text-reset'>
+                                <p onClick={()=> ServicePage(4)} className='text-reset service-page-footer'>
                                     Travels & Driver
-                                </a>
+                                </p>
                             </p>
                             <p>
-                                <a href={`ServicePage?serviceName=Security Gaurd`} className='text-reset'>
+                                <p  className='text-reset service-page-footer ' onClick={()=> ServicePage(5)}>
                                     Security Gaurd
-                                </a>
+                                </p>
                             </p>
                         </Col>
 

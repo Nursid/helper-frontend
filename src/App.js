@@ -23,9 +23,11 @@ import ProfileHistory from './LandingPage/Pages/ProfileHistory';
 // import MyProfile from './LandingPage/Pages/MyProfile';
 import AdminProfile from './AdminDashboards/Components/profile/AdminProfile';
 import Availability from './AdminDashboards/Components/Availability/Availability';
+import {ServiceProvider}  from './Store/context/serviceProvider';
 function App() {
 
   return (
+    <ServiceProvider>
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<LandingPage />} />
@@ -38,8 +40,6 @@ function App() {
         <Route path='/Term-&-Condition' element={<TermAndCondition />} />
         <Route path='/YourProfile' element={<ProfileHistory />} />
         <Route path='/email' element={<ProfileHistory />} />
-
-
         {/* Dashboard Routes */}
         <Route path='/admin' element={<AdminSignIn />}>
           <Route path='dashboard' element={<AdminPannel />} />
@@ -56,6 +56,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </ServiceProvider>
   );
 }
 

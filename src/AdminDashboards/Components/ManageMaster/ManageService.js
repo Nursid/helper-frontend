@@ -9,7 +9,7 @@ import { DeleteService } from '../../../Store/Actions/Dashboard/servicesAction';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import Swal from 'sweetalert2';
 import moment from 'moment/moment';
-import { API_URL } from '../../../config';
+import { API_URL, IMG_URL } from '../../../config';
 import { Button } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -158,7 +158,7 @@ const ManageService = () => {
         {
             field: "image", headerName: "Image", minWidth: 120, renderCell: (params) => (
                 <div>
-                   <img src={PlumberService} alt="Image" style={{ width: 100, height: 50 }} />
+                   <img src={IMG_URL+params.row.image} alt="Image" style={{ width: 100, height: 50 }} />
                 </div>
             )
         },

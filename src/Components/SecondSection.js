@@ -20,11 +20,11 @@ import { useNavigate } from 'react-router';
 import { Col, Row } from 'reactstrap';
 import { API_URL } from '../config';
 import { Typography } from '@mui/material';
-
+import { useService } from '../Store/context/serviceProvider';
 const SecondSection = ({ data }) => {
 
     const navigate = useNavigate()
-
+    const { setItems } = useService();
 
     const PrimaryServices = [
         {
@@ -102,9 +102,12 @@ const SecondSection = ({ data }) => {
         
     ];
 
-    const handleServiceSubmit = (items) => {
-        navigate('/ServicePage', { state: items });
-    };
+ 
+        const handleServiceSubmit = (id) => {
+            setItems(id);
+            navigate('/ServicePage');
+        };
+   
 
 
     return (
@@ -130,7 +133,7 @@ const SecondSection = ({ data }) => {
                         ))} */}
                         {PrimaryServices.map((item, index) => (
                             <Col xs={6} md={6} lg={2} xl={2} style={{ maxWidth: '100%' }} key={index}>
-                                <Card className='p-2 cardHover' onClick={() => handleServiceSubmit(item)} style={{ height: '16rem' }}>
+                                <Card className='p-2 cardHover' onClick={() => handleServiceSubmit(item.id)} style={{ height: '16rem' }}>
                                     <div className="border">
                                         <img className='w-100' height={150} src={item.image} />
                                         <Card.Body>
