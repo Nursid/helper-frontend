@@ -20,7 +20,8 @@ import { isMobile } from "react-device-detect";
 import { ScaleLoader } from "react-spinners";
 import { UseStateManager } from "../../../Context/StateManageContext";
 import { ForgetPasswordModal } from "../../../Components/Modal";
-
+import Navbar from "../../../Components/Navbar";
+import Header from "../../../Components/Header";
 function AdminSignIn() {
   const location = useLocation();
   const [selectedRole, setSelectedRole] = useState(roles.super);
@@ -141,9 +142,13 @@ function AdminSignIn() {
     //         </Grid>
     //     </Grid>
     // </Container>
+<>
+<Navbar/>
+    <Header/>
     <Container
       sx={{ display: "grid", placeItems: "center", position: "relative", }}
     >
+
 
 <ForgetPasswordModal
         ForgetPasswordModalOpen={forgetPasswordModalOpen}
@@ -379,6 +384,7 @@ function AdminSignIn() {
         </Grid>
       </Grid>
     </Container>
+    </>
   );
 }
 
