@@ -17,45 +17,44 @@ import AdminManageMaster from './AdminDashboards/Components/ManageMaster';
 import AdminManageWebsite from './AdminDashboards/Components/ManagePage';
 import AdminCustomerManage from './AdminDashboards/Components/Customer';
 import AdminRolesAndPermission from './AdminDashboards/Components/RolesAndPermission';
-import Profile from './AdminDashboards/Components/profile/Profile';
 import AdminPannel from './AdminDashboards/AdminPannel';
 import ProfileHistory from './LandingPage/Pages/ProfileHistory';
-// import MyProfile from './LandingPage/Pages/MyProfile';
 import AdminProfile from './AdminDashboards/Components/profile/AdminProfile';
 import Availability from './AdminDashboards/Components/Availability/Availability';
-import {ServiceProvider}  from './Store/context/serviceProvider';
-function App() {
+import { ServiceProvider } from './Store/context/serviceProvider';
 
+function App() {
   return (
     <ServiceProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<LandingPage />} />
-        <Route path='/ServicePage' element={<ServicePage />} />
-        <Route path='/Our-All-Services' element={<OurServices />} />
-        <Route path='/Contact-Us' element={<ContactUs />} />
-        <Route path='/About-Us' element={<AboutUs />} />
-        <Route path='/Why-Choose-Us' element={<WhyChooseUs />} />
-        <Route path='/Privacy-&-Policy' element={<Privacy />} />
-        <Route path='/Term-&-Condition' element={<TermAndCondition />} />
-        <Route path='/YourProfile' element={<ProfileHistory />} />
-        <Route path='/email' element={<ProfileHistory />} />
-        {/* Dashboard Routes */}
-        <Route path='/admin' element={<AdminSignIn />}>
-          <Route path='dashboard' element={<AdminPannel />} />
-          <Route path='attendance' element={<AdminAttendance />} />
-          <Route path='account' element={<AdminExpenses />} />
-          <Route path='manage-hr' element={<AdminManageHr />} />
-          <Route path='manage-hr/employee-form' element={<AdminAddEmployeeForm />} />
-          <Route path='manage-master' element={<AdminManageMaster />} />
-          <Route path='manage-website' element={<AdminManageWebsite />} />
-          <Route path='customer' element={<AdminCustomerManage />} />
-          <Route path='roles-&-permission' element={<AdminRolesAndPermission />} />
-          <Route path='profile' element={<AdminProfile />} />
-          <Route path='availability' element={<Availability />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<LandingPage />} />
+          <Route path='/ServicePage' element={<ServicePage />} />
+          <Route path='/Our-All-Services' element={<OurServices />} />
+          <Route path='/Contact-Us' element={<ContactUs />} />
+          <Route path='/About-Us' element={<AboutUs />} />
+          <Route path='/Why-Choose-Us' element={<WhyChooseUs />} />
+          <Route path='/Privacy-&-Policy' element={<Privacy />} />
+          <Route path='/Term-&-Condition' element={<TermAndCondition />} />
+          <Route path='/YourProfile' element={<ProfileHistory />} />
+          <Route path='/email' element={<ProfileHistory />} />
+
+          {/* Admin Dashboard Routes */}
+          <Route path='/admin/*' element={<AdminSignIn />}>
+            <Route path='dashboard' element={<AdminPannel />} />
+            <Route path='attendance' element={<AdminAttendance />} />
+            <Route path='account' element={<AdminExpenses />} />
+            <Route path='manage-hr' element={<AdminManageHr />} />
+            <Route path='manage-hr/employee-form' element={<AdminAddEmployeeForm />} />
+            <Route path='manage-master' element={<AdminManageMaster />} />
+            <Route path='manage-website' element={<AdminManageWebsite />} />
+            <Route path='customer' element={<AdminCustomerManage />} />
+            <Route path='roles-&-permission' element={<AdminRolesAndPermission />} />
+            <Route path='profile' element={<AdminProfile />} />
+            <Route path='availability' element={<Availability />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </ServiceProvider>
   );
 }
