@@ -88,7 +88,6 @@ const AdminDashboard = () => {
             booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
             userRole:userRole
           })
-
         }
     } else {
         NewData.push({ id: 0 })
@@ -341,7 +340,7 @@ const AdminDashboard = () => {
   }
 
   const Inventrycolumns = [
-    { field: "id", headerName: "Sr No.", minWidth: 200, editable: true},
+    { field: "_id", headerName: "Sr No.", minWidth: 200, editable: true},
     { field: "item", headerName: "Name", minWidth: 220, editable: true },
     { field: "qty", headerName: "Quantity", minWidth: 220, editable: true },
     {
@@ -371,7 +370,7 @@ const AdminDashboard = () => {
   },
   ]
   const AllotedItemsCollums = [
-    { field: "id", headerName: "Sr No.  ", minWidth: 200, editable: true },
+    { field: "_id", headerName: "Sr No.  ", minWidth: 200, editable: true },
     { field: "allotdate", headerName: "Date", minWidth: 220, editable: true },
     { field: "spname", headerName: "Item", minWidth: 220, editable: true },
     { field: "item", headerName: "Alloted To", minWidth: 220, editable: true },
@@ -712,7 +711,6 @@ onClick={()=>AssignAmount(params.row.order_no)}
                 setInventry(false);
                 setSummary(false);
                 setComplain(false);
-
                 if(role){
                   const status =undefined
                   dispatch(GetAllOrders(status,currentUser.id , role))
@@ -770,26 +768,25 @@ onClick={()=>AssignAmount(params.row.order_no)}
               color={"black"}
             />
 
-            <ColoredBtn
-              onClick={() => {
-                GetFilterOrder(0);
-              }}
-              btnName={"Pending Order"}
-              bg={"#e67e22"}
-              color={"black"}
-            />
-
+          <ColoredBtn
+            onClick={() => {
+              GetFilterOrder(0);
+            }}
+            btnName={"Pending Order"}
+            bg={"#e67e22"}
+            color={"black"}
+          />
             
           <ColoredBtn
-              onClick={() =>{
-                AddNewComplain()
-              }}
-              btnName={"New Complain"}
-              bg={"#f08080"}
-              color={"black"}
-            />
+            onClick={() =>{
+              AddNewComplain()
+            }}
+            btnName={"New Complain"}
+            bg={"#f08080"}
+            color={"black"}
+          />
 
-    {(role !== "service" && role !== "supervisor") ?
+            {(role !== "service" && role !== "supervisor") ?
             <> 
             <ColoredBtn
               onClick={() => {

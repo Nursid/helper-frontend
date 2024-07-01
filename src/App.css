@@ -316,3 +316,9 @@ button.Dash_dropdown_item.dropdown-item:hover {
     width: 50%;
     padding: 10px;
 }
+
+.service-page-footer {
+  text-decoration: underline;
+  cursor: pointer;
+}
+

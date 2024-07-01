@@ -22,11 +22,9 @@ const AboutUs = () => {
     ElectricBanner
   ];
   useEffect(() => {
-    // Function to handle the timer
     const timer = setInterval(() => {
-      // Increment the current image index
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 2000); // Change the image every 5 seconds
+    }, 2000);
 
     // Cleanup the timer when the component is unmounted
     return () => clearInterval(timer);
@@ -35,10 +33,8 @@ const AboutUs = () => {
   return (
     <>
       <Navbar />
-
       <Header />
       <section>
-
         {/* Hero section with a rotating background image */}
         <div
           style={{

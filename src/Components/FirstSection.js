@@ -6,12 +6,13 @@ import { GetAllServices } from '../Store/Actions/Dashboard/servicesAction';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
+import { useService } from '../Store/context/serviceProvider';
 const FirstSection = () => {
     const navigate = useNavigate();
     // State to track the selected location
     const [location, setLocation] = useState([]);
     const [allLocation, setAllLocation] = useState([]);
-
+    const { setItems } = useService();
     const [services, setAllServices]=useState({})
     const [selectedService, setSelectedService] = useState('')
     const handleLocationChange = (event) => {
@@ -29,7 +30,8 @@ const FirstSection = () => {
 useEffect(() => {
     if (data && data.data) {
         const transformedData = data.data.map(item => ({
-            label: item.serviceName
+            label: item.serviceName,
+            value: item.id
         }));
         setAllServices(transformedData);
     }
@@ -52,8 +54,9 @@ useEffect(() => {
 }, []);
 
 const SearchService = () => {
-  console.log("selectedService---",selectedService)
-  navigate(`/ServicePage?serviceName=${selectedService.label}`,);
+  setItems(selectedService.value)
+  navigate('/ServicePage')
+  // navigate(`/ServicePage?serviceName=${selectedService.label}`,);
 };
 
 

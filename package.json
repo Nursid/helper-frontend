@@ -8,7 +8,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.4",
-    "@mui/styles": "^5.14.1",
+    "@mui/styles": "^5.15.9",
     "@mui/x-data-grid": "^6.7.0",
     "@mui/x-data-grid-pro": "^6.7.0",
     "@mui/x-date-pickers": "^6.7.0",
@@ -69,5 +69,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "ajv": "^7.2.4"
   }
 }
