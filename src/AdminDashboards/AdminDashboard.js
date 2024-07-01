@@ -857,6 +857,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
               </Col>
             </Row>
           ) : null} */}
+          
           {/* Data Table  */}
           <div className="p-4 ">
           {!complain && !inventry && summary && <Card className="p-4">
