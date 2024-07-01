@@ -1,3 +1,4 @@
+/* 
 .AdminDashbaord_Header {
   height: 5rem;
 }
@@ -33,17 +34,16 @@ button.dropdownMenu-btn-header.btn.btn-secondary {
   flex-wrap: wrap;
   gap: 0.5rem;
   padding: 2rem;
-  justify-content: center;
+  justify-content:center;
 }
 
 .AllMenuCards > div {
   flex: 1 1 auto;
   max-width: fit-content;
-  min-width: 9rem;
+  min-width: 12rem;
   text-align: center;
   aspect-ratio: 4/4 !important;
   padding: 10px;
-  /* height: 10rem; */
 }
 
 .StackSelectBox {
@@ -72,14 +72,7 @@ button.dropdownMenu-btn-header.btn.btn-secondary {
   z-index: 1;
 }
 
-/* .DashboardAnalytics {
-  display: grid;
-  grid-template-areas:
-    "one two"
-    "three four";
-  column-gap: 1rem;
-  row-gap: 1rem;
-} */
+
 
 .DashboardAnalytics {
   width: 100%;
@@ -88,18 +81,7 @@ button.dropdownMenu-btn-header.btn.btn-secondary {
   gap: 1rem;
 }
 
-/* @media (max-width: 992px) {
-  .DashboardAnalytics {
-    display: grid;
-    grid-template-areas:
-      "one"
-      "two"
-      "three"
-      "four";
-    column-gap: 1rem;
-    row-gap: 1rem;
-  }
-} */
+
 
 .DashboardAnalytics > div {
   flex: 1 1 140px;
@@ -169,7 +151,7 @@ button.dropdownMenu-btn-header.btn.btn-secondary {
 
 span.validationError {
   position: absolute;
-  bottom: 0px; /* Adjust this value as needed */
+  bottom: 0px; 
   font-size: 12px;
   color: red;
 }
@@ -209,4 +191,257 @@ span.validationError {
   max-width: 93px;
   display: inline-block;
   margin-right: 10px
+} */
+
+
+.AdminDashbaord_Header {
+  height: 5rem;
+}
+
+.AdminDash_UserInfo > img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 100%;
+}
+
+.dropDownMenu-header.dropdown-menu.show {
+  transform: translate3d(40px, 83.5px, 0px) !important;
+}
+
+button.dropdownMenu-btn-header.dropdown-toggle.btn.btn-secondary {
+  padding: 0 !important;
+  background: transparent !important;
+  color: #4d4d4d !important;
+  border-color: white !important;
+  box-shadow: none !important;
+}
+
+button.dropdownMenu-btn-header.btn.btn-secondary {
+  background-color: transparent !important;
+  color: #4d4d4d !important;
+  border-color: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.AllMenuCards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 2rem;
+  justify-content: center;
+}
+
+.AllMenuCards > div {
+  flex: 1 1 auto;
+  max-width: fit-content;
+  min-width: 12rem;
+  text-align: center;
+  aspect-ratio: 4/4 !important;
+  padding: 10px;
+}
+
+.StackSelectBox {
+  border-radius: 10px;
+  padding: 0.3rem;
+  border-color: var(--text);
+  color: var(--text);
+}
+
+.StackAnalyticsBox {
+  width: auto;
+}
+
+.BackgroundFix {
+  position: absolute;
+}
+.BackgroundTopContents {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  max-height: 100vh;
+  overflow-y: auto;
+  background-color: rgba(38, 38, 38, 0.404);
+  z-index: 1;
+}
+
+.DashboardAnalytics {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.DashboardAnalytics > div {
+  flex: 1 1 140px;
+  min-height: calc(50vh / 2 - 1rem);
+}
+
+.AttendenceTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.AttendenceTabs > span {
+  flex: 1 1 140px;
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--yellow);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--yellow);
+  color: #ffffff;
+  font-weight: 500;
+  transition: 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.AttendenceTabs_Active {
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--yellow);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--yellow);
+  color: #ffffff;
+  font-weight: 500;
+  transition: 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.AttendenceTabs > span:hover {
+  background-color: white;
+  color: #4d4d4d;
+  border: 1px solid white;
+}
+
+.complete-cell {
+  background-color: green !important;
+}
+.running-cell {
+  background-color: yellow !important;
+}
+.cancel-cell {
+  background-color: gray !important;
+}
+.hold-cell {
+  background-color: #f08080 !important;
+}
+.due-cell {
+  background-color: #adadec !important;
+}
+.pending-cell {
+  background-color: #ffa500 !important;
+}
+
+span.validationError {
+  position: absolute;
+  bottom: 0px;
+  font-size: 12px;
+  color: red;
+}
+
+.info-view .form-label {
+  color: #6d6d6d;
+  font-size: 14px;
+  font-weight: 600
+}
+
+.info-view .form-group {
+  padding: 10px 0
+}
+
+.info-view .form-control {
+  background-color: #e0e0e0;
+  border: 1px solid #e0e0e0;
+  color: #6d6d6d;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 10px 30px 10px 15px;
+  margin-bottom: 0
+}
+
+.info-view .form-control .bi-question-circle {
+  position: absolute;
+  right: 14px;
+  cursor: pointer
+}
+
+.info-view .form-control .sname {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 93px;
+  display: inline-block;
+  margin-right: 10px
+}
+
+/* Media Queries for Responsiveness */
+
+@media (max-width: 1200px) {
+  .AllMenuCards {
+    padding: 1.5rem;
+  }
+  .AllMenuCards > div {
+    min-width: 10rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .AdminDashbaord_Header {
+    height: 4rem;
+  }
+  .AdminDash_UserInfo > img {
+    width: 3rem;
+    height: 3rem;
+  }
+  .AllMenuCards {
+    padding: 1rem;
+  }
+  .AllMenuCards > div {
+    min-width: 8rem;
+  }
+  .AttendenceTabs > span {
+    padding: 0.4rem 0.4rem;
+  }
+  .AttendenceTabs_Active {
+    padding: 0.4rem 0.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .AllMenuCards {
+    flex-direction: column;
+    align-items: center;
+  }
+  .AllMenuCards > div {
+    min-width: 12rem;
+    max-width: 12rem;
+  }
+  .AttendenceTabs > span {
+    flex: 1 1 100%;
+  }
+  .AttendenceTabs_Active {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .AdminDashbaord_Header {
+    height: 3rem;
+  }
+  .AdminDash_UserInfo > img {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  .DashboardAnalytics > div {
+    flex: 1 1 100%;
+    min-height: auto;
+  }
 }
