@@ -52,7 +52,9 @@ const ThirdSection = () => {
                             <h1 className='txtColour'>WHY CHOOSE US</h1>
                             <p className='sketchFamily font-weight-bold'>"DELIVERIING BEST QUALITY SERVICES, SECURING YOUR SMILE."</p>
                             <p> For we care! So that you have all your time in being more responsible for your people, and leave the rest to us for attending to!...</p>
-                            <Button onClick={() => navigate('/Why-Choose-Us')} className='bgColour my-4 txtColour'>Read More</Button>
+                            <Button onClick={() =>{navigate('/Why-Choose-Us')
+                                                  window.scrollTo(0, 0); }}
+                            className='bgColour my-4 txtColour'>Read More</Button>
                         </div>
                     </div>
                 </Col>

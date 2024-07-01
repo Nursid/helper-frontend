@@ -69,8 +69,11 @@ function Header() {
   return (
     <Navbar className="bgColour" expand="lg">
       <Container fluid>
-        <Navbar.Brand className="animate__animated animate__flipInY" href="/">
-          <img src={Logo} alt="MainLogo" />
+        <Navbar.Brand className="animate__animated animate__flipInY">
+          <img src={Logo} alt="MainLogo" onClick={() => {
+                navigate('/');
+                window.scrollTo(0, 0);  // Scroll to the top
+            }}   style={{ cursor: 'pointer' }}/>
         </Navbar.Brand>
 
         <Navbar.Toggle />
@@ -80,9 +83,20 @@ function Header() {
             className="ml-auto my-2 my-lg-0 text-center"
           >
             {/* <Nav.Link className='txtColour' href='#action1'>Register As A Professional</Nav.Link> */}
-            <Nav.Link className="txtColour" href="/">
-              <b>HOME</b>
+            <Nav.Link className="txtColour">
+            <span 
+              onClick={() => {
+                navigate('/');
+                window.scrollTo(0, 0);  // Scroll to the top
+            }} 
+            className='text-reset' style={{ cursor: 'pointer' }}>
+                <b>HOME</b>
+            </span>
             </Nav.Link>
+
+            
+
+            
             {/* <div className="mega-menu d-none d-md-block bgColour">
                             <Nav.Link className='txtColour' sx={{ pt: 1 }} onClick={toggleMenu}>
                                 <b>SERVICES</b>
@@ -140,8 +154,15 @@ function Header() {
                                 </Paper>
                             )}
                         </div> */}
-            <Nav.Link className="txtColour" href="/About-Us">
-              <b>ABOUT US</b>
+            <Nav.Link className="txtColour">
+              <span 
+              onClick={() => {
+                navigate('/About-Us');
+                window.scrollTo(0, 0);  // Scroll to the top
+            }} 
+            className='text-reset' style={{ cursor: 'pointer' }}>
+                <b>ABOUT US</b>
+            </span>
             </Nav.Link>
             {/* <Nav.Link className='txtColour' href='/'><b>Services</b></Nav.Link> */}
             {/* <Nav.Link className='txtColour' href='/Contact-Us'><b>Help</b></Nav.Link> */}
@@ -150,9 +171,16 @@ function Header() {
               <>
                 <Nav.Link
                   className="txtColour"
-                  href={`/YourProfile`}
                 >
-                  {currentUser.name}
+                  <span 
+              onClick={() => {
+                navigate('/YourProfile');
+                window.scrollTo(0, 0);  // Scroll to the top
+            }} 
+            style={{ cursor: 'pointer' }}>
+                {currentUser.name}
+            </span>
+                  
                 </Nav.Link>
                 <Nav.Link className="txtColour">
                   <Logout className="cursor-p" onClick={() => GetLogOut()} />

@@ -224,30 +224,58 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
 
                         <Col md="3" lg="2" xl="2" className='mx-auto mb-4'>
                             <h6 className='text-uppercase fw-bold mb-4'>Useful links</h6>
-                            <p>
-                                <a href='/About-Us' className='text-reset'>
+                         
+                                <span 
+                                 onClick={() => {
+                                    navigate('/About-Us');
+                                    window.scrollTo(0, 0);  // Scroll to the top
+                                }} 
+                                className='text-reset' style={{ cursor: 'pointer' }}>
                                     About Us
-                                </a>
-                            </p>
+                                </span>
                             <p>
-                                <a href='/Contact-Us' className='text-reset'>
+                                <span 
+                                 onClick={() => {
+                                    navigate('/Contact-Us');
+                                    window.scrollTo(0, 0);  // Scroll to the top
+                                }} 
+                                className='text-reset' style={{ cursor: 'pointer' }}>
                                     Contact Us
-                                </a>
+                                </span>
                             </p>
                             <p>
                                 <a href='#services' className='text-reset'>
                                     Services
                                 </a>
+                                
+                                {/* <span 
+                                 onClick={() => {
+                                    navigate('/Contact-Us');
+                                    window.scrollTo(0, 0);  // Scroll to the top
+                                }} 
+                                className='text-reset' style={{ cursor: 'pointer' }}>
+                                    Contact Us
+                                </span> */}
                             </p>
                             <p>
-                                <a href='/Term-&-Condition' className='text-reset'>
-                                    Terms & Conditions
-                                </a>
+                                <span 
+                                 onClick={() => {
+                                    navigate('/Term-&-Condition');
+                                    window.scrollTo(0, 0);  // Scroll to the top
+                                }} 
+                                className='text-reset' style={{ cursor: 'pointer' }}>
+                                   Terms & Conditions
+                                </span>
                             </p>
                             <p>
-                                <a href='/Privacy-&-Policy' className='text-reset'>
-                                    Privacy Policy
-                                </a>
+                                <span 
+                                 onClick={() => {
+                                    navigate('/Privacy-&-Policy');
+                                    window.scrollTo(0, 0);  // Scroll to the top
+                                }} 
+                                className='text-reset' style={{ cursor: 'pointer' }}>
+                                   Privacy Policy
+                                </span>
                             </p>
                         </Col>
 
