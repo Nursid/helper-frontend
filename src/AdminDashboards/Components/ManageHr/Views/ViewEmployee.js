@@ -242,8 +242,8 @@ export default function ViewEmployee({ data, toggleModal }) {
               <div className="col-md-6 d-flex justify-content-end">
                 <div className="form-group">
                   <img
-                    width={50}
-                    height={50}
+                    width={100}
+                    height={100}
                     className="img-thumbnail"
                     src={IMG_URL + data?.image ?? ""}
                     alt="Employee"
