@@ -108,10 +108,11 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
         document3: data2.document3 || "",
         provider_type: data2.provider_type || "",
     });
+   const [checkbox , setCheckbox]=useState(false);
+console.log(checkbox)
 
     const handleChange = (e, maxLength) => {
         const { name, value } = e.target;
-
         if (value.length <= maxLength) {
         setFormData(prevState => ({
             ...prevState,
@@ -131,6 +132,9 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
 
 		if (!formData.name) {
             errors.name = "Name is required";
+        }
+        if (!formData.mobile_no) {
+            errors.mobile_no = "Mobile Number is required";
         }
 
         if (errors && Object.keys(errors).length === 0) {
@@ -234,7 +238,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                 <Form>
                                     <Row>
                                         <h6 className='pb-3 fw-bold fs-5'>Personal Info</h6>
-                                        <Col md={6}>
+                                        {/* <Col md={6}>
                                             <FormGroup>
                                                 <Label for="username">Username</Label>
                                                 <Input
@@ -246,7 +250,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     placeholder='Enter User Name'
                                                 />
                                             </FormGroup>
-                                        </Col>
+                                        </Col> */}
 
                                         <Col md={6}>
                                             <FormGroup>
@@ -268,7 +272,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                             </FormGroup>
                                         </Col>
 
-                                        <Col md={6}>
+                                        {/* <Col md={6}>
                                             <FormGroup>
                                                 <Label for="first_name">First Name</Label>
                                                 <Input
@@ -295,7 +299,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     onKeyPress={handleKeyPress}
                                                 />
                                             </FormGroup>
-                                        </Col>
+                                        </Col> */}
                                         <Col md={6}>
                                             <FormGroup>
                                                 <Label for="image">Select Image</Label>
@@ -309,7 +313,8 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                         </Col>
                                         <Col md={6}>
                                             <FormGroup>
-                                                <Label for="mobileno">Mobile No.</Label>
+                                               
+                                                <Label for="mobileno">Mobile No <span style={{color: "red"}}>*</span></Label>
                                                 <Input
                                                     type="number"
                                                     name="mobile_no"
@@ -318,6 +323,11 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     value={formData?.mobile_no}
                                                     placeholder='Enter Mobile No'
                                                 />
+                                                 {errors?.mobile_no && (
+                                                    <span className='validationError'>
+                                                        {errors?.mobile_no}
+                                                    </span>
+                                                )}
                                             </FormGroup>
                                         </Col>
                                         <Col md={6}>
@@ -372,7 +382,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        <Col md={6}>
+                                        {/* <Col md={6}>
                                             <FormGroup>
                                                 <Label for="password">Password</Label>
                                                 <Input
@@ -384,7 +394,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     placeholder='Enter Password'
                                                 />
                                             </FormGroup>
-                                        </Col>
+                                        </Col> */}
                                         <Col md={12}>
                                             <FormGroup>
                                                 <Label for="paddress">Parmanent Address</Label>
@@ -400,12 +410,13 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                         </Col>
                                         <Col md={12}>
                                             <FormGroup>
-                                                <Label className="d-flex flex-nowrap" for="caddress">Current Address &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small><Input type="checkbox" /> same as parmarent address</small></Label>
+                                                <Label className="d-flex flex-nowrap" for="caddress">Current Address &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small><Input type="checkbox" onClick={()=>setCheckbox(!checkbox)} /> same as parmarent address</small></Label>
                                                 <Input
                                                     type="text"
                                                     name="current_address"
                                                     id="current_address"
-                                                    value={formData?.current_address}
+                                                    value={checkbox?formData.permanent_address:formData.current_address}
+
                                                     onChange={(e) => handleChange(e, 200)}
                                                     placeholder='Enter Current Address'
                                                 />

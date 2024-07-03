@@ -3,7 +3,7 @@ import moment from "moment";
 import { IMG_URL } from "../../../../config";
 
 export default function CustomerView({ data, toggleModal }) {
-  console.log(data);
+  // console.log(data);
   return (
     <div className="container rounded bg-white">
       <div className="row">
