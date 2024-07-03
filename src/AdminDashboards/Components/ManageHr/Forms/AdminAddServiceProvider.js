@@ -24,7 +24,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
     const [allServices, setAllServices]= useState({})
     const [isLoading, setIsLoading] = useState(false)
     const { isSuccess, data } = useSelector(pre => pre.GetAllServicesReducer);
-    
+    const [errors, setErrors]= useState([]);
     const DataWithID = (data) => {
         if (data && Array.isArray(data.data)) {
             const transformedData = data.data.map(item => ({
@@ -121,9 +121,29 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
     };
 
     
-    const ServiceProviderSubmit = () => {
+    const ServiceProviderSubmit = (e) => {
 
         setIsLoading(true)
+
+
+        e.preventDefault();
+        let errors = {};
+
+		if (!formData.name) {
+            errors.name = "Name is required";
+        }
+
+        if (errors && Object.keys(errors).length === 0) {
+			// Form is valid, handle form submission here
+			console.log("Form submitted successfully!",);
+		  } else {
+			// Form is invalid, display validation errors
+			console.log("Validation Errors:", errors);
+			setErrors(errors);
+			setIsLoading(true)
+			return false;
+		  }
+
         const serviceValues = selectedServices.map(option => option.label);
         const updatedFormData = {
             ...formData,
@@ -230,7 +250,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
 
                                         <Col md={6}>
                                             <FormGroup>
-                                                <Label for="firstname">Name</Label>
+                                                <Label for="firstname">Name <span style={{color: "red"}}>*</span></Label>
                                                 <Input
                                                     type="text"
                                                     name="name"
@@ -240,6 +260,11 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     placeholder='Enter Your Name'
                                                     onKeyPress={handleKeyPress}
                                                 />
+                                                {errors?.name && (
+                                                    <span className='validationError'>
+                                                        {errors?.name}
+                                                    </span>
+                                                )}
                                             </FormGroup>
                                         </Col>
 
