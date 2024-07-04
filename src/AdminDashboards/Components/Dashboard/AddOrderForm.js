@@ -88,9 +88,16 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 		if (!formData.name) {
             errors.name = "Name is required";
         }
-        // if (!formData.mobile_no) {
-        //     errors.mobile_no = "Mobile Number is required";
-        // }
+        if (!formData.mobile) {
+            errors.mobile = "Mobile Number is required";
+        }
+		if (!formData.address) {
+            errors.address = "address  is required";
+        }
+		if (!formData.zip_code) {
+            errors.zip_code = "Pincode  is required";
+        }
+
 
         if (errors && Object.keys(errors).length === 0) {
 			// Form is valid, handle form submission here
@@ -153,9 +160,10 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 	return (
 		<Fragment>
 			<Row>
-				{/* <Col md={6}>
+				<Col md={6}>
 					<FormGroup>
-						<Label>Mobile Number</Label>
+					
+						<Label for="firstname">Mobile Number <span style={{color: "red"}}>*</span></Label>
 						<Input 
 						onChange={(e) => handleChange(e, 10)}
 							name='mobile'
@@ -163,28 +171,18 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 							value={formData?.mobile}
 							placeholder='Enter Your Mobile Number'/>
 					</FormGroup>
-				</Col> */}
+					{errors?.mobile && (
+							<span className='validationError'>
+								{errors?.mobile}
+							</span>
+						)}
+				</Col>
 				
-				<Col md={6}>
-  <FormGroup>
-    <Label>Mobile Number</Label>
-    <Input 
-      onChange={(e) => handleChange(e, 10)}
-      name='mobile'
-      type='number'
-      value={formData?.mobile}
-      placeholder='Enter Your Mobile Number'
-      required
-    />
-    {formData.mobile && formData.mobile.length < 10 ? (
-      <div style={{ color: 'ed' }}>Mobile number is required and must be 10 digits</div>
-    ) : null}
-  </FormGroup>
-</Col>
+				
 
 				<Col md={6}>
 					<FormGroup>
-						<Label>Customer Name</Label>
+						<Label for="firstname">Customer Name<span style={{color: "red"}}>*</span></Label>
 						<Input 
 						onChange={(e) => handleChange(e, 50)}
 							onKeyPress={handleKeyPress}
@@ -333,13 +331,19 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 
 				<Col md={6}>
 					<FormGroup>
-						<Label>ZipCode</Label>
+						
+						<Label for="firstname">ZipCode <span style={{color: "red"}}>*</span></Label>
 						<Input type='number'
 							onChange={(e) => handleChange(e, 10)}
 							value={formData?.zip_code}
 							name='zip_code'
 							placeholder='Enter Your ZipCode'/>
 					</FormGroup>
+					{errors?.zip_code && (
+							<span className='validationError'>
+								{errors?.zip_code}
+							</span>
+						)}
 				</Col>
 
 				<Col md={6}>
