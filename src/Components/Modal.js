@@ -1270,7 +1270,7 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 		const billValue = bill ? parseFloat(bill) : 0;
 		const paidValue = paid ? parseFloat(paid) : 0;
 		setBalanceAmount(billValue - paidValue);
-	};;
+	};
 
 	return (
 		<Modal className="modal-dialog-centered"
