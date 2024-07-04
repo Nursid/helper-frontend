@@ -477,7 +477,7 @@ const AdminDashboard = () => {
     { field: "name", headerName: "Customer Name",minWidth: 150, editable: true },
     { field: "mobile", headerName: "Mobile",minWidth: 150, editable: true },
     { field: "user_type", headerName: "Type", minWidth: 80, editable: true },
-    { field: "service_name", headerName: "Service Type",minWidth: 120, editable: true },
+    { field: "service_name", headerName: "Service Type",minWidth: 150, editable: true },
     { field: "booktime", headerName: "Booking Time", minWidth: 120, editable: true },
     { field: "bookdate", headerName: "Booking Date", minWidth: 120, editable: true },
     { field: "problem_des", headerName: "Problem Description ", minWidth: 150, editable: true },
@@ -498,8 +498,8 @@ const AdminDashboard = () => {
           ) : (
             params.row.suprvisor_id
           )
-        ) : null
-      } </> ), minWidth: 150, editable: true },
+        ) :  params.row.suprvisor_id
+      } </> ), minWidth: 200, editable: true },
 
     { field: "servicep_id", headerName: "Service Provider",
     renderCell: (params) => ( 
@@ -515,7 +515,7 @@ const AdminDashboard = () => {
         ) : (
           params.row.servicep_id
         )
-      ) : null } </> ),
+      ) : params.row.servicep_id } </> ),
     minWidth: 200, editable: true },
 
     // { field: "vehicle_inventory", headerName: "Vehicle Used",
@@ -541,7 +541,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
     renderCell: (params) => ( 
         <>
         { params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
-        (params.row?.userRole?.role==="office" && !params.row.bakof_remark) ? (<><Button variant='contained' color='primary' onClick={()=>backOfficeRemark(params.row.order_no)}>Remark</Button></> ) : <>{params.row.bakof_remark} </>) : null } </> ),
+        (params.row?.userRole?.role==="office" && !params.row.bakof_remark) ? (<><Button variant='contained' color='primary' onClick={()=>backOfficeRemark(params.row.order_no)}>Remark</Button></> ) : <>{params.row.bakof_remark} </>) : params.row.bakof_remark } </> ),
 
     minWidth: 180, editable: true},
     { field: "admin_remark", headerName: "Admin Remark",
@@ -549,7 +549,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
         <>
         {params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
         
-        (params?.row?.userRole?.role==="admin" && !params.row.admin_remark) ? (<><Button variant='contained' color='primary' onClick={()=>AdminRemark(params.row.order_no)}>Remark</Button></> ) : <>{params.row.admin_remark} </> ) : null } </> ),
+        (params?.row?.userRole?.role==="admin" && !params.row.admin_remark) ? (<><Button variant='contained' color='primary' onClick={()=>AdminRemark(params.row.order_no)}>Remark</Button></> ) : <>{params.row.admin_remark} </> ) : params.row.admin_remark } </> ),
     minWidth: 150, editable: true },
     { field: "providerratings", headerName: "Provider Ratings",
     // renderCell: (params) => ( 
@@ -563,7 +563,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
         <>
         {
         params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
-        (params.row?.userRole?.role==="super" && !params.row.sueadmin_remark) ? (<><Button variant='contained' color='primary' onClick={()=>SuperAdminRemark(params.row.order_no)}>Remark</Button></> ) : <>{params.row.sueadmin_remark} </> ) : null} </> ),
+        (params.row?.userRole?.role==="super" && !params.row.sueadmin_remark) ? (<><Button variant='contained' color='primary' onClick={()=>SuperAdminRemark(params.row.order_no)}>Remark</Button></> ) : <>{params.row.sueadmin_remark} </> ) : params.row.sueadmin_remark} </> ),
 
     minWidth: 180, editable: true,},
     { field: "servp_remark",
@@ -572,10 +572,8 @@ onClick={()=>AssignAmount(params.row.order_no)}
         renderCell: (params) => ( 
             <>
             {params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
-            ( params.row?.userRole?.role==="service" && !params.row.servp_remark) ? (<><Button variant='contained' color='primary' onClick={()=>ServiceProviderRemark(params.row.order_no)} >Remark</Button></> ) : <>{params.row.servp_remark} </>) : null }
+            ( params.row?.userRole?.role==="service" && !params.row.servp_remark) ? (<><Button variant='contained' color='primary' onClick={()=>ServiceProviderRemark(params.row.order_no)} >Remark</Button></> ) : <>{params.row.servp_remark} </>) : params.row.servp_remark }
             </> ),
-            
-
         minWidth: 180,
         editable: true,
     },

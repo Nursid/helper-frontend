@@ -18,7 +18,8 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 	const {rows, setRows, Show, setShow} = UseStateManager()
 	const [getAllService, setAllservices] = useState([])
 	const dispatch = useDispatch()
-
+	const [errors, setErrors]= useState([]);
+	const [isLoading, setIsLoading] = useState(false)
 	const [formData, setFormData] = useState({
 		name: '',
 		email: '',
@@ -79,7 +80,28 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 		}
 	}
 
-	const onsubmitDate = () => {
+	const onsubmitDate = (e) => {
+
+		e.preventDefault();
+        let errors = {};
+
+		if (!formData.name) {
+            errors.name = "Name is required";
+        }
+        // if (!formData.mobile_no) {
+        //     errors.mobile_no = "Mobile Number is required";
+        // }
+
+        if (errors && Object.keys(errors).length === 0) {
+			// Form is valid, handle form submission here
+			console.log("Form submitted successfully!",);
+		  } else {
+			// Form is invalid, display validation errors
+			console.log("Validation Errors:", errors);
+			setErrors(errors);
+			setIsLoading(true)
+			return false;
+		  }
 		
 		const data ={
 			...formData,
@@ -170,6 +192,11 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 							placeholder='Enter Your Name'
 							name='name'
 							/>
+							 {errors?.name && (
+							<span className='validationError'>
+								{errors?.name}
+							</span>
+						)}
 					</FormGroup>
 				</Col>
 
@@ -327,7 +354,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 					</FormGroup>
 				</Col>
 				<Button className='bg-primary text-white'
-					onClick={onsubmitDate}>Submit</Button>
+					onClick={onsubmitDate} disabled={isLoading}>Submit</Button>
 			</Row>
 		</Fragment>
 	)

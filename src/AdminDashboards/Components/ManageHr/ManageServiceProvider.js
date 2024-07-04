@@ -242,7 +242,6 @@ const ManageServiceProvider = () => {
         <Fragment>
 
             <ModalComponent data={<AdminAddServiceProvider toggleModal={toggleModal} data2={editData}  />} 
-
             modalTitle={editMode ? "Edit Service Provider" : "Add Service Provider"}
             modal={showModal}
             toggle={toggleModal}
