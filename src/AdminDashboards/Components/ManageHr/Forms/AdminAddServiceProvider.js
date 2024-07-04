@@ -79,10 +79,10 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
    const [selectedServices, setSelected] = useState([]);
 
     const [formData, setFormData] = useState({
-        name: data2.name || "",
+        name: data2.name || "", 
         first_name: data2.first_name || "",
         last_name: data2.last_name || "",
-        username: data2.username || "",
+        username: data2.username || "",   
         mobile_no: data2.mobile_no || "",
         aadhar_no: data2.aadhar_no || "",
         pan_no: data2.pan_no || "",

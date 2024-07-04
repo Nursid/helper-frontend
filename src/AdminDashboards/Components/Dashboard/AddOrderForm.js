@@ -131,7 +131,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 	return (
 		<Fragment>
 			<Row>
-				<Col md={6}>
+				{/* <Col md={6}>
 					<FormGroup>
 						<Label>Mobile Number</Label>
 						<Input 
@@ -141,7 +141,24 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 							value={formData?.mobile}
 							placeholder='Enter Your Mobile Number'/>
 					</FormGroup>
-				</Col>
+				</Col> */}
+				
+				<Col md={6}>
+  <FormGroup>
+    <Label>Mobile Number</Label>
+    <Input 
+      onChange={(e) => handleChange(e, 10)}
+      name='mobile'
+      type='number'
+      value={formData?.mobile}
+      placeholder='Enter Your Mobile Number'
+      required
+    />
+    {formData.mobile && formData.mobile.length < 10 ? (
+      <div style={{ color: 'ed' }}>Mobile number is required and must be 10 digits</div>
+    ) : null}
+  </FormGroup>
+</Col>
 
 				<Col md={6}>
 					<FormGroup>
