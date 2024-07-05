@@ -529,7 +529,7 @@ const AdminDashboard = () => {
         {params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
         (!params.row.netpayamt) ? (<><Button variant='contained' color='primary'  
 onClick={()=>AssignAmount(params.row.order_no)}
-        >Amount</Button></> ) : <>{params.row.netpayamt} </> ) : null
+        >Amount</Button></> ) : <>{params.row.netpayamt} </> ) : <>{params.row.netpayamt}</>
         
         } </> ),
     minWidth: 150 },

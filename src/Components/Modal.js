@@ -309,24 +309,29 @@ export const SingupModal = () => {
 
 export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOpenfunction}) => {
 	const [formData, setFormData] = useState({
-		serviceName: "",
-		serviceType: "",
-		serviceTime: "",
-		serviceDate: "",
+		service_name: "",
+		user_type: "",
+		booktime: "",
+		bookdate: "",
 		name: "",
-		mobileNo: "",
+		mobile: "",
 		address: "",
-		landMark: "",
+		land_mark: "",
 		location: "",
-		problemDescription: ""
+		problem_des: ""
 	});
 
-	const handleInputChange = (event) => {
+	const [errors, setErrors] = useState([]);
+	const [isLoading, setIsLoading] = useState(false)
+
+	const handleInputChange = (event, maxLength) => {
 		const {name, value} = event.target;
+		if (value.length <= maxLength) {
 		setFormData((prevFormData) => ({
 			...prevFormData,
 			[name]: value
 		}));
+	}
 	};
 
 	const dispatch = useDispatch();
@@ -337,9 +342,51 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 		dispatch(GetAllServices());
 	}, []);
 
-	const handleSubmit = () => {
-		console.log(formData); // You can replace this with yserviceNameour desired form submission logic
-		serveRequestModalOpenfunction(); // Close the modal after submission
+	const handleSubmit = (e) => {
+
+		e.preventDefault();
+		setIsLoading(true)
+        let errors = {};
+
+		if (!formData.name) {
+            errors.name = "Name is required";
+        }
+		if (!formData.mobile) {
+			errors.mobile = "Mobile number is required";
+		} else if (!/^\d{10}$/.test(formData.mobile)) {
+			errors.mobile = "Mobile number should be 10 digits";
+		}
+		if (!formData.address) {
+            errors.address = "address  is required";
+        }
+		if (!formData.service_name) {
+            errors.service_name = "service name  is required";
+        }
+
+
+        if (errors && Object.keys(errors).length === 0) {
+			// Form is valid, handle form submission here
+			console.log("Form submitted successfully!",);
+		  } else {
+			// Form is invalid, display validation errors
+			console.log("Validation Errors:", errors);
+			setErrors(errors);
+			setIsLoading(false)
+			return false;
+		  }
+
+		const apiUrl = `${API_URL}/order/add-complain`;
+		axios.post(apiUrl, formData).then(response => {
+			if (response.status === 200) {
+				serveRequestModalOpenfunction();
+				Swal.fire('Successfully!', 'Your Order has been Added.', 'success')
+			} else {
+				Swal.fire({title: 'failed to add try again', icon: "error"})
+			}
+		}).catch(error => {
+			console.error('Error:', error);
+		});
+
 	};
 
 	return (
@@ -361,18 +408,18 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 										xl={6}>
 										<div className="form-outline mb-2">
 											<label className="form-label" htmlFor="stateSelect">
-												Service Name *
+												Service Name <span style={{color: "red"}}>*</span>
 											</label>
 											<Select style={
 													{maxHeight: "159px"}
 												}
 												id="stateSelect"
-												name="serviceName"
+												name="service_name"
 												className="form-control"
 												value={
-													formData.serviceName
+													formData.service_name
 												}
-												onChange={handleInputChange}>
+												onChange={(e) => handleInputChange(e, 50)}>
 												{
 												data.data && data.data.map((item, index) => (
 													<MenuItem key={index}
@@ -384,20 +431,26 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 													} </MenuItem>
 												))
 											} </Select>
+											
 										</div>
+										{errors?.service_name && (
+							<span className='validationError'>
+								{errors?.service_name}
+							</span>
+						)}
 									</Col>
 									<Col xs={12}
 										lg={6}
 										xl={6}>
 										<div className="form-outline mb-2">
 											<label className="form-label" htmlFor="stateSelect">
-												Type *
+												User Type 
 											</label>
-											<Select id="stateSelect" name="serviceType" className="form-control"
+											<Select id="stateSelect" name="user_type" className="form-control"
 												value={
-													formData.serviceType
+													formData.user_type
 												}
-												onChange={handleInputChange}>
+												onChange={(e) => handleInputChange(e, 10)}>
 												<MenuItem value="booking">Booking</MenuItem>
 												<MenuItem value="urgent">Urgent</MenuItem>
 												<MenuItem value="regular">Regular</MenuItem>
@@ -411,13 +464,13 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 										xl={6}>
 										<div className="form-outline mb-2">
 											<label className="form-label" htmlFor="serviceName">
-												Service Time *
+												Service Time 
 											</label>
-											<Input type="time" name="serviceTime" className="form-control"
+											<Input type="time" name="booktime" className="form-control"
 												value={
-													formData.serviceTime
+													formData.booktime
 												}
-												onChange={handleInputChange}/>
+												onChange={(e) => handleInputChange(e, 50)}/>
 										</div>
 									</Col>
 									<Col xs={12}
@@ -425,13 +478,14 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 										xl={6}>
 										<div className="form-outline mb-2">
 											<label className="form-label" htmlFor="serviceType">
-												Service Date *
+												Service Date 
 											</label>
-											<Input type="date" name="serviceDate" className="form-control"
+											<Input type="date" name="bookdate" className="form-control"
 												value={
-													formData.serviceDate
+													formData.bookdate
 												}
-												onChange={handleInputChange}/>
+												
+												onChange={(e) => handleInputChange(e, 50)}/>
 										</div>
 									</Col>
 								</Row>
@@ -441,42 +495,63 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 										xl={6}>
 										<div className="form-outline mb-2">
 											<label className="form-label" htmlFor="serviceName">
-												Name *
+												Name <span style={{color: "red"}}>*</span>
 											</label>
 											<Input type="text" name="name" className="form-control"
 												value={
 													formData.name
 												}
-												onChange={handleInputChange}/>
+												placeholder="Enter Your Name"
+												onChange={(e) => handleInputChange(e, 50)}/>
+												
 										</div>
+										{errors?.name && (
+							<span className='validationError'>
+								{errors?.name}
+							</span>
+						)}
 									</Col>
 									<Col xs={12}
 										lg={6}
 										xl={6}>
 										<div className="form-outline mb-2">
 											<label className="form-label" htmlFor="serviceType">
-												Mobile No. *
+												Mobile No. <span style={{color: "red"}}>*</span>
 											</label>
-											<Input type="number" name="mobileNo" className="form-control"
+											<Input type="number" name="mobile" className="form-control"
 												value={
-													formData.mobileNo
+													formData.mobile
 												}
-												onChange={handleInputChange}/>
+												placeholder="Enter Your Mobile"
+												onChange={(e) => handleInputChange(e, 10)}/>
+												
 										</div>
+										{errors?.mobile && (
+							<span className='validationError'>
+								{errors?.mobile}
+							</span>
+						)}
 									</Col>
 								</Row>
 								<Row>
 									<Col xs={12}>
 										<div className="form-outline mb-2">
 											<label className="form-label" htmlFor="serviceType">
-												Address *
+												Address <span style={{color: "red"}}>*</span>
 											</label>
 											<Input type="text" name="address" className="form-control"
 												value={
 													formData.address
 												}
-												onChange={handleInputChange}/>
+												placeholder="Enter your address"
+												onChange={(e) => handleInputChange(e, 200)}/>
+												
 										</div>
+										{errors?.address && (
+							<span className='validationError'>
+								{errors?.address}
+							</span>
+						)}
 									</Col>
 								</Row>
 								<Row>
@@ -485,13 +560,14 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 										xl={6}>
 										<div className="form-outline mb-2">
 											<label className="form-label" htmlFor="serviceName">
-												Landmark *
+												Landmark 
 											</label>
-											<Input type="text" name="landMark" className="form-control"
+											<Input type="text" name="land_mark" className="form-control"
 												value={
-													formData.landMark
+													formData.land_mark
 												}
-												onChange={handleInputChange}/>
+												placeholder="Enter your land mark"
+												onChange={(e) => handleInputChange(e, 100)}/>
 										</div>
 									</Col>
 									<Col xs={12}
@@ -499,13 +575,14 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 										xl={6}>
 										<div className="form-outline mb-2">
 											<label className="form-label" htmlFor="serviceType">
-												Location *
+												Location 
 											</label>
 											<Input type="text" name="location" className="form-control"
 												value={
 													formData.location
 												}
-												onChange={handleInputChange}/>
+												placeholder="Enter your location"
+												onChange={(e) => handleInputChange(e, 100)}/>
 										</div>
 									</Col>
 								</Row>
@@ -513,19 +590,22 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 									<Col xs={12}>
 										<div className="form-outline mb-2">
 											<label className="form-label" htmlFor="serviceName">
-												Problem Description *
+												Problem Description 
 											</label>
-											<Input type="textarea" name="problemDescription" className="form-control"
+											<Input type="textarea" name="problem_des" className="form-control"
 												value={
-													formData.problemDescription
+													formData.problem_des
 												}
-												onChange={handleInputChange}
+												onChange={(e) => handleInputChange(e, 200)}
 												rows="4"
-												cols="50"/>
+												cols="50"
+												placeholder="Enter Problem Description"
+												/>
 										</div>
 									</Col>
 								</Row>
 								<Button color="primary" className="btn-block"
+									disabled={isLoading}
 									onClick={handleSubmit}>
 									Submit
 								</Button>

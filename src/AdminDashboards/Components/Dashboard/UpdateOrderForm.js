@@ -9,28 +9,30 @@ import { API_URL } from '../../../config';
 
 const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) => {
   const dispatch = useDispatch();
+  const [errors, setErrors] = useState([]);
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
-    userType: orderData?.user_type || '',
+    user_type: orderData?.user_type || '',
     name: orderData?.orderProcess?.name || '',
     email: orderData?.orderProcess?.email || '',
     age: orderData?.age || '',
-    service: orderData?.service_name || '',
+    service_name: orderData?.service_name || '',
     mobile: orderData?.orderProcess?.mobile || '',
-    serviceDescription: orderData?.service_des || '',
-    supervisorName: orderData?.suprvisor_id || '',
+    service_des: orderData?.service_des || '',
+    suprvisor_id: orderData?.suprvisor_id || '',
     serviceDateTime: moment(orderData.serviceDateTime).format('YYYY-MM-DDTHH:mm') || '',
     address: orderData?.address || '',
     city: orderData?.city || '',
-    zipCode: orderData?.pincode || '',
+    pincode: orderData?.pincode || '',
     status: orderData?.pending || 'Pending',
-    time: orderData?.booktime || '',
-    date: moment(orderData?.bookdate).format('YYYY-MM-DD') || '',
-    serviceProvider: orderData?.servicep_id || '',
-    problemDescription: orderData?.problem_des || '',
+    booktime: orderData?.booktime || '',
+    bookdate: moment(orderData?.bookdate).format('YYYY-MM-DD') || '',
+    servicep_id: orderData?.servicep_id || '',
+    problem_des: orderData?.problem_des || '',
     paymethod: orderData?.paymethod || '',
-    billAmount: orderData?.netpayamt || '',
-    paidAmount: orderData?.piadamt || '',
-    balanceAmount: orderData?.totalamt || '',
+    netpayamt: orderData?.netpayamt || '',
+    piadamt: orderData?.piadamt || '',
+    totalamt: orderData?.totalamt || '',
   });
 
   const [allServices, setAllServices] = useState([]);
@@ -50,13 +52,15 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     { label: 'Cheque', value: 'Cheque' },
   ];
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e, maxLength) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (name === 'billAmount' || name === 'paidAmount') {
-      const bill = name === 'billAmount' ? parseFloat(value) : parseFloat(formData.billAmount);
-      const paid = name === 'paidAmount' ? parseFloat(value) : parseFloat(formData.paidAmount);
-      setFormData((prev) => ({ ...prev, balanceAmount: bill - paid }));
+    if (value.length <= maxLength) {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      }
+    if (name === 'netpayamt' || name === 'piadamt') {
+      const bill = name === 'netpayamt' ? parseFloat(value) : parseFloat(formData.netpayamt);
+      const paid = name === 'piadamt' ? parseFloat(value) : parseFloat(formData.piadamt);
+      setFormData((prev) => ({ ...prev, totalamt: bill - paid }));
     }
   };
 
@@ -80,9 +84,47 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     fetchData();
   }, []);
 
-  const handleSubmit = async () => {
-    try {
-      const response = await axios.patch(`${API_URL}/order/update/${orderData.order_no}`, formData);
+  const handleSubmit = async (e) => {
+   
+
+      e.preventDefault();
+      setIsLoading(true)
+        let errors = {};
+
+      if (!formData.name) {
+              errors.name = "Name is required";
+          }
+      if (!formData.mobile) {
+              errors.mobile = "Mobile No. is required";
+          }
+      if (!formData.service_name) {
+              errors.service_name = "Service type is required";
+          }
+
+      if (errors && Object.keys(errors).length === 0) {
+        // Form is valid, handle form submission here
+        console.log("Form submitted successfully!",);
+        } else {
+        // Form is invalid, display validation errors
+        console.log("Validation Errors:", errors);
+        setErrors(errors);
+        setIsLoading(true)
+        return false;
+        }
+
+      
+
+
+        const data ={
+          ...formData,
+          service_name: formData.service_name.value,
+          user_type: formData.user_type.value,
+          paymethod: formData.paymethod.value,
+          servicep_id: formData.servicep_id.value,
+          suprvisor_id: formData.suprvisor_id.value
+        }
+        try {
+      const response = await axios.patch(`${API_URL}/order/update/${orderData.order_no}`, data);
       if (response.status === 200) {
         prop();
         Swal.fire('Updated!', 'Your Customer has been Updated.', 'success');
@@ -101,62 +143,77 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
       <Row>
         <Col md={6}>
           <FormGroup>
-            <Label>Mobile No</Label>
-            <Input name="mobile" onChange={handleInputChange} value={formData.mobile} readOnly />
+            <Label>Mobile No <span style={{color: "red"}}>*</span></Label>
+            <Input name="mobile" onChange={(e) => handleInputChange(e, 10)} value={formData.mobile} readOnly />
+            {errors?.mobile && (
+							<span className='validationError'>
+								{errors?.mobile}
+							</span>
+						)}
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>User Type</Label>
-            <SelectBox options={userTypeOptions} setSelcted={(value) => setFormData((prev) => ({ ...prev, userType: value }))} initialValue={formData.userType} />
+            <SelectBox options={userTypeOptions} setSelcted={(value) => setFormData((prev) => ({ ...prev, user_type: value }))} initialValue={formData.user_type} />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
-            <Label>Customer Name</Label>
-            <Input name="name" onChange={handleInputChange} value={formData.name} placeholder="Enter Your Name" />
+            <Label>Customer Name <span style={{color: "red"}}>*</span></Label>
+            <Input name="name" onChange={(e) => handleInputChange(e, 50)} value={formData.name} placeholder="Enter Your Name" />
+            {errors?.name && (
+							<span className='validationError'>
+								{errors?.name}
+							</span>
+						)}
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>Email</Label>
-            <Input name="email" type="email" onChange={handleInputChange} value={formData.email} placeholder="Enter Your Email" />
+            <Input name="email" type="email" onChange={(e) => handleInputChange(e, 50)} value={formData.email} placeholder="Enter Your Email" />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>Time</Label>
-            <Input name="time" type="time" onChange={handleInputChange} value={formData.time} />
+            <Input name="booktime" type="time" onChange={(e) => handleInputChange(e, 50)} value={formData.booktime} />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>Date</Label>
-            <Input name="date" type="date" onChange={handleInputChange} value={formData.date} />
+            <Input name="bookdate" type="date" onChange={(e) => handleInputChange(e, 50)} value={formData.bookdate} />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
-            <Label>Service Type</Label>
-            <SelectBox options={allServices} setSelcted={(value) => setFormData((prev) => ({ ...prev, service: value }))} initialValue={formData.service} />
+            <Label>Service Type <span style={{color: "red"}}>*</span></Label>
+            <SelectBox options={allServices} setSelcted={(value) => setFormData((prev) => ({ ...prev, service_name: value }))} initialValue={formData.service_name} />
+            {errors?.service_name && (
+							<span className='validationError'>
+								{errors?.service_name}
+							</span>
+						)}
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>Problem Description</Label>
-            <Input name="problemDescription" onChange={handleInputChange} value={formData.problemDescription} placeholder="Problem Description" />
+            <Input name="problem_des" onChange={(e) => handleInputChange(e, 100)} value={formData.problem_des} placeholder="Problem Description" />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>Supervisor Name</Label>
-            <SelectBox options={allSupervisors} setSelcted={(value) => setFormData((prev) => ({ ...prev, supervisorName: value }))} initialValue={formData.supervisorName} />
+            <SelectBox options={allSupervisors} setSelcted={(value) => setFormData((prev) => ({ ...prev, suprvisor_id: value }))} initialValue={formData.suprvisor_id} />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>Service Provider</Label>
-            <SelectBox options={allServiceProviders} setSelcted={(value) => setFormData((prev) => ({ ...prev, serviceProvider: value }))} initialValue={formData.serviceProvider} />
+            <SelectBox options={allServiceProviders} setSelcted={(value) => setFormData((prev) => ({ ...prev, servicep_id: value }))} initialValue={formData.servicep_id} />
           </FormGroup>
         </Col>
         <Col md={6}>
@@ -168,19 +225,19 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         <Col md={6}>
           <FormGroup>
             <Label>Address</Label>
-            <Input name="address" onChange={handleInputChange} value={formData.address} placeholder="Enter Your Address" />
+            <Input name="address" onChange={(e) => handleInputChange(e, 200)} value={formData.address} placeholder="Enter Your Address" />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>City</Label>
-            <Input name="city" type="text" onChange={handleInputChange} value={formData.city} placeholder="Enter Your City" />
+            <Input name="city" type="text" onChange={(e) => handleInputChange(e, 50)} value={formData.city} placeholder="Enter Your City" />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>ZipCode</Label>
-            <Input name="zipCode" type="text" onChange={handleInputChange} value={formData.zipCode} placeholder="Enter Your ZipCode" />
+            <Input name="pincode" type="text" onChange={(e) => handleInputChange(e, 6)} value={formData.pincode} placeholder="Enter Your ZipCode" />
           </FormGroup>
         </Col>
         <h2>Billing Details</h2>
@@ -193,22 +250,22 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         <Col md={6}>
           <FormGroup>
             <Label>Bill Amount</Label>
-            <Input name="billAmount" type="number" onChange={handleInputChange} value={formData.billAmount} placeholder="Bill Amount" />
+            <Input name="netpayamt" type="number" onChange={(e) => handleInputChange(e, 7)} value={formData.netpayamt} placeholder="Bill Amount" />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>Paid Amount</Label>
-            <Input name="paidAmount" type="number" onChange={handleInputChange} value={formData.paidAmount} placeholder="Paid Amount" />
+            <Input name="piadamt" type="number" onChange={(e) => handleInputChange(e, 7)} value={formData.piadamt} placeholder="Paid Amount" />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>Balance Amount</Label>
-            <Input name="balanceAmount" type="number" value={formData.balanceAmount} placeholder="Balance Amount" readOnly />
+            <Input name="totalamt" type="number" value={formData.totalamt} placeholder="Balance Amount" readOnly />
           </FormGroup>
         </Col>
-        <Button className="bg-primary text-white" onClick={handleSubmit}>Update</Button>
+        <Button className="bg-primary text-white" disabled={isLoading} onClick={handleSubmit}>Update</Button>
       </Row>
     </Fragment>
   );

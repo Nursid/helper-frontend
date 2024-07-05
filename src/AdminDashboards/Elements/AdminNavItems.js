@@ -13,9 +13,6 @@ import { FaRegClock } from "react-icons/fa";
 const AdminNavItems = () => {
     const { userRole, setUserRole, UserRoleCalled } = useUserRoleContext();
 
-
-    console.log("userRole---",userRole)
-
     const navigate = useNavigate()
     const NavItems = [
         { field: "Dashboard", title: "Dashboard", icon: <CiViewList size={30} /> },

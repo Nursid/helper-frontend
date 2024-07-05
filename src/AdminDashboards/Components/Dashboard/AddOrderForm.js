@@ -88,9 +88,11 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 		if (!formData.name) {
             errors.name = "Name is required";
         }
-        if (!formData.mobile) {
-            errors.mobile = "Mobile Number is required";
-        }
+		if (!formData.mobile) {
+			errors.mobile = "Mobile number is required";
+		} else if (!/^\d{10}$/.test(formData.mobile)) {
+			errors.mobile = "Mobile number should be 10 digits";
+		}
 		if (!formData.address) {
             errors.address = "address  is required";
         }
