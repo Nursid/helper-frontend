@@ -151,26 +151,22 @@ const ManageService = () => {
         { field: "date", headerName: "Date", minWidth: 160 },
         { field: "serviceName", headerName: "Service Name", minWidth: 200, editable: true },
         {
-            field: "icon", headerName: "Icon", minWidth: 120, renderCell: (params) => {
-                return <img src={PlumberService} alt='icon' style={{ width: 100, height: 50 }} />;
-            }
+            field: "icon", headerName: "Icon", minWidth: 120, renderCell: (params) => (
+                <div className='w-80 h-80 rounded-circle'>
+           <img src={PlumberService} alt='icon' style={{ width: "60px", height: "50px" }} />;
+           </div>
+            )
         },
         {
             field: "image", headerName: "Image", minWidth: 120, renderCell: (params) => (
-                <div>
-                   <img src={IMG_URL+params.row.image} alt="Image" style={{ width: 100, height: 50 }} />
+                <div className='w-80 h-80 rounded-circle'>
+                   <img src={IMG_URL+params.row.image} alt="Image" style={{ width: "64px", height: "64px" }} />
                 </div>
             )
         },
         {
             field: "details", headerName: 'Service Details', minWidth: 200, innerHeight: 200
         },
-        // { field: "mobileNumber", headerName: "Mobile No.", minWidth: 120, editable: true },
-        // { field: "email", headerName: "Email", minWidth: 120, editable: true },
-        // { field: "address", headerName: "Address", minWidth: 250, editable: true },
-        // { field: "username", headerName: "User Name", minWidth: 250, editable: true },
-        // { field: "password", headerName: "password", minWidth: 250, editable: true },
-        // { field: "zipCode", headerName: "Password", minWidth: 120, editable: true },
         {
             field: "adminStatus",
             minWidth: 150,
@@ -239,12 +235,6 @@ const ManageService = () => {
     useEffect(() => {
         dispatch(GetAllServices())
     }, [])
-
-    // useEffect(() => {
-    //     if (DeletResult.isSuccess) {
-    //         dispatch(GetAllServices())
-    //     }
-    // }, [DeletResult.isSuccess])
 
     useEffect(() => {
         dispatch(GetAllServices());

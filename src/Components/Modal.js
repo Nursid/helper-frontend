@@ -363,7 +363,6 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
             errors.service_name = "service name  is required";
         }
 
-
         if (errors && Object.keys(errors).length === 0) {
 			// Form is valid, handle form submission here
 			console.log("Form submitted successfully!",);

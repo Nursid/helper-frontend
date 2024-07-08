@@ -144,12 +144,15 @@ const MyProfile = ({ serviceData }) => {
                 <Col xs={12} lg={4} xl={4} >
                     <Card className='mt-2'>
                         <CardBody className="text-center">
+                            <div className='w-80 h-80 rounded-circle'>
                             <img
                                 src={IMG_URL+serviceData?.image || `https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp`}
                                 alt="avatar"
                                  className="rounded-circle mb-3"
-                                style={{ width: '150px' }}
+                                style={{ width: '150px', height: '150px' }}
                                 />
+                            </div>
+                           
                             <h6 className="text-muted mb-1">{serviceData.NewCustomer.name ? serviceData.NewCustomer.name : "NA" }</h6>
                             <p className="text-muted mb-4">{serviceData.address ? serviceData.address : '-------'}</p>
                             <div className="d-flex justify-content-center">

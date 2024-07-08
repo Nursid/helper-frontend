@@ -1,93 +1,77 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect,Fragment } from 'react'
 import { Container } from '@mui/material'
 import { Col, Row,Card ,Button} from 'reactstrap'
 import { GetAllOrdersByID } from '../../Store/Actions/Dashboard/Orders/OrderAction';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { DataGrid } from '@mui/x-data-grid';
+import { GetAllServices } from '../../Store/Actions/Dashboard/servicesAction';
+import PlumberService from '../../assets/img/Travel&Driver.png';
+import { IMG_URL } from '../../config';
+import AdminDataTable from '../../AdminDashboards/Elements/AdminDataTable';
 const FreeService = ({registerId}) => {
 
 
-    const status = [
-        { id: 0, name: "Pending" },
-        { id: 1, name: "Hold" },
-        { id: 2, name: "Due" },
-        { id: 3, name: "Completed" },
-        { id: 4, name: "Running" },
-        { id: 5, name: "Cancel" }
-    ];
-
-    const [userId, setUserId] = useState(registerId);
     const dispatch = useDispatch()
-    const { data, isLoading } = useSelector(state => state.GetAllOrderByIdReducer)
-   
-    useEffect(() => {
-        dispatch(GetAllOrdersByID(userId))
-      }, [userId]);
 
-      const DataWithID = (data) => {
+      useEffect(() => {
+        dispatch(GetAllServices())
+    }, []);
+
+
+    const { data } = useSelector(pre => pre.GetAllServicesReducer)
+    // service reducere
+    // const DeletResult = useSelector(pre => pre.DeleterTheServiceReducer)
+
+    const DataWithID = (data) => {
         const NewData = []
         if (data !== undefined) {
             for (let item of data) {
-                let orderProcess = item.orderProcess;
-                let mergedItem = {...item, ...orderProcess};
-                NewData.push({ ...mergedItem, id: data.indexOf(item), date: moment(item.createdAt).format("D / M / Y") })
-  
+                NewData.push({ ...item, _id: data.indexOf(item), date: moment(item.createdAt).format("D / M / Y") })
             }
         } else {
             NewData.push({ id: 0 })
         }
         return NewData
-      }
+    }
 
       const columns = [
-        { field: 'id', headerName: 'ID', width: 100, headerCenter: true },
-        { field: 'service_name', headerName: 'Service Name', width: 180, headerCenter: true },
         {
-            field: 'pending',
-            headerCenter: true,
-            width: 200,
-            headerName: 'Order Status',
-            renderCell: (params) => (
-            <Button 
-            
-            color={
-                params.row.pending === 0 ? "warning" :
-                params.row.pending === 1 ? "secondary" :
-                params.row.pending === 2 ? "secondary" :
-                params.row.pending === 3 ? "success" :
-                params.row.pending === 4 ? "info" :
-                "danger"
-            }
-                variant='contained' >{status.find(item => item.id === params.row.pending)?.name}</Button>)
+            field: "_id",         // Assuming "_id" is the unique identifier in your data
+            headerName: "Sr No",
+            minWidth: 50,
+        },
+        { field: "date", headerName: "Date", minWidth: 160 },
+        { field: "serviceName", headerName: "Service Name", minWidth: 200, editable: true },
+        {
+            field: "icon", headerName: "Icon", minWidth: 120, renderCell: (params) => (
+                <div className='w-80 h-80 rounded-circle'>
+           <img src={PlumberService} alt='icon' style={{ width: "60px", height: "50px" }} />;
+           </div>
+            )
+        },
+        {
+            field: "image", headerName: "Image", minWidth: 120, renderCell: (params) => (
+                <div className='w-80 h-80 rounded-circle'>
+                   <img src={IMG_URL+params.row.image} alt="Image" style={{ width: "64px", height: "64px" }} />
+                </div>
+            )
+        },
+        {
+            field: "details", headerName: 'Service Details', minWidth: 400, innerHeight: 200
         }
       ]
+     
+
 
     return (
-        <div>
+        <Fragment>
+        <h4 className='p-3 px-4 mt-3 bg-transparent headingBelowBorder justify-content-start' style={{ maxWidth: "18rem", minWidth: "18rem" }}> All Services List</h4>
 
-            <Container maxWidth='sm' className='w-100 p-1'>
-            <Row className='py-2'>
-                <Col xs={12}>
-                    {/* Map over serviceData and create a table */}
-                    <Card>
-                        <div style={{ height: 400, width: '100%' }}>
-                            <DataGrid
-                                rows={DataWithID(data.data)}
-                                columns={columns}
-                                initialState={{
-                                    pagination: {
-                                        paginationModel: { page: 0, pageSize: 5 },
-                                    },
-                                }}
-                                pageSizeOptions={[5, 10]}
-                            />
-                        </div>
-                    </Card>
-                </Col>
-            </Row>
-            </Container>
+        <div className='p-4'>
+            <AdminDataTable rows={DataWithID(data.data)} columns={columns}/>
         </div>
+    </Fragment>
     )
 }
 
