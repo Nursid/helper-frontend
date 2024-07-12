@@ -32,6 +32,7 @@ import { GetAllInventry,GetAllAllotedItems } from "../Store/Actions/Dashboard/In
 import { AssignSupervisorModal,AssignServiceProviderModal,AddComplainModal,AddAmount,SuperAdminRemarkModal,AdminRemarkModal,BackOfficeRemarkModal,AllotItemModal,AddInventryModal } from "../Components/Modal";
 import { useAuth } from "../Context/userAuthContext";
 import { ServiceProviderRemarkModal } from "../Components/Modal";
+
 const AdminDashboard = () => {
   const { rows, Show, setShow } = UseStateManager();
   const { userRole } = useUserRoleContext();
@@ -42,6 +43,7 @@ const AdminDashboard = () => {
   const { data: inventories, isLoading: isInventoryLoading } = useSelector(state => state.GetAllInventryReducers);
 
   const { data: allotedItem, isLoading: isAllotedItemsLoading } = useSelector(state => state.GetAllAllotedItemReducers);
+
 
   useEffect(() => {
     if (role === "service" || role === "supervisor") {
@@ -54,12 +56,25 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     dispatch(GetAllInventry())
-  }, []);
-
-  useEffect(() => {
     dispatch(GetAllAllotedItems())
   }, []);
 
+  const [totalSummary, setTotalSummary] = useState([])
+  const [from, setFrom] = useState(null)
+  const [to, setTo] = useState(null)
+
+  const GetTotalSummary = async () =>{
+    const res = await axios.get(`${API_URL}/order/filter-order?from=${from}&to=${to}`);
+   if(res.status === 200){
+    setTotalSummary(res.data.data)
+   }
+    }
+    useEffect(() => {
+      GetTotalSummary()
+
+  }, []);
+
+ 
   const status= [
   {0: "Pending"},
   {1: "Hold"},
@@ -859,37 +874,40 @@ onClick={()=>AssignAmount(params.row.order_no)}
           {/* Data Table  */}
           <div className="p-4 ">
           {!complain && !inventry && summary && <Card className="p-4">
-          <div className="p-4 pb-4">
-                    <h4>Todays Summary</h4>
+          <div className="">
+          <h3>Order Summary</h3>
+          <div className="flex flex-col justify-between w-full mb-3 ">
+            <div className="flex justify-between gap-6 items-center">
+                <label htmlFor="startDate">From:</label>
+                <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
+                <label htmlFor="endDate" className="mr-2">To:</label>
+                <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
+                <Button className="btn btn-primary ml-3" size="small" onClick={GetTotalSummary}  variant="contained">Search</Button>
+            </div>
+        </div>     
           <Table striped>
               <thead>
                   <tr>
                       <th>Total Services</th>
                       <th>Monthly Service</th>
-                      <th>Additional Service</th>
                       <th>Completed Service</th>
                       <th>Cancelled Service</th>
-                      <th>Free Service</th>
-                      <th>Transfered Service</th>
-                      <th>Continued Service</th>
+                      <th>Hold Service</th>
+                      <th>Pending</th>
                   </tr>
               </thead>
               <tbody>
                   <tr>
-                      <td>75</td>
-                      <td>1</td>
-                      <td>74</td>
-                      <td>55</td>
-                      <td>5</td>
-                      <td>0</td>
-                      <td>0</td>
-                      <td>0</td>
+                      <td>{totalSummary?.totalOrders}</td>
+                      <td>{totalSummary?.totalMonthlyService}</td>
+                      <td>{totalSummary?.totalCompleted}</td>
+                      <td>{totalSummary?.totalHold}</td>
+                      <td>{totalSummary?.totalCancel}</td>
+                      <td>{totalSummary?.totalPending}</td>
+                      
                   </tr>
               </tbody>
           </Table>
-          </div>
-
-          <div className="p-4 pb-4">
           <h4>Cash Summary</h4>
           <Table striped>
               <thead>
