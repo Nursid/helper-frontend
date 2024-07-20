@@ -913,10 +913,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
               <thead>
                   <tr>
                       <th>Monthly Service Payments</th>
-                      <th> Add. Service Payments</th>
-                      <th> Todays Expenses</th>
-                      <th> Todays cash</th>
-                      <th> Todays online</th>
+                      <th> Total Expenses</th>
                       <th> Total in Cash</th>
                       <th> Total in Bank </th>
                       <th> Net Balance </th>
@@ -925,18 +922,20 @@ onClick={()=>AssignAmount(params.row.order_no)}
               </thead>
               <tbody>
                   <tr>
-                      <td>0</td>
-                      <td>1500</td>
-                      <td></td>
-                      <td>1500</td>
-                      <td>0</td>
-                      <td>881416</td>
-                      <td>258365</td>
-                      <td>1139781</td>
-                      <th><a href="data:text/csv;charset=utf-8,Total Services,Monthly Service,Additional Service,Completed Service,Cancelled Service,Free Service,Transfered Service,Continued Service
-                        75,1,74,55,5,0,0,0
-                        Monthly Service Payments,Add Service Payments,Todays Expenses,Todays cash,Todays online,Total in Cash,Total in Bank,Net Balance 
-                        0,1500,,1500,0,881416,258365,1139781" download="TodaysServicesReport.csv">Export <br/> Services<br/> Report</a></th>
+                      <td>{totalSummary?.TotalserviceFees}</td>
+                      <td>{totalSummary?.TotalExpenses}</td>
+                      <td>{totalSummary?.TotalCash}</td>
+                      <td>{totalSummary?.TotalBank}</td>
+                      <td>{parseFloat(totalSummary?.TotalCash) + parseFloat(totalSummary?.TotalBank)}</td>
+                     
+                      <th><a
+                                href={`data:text/csv;charset=utf-8,Total Services,Monthly Service,Completed Service,Cancelled Service,Hold Service,Pending
+                                    ${totalSummary?.totalOrders},${totalSummary?.totalMonthlyService},${totalSummary?.totalCompleted},${totalSummary?.totalCancel},${totalSummary?.totalHold},${totalSummary?.totalPending}
+                                    Monthly Service Payments,Total Expenses,Total Cash,Total online,Net Balance 
+                                    ${totalSummary?.TotalserviceFees},${totalSummary?.TotalExpenses},${totalSummary?.TotalCash},${totalSummary?.TotalBank},${parseFloat(totalSummary?.TotalCash) + parseFloat(totalSummary?.TotalBank)}`}
+                                download="TodaysServicesReport.csv"
+                            >
+                              Export Report</a></th>
                   </tr>
 
               </tbody>

@@ -91,7 +91,7 @@ const AddExpense = ({ setActiveAttendance }) => {
   const handleKeyPress = (e) => {
     const charCode = e.which || e.keyCode;
     const charStr = String.fromCharCode(charCode);
-    if (!/^[a-zA-Z]+$/.test(charStr)) {
+    if (!/^[a-zA-Z\s]+$/.test(charStr)) {
         e.preventDefault();
         }
     };
@@ -169,7 +169,7 @@ const AddExpense = ({ setActiveAttendance }) => {
                 placeholder="Name"
                 name="personName"
                 value={formData.personName || ""}
-                oonChange={(e) => HandleChange(e, 50)}
+                onChange={(e) => HandleChange(e, 50)}
                 onKeyPress={handleKeyPress}
               />
             </div>
