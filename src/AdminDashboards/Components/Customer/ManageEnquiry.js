@@ -149,6 +149,7 @@ const ManageEnquiry = () => {
 
 
 
+
     const column = [
         { field: "_id", headerName: "Sr No", flex: 1, minWidth: 50, editable: true },
         { field: "date", headerName: "Date",flex: 1, minWidth: 120, editable: true },
@@ -181,6 +182,9 @@ const ManageEnquiry = () => {
 
                     <Button variant='contained' color='primary'
                     style={{minWidth: "40px", maxWidth: "40px"}}
+                    onClick={(e)=>(
+                        editEnquiry(params.row)
+                    )}
                     ><BorderColorIcon /></Button>
 
                     {/* <Button variant="contained" color="success"
@@ -192,7 +196,7 @@ const ManageEnquiry = () => {
                     </Button> */}
                     <Button variant="contained" color="error"
                     onClick={(e)=>(
-                        GetDeleteByID(params.row.mobileNo)
+                        GetDeleteByID(params.row.id)
                     )}
                     style={{minWidth: "40px", maxWidth: "40px"}}
                     >
@@ -251,9 +255,16 @@ const ManageEnquiry = () => {
     // Add service provider controller 
     const [addCustomer, setAddCustomer] = useState(false)
     const ToggleAddCustomer = () => setAddCustomer(!addCustomer)
+
+    
+    const editEnquiry = (data) =>{
+        setUpdate(data)
+        ToggleAddCustomer()
+    }
+
     return (
         <Fragment>
-            <ModalComponent modal={addCustomer} toggle={ToggleAddCustomer} data={<AddEnquiryForm />} modalTitle={"Add New Enquiry"} size={"xl"} scrollable={true} />
+            <ModalComponent modal={addCustomer} toggle={ToggleAddCustomer} data={<AddEnquiryForm toggle={ToggleAddCustomer}  data={update}/>} modalTitle={update ? "Edit Enquiry" : "Add New Enquiry"} size={"lg"} scrollable={true} />
 
             {/* <ModalComponent
                 data={<CustomerView 

@@ -103,8 +103,6 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
 		getAllServices();
 	}, []);
 
-    console.log(formData)
-
 	const getAllServices = async () => {
 		const response = await axios.get(API_URL + '/service/getall')
 		if (response.status === 200) {
