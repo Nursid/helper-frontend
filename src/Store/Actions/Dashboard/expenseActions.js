@@ -48,9 +48,18 @@ export const GetDeleteHeadExp = (id) => {
             const response = await axios.delete(API_URL + '/expense/delete/' + id)
             if (response.status === 200) {
                 dispatch({ type: constant.GET_DEL_HEADEXP_SUCCESS })
-                showMsg(false, 'Expense Deleted Successfully')
+                
+                Swal.fire(
+                    'Successfully!',
+                    "Expense Deleted Successfully",
+                    'success'
+                )
             } else {
-                showMsg(true, response.data.message)
+                
+                Swal.fire({
+                    title: 'failed to add try again',
+                    icon: "error",
+                })
             }
         } catch (error) {
             dispatch({ type: constant.GET_DEL_HEADEXP_ERROR })
@@ -66,8 +75,18 @@ export const GetAddExpense = (formdata) => {
             const response = await axios.post(API_URL + '/expense/addexpense', formdata);
             if (response.status === 200) {
                 dispatch({ type: constant.GET_ADDEXP_API_SUCCESS, payload: response.data.data })
-                showMsg(false, "successfully added new expense")
+                Swal.fire(
+                    'Successfully!',
+                    "successfully added new expense",
+                    'success'
+                )
+            }else{
+                Swal.fire({
+                    title: 'failed to add try again',
+                    icon: "error",
+                })
             }
+
         } catch (error) {
             dispatch({ type: constant.GET_ADDEXP_API_ERROR })
         }
@@ -83,14 +102,25 @@ export const GetAddCollections = (formdata) => {
         
             if (response.status === 200) {
                 dispatch({ type: constant.GET_ADD_COLLECTION_SUCCESS, payload: response.data.data })
-                showMsg(false, "successfully added new collection")
-            } else {
                 
-                showMsg(true, response.data.message)
+                Swal.fire(
+                    'Successfully!',
+                    "successfully added new collection",
+                    'success'
+                )
+            } else {
+                Swal.fire({
+                    title: 'failed to add try again',
+                    icon: "error",
+                })
+                
             }
         } catch (error) {
             dispatch({ type: constant.GET_ADD_COLLECTION_ERROR })
-            showMsg(true, "Not Added Facing Issue Try Again")
+            Swal.fire({
+                title: 'failed to add try again',
+                icon: "error",
+            })
         }
     }
 }
@@ -134,7 +164,17 @@ export const DeleteCollectionById = async (id) => {
     try {
         const response = await axios.get(API_URL + "/expense/deletecollection/" + id)
         if (response.status === 200) {
-            showMsg(false, 'Deleted successfully')
+            // showMsg(false, 'Deleted successfully')
+            Swal.fire(
+                'Successfully!',
+               'Deleted successfully',
+                'success'
+            )
+        }else{
+            Swal.fire({
+                title: 'failed to add try again',
+                icon: "error",
+            })
         }
     } catch (error) {
         showMsg(true, error)
@@ -146,10 +186,24 @@ export const DeleteExpByID = async (id) => {
     try {
         const response = await axios.get(API_URL + "/expense/deleteexpense/" + id)
         if (response.status === 200) {
-            showMsg(false, 'Deleted successfully')
+            // showMsg(false, 'Deleted successfully')
+            Swal.fire(
+                'Successfully!',
+               'Deleted successfully',
+                'success'
+            )
+        }else{
+            Swal.fire({
+                title: 'failed to add try again',
+                icon: "error",
+            })
         }
     } catch (error) {
-        showMsg(true, error)
+        // showMsg(true, error)
+        Swal.fire({
+            title: 'failed to add try again',
+            icon: "error",
+        })
     }
 }
 

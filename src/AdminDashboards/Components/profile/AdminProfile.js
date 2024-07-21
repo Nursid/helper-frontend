@@ -45,14 +45,15 @@ const AdminProfile = ()=>{
             <Col xs={12} lg={12} xl={12} >
                     <Card className='mt-2'>
                         <CardBody className="text-center">
+                            <div class="w-80 h-80 rounded-circle">
                             <img
-                               
-                                src={IMG_URL+data?.image ?? ''}
-
+                               class="rounded-circle mb-3"
+                                src={ data?.image ? IMG_URL+data?.image : 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'}
                                 alt="avatar"
                                 className="rounded-circle"
-                                style={{ width: '150px' }}
+                                style={{ width: '150px' , height: "150px" }}
                                 fluid />
+                                </div>
                                   </CardBody>
                                   <Button  onClick={(e)=>{toggleEditMode()}} variant='contained' color='primary' style={{width: "150px"}}><BorderColorIcon /></Button>
                       

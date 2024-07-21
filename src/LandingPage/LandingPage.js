@@ -40,9 +40,12 @@ const LandingPage = () => {
   };
   const [formData, setFormData] = useState({
     name: '',
-    mobileNumber: '',
-    services: '',
-    description: '',
+    email: '',
+    refName: '', 
+    mobileNo: '',
+    message: '',
+    address: '',
+    service: ''
   });
 
   const handleInputChange = (event) => {
@@ -119,11 +122,11 @@ const LandingPage = () => {
                   <div className="form-group">
                     <label htmlFor="mobileNumber">Mobile Number:</label>
                     <input
-                      type="text"
-                      id="mobileNumber"
-                      name="mobileNumber"
+                      type="number"
+                      id="mobileNo"
+                      name="mobileNo"
                       placeholder="Enter Mobile Number"
-                      value={formData.mobileNumber}
+                      value={formData.mobileNo}
                       onChange={handleInputChange}
                       required
                     />
@@ -132,10 +135,10 @@ const LandingPage = () => {
                     <label htmlFor="services">Services looking for:</label>
                     <input
                       type="text"
-                      id="services"
-                      name="services"
+                      id="service"
+                      name="service"
                       placeholder="Please enter the service you are looking for."
-                      value={formData.services}
+                      value={formData?.service}
                       onChange={handleInputChange}
                       required
                     />
@@ -143,14 +146,38 @@ const LandingPage = () => {
                   <div className="form-group">
                     <label htmlFor="description">Description (Please specify):</label>
                     <textarea
-                      id="description"
-                      name="description"
+                      id="message"
+                      name="message"
                       placeholder="Enter Description"
                       rows="5"
-                      value={formData.description}
+                      value={formData?.message}
                       onChange={handleInputChange}
                       required
                     ></textarea>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="description">Address</label>
+                    <textarea
+                      id="address"
+                      name="address"
+                      placeholder="Enter Address"
+                      rows="5"
+                      value={formData.address}
+                      onChange={handleInputChange}
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="refName">Referance By</label>
+                    <input
+                      id="refName"
+                      name="refName"
+                      placeholder="Enter refName"
+                      rows="5"
+                      value={formData?.refName}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </div>
                   <div className="form-group">
                     <input type="submit" value="Submit" />

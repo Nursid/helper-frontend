@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { Col, Row } from 'reactstrap'
+import React, { useState, useEffect } from 'react'
 import { FaEnvelope, FaFacebook, FaGoogle, FaHome, FaInstagram, FaLinkedinIn, FaPhone, FaPrint, FaTwitter } from "react-icons/fa";
 import { Container } from 'react-bootstrap';
 import FooterBannner from '../assets/img/FooterBanner.png'
@@ -9,10 +8,24 @@ import SeventhSection from './SeventhSection';
 import { Button, InputAdornment, TextField } from '@mui/material';
 import { useService } from '../Store/context/serviceProvider';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import { API_URL } from '../config';
+import {
+	Col,
+	Form,
+	FormGroup,
+	Input,
+	Label,
+	Row
+} from 'reactstrap'
+import SelectBox from '../AdminDashboards/Elements/SelectBox';
+
 const Footer = ({ hide, reqrem, paddingForm }) => {
 
     const [message, setMessage] = useState('');
-
+    const [getAllService, setAllservices] = useState([])
+    const [service, setService] = useState('')
     const handleMessageChange = (event) => {
         setMessage(event.target.value);
     };
@@ -27,22 +40,57 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
     };
 
     const [formData, setFormData] = useState({
-        name: '',
-        mobileNumber: '',
-        services: '',
-        description: '',
-    });
+    name: '',
+    email: '',
+    refName: '', 
+    mobileNo: '',
+    message: '',
+    address: '',
+    service: ''
+  });
 
-    const handleInputChange = (event) => {
+  const handleKeyPress = (e) => {
+    const charCode = e.which || e.keyCode;
+    const charStr = String.fromCharCode(charCode);
+    if (!/^[0-9]+$/.test(charStr)) {
+        e.preventDefault();
+        }
+};
+
+    const handleInputChange = (event, maxLength) => {
         const { name, value } = event.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+        if (value.length <= maxLength) {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        const apiUrl = `${API_URL}/enquiry/register`;
+		axios.post(apiUrl, formData)
+			.then(response => {
+				if (response.status === 200) {
+                    setFormData([])
+					Swal.fire(
+						'Successfully!',
+						response.data.message,
+						'success'
+					)
+				} else {
+					Swal.fire({
+						title: 'failed to add try again',
+						icon: "error",
+					})
+				}
+			
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+
     };
 
     const ServicePage = (id) =>{
@@ -50,6 +98,27 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
         setItems(id);
         navigate('/ServicePage');
     }
+
+    useEffect(() => {
+		getAllServices();
+	}, []);
+
+    console.log(formData)
+
+	const getAllServices = async () => {
+		const response = await axios.get(API_URL + '/service/getall')
+		if (response.status === 200) {
+			const transformedData = response.data.data.map(item => ({label: item.serviceName, value: item.serviceName}));
+			setAllservices(transformedData);
+		}
+	}
+    const handleKeyPressName = (e) => {
+        const charCode = e.which || e.keyCode;
+        const charStr = String.fromCharCode(charCode);
+        if (!/^[a-zA-Z\s]+$/.test(charStr)) {
+            e.preventDefault();
+        }
+    };
 
     return (
         <footer style={{ background: '#3d5ce8' }} className={`text-center text-lg-start text-white ${paddingForm}`}>
@@ -106,8 +175,9 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
                                         id="name"
                                         name="name"
                                         placeholder="Enter Full Name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
+                                        value={formData?.name}
+                                        onChange={(e) => handleInputChange(e, 50)}
+                                        onKeyPress={handleKeyPressName}
                                         required
                                     />
                                 </div>
@@ -115,35 +185,60 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
                                     <label htmlFor="mobileNumber">Mobile Number:</label>
                                     <input
                                         type="text"
-                                        id="mobileNumber"
-                                        name="mobileNumber"
+                                        id="mobileNo"
+                                        name="mobileNo"
                                         placeholder="Enter Mobile Number"
-                                        value={formData.mobileNumber}
-                                        onChange={handleInputChange}
+                                        value={formData?.mobileNo}
+                                        onChange={(e) => handleInputChange(e, 10)}
                                         required
+                                        onKeyPress={handleKeyPress}
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="services">Services looking for:</label>
+                                    <label htmlFor="services">Services</label>
+                                    <select
+                                        name="service"
+                                        value={formData?.service}
+                                        onChange={(e) => handleInputChange(e, 50)}
+                                        required
+                                    >
+                                         <option value="" disabled>Please select a service</option>
+                                       {getAllService.map((service, index) => (
+                                            <option key={index} value={service.label}>{service.label}</option>
+                                        ))}
+                                        </select>
+
+                                </div>
+
+                                {/* <Col md={12}>
+					<FormGroup>
+						<Label>Service Type</Label>
+						<SelectBox options={getAllService}
+							setSelcted={setService}
+							selectOption={service}/>
+					</FormGroup>
+				</Col> */}
+                                <div className="form-group">
+                                    <label htmlFor="services">Referance By</label>
                                     <input
                                         type="text"
-                                        id="services"
-                                        name="services"
-                                        placeholder="Please enter the service you are looking for."
-                                        value={formData.services}
-                                        onChange={handleInputChange}
+                                        id="refName"
+                                        name="refName"
+                                        placeholder="Please Referance Name"
+                                        value={formData?.refName}
+                                        onChange={(e) => handleInputChange(e, 50)}
                                         required
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="description">Description (Please specify):</label>
                                     <textarea
-                                        id="description"
-                                        name="description"
+                                        id="message"
+                                        name="message"
                                         placeholder="Enter Description"
-                                        rows="5"
-                                        value={formData.description}
-                                        onChange={handleInputChange}
+                                        rows="3"
+                                        value={formData?.message}
+                                        onChange={(e) => handleInputChange(e, 50)}
                                         required
                                     ></textarea>
                                 </div>

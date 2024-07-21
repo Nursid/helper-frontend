@@ -7,7 +7,7 @@ import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import BlockIcon from '@mui/icons-material/Block'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 import { useNavigate } from 'react-router-dom/dist';
-import AddNewCustomerForm from './Froms/AddNewCustomerForm';
+import AddEnquiryForm from './Froms/AddEnquiryForm';
 import ModalComponent from '../../Elements/ModalComponent';
 import AdminDataTable from '../../Elements/AdminDataTable';
 import { Button } from '@mui/material';
@@ -21,18 +21,18 @@ import CustomerView from './View/CustomerView';
 const ManageEnquiry = () => {
     const navigate = useNavigate()
 
-    const [Block, setBlock] = useState(false)
+    // const [Block, setBlock] = useState(false)
     const { data, isLoading } = useSelector(state => state.GetAllEnquiryReducer)
     const dispatch = useDispatch()
     const [update, setUpdate]=useState([]);
-    const [viewModal, setViewModel] = useState(false)
+    // const [viewModal, setViewModel] = useState(false)
 
 
     useEffect(() => {
         dispatch(GetAllEnquiry())
     }, []);
     
-    const GetDeleteByID = (id) => {
+    const GetDeleteByID = (mobileNo) => {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -43,7 +43,7 @@ const ManageEnquiry = () => {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const response = await axios.get(API_URL + '/delete/customer/' + id)
+                const response = await axios.delete(API_URL + '/enquiry/delete/' + mobileNo)
                 if (response.status === 200) {
                     Swal.fire(
                         'Deleted!',
@@ -65,9 +65,7 @@ const ManageEnquiry = () => {
         const NewData = []
         if (data !== undefined) {
             for (let item of data) {
-                let newCustomer = item.NewCustomer;
-                let mergedItem = {...item, ...newCustomer};
-                NewData.push({ ...mergedItem, _id: data.indexOf(item), date: moment(item.createdAt).format("DD-MM-YYYY") })
+                NewData.push({ ...item, _id: data.indexOf(item), date: moment(item.createdAt).format("DD-MM-YYYY") })
             }
         } else {
             NewData.push({ id: 0 })
@@ -76,75 +74,75 @@ const ManageEnquiry = () => {
     }
 
 
-    const [blockStatus, setBlockStatus] = useState({});
+    // const [blockStatus, setBlockStatus] = useState({});
 
     // Set initial block status when data changes
-    useEffect(() => {
-        if (data.data && data.data.length > 0) {
-            const initialBlockStatus = {};
-            data.data.forEach(item => {
-                initialBlockStatus[item.user_id] = item.is_block;
-            });
-            setBlockStatus(initialBlockStatus);
-        }
-    }, [data]);
+    // useEffect(() => {
+    //     if (data.data && data.data.length > 0) {
+    //         const initialBlockStatus = {};
+    //         data.data.forEach(item => {
+    //             initialBlockStatus[item.user_id] = item.is_block;
+    //         });
+    //         setBlockStatus(initialBlockStatus);
+    //     }
+    // }, [data]);
 
 
-    const handleToggleBlock = (userId) => {
-        const newBlockStatus = !blockStatus[userId]; // Toggle the block status
-        // Make API call to update block status on the serve
+    // const handleToggleBlock = (userId) => {
+    //     const newBlockStatus = !blockStatus[userId]; // Toggle the block status
+    //     // Make API call to update block status on the serve
 
-        const actionText = newBlockStatus ? 'Un-Block' : 'Block';
+    //     const actionText = newBlockStatus ? 'Un-Block' : 'Block';
         
-        Swal.fire({
-            title: 'Are you sure?',
-            text: `You won't be able to ${actionText}!`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: `Yes, ${actionText} it!`
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                // Toggle the block status
-        // Make API call to update block status on the server
-        axios.post(`${API_URL}/customer/block/${userId}`, { is_block: newBlockStatus })
-            .then(response => {
-                if (response.status === 200) {
-                    Swal.fire(
-                        `${actionText} Successful`,
-                        `User has been ${actionText}ed.`,
-                        'success'
-                    );
-                    // Update local state if API call is successful
-                   setBlockStatus(prevBlockStatus => ({
-                        ...prevBlockStatus,
-                        [userId]: newBlockStatus,
-                    }));
-                } else {
-                    // Handle error if API call fails
-                    Swal.fire({
-                        title: 'failed to delete try again',
-                        icon: "error",
-                    })
-                    console.error('Failed to update block status');
-                }
-            })
-            .catch(error => {
-                console.error('Error updating block status:', error);
-            });
+    //     Swal.fire({
+    //         title: 'Are you sure?',
+    //         text: `You won't be able to ${actionText}!`,
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: `Yes, ${actionText} it!`
+    //     }).then(async (result) => {
+    //         if (result.isConfirmed) {
+    //             // Toggle the block status
+    //     // Make API call to update block status on the server
+    //     axios.post(`${API_URL}/customer/block/${userId}`, { is_block: newBlockStatus })
+    //         .then(response => {
+    //             if (response.status === 200) {
+    //                 Swal.fire(
+    //                     `${actionText} Successful`,
+    //                     `User has been ${actionText}ed.`,
+    //                     'success'
+    //                 );
+    //                 // Update local state if API call is successful
+    //                setBlockStatus(prevBlockStatus => ({
+    //                     ...prevBlockStatus,
+    //                     [userId]: newBlockStatus,
+    //                 }));
+    //             } else {
+    //                 // Handle error if API call fails
+    //                 Swal.fire({
+    //                     title: 'failed to delete try again',
+    //                     icon: "error",
+    //                 })
+    //                 console.error('Failed to update block status');
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error('Error updating block status:', error);
+    //         });
 
                
-            }
-        })
-    };
+    //         }
+    //     })
+    // };
 
 
     
-    const toggleView = (data) =>{
-        setUpdate(data);
-        setViewModel(!viewModal)
-    }
+    // const toggleView = (data) =>{
+    //     setUpdate(data);
+    //     setViewModel(!viewModal)
+    // }
 
 
 
@@ -153,16 +151,17 @@ const ManageEnquiry = () => {
 
     const column = [
         { field: "_id", headerName: "Sr No", flex: 1, minWidth: 50, editable: true },
-        { field: "date", headerName: "Date", minWidth: 120, editable: true },
-        { field: "name", headerName: "Name", minWidth: 120, editable: true },
-        { field: "mobileno", headerName: "Mobile No.", minWidth: 120, editable: true },
-        { field: "email", headerName: "Email", minWidth: 350, editable: true },
-        { field: "refrence", headerName: "Refrence", minWidth: 250, editable: true },
-        {
-            field: "referby", headerName: "Refer By", renderCell: (parmas) => (
-                <div className='p-1 px-2 bg-blue text-white rounded-2 cursor-p'>Direct Enquiry</div>
-            ), minWidth: 150, editable: true
-        },
+        { field: "date", headerName: "Date",flex: 1, minWidth: 120, editable: true },
+        { field: "service", headerName: "Date",flex: 1, minWidth: 120, editable: true },
+        { field: "name", headerName: "Name",flex: 1, minWidth: 120, editable: true },
+        { field: "mobileNo", headerName: "Mobile No.",flex: 1, minWidth: 120, editable: true },
+        { field: "email", headerName: "Email",flex: 1, minWidth: 350, editable: true },
+        { field: "refName", headerName: "Refrence",flex: 1, minWidth: 250, editable: true },
+        // {
+        //     field: "referby", headerName: "Refer By", renderCell: (parmas) => (
+        //         <div className='p-1 px-2 bg-blue text-white rounded-2 cursor-p'>Direct Enquiry</div>
+        //     ), minWidth: 150, editable: true
+        // },
         // {
         //     field: "status", headerName: "Status", renderCell: (parmas) => (
         //         <div className='p-1 px-2 bg-red text-white rounded-2 cursor-p'>On-Hold</div>
@@ -175,22 +174,25 @@ const ManageEnquiry = () => {
         {
             field: "action",
             headerName: "Action",
+            flex: 1,
             minWidth: 150,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
+
                     <Button variant='contained' color='primary'
                     style={{minWidth: "40px", maxWidth: "40px"}}
                     ><BorderColorIcon /></Button>
-                    <Button variant="contained" color="success"
+
+                    {/* <Button variant="contained" color="success"
                     style={{minWidth: "40px", maxWidth: "40px"}}
                     onClick={(e)=>{toggleView(params.row)}}
 
                     >
                         <VisibilityIcon />
-                    </Button>
+                    </Button> */}
                     <Button variant="contained" color="error"
                     onClick={(e)=>(
-                        GetDeleteByID(params.row.id)
+                        GetDeleteByID(params.row.mobileNo)
                     )}
                     style={{minWidth: "40px", maxWidth: "40px"}}
                     >
@@ -199,25 +201,25 @@ const ManageEnquiry = () => {
                 </div>
             ),
         },
-        {
-            field: "block",
-            headerName: "Block",
-            minWidth: 150,
-            renderCell: (params) => (
-                <div className="d-flex gap-2">
-                    {blockStatus[params.row.user_id] ?
-                       <Button variant="contained" color="error" onClick={() => handleToggleBlock(params.row.user_id)}
-                       style={{minWidth: "40px", maxWidth: "40px"}}
-                       ><BlockIcon /></Button>
-                        :
-                        <Button className="text-white bg-warning border-warning" onClick={() => handleToggleBlock(params.row.user_id)}
-                        style={{minWidth: "80px", maxWidth: "80px"}}
-                        >Un-Block</Button>
-                    }
+        // {
+        //     field: "block",
+        //     headerName: "Block",
+        //     minWidth: 150,
+        //     renderCell: (params) => (
+        //         <div className="d-flex gap-2">
+        //             {blockStatus[params.row.user_id] ?
+        //                <Button variant="contained" color="error" onClick={() => handleToggleBlock(params.row.user_id)}
+        //                style={{minWidth: "40px", maxWidth: "40px"}}
+        //                ><BlockIcon /></Button>
+        //                 :
+        //                 <Button className="text-white bg-warning border-warning" onClick={() => handleToggleBlock(params.row.user_id)}
+        //                 style={{minWidth: "80px", maxWidth: "80px"}}
+        //                 >Un-Block</Button>
+        //             }
                
-                </div>
-            ),
-        },
+        //         </div>
+        //     ),
+        // },
 
         // {
         //     field: "enquiryAction", headerName: "Enquiry Action", renderCell: (params) => (
@@ -251,16 +253,16 @@ const ManageEnquiry = () => {
     const ToggleAddCustomer = () => setAddCustomer(!addCustomer)
     return (
         <Fragment>
-            <ModalComponent modal={addCustomer} toggle={ToggleAddCustomer} data={<AddNewCustomerForm />} modalTitle={"Add New Customer"} size={"xl"} scrollable={true} />
+            <ModalComponent modal={addCustomer} toggle={ToggleAddCustomer} data={<AddEnquiryForm />} modalTitle={"Add New Enquiry"} size={"xl"} scrollable={true} />
 
-            <ModalComponent
+            {/* <ModalComponent
                 data={<CustomerView 
                 data={update} toggleModal={toggleView} />}
                 modalTitle={"Customer Profile"}
                 modal={viewModal}
                 toggle={toggleView}
                 size={"xl"} scrollable={true}
-            />
+            /> */}
 
             <div className='flex'>
             <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "15rem", minWidth: "15rem" }}> Enquiry List </h4>

@@ -180,6 +180,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
     useEffect(() => {
         const fetchData = async () => {
             const deptValue = parseInt(department?.value);
+            console.log(deptValue)
             if (deptValue === 2 || deptValue === 3) {
                 try {
                     const response = await axios.get(`${API_URL}/service/get-service/${deptValue}`);

@@ -1042,10 +1042,15 @@ onClick={()=>AssignAmount(params.row.order_no)}
                                 <Input
                                   id="mobile"
                                   name="mobile"
-                                  type="text"
+                                  type="number"
                                   value={mobileNo}
                                   placeholder="Mobile No"
-                                  onChange={(e) => setMobileNo(e.target.value)}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (/^\d{0,10}$/.test(value)) {  
+                                        setMobileNo(value);  
+                                    }
+                                }}
                                 />
                                 </FormGroup>
                                 </Col>

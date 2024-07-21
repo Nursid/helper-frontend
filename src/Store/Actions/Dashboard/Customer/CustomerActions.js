@@ -55,9 +55,8 @@ export const GetAllEnquiry = () => {
     return async (dispatch) => {
         dispatch({ type: constant.GET_ALL_Enquiry_LOADING })
         try {
-            const response = await axios.get(API_URL + '/all/customers')
+            const response = await axios.get(API_URL + '/enquiry/getall')
             if (response.status === 200) {
-
                 dispatch({ type: constant.GET_ALL_Enquiry_SUCCESS, payload: response.data })
             }
         } catch (error) {

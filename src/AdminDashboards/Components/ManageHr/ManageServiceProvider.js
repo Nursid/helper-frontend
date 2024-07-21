@@ -162,7 +162,6 @@ const ManageServiceProvider = () => {
 
     const column = [
         { field: "_id", headerName: "Sr No", minWidth: 50, editable: true },
-        { field: "username", headerName: "User Name", minWidth: 120, editable: true },
         { field: "name", headerName: "Name", minWidth: 120, editable: true },
         { field: "ref_name", headerName: "Ref Name", minWidth: 120, editable: true }, 
         { field: "provider_type", headerName: "Provider Type", minWidth: 120, editable: true },

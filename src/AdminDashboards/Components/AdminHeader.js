@@ -86,8 +86,7 @@ const AdminHeader = () => {
                             <DropdownToggle className='dropdownMenu-btn-header' >
                                 <div id="drop-menu" className="AdminDash_UserInfo d-flex align-items-center justify-content-end   gap-3">
                                     <img width={'100px'} 
-                                    
-                                    src={IMG_URL+currentUser?.image ?? ''}
+                                    src={ currentUser?.image ? IMG_URL+currentUser?.image : 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'}
                                     alt="" />
                                     <div className=''>
                                         <h6 className='d-none d-md-block'>{currentUser && currentUser.name ? currentUser.name : "yourName "}</h6>

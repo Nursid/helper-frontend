@@ -4,8 +4,7 @@ import { API_URL } from '../../../../config';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 
-const AddMonthlyMembers = () => {
-
+const AddEnquiryForm = () => {
 
 
     const [inputValue, setInputValue] = useState([]);
@@ -77,8 +76,6 @@ const AddMonthlyMembers = () => {
         setInputValue({...inputValue, [name]:value})
     }
    
-
-
     const handleKeyPress = (e) => {
         const charCode = e.which || e.keyCode;
         const charStr = String.fromCharCode(charCode);
@@ -96,7 +93,6 @@ const AddMonthlyMembers = () => {
                         <FormGroup>
                             <Label >Customer Name</Label>
                             <Input placeholder='Enter Name' onKeyPress={handleKeyPress} 
-                            
                             onChange={handleChange}
                             defaultValue={inputValue?.payment_mode}
                             />
@@ -111,7 +107,7 @@ const AddMonthlyMembers = () => {
                     </Col>
                     <Col md={6}>
                         <FormGroup>
-                            <Label >T.Service</Label>
+                            <Label >Mobile No</Label>
                             <Input placeholder='Enter Type of Service'  onKeyPress={handleKeyPress} />
                         </FormGroup>
                     </Col>
@@ -140,4 +136,4 @@ const AddMonthlyMembers = () => {
     )
 }
 
-export default AddMonthlyMembers
+export default AddEnquiryForm

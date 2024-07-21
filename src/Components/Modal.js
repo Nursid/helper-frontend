@@ -897,34 +897,34 @@ export const AddComplainModal = ({complainModalOpen, complainModalOpenfunction, 
 
 	const onsubmitDate = () => {
 		
-		if (!mobileNumber) {
-			setErrformData(prevState => ({ ...prevState, mobile: "Please Fill Mobile No." }));
-		} else {
-			setErrformData(prevState => ({ ...prevState, mobile: "" }));
-		}
+		// if (!mobileNumber) {
+		// 	setErrformData(prevState => ({ ...prevState, mobile: "Please Fill Mobile No." }));
+		// } else {
+		// 	setErrformData(prevState => ({ ...prevState, mobile: "" }));
+		// }
 		
-		if (!customerName) {
-			setErrformData(prevState => ({ ...prevState, name: "Please Fill Name" }));
-		} else {
-			setErrformData(prevState => ({ ...prevState, name: "" }));
-		}
+		// if (!customerName) {
+		// 	setErrformData(prevState => ({ ...prevState, name: "Please Fill Name" }));
+		// } else {
+		// 	setErrformData(prevState => ({ ...prevState, name: "" }));
+		// }
 
-		if (!time) {
-			setErrformData(prevState => ({ ...prevState, time: "Please Fill Time" }));
-		} else {
-			setErrformData(prevState => ({ ...prevState, time: "" }));
-		}
+		// if (!time) {
+		// 	setErrformData(prevState => ({ ...prevState, time: "Please Fill Time" }));
+		// } else {
+		// 	setErrformData(prevState => ({ ...prevState, time: "" }));
+		// }
 
-		if (!date) {
-			setErrformData(prevState => ({ ...prevState, date: "Please Fill Time" }));
-		} else {
-			setErrformData(prevState => ({ ...prevState, date: "" }));
-		}
+		// if (!date) {
+		// 	setErrformData(prevState => ({ ...prevState, date: "Please Fill Time" }));
+		// } else {
+		// 	setErrformData(prevState => ({ ...prevState, date: "" }));
+		// }
 
 	
-		if(!errformData.mobile || !errformData.name || !errformData.date || errformData.time){
-			return;
-		}
+		// if(!errformData.mobile || !errformData.name || !errformData.date || errformData.time){
+		// 	return;
+		// }
 
 		const formData = {
 			service_name: service.value,
@@ -939,6 +939,9 @@ export const AddComplainModal = ({complainModalOpen, complainModalOpenfunction, 
 			city: location,
 			problem_des: problemDescription
 		};
+
+		console.log(formData)
+
 		const apiUrl = `${API_URL}/order/add-complain`;
 		axios.post(apiUrl, formData).then(response => {
 			if (response.status === 200) {
@@ -973,7 +976,7 @@ export const AddComplainModal = ({complainModalOpen, complainModalOpenfunction, 
 					<Row>
 						<Col md={4}>
 							<FormGroup>
-								<Label>Choose Service *</Label>
+								<Label>Choose Service <span style={{color: "red"}}>*</span></Label>
 								<SelectBox options={getAllService}
 									setSelcted={setService}
 									selectOption={service}/>
@@ -982,7 +985,7 @@ export const AddComplainModal = ({complainModalOpen, complainModalOpenfunction, 
 
 						<Col md={4}>
 							<FormGroup>
-								<Label>Type *</Label>
+								<Label>Type <span style={{color: "red"}}>*</span></Label>
 								<SelectBox options={getAllType}
 									setSelcted={setType}
 									selectOption={type}/>
@@ -1017,10 +1020,20 @@ export const AddComplainModal = ({complainModalOpen, complainModalOpenfunction, 
 
 						<Col md={4}>
 							<FormGroup>
-								<Label>Customer Name *</Label>
-								<Input onChange={
-										(e) => setCustomerName(e.target.value)
+								<Label>Customer Name <span style={{color: "red"}}>*</span></Label>
+								<Input 
+								
+								onChange={(e) => {
+									const inputValue = e.target.value;
+							
+									// Regular expression to allow only alphabets (uppercase and lowercase)
+									const regex = /^[A-Za-z\s]*$/;
+							
+									// Check if the input value matches the regex pattern and does not exceed 50 characters
+									if (regex.test(inputValue) && inputValue.length <= 50) {
+										setCustomerName(inputValue);
 									}
+								}}
 									value={customerName}
 									placeholder='Name'/>
 									<span style={{color: 'red', marginLeft: '5px'}}>{errformData.name}</span>
@@ -1029,10 +1042,19 @@ export const AddComplainModal = ({complainModalOpen, complainModalOpenfunction, 
 
 						<Col md={4}>
 							<FormGroup>
-								<Label>Mobile Number *</Label>
-								<Input onChange={
-										(e) => setMobileNumber(e.target.value)
-									}
+								<Label>Mobile Number <span style={{color: "red"}}>*</span></Label>
+								<Input 
+									onChange={(e) => {
+										const inputValue = e.target.value;
+								
+										// Regular expression to allow only alphabets (uppercase and lowercase)
+										const regex = /^[0-9\s]*$/;
+								
+										// Check if the input value matches the regex pattern and does not exceed 50 characters
+										if (regex.test(inputValue) && inputValue.length <= 10) {
+											setMobileNumber(inputValue)
+										}
+									}}
 									value={mobileNumber}
 									placeholder='Mobile No'/>
 									<span style={{color: 'red', marginLeft: '5px'}}>{errformData.mobile}</span>
@@ -1111,9 +1133,7 @@ export const AddComplainModal = ({complainModalOpen, complainModalOpenfunction, 
 					</Col> */}
 
 
-						<Button className='bg-success'
-							onClick={onsubmitDate}>Proceed Now
-						</Button>
+						<Button className='bg-success' onClick={onsubmitDate}>Proceed Now</Button>
 					</Row>
 				</Fragment>
 

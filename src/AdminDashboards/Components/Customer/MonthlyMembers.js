@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import { useEffect } from 'react';
 import moment from 'moment';
-import AddMonthlyMembers from './Froms/AddMonthlyMembers';
+import AddMonthlyMembers from './Froms/AddEnquiryForm';
 import ModalComponent from '../../Elements/ModalComponent';
 import AdminDataTable from '../../Elements/AdminDataTable';
 

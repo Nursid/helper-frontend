@@ -74,7 +74,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
     }, []);
 
     const [selectedCity, setSelectedCity] = useState(null)
-    const [selectedServiceType, setSeletedServiceType] = useState(null)
+    // const [selectedServiceType, setSeletedServiceType] = useState(null)
    // selected services
    const [selectedServices, setSelected] = useState([]);
 
@@ -109,7 +109,6 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
         provider_type: data2.provider_type || "",
     });
    const [checkbox , setCheckbox]=useState(false);
-console.log(checkbox)
 
     const handleChange = (e, maxLength) => {
         const { name, value } = e.target;
@@ -125,7 +124,6 @@ console.log(checkbox)
     const ServiceProviderSubmit = (e) => {
 
         setIsLoading(true)
-
 
         e.preventDefault();
         let errors = {};
@@ -152,7 +150,6 @@ console.log(checkbox)
         const updatedFormData = {
             ...formData,
             multiServices: JSON.stringify(serviceValues),
-            provider_type: selectedServiceType.value,
             ...files
         };
 
@@ -202,10 +199,10 @@ console.log(checkbox)
 
 
 
-    const ServiceProviderType = [
-        { value: 'staff', label: 'Staff' },
-        { value: 'outsource', label: 'Out Source' },
-    ];
+    // const ServiceProviderType = [
+    //     { value: 'staff', label: 'Staff' },
+    //     { value: 'outsource', label: 'Out Source' },
+    // ];
 
     const handleFileChange = (e) => {
         const { name, files: newFiles } = e.target;
@@ -603,12 +600,12 @@ console.log(checkbox)
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        <Col md={12}>
+                                        {/* <Col md={12}>
                                             <FormGroup>
                                                 <Label for="serviceprovidertype">Service Provider Type</Label>
                                                 <SelectBox options={ServiceProviderType} setSelcted={setSeletedServiceType} />
                                             </FormGroup>
-                                        </Col>
+                                        </Col> */}
                                         <Col md={12}>
                                             <FormGroup>
                                                 <Label for="aboutserviceprover">About Service Provider</Label>

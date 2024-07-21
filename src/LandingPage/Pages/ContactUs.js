@@ -12,6 +12,8 @@ import SalonBanner from '../../assets/img/SalonBanner.jpg'
 import ElectricBanner from '../../assets/img/ElectricBanner.jpg'
 
 const ContactUs = () => {
+
+    
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const images = [
