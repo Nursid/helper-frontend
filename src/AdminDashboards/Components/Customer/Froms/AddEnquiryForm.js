@@ -8,16 +8,16 @@ import SelectBox from '../../../Elements/SelectBox';
 import { GetAllEnquiry } from '../../../../Store/Actions/Dashboard/Customer/CustomerActions';
 const AddEnquiryForm = ({toggle,data}) => {
     const [inputValue, setInputValue] = useState({
-        name: data.name || '',
-        email: data.email || '',
-        refName: data.refName || '',
-        mobileNo: data.mobileNo || '',
-        message: data.message || '',
-        address: data.address || '',
-        service: data.service || ''
+        name: data?.name || '',
+        email: data?.email || '',
+        refName: data?.refName || '',
+        mobileNo: data?.mobileNo || '',
+        message: data?.message || '',
+        address: data?.address || '',
+        service: data?.service || ''
     });
     const [getAllService, setAllservices] = useState([])
-    const [service, setServices] = useState( data.service || '')
+    const [service, setServices] = useState( data?.service || '')
     const [errors, setErrors]= useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
@@ -57,8 +57,8 @@ const AddEnquiryForm = ({toggle,data}) => {
             service: service.value
           }
         var apiUrl = "";
-		if(data.id!=null){
-			 apiUrl = `${API_URL}/enquiry/update/${data.id}`;
+		if(data?.id!=null){
+			 apiUrl = `${API_URL}/enquiry/update/${data?.id}`;
 		}else{
 			apiUrl = `${API_URL}/enquiry/register`;
 		}
@@ -238,7 +238,7 @@ const AddEnquiryForm = ({toggle,data}) => {
                         </FormGroup>
                     </Col>
                     <Button type="submit"  disabled={isLoading} className='bg-primary'>
-                        {data.id ? 'Update' : 'Submit'}
+                        {data?.id ? 'Update' : 'Submit'}
                     </Button>
                 </Row>
             </Form>

@@ -254,8 +254,13 @@ const ManageEnquiry = () => {
     }
     // Add service provider controller 
     const [addCustomer, setAddCustomer] = useState(false)
-    const ToggleAddCustomer = () => setAddCustomer(!addCustomer)
 
+    const ToggleAddCustomer = () => {
+        setAddCustomer(!addCustomer)
+        if (addCustomer) {
+            setUpdate(null); // Reset editData when closing masterAddService
+        }
+    };
     
     const editEnquiry = (data) =>{
         setUpdate(data)

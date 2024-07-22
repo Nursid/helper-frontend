@@ -23,7 +23,7 @@ const ManageService = () => {
 
     const [Block, setBlock] = useState(false)
     const dispatch = useDispatch()
-
+    const [editData, setEditData] = useState([])
     const [deleteSuccess, setDeleteSuccess] = useState(false); // New state variable
 
 
@@ -114,9 +114,8 @@ const ManageService = () => {
     //     return IconComponent ? <IconComponent /> : null;
     // };
 
-    const handleDeleteServices = (id) => {
 
-        const dbID = data.data[id]._id
+    const handleDeleteServices = (id) => {
         Swal.fire({
             title: `Are you sure? `,
             text: "You won't be able to revert this!",
@@ -127,7 +126,7 @@ const ManageService = () => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                dispatch(DeleteService(dbID))
+                dispatch(DeleteService(id))
                     .then(() => {
                         setDeleteSuccess(true);
                         Swal.fire("Deleted!", "Your Data Deleted", "success");
@@ -183,12 +182,13 @@ const ManageService = () => {
                 <div className="d-flex gap-2">
                     <Button variant='contained' color='primary'
                     style={{minWidth: "40px", maxWidth: "40px"}}
+                    onClick={() => handleEdit(params.row)}
                     ><BorderColorIcon /></Button>
-                    <Button variant="contained" color="success"
+                    {/* <Button variant="contained" color="success"
                     style={{minWidth: "40px", maxWidth: "40px"}}
                     >
                         <VisibilityIcon />
-                    </Button>
+                    </Button> */}
                     <Button onClick={() => handleDeleteServices(params.id)} variant="contained" color="error"
                         style={{minWidth: "40px", maxWidth: "40px"}}
                         >
@@ -229,8 +229,18 @@ const ManageService = () => {
     };
 
     const [masterAddService, setMasterAddServices] = useState(false)
-    const ToggleMasterAddService = () => setMasterAddServices(!masterAddService)
+    // const ToggleMasterAddService = () => setMasterAddServices(!masterAddService)
 
+    const ToggleMasterAddService = () => {
+        setMasterAddServices(!masterAddService);
+        if (masterAddService) {
+            setEditData(null); // Reset editData when closing masterAddService
+        }
+    };
+    const handleEdit = (data) =>{
+        setEditData(data)
+        ToggleMasterAddService()
+    }
 
     useEffect(() => {
         dispatch(GetAllServices())
@@ -243,7 +253,7 @@ const ManageService = () => {
     return (
         <Fragment>
 
-            <ModalComponent modal={masterAddService} toggle={ToggleMasterAddService} data={<MasterAddService ToggleMasterAddService={ToggleMasterAddService} />} modalTitle={"Add Service"} />
+            <ModalComponent modal={masterAddService} toggle={ToggleMasterAddService} data={<MasterAddService ToggleMasterAddService={ToggleMasterAddService} data={editData} />} modalTitle={`${editData?.id ? 'Edit Service' : 'Add Service' } `} />
             {/* <DashHeader /> */} 
             <div className='flex'>
             <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}> All Services List</h4>
