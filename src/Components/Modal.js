@@ -842,302 +842,310 @@ export const CustomerCancelOrderModal = ({
 };
 
 
-export const AddComplainModal = ({complainModalOpen, complainModalOpenfunction, mobileNo, GetAllOrders, role , currentUser}) => {
-
-	const [getAllService, setAllservices] = useState([])
+export const AddComplainModal = ({ complainModalOpen, complainModalOpenfunction, data, fetchData }) => {
 	const dispatch = useDispatch();
 
-	const [customerName, setCustomerName] = useState('');
-	const [type, setType] = useState('');
-	const [time, setTime] = useState('');
-	const [mobileNumber, setMobileNumber] = useState(mobileNo || '');
-	const [memberShipId, setMemberShipId] = useState('');
-	const [service, setService] = useState('')
-	const [date, setDate] = useState('');
-	const [address, setAddress] = useState('');
-	const [sericeAddress, setServiceAddress] = useState('');
-	const [landMark, setLandMark] = useState('');
-	const [location, setLocation] = useState('');
-	const [problemDescription, setProblemDescription] = useState('')
-	const [status, setStatus] = useState('Pending');
-
-
-	const [errformData, setErrformData] = useState({
-		mobile: '',
-		name: '',
+	const [formData, setFormData] = useState({
+		customerName: data?.customerData?.NewCustomer?.name ?? '',
+		type: '',
 		time: '',
-		data: ''
-		})
+		mobileNumber: data?.customerData?.NewCustomer?.mobileno ?? '',
+		memberShipId: '',
+		service: '',
+		date: '',
+		address: data?.customerData?.address ?? '',
+		serviceAddress: '',
+		landMark: data?.customerData?.land_mark ?? '',
+		location: data?.customerData?.location ?? '',
+		problemDescription: '',
+		status: 'Pending'
+	});
+	
+	console.log(formData)
 
+	const [getAllService, setAllservices] = useState([]);
+	const [errors, setErrors] = useState([]);
 
 	useEffect(() => {
-		getAllServices();
+		getAllServices()
 	}, []);
 
 	const getAllServices = async () => {
-		const response = await axios.get(API_URL + '/service/getall')
+		const response = await axios.get(API_URL + '/service/getall');
 		if (response.status === 200) {
-			const transformedData = response.data.data.map(item => ({label: item.serviceName, value: item.serviceName}));
-			setAllservices(transformedData);
+			if(!!data?.customerData?.NewCustomer?.id){
+				const transformedData = data?.recentOrder?.map(item => ({ label: item.service_name, value: item.order_no }));
+				setAllservices(transformedData);
+			}else{
+				const transformedData = response.data.data.map(item => ({ label: item.serviceName, value: item.serviceName }));
+				setAllservices(transformedData);
+			}
+			
 		}
-	}
+	};
 
 	const getAllType = [
-		{
-			label: "Booking",
-			value: "booking"
-		}, {
-			label: "Urgent",
-			value: "urgent"
-		}, {
-			label: "Regular",
-			value: "regular"
-		}
-	]
+		{ label: "Booking", value: "booking" },
+		{ label: "Urgent", value: "urgent" },
+		{ label: "Regular", value: "regular" }
+	];
 
-	const onsubmitDate = () => {
-		
-		// if (!mobileNumber) {
-		// 	setErrformData(prevState => ({ ...prevState, mobile: "Please Fill Mobile No." }));
-		// } else {
-		// 	setErrformData(prevState => ({ ...prevState, mobile: "" }));
-		// }
-		
-		// if (!customerName) {
-		// 	setErrformData(prevState => ({ ...prevState, name: "Please Fill Name" }));
-		// } else {
-		// 	setErrformData(prevState => ({ ...prevState, name: "" }));
-		// }
-
-		// if (!time) {
-		// 	setErrformData(prevState => ({ ...prevState, time: "Please Fill Time" }));
-		// } else {
-		// 	setErrformData(prevState => ({ ...prevState, time: "" }));
-		// }
-
-		// if (!date) {
-		// 	setErrformData(prevState => ({ ...prevState, date: "Please Fill Time" }));
-		// } else {
-		// 	setErrformData(prevState => ({ ...prevState, date: "" }));
-		// }
-
-	
-		// if(!errformData.mobile || !errformData.name || !errformData.date || errformData.time){
-		// 	return;
-		// }
-
-		const formData = {
-			service_name: service.value,
-			user_type: type.value,
-			booktime: time,
-			bookdate: date,
-			name: customerName,
-			mobile: mobileNumber,
-			address: address,
-			service_address: sericeAddress,
-			land_mark: landMark,
-			city: location,
-			problem_des: problemDescription
-		};
-
-		console.log(formData)
-
-		const apiUrl = `${API_URL}/order/add-complain`;
-		axios.post(apiUrl, formData).then(response => {
-			if (response.status === 200) {
-				setErrformData('');
-				complainModalOpenfunction();
-				Swal.fire('Successfully!', 'Your Order has been Added.', 'success')
-			} else {
-				Swal.fire({title: 'failed to add try again', icon: "error"})
-			}
-			if (role === "service" || role === "supervisor") {
-                const status = undefined;
-                dispatch(GetAllOrders(status, currentUser, role));
-              } else {
-                dispatch(GetAllOrders());
-              }
-		}).catch(error => {
-			console.error('Error:', error);
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData({
+			...formData,
+			[name]: value
 		});
 	};
 
+	const handleSelectChange = (selectedOption, name) => {
+		setFormData({
+			...formData,
+			[name]: selectedOption
+		});
+	};
+
+	const onsubmitDate = () => {
+
+
+		let errors = {};
+       
+		if (!formData?.mobileNumber) {
+			errors.mobileNumber = "Mobile number is required";
+		} else if (!/^\d{10}$/.test(formData?.mobileNumber)) {
+			errors.mobileNumber = "Mobile number should be 10 digits";
+		}
+
+		if(!formData?.date){
+			errors.date = "Date is required"
+		}
+
+		if(!formData?.service?.value){
+			errors.service_name = "service is required"
+		}
+		if(!formData?.time){
+			errors.time = "time is required"
+		}
+		if(!formData?.problemDescription){
+			errors.problemDescription = "Problem description is required"
+		}
+
+		if (errors && Object.keys(errors).length === 0) {
+			console.log("Form submitted successfully!",);
+			} else {
+			// Form is invalid, display validation errors
+			console.log("Validation Errors:", errors);
+			setErrors(errors);
+			return false;
+			}
+
+		const payload = {
+			service_name: formData.service.label,
+			user_type: formData.type.value,
+			order_no: (!!data?.customerData?.NewCustomer?.id) ? formData.service?.value : '',
+			booktime: formData.time,
+			bookdate: formData.date,
+			name: formData.customerName,
+			mobile: formData.mobileNumber,
+			address: formData.address,
+			service_address: formData.serviceAddress,
+			land_mark: formData.landMark,
+			city: formData.location,
+			problem_des: formData.problemDescription,
+			cust_id: data?.customerData?.NewCustomer?.id,
+			pending: 0
+		};
+		const apiUrl = `${API_URL}/complain/add`;
+		axios.post(apiUrl, payload)
+			.then(response => {
+				if (response.status === 200) {
+					complainModalOpenfunction();
+					Swal.fire('Successfully!', 'Your Complain has been Added.', 'success');
+				} else {
+					Swal.fire({ title: 'Failed to add, try again', icon: 'error' });
+				}
+				fetchData();
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+	};
+
 	return (
-		<Modal className="modal-dialog-centered modal-lg"
-			isOpen={complainModalOpen}
-			toggle={complainModalOpenfunction}>
-			<ModalHeader toggle={complainModalOpenfunction}>
-				Add New Complain
-			</ModalHeader>
+		<Modal className="modal-dialog-centered modal-lg" isOpen={complainModalOpen} toggle={complainModalOpenfunction}>
+			<ModalHeader toggle={complainModalOpenfunction}>Add New Complain</ModalHeader>
 			<ModalBody>
-
-
 				<Fragment>
 					<Row>
 						<Col md={4}>
 							<FormGroup>
-								<Label>Choose Service <span style={{color: "red"}}>*</span></Label>
-								<SelectBox options={getAllService}
-									setSelcted={setService}
-									selectOption={service}/>
+								<Label>Choose Service <span style={{ color: 'red' }}>*</span></Label>
+								<SelectBox
+									options={getAllService}
+									setSelcted={(selectedOption) => handleSelectChange(selectedOption, 'service')}
+									initialValue={formData?.service}
+								/>
+								{errors?.service_name && (
+                        <span className='validationError'>
+                            {errors?.service_name}
+                        </span>
+                    )}
 							</FormGroup>
 						</Col>
 
 						<Col md={4}>
 							<FormGroup>
-								<Label>Type <span style={{color: "red"}}>*</span></Label>
-								<SelectBox options={getAllType}
-									setSelcted={setType}
-									selectOption={type}/>
+								<Label>Type <span style={{ color: 'red' }}>*</span></Label>
+								<SelectBox
+									options={getAllType}
+									setSelcted={(selectedOption) => handleSelectChange(selectedOption, 'type')}
+									initialValue={formData?.type}
+								/>
 							</FormGroup>
 						</Col>
 
 						<Col md={4}>
 							<FormGroup>
-								<Label>Time</Label>
-								<Input onChange={
-										(e) => setTime(e.target.value)
-									}
-									value={time}
-									placeholder=''
-									type='time'/>
-									<span style={{color: 'red', marginLeft: '5px'}}>{errformData.time}</span>
+								<Label>Time <span style={{color: "red"}}>*</span> </Label>
+								<Input
+									name="time"
+									onChange={handleChange}
+									value={formData?.time}
+									type="time"
+								/>
+								{errors?.time && (
+                        <span className='validationError'>
+                            {errors?.time}
+                        </span>
+                    )}
 							</FormGroup>
 						</Col>
 
 						<Col md={4}>
 							<FormGroup>
-								<Label>Date</Label>
-								<Input onChange={
-										(e) => setDate(e.target.value)
-									}
-									value={date}
-									placeholder=''
-									type='date'/>
-									<span style={{color: 'red', marginLeft: '5px'}}>{errformData.date}</span>
+								<Label>Date <span style={{color: "red"}}>*</span></Label>
+								<Input
+									name="date"
+									onChange={handleChange}
+									value={formData?.date}
+									type="date"
+								/>
+								{errors?.date && (
+                        <span className='validationError'>
+                            {errors?.date}
+                        </span>
+                    )}
 							</FormGroup>
 						</Col>
 
 						<Col md={4}>
 							<FormGroup>
-								<Label>Customer Name <span style={{color: "red"}}>*</span></Label>
-								<Input 
-								
-								onChange={(e) => {
-									const inputValue = e.target.value;
-							
-									// Regular expression to allow only alphabets (uppercase and lowercase)
-									const regex = /^[A-Za-z\s]*$/;
-							
-									// Check if the input value matches the regex pattern and does not exceed 50 characters
-									if (regex.test(inputValue) && inputValue.length <= 50) {
-										setCustomerName(inputValue);
-									}
-								}}
-									value={customerName}
-									placeholder='Name'/>
-									<span style={{color: 'red', marginLeft: '5px'}}>{errformData.name}</span>
+								<Label>Customer Name <span style={{ color: 'red' }}>*</span></Label>
+								<Input
+									name="customerName"
+									onChange={handleChange}
+									value={formData?.customerName}
+									placeholder="Name"
+									readOnly={!!data?.customerData?.NewCustomer?.id}
+								/>
+								{errors?.customerName && (
+                        <span className='validationError'>
+                            {errors?.customerName}
+                        </span>
+                    )}
 							</FormGroup>
 						</Col>
 
 						<Col md={4}>
 							<FormGroup>
-								<Label>Mobile Number <span style={{color: "red"}}>*</span></Label>
-								<Input 
-									onChange={(e) => {
-										const inputValue = e.target.value;
-								
-										// Regular expression to allow only alphabets (uppercase and lowercase)
-										const regex = /^[0-9\s]*$/;
-								
-										// Check if the input value matches the regex pattern and does not exceed 50 characters
-										if (regex.test(inputValue) && inputValue.length <= 10) {
-											setMobileNumber(inputValue)
-										}
-									}}
-									value={mobileNumber}
-									placeholder='Mobile No'/>
-									<span style={{color: 'red', marginLeft: '5px'}}>{errformData.mobile}</span>
+								<Label>Mobile Number <span style={{ color: 'red' }}>*</span></Label>
+								<Input
+									name="mobileNumber"
+									onChange={handleChange}
+									value={formData?.mobileNumber}
+									placeholder="Mobile No"
+									readOnly={!!data?.customerData?.NewCustomer?.id}
+								/>
+								{errors?.mobileNumber && (
+                        <span className='validationError'>
+                            {errors?.mobileNumber}
+                        </span>
+                    )}
 							</FormGroup>
 						</Col>
 
 						<Col md={12}>
 							<FormGroup>
 								<Label>Address</Label>
-								<Input onChange={
-										(e) => setAddress(e.target.value)
-									}
-									value={address}
-									placeholder='Enter Your Address'/>
+								<Input
+									name="address"
+									onChange={handleChange}
+									value={formData?.address}
+									placeholder="Enter Your Address"
+									readOnly={!!data?.customerData?.NewCustomer?.id}
+								/>
 							</FormGroup>
 						</Col>
 
 						<Col md={12}>
 							<FormGroup>
-								<Label>Service Address
-								</Label>
-								<Input onChange={
-										(e) => setServiceAddress(e.target.value)
-									}
-									value={sericeAddress}
-									placeholder='Service Address'/>
+								<Label>Service Address</Label>
+								<Input
+									name="serviceAddress"
+									onChange={handleChange}
+									value={formData?.serviceAddress}
+									placeholder="Service Address"
+								/>
 							</FormGroup>
 						</Col>
 
 						<Col md={6}>
 							<FormGroup>
-								<Label>Land Mark
-								</Label>
-								<Input onChange={
-										(e) => setLandMark(e.target.value)
-									}
-									value={landMark}
-									placeholder='Land Mark'/>
+								<Label>Land Mark</Label>
+								<Input
+									name="landMark"
+									onChange={handleChange}
+									value={formData?.landMark}
+									placeholder="Land Mark"
+									readOnly={!!data?.customerData?.NewCustomer?.id}
+								/>
 							</FormGroup>
 						</Col>
 
 						<Col md={6}>
 							<FormGroup>
-								<Label>Location
-								</Label>
-								<Input onChange={
-										(e) => setLocation(e.target.value)
-									}
-									value={location}
-									placeholder='Location'/>
+								<Label>Location</Label>
+								<Input
+									name="location"
+									onChange={handleChange}
+									value={formData?.location}
+									placeholder="Location"
+									readOnly={!!data?.customerData?.NewCustomer?.id}
+								/>
 							</FormGroup>
 						</Col>
 
 						<Col md={12}>
 							<FormGroup>
-								<Label>Problem Description
-								</Label>
-								<Input onChange={
-										(e) => setProblemDescription(e.target.value)
-									}
+								<Label>Problem Description <span style={{color: "red"}}>*</span></Label>
+								<Input
+									name="problemDescription"
 									type="textarea"
-									value={problemDescription}
-									placeholder='Problem Description'/>
+									onChange={handleChange}
+									value={formData?.problemDescription}
+									placeholder="Problem Description"
+								/>
+								{errors?.problemDescription && (
+                        <span className='validationError'>
+                            {errors?.problemDescription}
+                        </span>
+                    )}
 							</FormGroup>
 						</Col>
 
-
-						{/* <Col md={6}>
-						<FormGroup>
-							<Label>MemberShip Id</Label>
-							<Input onChange={
-								(e) => setMemberShipId(e.target.value)
-							}
-							value={memberShipId} placeholder='Enter Your MemberShip'/>
-						</FormGroup>
-					</Col> */}
-
-
-						<Button className='bg-success' onClick={onsubmitDate}>Proceed Now</Button>
+						<Button className="bg-success" onClick={onsubmitDate}>Complain Now</Button>
 					</Row>
 				</Fragment>
-
-
 			</ModalBody>
 		</Modal>
 	);

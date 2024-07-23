@@ -665,15 +665,6 @@ onClick={()=>AssignAmount(params.row.order_no)}
         currentUser={currentUser.id}
       />
 
-      {/* <AddComplainModal
-          complainModalOpen={complainModalOpen}
-          complainModalOpenfunction={() => setComplainModalOpen(!complainModalOpen)}
-          mobileNo={mobileNo}
-          GetAllOrders={GetAllOrders}
-          role={role}
-          currentUser={currentUser.id}
-      /> */}
-
       <ModalComponent
         modalTitle={"Add Order"}
         modal={Show}

@@ -92,12 +92,9 @@ const ProfileHistory = () => {
                     active === '2' ? <EditProfile serviceData={serviceData} /> :
                         active === '3' ? <FreeService  registerId={serviceData.user_id}/> :
                             active === '4' ? <ManagePost registerId={serviceData.user_id} /> : null
-            }
-
-
-                       
-            <div className={isMobile ? 'd-none' : 'profilePadding mt-5'}>
-                <Footer reqrem={'d-none'} />
+            } 
+            <div className={isMobile ? 'd-none' : 'mt-5'}>
+                <Footer reqrem={'d-none'} hide={'d-none'}  />
             </div>
         </div >
     )

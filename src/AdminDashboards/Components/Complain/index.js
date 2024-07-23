@@ -14,12 +14,6 @@ const AdminComplain = () => {
                 <AnimatedBackground />
                 <div className='BackgroundTopContents'>
                     <AdminNavItems />
-                    {/* <div className="AttendenceTabs px-3">
-                        <span className={` ${attendanceActive === "in" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("in") }}>In Attendence</span>
-                        <span className={` ${attendanceActive === "out" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("out") }}>Out Attendence</span>
-                        <span className={` ${attendanceActive === "report" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("report") }}>Attendance Report</span>
-                        <span className={` ${attendanceActive === "modify" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("modify") }}>Attendance Modify</span>
-                    </div> */}
                     <TabContent activeTab={attendanceActive} >
                         <TabPane tabId="master">
                             <ManageComplain />

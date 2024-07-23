@@ -1,25 +1,45 @@
 import { GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import React, { Fragment, useEffect, useState } from 'react'
-
+import { AddComplainModal } from '../../../Components/Modal';
 import ModalComponent from '../../Elements/ModalComponent';
 import AdminDataTable from '../../Elements/AdminDataTable';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import Swal from 'sweetalert2';
 import moment from 'moment/moment';
 import { API_URL, IMG_URL } from '../../../config';
-import { Button } from '@mui/material';
+// import { Button } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import BlockIcon from '@mui/icons-material/Block';
 import axios from 'axios';
-
+import {
+    Button,
+	Modal,
+	ModalHeader,
+	ModalBody,
+	ModalFooter,
+	Alert,
+	Row,
+	Col,
+	Input,
+	CardBody,
+	CardHeader,
+	Card,
+	Label,
+	FormGroup
+} from "reactstrap";
 export default function ManageComplain(){
 
     const [Block, setBlock] = useState(false)
     const [editData, setEditData] = useState([])
     const [deleteSuccess, setDeleteSuccess] = useState(false); // New state variable
     const [data, setData] = useState([])
-
+    const [complainModalOpen, setComplainModalOpen ] = useState(false)
+    const [customerTypeOpen, customerTypeOpenFunction] =useState(false)
+    const [memberType, setMemberType] = useState('');
+    const [mobileNo, setMobileNo] = useState('')
+    const [errors, setErrors] = useState([])
+    const [lastOrder, setLastOrder] = useState([])
     async function fetchData() {
     try {
         const response = await axios.get(`${API_URL}/complain/getall`);
@@ -36,7 +56,9 @@ export default function ManageComplain(){
         const NewData = []
         if (data !== undefined) {
             for (let item of data) {
-                NewData.push({ ...item, _id: data.indexOf(item), date: moment(item.createdAt).format("D / M / Y") })
+                const NewCustomer = item.NewCustomer
+                let mergedItem = {...item, ...NewCustomer};
+                NewData.push({ ...mergedItem, _id: data.indexOf(item), date: moment(item.createdAt).format("D / M / Y") })
             }
         } else {
             NewData.push({ id: 0 })
@@ -166,10 +188,10 @@ export default function ManageComplain(){
             minWidth: 150,
             editable: true,
         },
-        // { field: "cust_id", headerName: "Customer ID", minWidth: 120, editable: true,  },
-        // { field: "order_no", headerName: "Order Number", minWidth: 120, editable: true },
-        // { field: "name", headerName: "Customer Name",minWidth: 150, editable: true },
-        // { field: "mobile", headerName: "Mobile",minWidth: 150, editable: true },
+        { field: "cust_id", headerName: "Customer ID", minWidth: 120, editable: true,  },
+        { field: "order_no", headerName: "Complain Number", minWidth: 120, editable: true },
+        { field: "name", headerName: "Customer Name",minWidth: 150, editable: true },
+        { field: "mobileno", headerName: "Mobile",minWidth: 150, editable: true },
         { field: "user_type",flex: 1, headerName: "Type", minWidth: 80, editable: true },
         { field: "service_name",flex: 1, headerName: "Service Type",minWidth: 150, editable: true },
         { field: "booktime",flex: 1, headerName: "Booking Time", minWidth: 120, editable: true },
@@ -275,6 +297,49 @@ export default function ManageComplain(){
         // { field: "cancle_reson", headerName: "Cancel Reason", minWidth: 150, editable: true },
       ];
 
+      const handleComplain = () =>{
+        let errors = {};
+        if(memberType){
+            if (!mobileNo) {
+                errors.mobileNo = "Mobile number is required";
+            } else if (!/^\d{10}$/.test(mobileNo)) {
+                errors.mobileNo = "Mobile number should be 10 digits";
+            }
+
+            if (errors && Object.keys(errors).length === 0) {
+                console.log("Form submitted successfully!",);
+              } else {
+                // Form is invalid, display validation errors
+                console.log("Validation Errors:", errors);
+                setErrors(errors);
+                return false;
+              }
+
+          
+		axios.get(`${API_URL}/get/customerByMobile/${mobileNo}`)
+			.then(response => {
+				if (response.status === 200) {
+					setLastOrder(response.data.data)
+                    customerTypeOpenFunction()
+                    setComplainModalOpen(true)
+				} else {
+					Swal.fire({
+						title: 'Not User Found Please Enter valid User',
+						icon: "error",
+					})
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+        }
+        else{
+            customerTypeOpenFunction()
+            setComplainModalOpen(true)
+        }
+        
+      }
+
     const CustomToolbar = () => {
         return (
             <GridToolbarContainer>
@@ -312,13 +377,93 @@ export default function ManageComplain(){
     return (
         <Fragment>
 
+           {complainModalOpen &&  <AddComplainModal
+                    complainModalOpen={complainModalOpen}
+                    complainModalOpenfunction={() => setComplainModalOpen(!complainModalOpen)}
+                    data={lastOrder}
+                    fetchData={fetchData}
+                    // role={role}
+                    // currentUser={currentUser.id}
+                />
+            }
+          {customerTypeOpen &&   <Modal className="modal-dialog-centered"
+			isOpen={customerTypeOpen}
+			toggle={customerTypeOpenFunction}>
+			<ModalHeader toggle={customerTypeOpenFunction}>
+				Customer Type
+			</ModalHeader>
+			<ModalBody>
+				<Row>
+				  <Col md={12}>
+                            <FormGroup>
+                              <Label for="complaint">New Complaint</Label>
+                              <Input
+                                id="exampleSelect"
+                                name="select"
+                                type="select"
+                                onChange={(e) => {
+                                  setMemberType(e.target.value);
+                                  setMobileNo('');
+                                }}
+                              >
+                                <option disabled>Select Member Type</option>
+                                <option value={false}>Not Member</option>
+                                <option value={true}>Member</option>
+                              </Input>
+                            </FormGroup>
+                            </Col>
+                    
+                            {memberType && JSON.parse(memberType) && (
+                              <Col md={12}>
+                              <FormGroup>
+                                <Label for="mobile">Mobile No <span style={{color: "red"}}>*</span></Label>
+                                <Input
+                                  id="mobile"
+                                  name="mobile"
+                                  type="number"
+                                  value={mobileNo}
+                                  placeholder="Mobile No"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (/^\d{0,10}$/.test(value)) {  
+                                        setMobileNo(value);  
+                                    }
+                                }}
+                                />
+                                {errors?.name && (
+                        <span className='validationError'>
+                            {errors?.name}
+                        </span>
+                    )}
+                                </FormGroup>
+                                </Col>
+                            )}
+                        
+                            <Button variant='contained' color='primary' onClick={handleComplain}>Complain Now</Button>
+					{/* <div className="d-flex justify-content-end ">
+						<Button color="success"
+							
+							style={
+								{marginRight: '10px'}
+						}>
+							Save
+						</Button>
+						<Button color="danger"
+							onClick={customerTypeOpenFunction}>
+							Close
+						</Button>
+					</div> */}
+				</Row>
+			</ModalBody>
+		</Modal>
+        }
             {/* <ModalComponent modal={masterAddService} toggle={ToggleMasterAddService} data={<MasterAddService ToggleMasterAddService={ToggleMasterAddService} data={editData} />} modalTitle={`${editData?.id ? 'Edit Service' : 'Add Service' } `} /> */}
             {/* <DashHeader /> */} 
             <div className='flex'>
             <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}> All Complain List</h4>
 
             <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
-                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "18rem", maxWidth: "18rem" }}>
+                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "18rem", maxWidth: "18rem" }} onClick={() => customerTypeOpenFunction(!customerTypeOpen)}>
                 Add New Complain
                 </div>
             </div>
