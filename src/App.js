@@ -22,7 +22,7 @@ import ProfileHistory from './LandingPage/Pages/ProfileHistory';
 import AdminProfile from './AdminDashboards/Components/profile/AdminProfile';
 import Availability from './AdminDashboards/Components/Availability/Availability';
 import { ServiceProvider } from './Store/context/serviceProvider';
-
+import AdminComplain from './AdminDashboards/Components/Complain';
 function App() {
   return (
     <ServiceProvider>
@@ -52,6 +52,7 @@ function App() {
             <Route path='roles-&-permission' element={<AdminRolesAndPermission />} />
             <Route path='profile' element={<AdminProfile />} />
             <Route path='availability' element={<Availability />} />
+            <Route path='complain' element={<AdminComplain />} />
           </Route>
         </Routes>
       </BrowserRouter>

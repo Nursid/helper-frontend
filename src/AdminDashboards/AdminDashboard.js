@@ -665,14 +665,14 @@ onClick={()=>AssignAmount(params.row.order_no)}
         currentUser={currentUser.id}
       />
 
-      <AddComplainModal
+      {/* <AddComplainModal
           complainModalOpen={complainModalOpen}
           complainModalOpenfunction={() => setComplainModalOpen(!complainModalOpen)}
           mobileNo={mobileNo}
           GetAllOrders={GetAllOrders}
           role={role}
           currentUser={currentUser.id}
-      />
+      /> */}
 
       <ModalComponent
         modalTitle={"Add Order"}
@@ -790,14 +790,14 @@ onClick={()=>AssignAmount(params.row.order_no)}
             color={"black"}
           />
             
-          <ColoredBtn
+          {/* <ColoredBtn
             onClick={() =>{
               AddNewComplain()
             }}
             btnName={"New Complain"}
             bg={"#f08080"}
             color={"black"}
-          />
+          /> */}
 
             {(role !== "service" && role !== "supervisor") ?
             <> 
@@ -821,57 +821,6 @@ onClick={()=>AssignAmount(params.row.order_no)}
             </> : null }
           </div>
 
-          {/* {userRole && userRole.Dashboard ? (
-            <Row>
-              <Col md={12}>
-                <div className="DashboardAnalytics">
-                  <StackBox
-                    title="Total Income"
-                    amount={20000}
-                    rupee={true}
-                    style={{
-                      background:
-                        "linear-gradient(to right bottom ,var(--yellow) , var(--yellow))",
-                      gridArea: "one",
-                    }}
-                  />
-                  <StackBox
-                    title={"Total Expenses"}
-                    amount={20000000}
-                    rupee={true}
-                    style={{
-                      background:
-                        "linear-gradient(to right bottom ,yellow , goldenrod)",
-                      gridArea: "two",
-                    }}
-                  />
-                  <StackBox
-                    title={"Total Services"}
-                    amount={2482}
-                    rupee={false}
-                    style={{
-                      background:
-                        "linear-gradient(to right bottom ,lightgreen , skyblue",
-                      gridArea: "three",
-                    }}
-                  />
-                  <StackBox
-                    title={"Total Employee"}
-                    amount={202}
-                    rupee={false}
-                    style={{
-                      background:
-                        "linear-gradient(to right bottom ,cornflowerblue , aqua",
-                      gridArea: "four",
-                    }}
-                  />
-
-                </div>
-              </Col>
-            </Row>
-          ) : null} */}
-          
-          {/* Data Table  */}
           <div className="p-4 ">
           {!complain && !inventry && summary && <Card className="p-4">
           <div className="">
@@ -1010,7 +959,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
                           })}    
                          />
                         }
-          {!inventry && !summary && complain && 
+          {/* {!inventry && !summary && complain && 
                   <div className='d-grid place-items-center'>
                     <Card className="p-4 border-0">
                       <div className="mx-auto">
@@ -1062,7 +1011,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
                       </div>
                     </Card>
                   </div>
-                }
+                } */}
             {inventry && !allotedItems && <AdminDataTable rows={inventories} CustomToolbar={InventryToolbar} columns={Inventrycolumns} />}  
 
             {!complain && !summary && inventry && allotedItems && <AdminDataTable rows={allotedItem} CustomToolbar={InventryToolbar} columns={AllotedItemsCollums} />}   

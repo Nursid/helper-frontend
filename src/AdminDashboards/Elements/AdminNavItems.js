@@ -9,6 +9,7 @@ import { MdOutlinePeople, MdPeopleOutline } from 'react-icons/md';
 import { CgWebsite } from 'react-icons/cg';
 import { FaPeopleCarry } from 'react-icons/fa';
 import { FaRegClock } from "react-icons/fa";
+import { MdReportProblem } from "react-icons/md";
 
 const AdminNavItems = () => {
     const { userRole, setUserRole, UserRoleCalled } = useUserRoleContext();
@@ -22,13 +23,14 @@ const AdminNavItems = () => {
         { field: "ManageService", title: "Manage Master", icon: <CiGrid41 size={30} /> },
         { field: "ManagePage", title: "Manage Website", icon: <CgWebsite size={30} /> },
         { field: "Customer", title: "Customer", icon: <FaPeopleCarry size={30} /> },
+      
         { field: "RolesAndPermission", title: "Roles & Permission", icon: <MdOutlinePeople size={30}    
         />
     },
+    { field: "Complain", title: "Complain", icon: <MdReportProblem size={30} /> },
     { field: "Availability", title: "Availability", icon: <FaRegClock size={30}    
         />
-    }
-        ,
+    },
     ]
 
     return (
@@ -37,7 +39,7 @@ const AdminNavItems = () => {
             <div className="AllMenuCards">
                 {NavItems.filter(x => userRole ? userRole[x.field] : false === true).map((item, index) => (
                     <div onClick={() => navigate(item.title !== "" ? `/admin/${item.title.toLocaleLowerCase().split(" ").join("-")}` : "/admin")} className={`${""} d-flex cursor-p bg-white  text-blue hoverShadow hoverPrimary flex-column align-items-center justify-content-center gap-1 border rounded-3`}>
-                       
+                       {console.log(NavItems)}
                         {item.icon}
                         <h6 className='text-center'>{item.title}</h6>
                     </div>
