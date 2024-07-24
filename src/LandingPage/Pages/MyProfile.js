@@ -11,11 +11,13 @@ import { Button, Col, Form, FormGroup, Input, Label, Row, TextArea,CardBody,Card
 import axios from 'axios';
 import { AddNewComplain } from './AddNewComplain'
 import { IMG_URL } from '../../config';
+import { AddComplainModal } from '../../Components/Modal';
 const MyProfile = ({ serviceData }) => {
 
     const dispatch = useDispatch()
     const { data, isLoading } = useSelector(state => state.GetAllOrderByIdReducer)
-   
+    const [lastOrder, setData] = useState([])
+    const [isComplain, setComplain] = useState(false)
 
     const [complainModalOpen, setComplainModalOpen] = useState(false)
 
@@ -28,6 +30,29 @@ const MyProfile = ({ serviceData }) => {
         { id: 5, name: "Cancel" }
     ];
 
+    async function fetchData() {
+        axios.get(`${API_URL}/get/customerByMobile/${serviceData?.NewCustomer?.mobileno}`)
+        .then(response => {
+            if (response.status === 200) {
+                setData(response.data.data)
+                setComplain(true)
+                setComplainModalOpen(!complainModalOpen);
+            } else {
+                Swal.fire({
+                    title: 'Not User Found Please Enter valid User',
+                    icon: "error",
+                })
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        }
+
+        const Togglecomplain = () =>{
+            fetchData()
+          }
+
 
     useEffect(() => {
       dispatch(GetAllOrdersByID(serviceData.user_id))
@@ -38,7 +63,6 @@ const MyProfile = ({ serviceData }) => {
 
 
     const CancelOrderForm = (registered_id,order_no) =>{
-        // onClick={()=>{CancelOrderForm(params.row.registered_id,params.row.order_no)}}
         setRegisterId(registered_id);
         setOrderNo(order_no)
         setCustomerCancelModalOpen(!customerCancelModalOpen)
@@ -113,6 +137,9 @@ const MyProfile = ({ serviceData }) => {
         }
         return NewData
       }
+
+
+      
  
 
 
@@ -133,13 +160,13 @@ const MyProfile = ({ serviceData }) => {
                 GetAllOrders={GetAllOrdersByID}
                 />
 
-            <AddNewComplain
+         {isComplain && <AddComplainModal
                 complainModalOpen={complainModalOpen}
-                complainModalOpenfunction={() => setComplainModalOpen(!complainModalOpen)}
-                mobileNo={serviceData?.NewCustomer?.mobileno}
-                UserID={registered_id}
+                complainModalOpenfunction={()=>setComplainModalOpen(!complainModalOpen)}
+                data={lastOrder}
+                fetchData={fetchData}
             />
-
+         }
             <Row>
                 <Col xs={12} lg={4} xl={4} >
                     <Card className='mt-2'>
@@ -160,7 +187,7 @@ const MyProfile = ({ serviceData }) => {
                             </div>
                             <Button onClick={() => setserveRequestModalOpen(!serveRequestModalOpen)} sx={{ background: '#3d5ce8' }} variant='contained'> Request New Service </Button>
 
-                            <Button onClick={() => setComplainModalOpen(!complainModalOpen)} style={{ backgroundColor: '#e74c3c' }} variant='contained' className='ms-5'> Add New Complain </Button>
+                            <Button onClick={Togglecomplain} style={{ backgroundColor: '#e74c3c' }} variant='contained' className='ms-5'> Add New Complain </Button>
 
                             <ServeiceRequestModal
                                 serveRequestModalOpen={serveRequestModalOpen}

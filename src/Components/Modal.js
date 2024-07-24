@@ -1232,6 +1232,88 @@ export const AssignSupervisorModal = ({supervisorModalOpen, supervisorModalOpenF
 	);
 };
 
+export const AssignSupervisorForComplainModal = ({supervisorModalOpen, supervisorModalOpenFunction, OrderNo, fetchData}) => {
+
+	const [GetAllSupervisor, setAllSupervisor] = useState([])
+	const [supervisor, setSupervisor] = useState('')
+
+	const dispatch = useDispatch();
+	useEffect(() => {
+		getAllServices();
+	}, []);
+
+	const getAllServices = async () => {
+		const response = await axios.get(API_URL + '/employee/getall/supervisor')
+		if (response.status === 200) {
+			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
+			setAllSupervisor(transformedData);
+		}
+	}
+
+	const handleSubmit = () => {
+
+		const formData = {
+			suprvisor_id: supervisor.value
+		}
+		const apiUrl = `${API_URL}/complain/assing/${OrderNo}`;
+		// Make a POST request using Axios
+		axios.put(apiUrl, formData).then(response => {
+			if (response.status === 200) {
+				fetchData()
+				supervisorModalOpenFunction();
+				Swal.fire('Successfully!', response.data.message, 'success')
+			} else {
+				Swal.fire({title: 'failed to add try again', icon: "error"})
+			} 
+
+		}).catch(error => {
+			console.error('Error:', error);
+		});
+
+
+	};
+
+	return (
+		<Modal className="modal-dialog-centered"
+			isOpen={supervisorModalOpen}
+			toggle={supervisorModalOpenFunction}>
+			<ModalHeader toggle={supervisorModalOpenFunction}>
+				Choose The Supervisor
+			</ModalHeader>
+			<ModalBody>
+				<Row>
+					<Col xs={12}>
+						<FormGroup>
+							<label className="form-label" htmlFor="serviceRemark">
+								Choose Supervisor
+							</label>
+
+
+							<SelectBox options={GetAllSupervisor}
+								setSelcted={setSupervisor}
+								selectOption={supervisor}/>
+						</FormGroup>
+					</Col>
+					<div className="d-flex justify-content-end ">
+						<Button color="success"
+							onClick={handleSubmit}
+							style={
+								{marginRight: '10px'}
+						}>
+							Save
+						</Button>
+						<Button color="danger"
+							onClick={supervisorModalOpenFunction}>
+							Close
+						</Button>
+					</div>
+
+				</Row>
+			</ModalBody>
+		</Modal>
+	);
+};
+
 export const AssignServiceProviderModal = ({serviceProviderModalOpen, serviceProviderModalOpenFunction, OrderNo, GetAllOrders, role, currentUser}) => {
 
 	const [GetAllServiceProvider, setAllServiceProvider] = useState([]);
@@ -1270,6 +1352,80 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
               } else {
                 dispatch(GetAllOrders());
               }
+		}).catch(error => {
+			console.error('Error:', error);
+		});
+	};
+
+	return (
+		<Modal className="modal-dialog-centered"
+			isOpen={serviceProviderModalOpen}
+			toggle={serviceProviderModalOpenFunction}>
+			<ModalHeader toggle={serviceProviderModalOpenFunction}>
+				Choose The Service Provider
+			</ModalHeader>
+			<ModalBody>
+				<Row>
+					<Col xs={12}>
+						<FormGroup>
+							<label className="form-label" htmlFor="serviceRemark">
+								Choose Service Provider
+							</label>
+							<SelectBox options={GetAllServiceProvider}
+								setSelcted={setServiceProvider}
+								selectOption={serviceProvider}/>
+						</FormGroup>
+					</Col>
+					<div className="d-flex justify-content-end ">
+						<Button color="success"
+							onClick={handleSubmit}
+							style={
+								{marginRight: '10px'}
+						}>
+							Save
+						</Button>
+						<Button color="danger"
+							onClick={serviceProviderModalOpenFunction}>
+							Close
+						</Button>
+					</div>
+				</Row>
+			</ModalBody>
+		</Modal>
+	);
+};
+
+export const AssignServiceProviderForComplainModal = ({serviceProviderModalOpen, serviceProviderModalOpenFunction, OrderNo, fetchData}) => {
+
+	const [GetAllServiceProvider, setAllServiceProvider] = useState([]);
+	const [serviceProvider, setServiceProvider] = useState('');
+
+	useEffect(() => {
+		getAllServices();
+	}, []);
+
+	const getAllServices = async () => {
+		const response = await axios.get(API_URL + '/service-provider/getall')
+		if (response.status === 200) {
+			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
+			setAllServiceProvider(transformedData);
+		}
+	}
+
+	const handleSubmit = () => {
+		const formData = {
+			servicep_id: serviceProvider.value
+		}
+		const apiUrl = `${API_URL}/complain/assing/${OrderNo}`;
+		// Make a POST request using Axios
+		axios.put(apiUrl, formData).then(response => {
+			if (response.status === 200) {
+				fetchData()
+				serviceProviderModalOpenFunction();
+				Swal.fire('Successfully!', response.data.message, 'success')
+			} else {
+				Swal.fire({title: 'failed to add try again', icon: "error"})
+			} 
 		}).catch(error => {
 			console.error('Error:', error);
 		});

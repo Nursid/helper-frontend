@@ -280,7 +280,6 @@ const AdminDashboard = () => {
     setSummary(false);
     setComplain(false);
     if(role){
-      // console.log("currentUser.designation.name--------",currentUser.name)
       dispatch(GetAllOrders(status,currentUser.id, role))
     }else{
       dispatch(GetAllOrders(status))

@@ -12,6 +12,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import BlockIcon from '@mui/icons-material/Block';
 import axios from 'axios';
+import { AssignServiceProviderForComplainModal } from '../../../Components/Modal';
+import { AssignSupervisorForComplainModal } from '../../../Components/Modal';
 import {
     Button,
 	Modal,
@@ -35,11 +37,17 @@ export default function ManageComplain(){
     const [deleteSuccess, setDeleteSuccess] = useState(false); // New state variable
     const [data, setData] = useState([])
     const [complainModalOpen, setComplainModalOpen ] = useState(false)
-    const [customerTypeOpen, customerTypeOpenFunction] =useState(false)
+    const [customerTypeOpen, setCustomerTypeOpenFunction] =useState(false)
     const [memberType, setMemberType] = useState('');
     const [mobileNo, setMobileNo] = useState('')
     const [errors, setErrors] = useState([])
-    const [lastOrder, setLastOrder] = useState([])
+    const [lastOrder, setLastOrder] = useState([]);
+    const [OrderNo, SetOrderNo]=useState('')
+    const [serviceProviderModalOpen, setserviceProviderModalOpen] = useState(false)
+    const [supervisorModalOpen, setsupervisorModalOpen] = useState(false)
+
+    const customerTypeOpenFunction = () =>setCustomerTypeOpenFunction(!customerTypeOpen)
+
     async function fetchData() {
     try {
         const response = await axios.get(`${API_URL}/complain/getall`);
@@ -52,13 +60,31 @@ export default function ManageComplain(){
     }
     }
 
+    const status= [
+        {0: "Pending"},
+        {1: "Hold"},
+        {2: "Due"},
+        {3: "Completed"},
+        {4: "Running"},
+        {5: "Cancel"}
+        ]
+      
+        function getStatusByKey(key) {
+        for (let i = 0; i < status.length; i++) {
+          if (status[i].hasOwnProperty(key)) {
+            return status[i][key];
+          }
+          }
+          return "Status not found";
+        }
+
     const DataWithID = (data) => {
         const NewData = []
         if (data !== undefined) {
             for (let item of data) {
                 const NewCustomer = item.NewCustomer
                 let mergedItem = {...item, ...NewCustomer};
-                NewData.push({ ...mergedItem, _id: data.indexOf(item), date: moment(item.createdAt).format("D / M / Y") })
+                NewData.push({ ...mergedItem, _id: data.indexOf(item), date: moment(item.createdAt).format("D / M / Y"), pending:getStatusByKey(item.pending),  id: item.id })
             }
         } else {
             NewData.push({ id: 0 })
@@ -66,173 +92,83 @@ export default function ManageComplain(){
         return NewData
     }
 
-    // const [blockStatus, setBlockStatus] = useState({});
 
+    const AssignServiceProvider = (order_no) => { 
+        SetOrderNo(order_no)
+        setserviceProviderModalOpen(!serviceProviderModalOpen)
+      }
 
-    // useEffect(() => {
-    //     if (data.data && data.data.length > 0) {
-    //         const initialBlockStatus = {};
-    //         data.data.forEach(item => {
-    //             initialBlockStatus[item.id] = item.block;
-    //         });
-    //         setBlockStatus(initialBlockStatus);
-    //     }
-    // }, [data]);
-
-
-
-
-    // const handleToggleBlock = (userId) => {
-    //     const newBlockStatus = !blockStatus[userId]; // Toggle the block status
-    //     // Make API call to update block status on the server
-
-    //     const actionText = newBlockStatus ? 'Un-Block' : 'Block';
-    //     Swal.fire({
-    //         title: 'Are you sure?',
-    //         text: `You won't be able to ${actionText}!`,
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonColor: '#3085d6',
-    //         cancelButtonColor: '#d33',
-    //         confirmButtonText: `Yes, ${actionText} it!`
-    //     }).then(async (result) => {
-    //         if (result.isConfirmed) {
-    //             // Toggle the block status
-    //     // Make API call to update block status on the server
-    //     axios.put(`${API_URL}/service/block/${userId}`, { block: newBlockStatus })
-    //         .then(response => {
-    //             if (response.status === 200) {
-    //                 Swal.fire(
-    //                     `${actionText} Successful`,
-    //                     `User has been ${actionText}ed.`,
-    //                     'success'
-    //                 );
-    //                 // Update local state if API call is successful
-    //                setBlockStatus(prevBlockStatus => ({
-    //                     ...prevBlockStatus,
-    //                     [userId]: newBlockStatus,
-    //                 }));
-    //             } else {
-    //                 // Handle error if API call fails
-    //                 Swal.fire({
-    //                     title: 'failed to delete try again',
-    //                     icon: "error",
-    //                 })
-    //                 console.error('Failed to update block status');
-    //             }
-    //         })
-    //         .catch(error => {
-    //             console.error('Error updating block status:', error);
-    //         });
-
-               
-    //         }
-    //     })
-    // };
-
-
-
-    // const IconWrapper = ({ icon }) => {
-    //     const IconComponent = ALlIcon[icon];
-    //     return IconComponent ? <IconComponent /> : null;
-    // };
-
-
-    // const handleDeleteServices = (id) => {
-    //     Swal.fire({
-    //         title: `Are you sure? `,
-    //         text: "You won't be able to revert this!",
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonColor: '#3085d6',
-    //         cancelButtonColor: '#d33',
-    //         confirmButtonText: 'Yes, delete it!'
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             dispatch(DeleteService(id))
-    //                 .then(() => {
-    //                     setDeleteSuccess(true);
-    //                     Swal.fire("Deleted!", "Your Data Deleted", "success");
-    //                 })
-    //                 .catch((error) => {
-    //                     console.error("Delete error:", error);
-    //                     Swal.fire(
-    //                         "Error",
-    //                         "An error occurred while deleting the file.",
-    //                         "error"
-    //                     );
-    //                 });
-    //         }
-    //     })
-
-    // }
-
+      const AssignSupervisor = (order_no) => { 
+        SetOrderNo(order_no)
+        setsupervisorModalOpen(!supervisorModalOpen)
+      }
+    
     const column = [
-        {
-            field: "action",
-            headerName: "Action",
-            flex: 1,
-            renderCell: (params) => (
-                <select
-                    className="p-2 border-0"
-                    style={{ borderRadius: "5px", outline: "none", cursor: "pointer" }}
-                >
-                    <option value="Cancel">Cancel</option>
-                    <option value="Transfer">Transfer</option>
-                    <option value="Hold">Hold</option>
-                    <option value="Complete">Complete</option>
-                    <option value="Edit">Edit</option>
+        // {
+        //     field: "action",
+        //     headerName: "Action",
+        //     flex: 1,
+        //     renderCell: (params) => (
+        //         <select
+        //             className="p-2 border-0"
+        //             style={{ borderRadius: "5px", outline: "none", cursor: "pointer" }}
+        //         >
+        //             <option value="Cancel">Cancel</option>
+        //             <option value="Transfer">Transfer</option>
+        //             <option value="Hold">Hold</option>
+        //             <option value="Complete">Complete</option>
+        //             <option value="Edit">Edit</option>
                     
-                </select>
-            ),
-            minWidth: 150,
-            editable: true,
-        },
-        { field: "cust_id", headerName: "Customer ID", minWidth: 120, editable: true,  },
-        { field: "order_no", headerName: "Complain Number", minWidth: 120, editable: true },
-        { field: "name", headerName: "Customer Name",minWidth: 150, editable: true },
-        { field: "mobileno", headerName: "Mobile",minWidth: 150, editable: true },
+        //         </select>
+        //     ),
+        //     minWidth: 150,
+        //     editable: true,
+        // },
+        { field: "cust_id", headerName: "Customer ID", flex:1, minWidth: 120, editable: true,  },
+        { field: "order_no", headerName: "Order Number", flex:1,minWidth: 120, editable: true },
+        { field: "name", headerName: "Customer Name",minWidth: 150,flex:1, editable: true },
+        { field: "mobileno", headerName: "Mobile",minWidth: 150,flex:1, editable: true },
         { field: "user_type",flex: 1, headerName: "Type", minWidth: 80, editable: true },
         { field: "service_name",flex: 1, headerName: "Service Type",minWidth: 150, editable: true },
         { field: "booktime",flex: 1, headerName: "Booking Time", minWidth: 120, editable: true },
         { field: "bookdate", flex: 1, headerName: "Booking Date", minWidth: 120, editable: true },
         { field: "problem_des",flex: 1, headerName: "Problem Description ", minWidth: 150, editable: true },
-        // { field: "suprvisor_id", headerName: "Supervisor",
-        // renderCell: (params) => ( 
-        //     <>
-        //     {
-        //     params?.row?.pending !== "Completed" && params?.row?.pending !== "Cancel" ? (
-        //       !params.row.suprvisor_id ? (
-        //         <Button 
-        //           variant='contained' 
-        //           color='primary' 
-        //           onClick={() => AssignSupervisor(params.row.order_no)} 
-        //           disabled={params?.row?.userRole?.role === "service"}
-        //         >
-        //           Supervisor
-        //         </Button>
-        //       ) : (
-        //         params.row.suprvisor_id
-        //       )
-        //     ) :  params.row.suprvisor_id
-        //   } </> ), minWidth: 200, editable: true },
+        { field: "suprvisor_id", headerName: "Supervisor",flex:1,
+        renderCell: (params) => ( 
+            <>
+            {
+            params?.row?.pending !== "Completed" && params?.row?.pending !== "Cancel" ? (
+              !params.row.suprvisor_id ? (
+                <Button 
+                  variant='contained' 
+                  color='primary' 
+                  onClick={() => AssignSupervisor(params.row.id)} 
+                  disabled={params?.row?.userRole?.role === "service"}
+                >
+                  Supervisor
+                </Button>
+              ) : (
+                params.row.suprvisor_id
+              )
+            ) :  params.row.suprvisor_id
+          } </> ), minWidth: 200, editable: true },
     
-        // { field: "servicep_id", headerName: "Service Provider",
-        // renderCell: (params) => ( 
-        //     <>
-        //     {
-        //   params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
-        //     !params.row.servicep_id ? (
+        { field: "servicep_id", headerName: "Service Provider",flex:1,
+        renderCell: (params) => ( 
+            <>
+            {
+          params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
+            !params.row.servicep_id ? (
            
-        //       <Button variant='contained' color='primary' onClick={() => AssignServiceProvider(params.row.order_no)} >
-        //         Service Provider
-        //       </Button>
+              <Button variant='contained' color='primary' onClick={() => AssignServiceProvider(params.row.id)} >
+                Service Provider
+              </Button>
     
-        //     ) : (
-        //       params.row.servicep_id
-        //     )
-        //   ) : params.row.servicep_id } </> ),
-        // minWidth: 200, editable: true },
+            ) : (
+              params.row.servicep_id
+            )
+          ) : params.row.servicep_id } </> ),
+        minWidth: 200, editable: true },
     
         // { field: "vehicle_inventory", headerName: "Vehicle Used",
         // renderCell: (params) => ( 
@@ -293,52 +229,52 @@ export default function ManageComplain(){
         //     minWidth: 180,
         //     editable: true,
         // },
-        { field: "pending", headerName: "Order Status", minWidth: 150, editable: true },
+        { field: "pending", headerName: "Order Status",flex:1, minWidth: 150, editable: true },
         // { field: "cancle_reson", headerName: "Cancel Reason", minWidth: 150, editable: true },
       ];
 
-      const handleComplain = () =>{
-        let errors = {};
-        if(memberType){
-            if (!mobileNo) {
-                errors.mobileNo = "Mobile number is required";
-            } else if (!/^\d{10}$/.test(mobileNo)) {
-                errors.mobileNo = "Mobile number should be 10 digits";
+    const handleComplain = () =>{
+    let errors = {};
+    if(memberType){
+        if (!mobileNo) {
+            errors.mobileNo = "Mobile number is required";
+        } else if (!/^\d{10}$/.test(mobileNo)) {
+            errors.mobileNo = "Mobile number should be 10 digits";
+        }
+
+        if (errors && Object.keys(errors).length === 0) {
+            console.log("Form submitted successfully!",);
+            } else {
+            // Form is invalid, display validation errors
+            console.log("Validation Errors:", errors);
+            setErrors(errors);
+            return false;
             }
 
-            if (errors && Object.keys(errors).length === 0) {
-                console.log("Form submitted successfully!",);
-              } else {
-                // Form is invalid, display validation errors
-                console.log("Validation Errors:", errors);
-                setErrors(errors);
-                return false;
-              }
-
-          
-		axios.get(`${API_URL}/get/customerByMobile/${mobileNo}`)
-			.then(response => {
-				if (response.status === 200) {
-					setLastOrder(response.data.data)
-                    customerTypeOpenFunction()
-                    setComplainModalOpen(true)
-				} else {
-					Swal.fire({
-						title: 'Not User Found Please Enter valid User',
-						icon: "error",
-					})
-				}
-			})
-			.catch(error => {
-				console.error('Error:', error);
-			});
-        }
-        else{
-            customerTypeOpenFunction()
-            setComplainModalOpen(true)
-        }
         
-      }
+    axios.get(`${API_URL}/get/customerByMobile/${mobileNo}`)
+        .then(response => {
+            if (response.status === 200) {
+                setLastOrder(response.data.data)
+                customerTypeOpenFunction()
+                setComplainModalOpen(true)
+            } else {
+                Swal.fire({
+                    title: 'Not User Found Please Enter valid User',
+                    icon: "error",
+                })
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    else{
+        customerTypeOpenFunction()
+        setComplainModalOpen(true)
+    }
+    
+    }
 
     const CustomToolbar = () => {
         return (
@@ -352,38 +288,35 @@ export default function ManageComplain(){
         );
     };
 
-    // const [masterAddService, setMasterAddServices] = useState(false)
-    // // const ToggleMasterAddService = () => setMasterAddServices(!masterAddService)
-
-    // const ToggleMasterAddService = () => {
-    //     setMasterAddServices(!masterAddService);
-    //     if (masterAddService) {
-    //         setEditData(null); // Reset editData when closing masterAddService
-    //     }
-    // };
-    // const handleEdit = (data) =>{
-    //     setEditData(data)
-    //     ToggleMasterAddService()
-    // }
 
     useEffect(() => {
         fetchData()
     }, [])
 
     useEffect(() => {
-        // dispatch(GetAllServices());
-        setDeleteSuccess(false); // Reset the delete success state
-    }, [deleteSuccess]); // Trigger useEffect when deleteSuccess changes
+        setDeleteSuccess(false);
+    }, [deleteSuccess]);
+
     return (
         <Fragment>
+        <AssignSupervisorForComplainModal
+                supervisorModalOpen={supervisorModalOpen}
+                supervisorModalOpenFunction={() => setsupervisorModalOpen(!supervisorModalOpen)}
+                OrderNo={OrderNo}
+                fetchData={fetchData}
+            />
+        <AssignServiceProviderForComplainModal
+                serviceProviderModalOpen={serviceProviderModalOpen}
+                serviceProviderModalOpenFunction={() => setserviceProviderModalOpen(!serviceProviderModalOpen)}
+                OrderNo={OrderNo}
+                fetchData={fetchData}
+            />
 
            {complainModalOpen &&  <AddComplainModal
                     complainModalOpen={complainModalOpen}
                     complainModalOpenfunction={() => setComplainModalOpen(!complainModalOpen)}
                     data={lastOrder}
                     fetchData={fetchData}
-                    // role={role}
-                    // currentUser={currentUser.id}
                 />
             }
           {customerTypeOpen &&   <Modal className="modal-dialog-centered"
@@ -440,25 +373,11 @@ export default function ManageComplain(){
                             )}
                         
                             <Button variant='contained' color='primary' onClick={handleComplain}>Complain Now</Button>
-					{/* <div className="d-flex justify-content-end ">
-						<Button color="success"
-							
-							style={
-								{marginRight: '10px'}
-						}>
-							Save
-						</Button>
-						<Button color="danger"
-							onClick={customerTypeOpenFunction}>
-							Close
-						</Button>
-					</div> */}
 				</Row>
 			</ModalBody>
 		</Modal>
         }
-            {/* <ModalComponent modal={masterAddService} toggle={ToggleMasterAddService} data={<MasterAddService ToggleMasterAddService={ToggleMasterAddService} data={editData} />} modalTitle={`${editData?.id ? 'Edit Service' : 'Add Service' } `} /> */}
-            {/* <DashHeader /> */} 
+
             <div className='flex'>
             <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}> All Complain List</h4>
 
