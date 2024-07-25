@@ -164,7 +164,7 @@ const AddNewCustomerForm = ({prop, data}) => {
 		const apiUrl = `${API_URL}/customer/signup`;
 		axios.post(apiUrl, formData)
 			.then(response => {
-				if (response.status === 200) {
+				if (response.data.status === true) {
 					prop();
 					Swal.fire(
 						'Successfully!',
@@ -174,7 +174,7 @@ const AddNewCustomerForm = ({prop, data}) => {
 					dispatch(GetAllCustomers())
 				} else {
 					Swal.fire({
-						title: 'failed to add try again',
+						title: response.data.message,
 						icon: "error",
 					})
 				}
@@ -183,6 +183,7 @@ const AddNewCustomerForm = ({prop, data}) => {
 			.catch(error => {
 				console.error('Error:', error);
 			});
+			SetIsLoading(false);
 	};
 
 	const handleKeyPress = (e) => {

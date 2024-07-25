@@ -494,7 +494,7 @@ const AdminDashboard = () => {
     { field: "service_name", headerName: "Service Type",minWidth: 150, editable: true },
     { field: "booktime", headerName: "Booking Time", minWidth: 120, editable: true },
     { field: "bookdate", headerName: "Booking Date", minWidth: 120, editable: true },
-    { field: "problem_des", headerName: "Problem Description ", minWidth: 150, editable: true },
+    { field: "problem_des", headerName: "Service Description ", minWidth: 150, editable: true },
     { field: "suprvisor_id", headerName: "Supervisor",
     renderCell: (params) => ( 
         <>

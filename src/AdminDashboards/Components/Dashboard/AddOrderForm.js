@@ -23,6 +23,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 	const [formData, setFormData] = useState({
 		name: '',
 		email: '',
+		user_type: '',
 		age: '',
 		mobile: '',
 		membership: '',
@@ -36,10 +37,26 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 		address: '',
 		city: '',
 		zip_code: '',
-		registered_id: ''
+		registered_id: '',
 	  });
 
+	  const UserTypes =[
+		{
+			label: 'regular',
+			value: 'Regular',
+		},
+		{
+			label: 'Urgent',
+			value: 'urgent',
+		},
+		{
+			label: 'Booking',
+			value: 'booking',
+		}
+	]
+
 	  const [service, setService] = useState('')
+	  const [userType, setUsertype] = useState('')
 
 	  useEffect(() => {
 		if (formData?.mobile && formData.mobile.length === 10) {
@@ -50,18 +67,22 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 	const fetchData = async () => {
 		try {
 			const response = await axios.get(API_URL + '/get/customerByMobile/' + formData?.mobile);
-			response.data.data.forEach(item => {
+			
+			let item = response.data.data
+			let lastService = item?.recentOrder[item?.recentOrder.length - 1];
+			console.log("lastService---",lastService)
 				setFormData(prevFormData => ({
 				  ...prevFormData,
-				  name: item.NewCustomer.name,
-				  email: item.NewCustomer.email,
-				  age: item.age,
+				  name: item?.customerData?.NewCustomer?.name,
+				  email: item?.customerData?.NewCustomer?.email,
+				  age: item?.customerData?.age,
 				  membership: item.member_id,
-				  address: item.address,
-				  city: item.location,
-				  registered_id: item.user_id
+				  address: item?.customerData?.address,
+				  city: item?.customerData?.location,
+				  registered_id: item?.customerData?.NewCustomer?.id,
+				  lst_serv_date: new Date(lastService?.createdAt).toISOString().split('T')[0],
+				  lst_serv_type: lastService?.service_name,
 				}));
-			  });
 
 		} catch (error) {
 			console.error('Error fetching data:', error);
@@ -84,7 +105,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 
 		e.preventDefault();
         let errors = {};
-
+		setIsLoading(true)
 		if (!formData.name) {
             errors.name = "Name is required";
         }
@@ -96,9 +117,13 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 		if (!formData.address) {
             errors.address = "address  is required";
         }
-		if (!formData.zip_code) {
-            errors.zip_code = "Pincode  is required";
+		if (!service.value) {
+            errors.service = "service  is required";
         }
+		if (!formData.serviceDateTime) {
+            errors.serviceDateTime = "serviceDateTime  is required";
+        }
+		
 
 
         if (errors && Object.keys(errors).length === 0) {
@@ -108,14 +133,15 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 			// Form is invalid, display validation errors
 			console.log("Validation Errors:", errors);
 			setErrors(errors);
-			setIsLoading(true)
+			setIsLoading(false)
 			return false;
 		  }
 		
 		const data ={
 			...formData,
 			service_name: service.value,
-			services: service.value
+			services: service.value,
+			user_type: userType.value
 		}
 
 		const apiUrl = `${API_URL}/order/add/${formData?.registered_id}`;
@@ -179,12 +205,9 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 							</span>
 						)}
 				</Col>
-				
-				
-
 				<Col md={6}>
 					<FormGroup>
-						<Label for="firstname">Customer Name<span style={{color: "red"}}>*</span></Label>
+						<Label for="firstname">Customer Name <span style={{color: "red"}}>*</span></Label>
 						<Input 
 						onChange={(e) => handleChange(e, 50)}
 							onKeyPress={handleKeyPress}
@@ -199,6 +222,12 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 						)}
 					</FormGroup>
 				</Col>
+				<Col md={6}>
+				<Label for="firstname">User Type </Label>
+				<SelectBox options={UserTypes}
+							setSelcted={setUsertype}
+							selectOption={userType}/>
+									</Col>
 
 				<Col md={6}>
 					<FormGroup>
@@ -235,10 +264,15 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 
 				<Col md={6}>
 					<FormGroup>
-						<Label>Service Type</Label>
+						<Label>Service Type <span style={{color: "red"}}>*</span></Label>
 						<SelectBox options={getAllService}
 							setSelcted={setService}
 							selectOption={service}/>
+							{errors?.service && (
+							<span className='validationError'>
+								{errors?.service}
+							</span>
+						)}
 					</FormGroup>
 				</Col>
 
@@ -302,12 +336,17 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 				<Col md={6}>
 					<FormGroup>
 						<Label>
-							Service Date & Time</Label>
+							Service Date & Time <span style={{color: "red"}}>*</span></Label>
 						<Input 
 							onChange={(e) => handleChange(e, 20)}
 							value={formData?.serviceDateTime}
 							name='serviceDateTime'
 							type='datetime-local'/>
+							{errors?.serviceDateTime && (
+							<span className='validationError'>
+								{errors?.serviceDateTime}
+							</span>
+						)}
 					</FormGroup>
 				</Col>
 				<Col md={6}>
@@ -331,10 +370,10 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 					</FormGroup>
 				</Col>
 
-				<Col md={6}>
+				{/* <Col md={6}>
 					<FormGroup>
 						
-						<Label for="firstname">ZipCode <span style={{color: "red"}}>*</span></Label>
+						<Label for="firstname">ZipCode</Label>
 						<Input type='number'
 							onChange={(e) => handleChange(e, 10)}
 							value={formData?.zip_code}
@@ -346,7 +385,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 								{errors?.zip_code}
 							</span>
 						)}
-				</Col>
+				</Col> */}
 
 				<Col md={6}>
 					<FormGroup>

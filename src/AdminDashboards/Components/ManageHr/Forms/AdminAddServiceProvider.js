@@ -171,8 +171,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
             }
           })
 			.then(response => {
-				if (response.status === 200) {
-                    console.log(response)
+				if (response.data.status === true) {
 					toggleModal();
 					Swal.fire(
 						'Successfully!',
@@ -183,7 +182,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                     setIsLoading(false)
 				} else {
 					Swal.fire({
-						title: 'failed to add try again',
+						title: response.data.message,
 						icon: "error",
 					})
 				}
