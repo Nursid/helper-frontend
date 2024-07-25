@@ -93,8 +93,11 @@ const ProfileHistory = () => {
                         active === '3' ? <FreeService  registerId={serviceData.user_id}/> :
                             active === '4' ? <ManagePost registerId={serviceData.user_id} /> : null
             } 
-            <div className={isMobile ? 'd-none' : 'mt-5'}>
+            {/* <div className={isMobile ? 'd-none' : 'mt-5'}>
                 <Footer reqrem={'d-none'} hide={'d-none'}  />
+            </div> */}
+            <div className={isMobile ? 'd-none' : ''}>
+                <Footer reqrem={'d-none'}/>
             </div>
         </div >
     )

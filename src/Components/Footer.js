@@ -23,7 +23,7 @@ import SelectBox from '../AdminDashboards/Elements/SelectBox';
 
 const Footer = ({ hide, reqrem, paddingForm }) => {
 
-    console.log(reqrem, hide)
+    console.log(reqrem)
 
     const [message, setMessage] = useState('');
     const [getAllService, setAllservices] = useState([])
@@ -96,7 +96,7 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
     };
 
     const ServicePage = (id) =>{
-        console.log(id)
+       
         setItems(id);
         navigate('/ServicePage');
     }
@@ -122,7 +122,7 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
 
     return (
         <footer style={{ background: '#3d5ce8' }} className={`text-center text-lg-start text-white ${paddingForm}`}>
-            <div className={`footerform d-none d-sm-none d-md-none`}>
+            <div className={`footerform d-sm-none d-md-none  ${hide} ${reqrem === 'd-none' ? '' : 'd-md-block d-lg-block'}`}>                
                 <Row>
                     <Col sm={12} xl='4' style={{ display: 'grid', placeItems: 'center' }}>
                         <div>

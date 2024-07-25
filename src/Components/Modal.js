@@ -307,17 +307,18 @@ export const SingupModal = () => {
 	);
 };
 
-export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOpenfunction}) => {
+export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOpenfunction,Data,GetAllOrders}) => {
+
 	const [formData, setFormData] = useState({
 		service_name: "",
 		user_type: "",
 		booktime: "",
 		bookdate: "",
-		name: "",
-		mobile: "",
-		address: "",
-		land_mark: "",
-		location: "",
+		name: Data?.customerData?.NewCustomer?.name || "",
+		mobile: Data?.customerData?.NewCustomer?.mobileno || "",
+		address: Data?.customerData?.address || "",
+		land_mark: Data?.customerData?.land_mark || "",
+		location: Data?.customerData?.location || "",
 		problem_des: ""
 	});
 
@@ -373,10 +374,10 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 			setIsLoading(false)
 			return false;
 		  }
-
-		const apiUrl = `${API_URL}/order/add-complain`;
+		const apiUrl = `${API_URL}/order/add/${Data?.customerData?.NewCustomer?.id}`;
 		axios.post(apiUrl, formData).then(response => {
 			if (response.status === 200) {
+				dispatch(GetAllOrders(Data?.customerData?.NewCustomer?.id));
 				serveRequestModalOpenfunction();
 				Swal.fire('Successfully!', 'Your Order has been Added.', 'success')
 			} else {
@@ -501,7 +502,9 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 													formData.name
 												}
 												placeholder="Enter Your Name"
-												onChange={(e) => handleInputChange(e, 50)}/>
+												onChange={(e) => handleInputChange(e, 50)}
+												readOnly={!!Data?.customerData?.NewCustomer?.id}
+												/>
 												
 										</div>
 										{errors?.name && (
@@ -522,7 +525,9 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 													formData.mobile
 												}
 												placeholder="Enter Your Mobile"
-												onChange={(e) => handleInputChange(e, 10)}/>
+												onChange={(e) => handleInputChange(e, 10)}
+												readOnly={!!Data?.customerData?.NewCustomer?.id}
+												/>
 												
 										</div>
 										{errors?.mobile && (
@@ -543,7 +548,9 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 													formData.address
 												}
 												placeholder="Enter your address"
-												onChange={(e) => handleInputChange(e, 200)}/>
+												onChange={(e) => handleInputChange(e, 200)}
+												readOnly={!!Data?.customerData?.NewCustomer?.id}
+												/>
 												
 										</div>
 										{errors?.address && (
@@ -566,7 +573,9 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 													formData.land_mark
 												}
 												placeholder="Enter your land mark"
-												onChange={(e) => handleInputChange(e, 100)}/>
+												onChange={(e) => handleInputChange(e, 100)}
+												readOnly={!!Data?.customerData?.NewCustomer?.id}
+												/>
 										</div>
 									</Col>
 									<Col xs={12}
@@ -581,7 +590,9 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 													formData.location
 												}
 												placeholder="Enter your location"
-												onChange={(e) => handleInputChange(e, 100)}/>
+												onChange={(e) => handleInputChange(e, 100)}
+												readOnly={!!Data?.customerData?.NewCustomer?.id}
+												/>
 										</div>
 									</Col>
 								</Row>
@@ -589,7 +600,7 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 									<Col xs={12}>
 										<div className="form-outline mb-2">
 											<label className="form-label" htmlFor="serviceName">
-												Problem Description 
+												Service Description 
 											</label>
 											<Input type="textarea" name="problem_des" className="form-control"
 												value={
@@ -598,7 +609,7 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 												onChange={(e) => handleInputChange(e, 200)}
 												rows="4"
 												cols="50"
-												placeholder="Enter Problem Description"
+												placeholder="Enter Service Description"
 												/>
 										</div>
 									</Col>
@@ -733,14 +744,13 @@ export const CustomerCancelOrderModal = ({
 	const [cancelReason, setCancelReason] = useState('');
 	const dispatch = useDispatch()
 
-
 	const handleSubmit = () => {
 		const data = {
 			cancle_reson: cancelReason,
 			pending: 5
 		}
 
-		const apiUrl = `${API_URL}/order/cancel/${order_no}/${registerId}`;
+		const apiUrl = `${API_URL}/order/cancel/${order_no}`;
 		axios.post(apiUrl, data).then(response => {
 			console.log(response)
 			if (response.status === 200) {
@@ -760,7 +770,7 @@ export const CustomerCancelOrderModal = ({
 			isOpen={customerCancelOrderModalOpen}
 			toggle={customerCancelModalfunction}>
 			<ModalHeader toggle={customerCancelModalfunction}>
-				Service Remark
+				Cancel Order
 			</ModalHeader>
 			<ModalBody>
 

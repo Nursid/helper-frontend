@@ -31,28 +31,37 @@ const MyProfile = ({ serviceData }) => {
     ];
 
     async function fetchData() {
-        axios.get(`${API_URL}/get/customerByMobile/${serviceData?.NewCustomer?.mobileno}`)
-        .then(response => {
+        try {
+            const response = await axios.get(`${API_URL}/get/customerByMobile/${serviceData?.NewCustomer?.mobileno}`);
             if (response.status === 200) {
-                setData(response.data.data)
-                setComplain(true)
-                setComplainModalOpen(!complainModalOpen);
+                setData(response.data.data);
+                return true;
             } else {
                 Swal.fire({
-                    title: 'Not User Found Please Enter valid User',
+                    title: 'No User Found. Please Enter Valid User',
                     icon: "error",
-                })
+                });
+                return false;
             }
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Error:', error);
-        });
+            return false;
         }
+    }
 
-        const Togglecomplain = () =>{
-            fetchData()
-          }
-
+    const Togglecomplain = async () => {
+        const complain = await fetchData();
+        if (complain) {
+            setComplain(true);
+            setComplainModalOpen(true);
+        }
+    }
+    const ToggleService = async () => {
+        const complain = await fetchData();
+        if (complain) {
+            setserveRequestModalOpen(!serveRequestModalOpen)
+        }
+    }
 
     useEffect(() => {
       dispatch(GetAllOrdersByID(serviceData.user_id))
@@ -62,7 +71,7 @@ const MyProfile = ({ serviceData }) => {
     const [order_no,setOrderNo]=useState('')
 
 
-    const CancelOrderForm = (registered_id,order_no) =>{
+    const CancelOrderForm = (order_no,registered_id) =>{
         setRegisterId(registered_id);
         setOrderNo(order_no)
         setCustomerCancelModalOpen(!customerCancelModalOpen)
@@ -87,7 +96,7 @@ const MyProfile = ({ serviceData }) => {
         { field: 'service_name', headerName: 'Service Name', width: 180, headerCenter: true },
         { field: 'bookdate', headerName: 'Bookig Date', width: 150, headerCenter: true },
         { field: 'booktime', headerName: 'Bookig Time', width: 100, headerCenter: true },
-        { field: 'service_des', headerName: 'Service Details', width: 200, headerCenter: true },
+        { field: 'problem_des', headerName: 'Service Details', width: 200, headerCenter: true },
         { field: 'suprvisor_id', headerName: 'Supervisor', width: 100, headerCenter: true },
         { field: 'servicep_id', headerName: 'Service Provider', width: 150, headerCenter: true },
         { field: 'totalamt', headerName: 'Billing Amount', width: 150, headerCenter: true },
@@ -102,25 +111,32 @@ const MyProfile = ({ serviceData }) => {
             )
         },
         { field: 'suerv_remark', headerName: 'Supervisor Remark', width: 180, headerCenter: true },
-        { field: 'problem_des', headerName: 'Complain', width: 180, headerCenter: true },
+        { field: 'cancle_reson', headerName: 'Cancel Reason', width: 180, headerCenter: true },
+        
         {
             field: 'pending',
             headerCenter: true,
             width: 200,
-            headerName: 'Order Status',
+            headerName: 'Cancel',
             renderCell: (params) => (
-            <Button 
-            
-            color={
-                params.row.pending === 0 ? "warning" :
-                params.row.pending === 1 ? "secondary" :
-                params.row.pending === 2 ? "secondary" :
-                params.row.pending === 3 ? "success" :
-                params.row.pending === 4 ? "info" :
-                "danger"
-            }
-                variant='contained' >{status.find(item => item.id === params.row.pending)?.name}</Button>)
+                <>
+                    {params.row.pending === 3 ? (
+                        <>Completed</>
+                    ) : params.row.pending === 5 ? (
+                        <>Cancelled</>
+                    ) : (
+                        <Button 
+                            color="danger"
+                            variant='contained' 
+                            onClick={() => CancelOrderForm(params.row.order_no, params.row.cust_id)}
+                        >
+                            Cancel
+                        </Button>
+                    )}
+                </>
+            )
         }
+        
     ];
 
 
@@ -145,21 +161,22 @@ const MyProfile = ({ serviceData }) => {
 
     return (
         <div>
-            <CustomerRemarkModal
+            {customerRemarkModalOpen && <CustomerRemarkModal
                 customerRemarkModalOpen={customerRemarkModalOpen}
                 customerRemarkModalfunction={() => setCustomerRemarkModalOpen(!customerRemarkModalOpen)}
                 orderNo={order_no}
                 registerId={registered_id}
                 GetAllOrders={GetAllOrdersByID}
             />
-             <CustomerCancelOrderModal
+            }
+            {customerCancelModalOpen && <CustomerCancelOrderModal
                 customerCancelOrderModalOpen={customerCancelModalOpen}
                 customerCancelModalfunction={() => setCustomerCancelModalOpen(!customerCancelModalOpen)}
                 registerId={registered_id}
                 orderNo={order_no}
                 GetAllOrders={GetAllOrdersByID}
                 />
-
+            }
          {isComplain && <AddComplainModal
                 complainModalOpen={complainModalOpen}
                 complainModalOpenfunction={()=>setComplainModalOpen(!complainModalOpen)}
@@ -167,6 +184,13 @@ const MyProfile = ({ serviceData }) => {
                 fetchData={fetchData}
             />
          }
+          {serveRequestModalOpen &&   <ServeiceRequestModal
+                                serveRequestModalOpen={serveRequestModalOpen}
+                                serveRequestModalOpenfunction={() => setserveRequestModalOpen(!serveRequestModalOpen)} 
+                                Data={lastOrder}
+                                GetAllOrders={GetAllOrdersByID}
+                                />
+                         }
             <Row>
                 <Col xs={12} lg={4} xl={4} >
                     <Card className='mt-2'>
@@ -185,13 +209,14 @@ const MyProfile = ({ serviceData }) => {
                             <div className="d-flex justify-content-center">
                                 <h5>Memeber Id: <span style={{ color: '#ff0000' }}>{serviceData.member_id}</span></h5>
                             </div>
-                            <Button onClick={() => setserveRequestModalOpen(!serveRequestModalOpen)} sx={{ background: '#3d5ce8' }} variant='contained'> Request New Service </Button>
-
+                            <Button 
+                                onClick={ToggleService} 
+                                sx={{ background: '#3d5ce8' }} 
+                                variant='contained'
+                            > 
+                                Request New Service 
+                            </Button>
                             <Button onClick={Togglecomplain} style={{ backgroundColor: '#e74c3c' }} variant='contained' className='ms-5'> Add New Complain </Button>
-
-                            <ServeiceRequestModal
-                                serveRequestModalOpen={serveRequestModalOpen}
-                                serveRequestModalOpenfunction={() => setserveRequestModalOpen(!serveRequestModalOpen)} />
                         </CardBody>
                     </Card>
                 </Col>

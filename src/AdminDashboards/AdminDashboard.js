@@ -565,13 +565,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
         
         (params?.row?.userRole?.role==="admin" && !params.row.admin_remark) ? (<><Button variant='contained' color='primary' onClick={()=>AdminRemark(params.row.order_no)}>Remark</Button></> ) : <>{params.row.admin_remark} </> ) : params.row.admin_remark } </> ),
     minWidth: 150, editable: true },
-    { field: "providerratings", headerName: "Provider Ratings",
-    // renderCell: (params) => ( 
-    //     <>
-    //     {console.log("params.row.userRole-----",params.row)}
-    //      </> ),
 
-    minWidth: 150, editable: true },
     { field: "sueadmin_remark", headerName: "Super Admin Remark",
     renderCell: (params) => ( 
         <>
