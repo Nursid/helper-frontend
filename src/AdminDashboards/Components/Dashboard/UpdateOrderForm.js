@@ -112,9 +112,6 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         return false;
         }
 
-      
-
-
         const data ={
           ...formData,
           service_name: formData.service_name.value,

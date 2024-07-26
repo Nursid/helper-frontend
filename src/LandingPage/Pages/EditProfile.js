@@ -59,20 +59,21 @@ const EditProfile = ({ serviceData }) => {
 		formData1.append('age', formData.age);
 		formData1.append('address', formData.address);
 		formData1.append('email',formData.email);
-        formData1.append('mobileno',formData.mobileno);
+        formData1.append('mobile',formData.mobileno);
         formData1.append('aadhar_no',formData.aadhar_no);
         formData1.append('image',imageFile);
 
         axios.put(`${API_URL}/customer/getupdate/${serviceData.user_id}`,formData1 )
 			.then(response => {
-				if (response.status === 200) {
+				if (response.data.status === true) {
 					Swal.fire(
-						'Profile updated',
+						'Successfully!',
+                        response.data.message,
 						'success'
 					)
 				} else {
 					Swal.fire({
-						title: 'failed to add try again',
+						title: response.data.message,
 						icon: "error",
 					})
 				}
@@ -151,8 +152,26 @@ const EditProfile = ({ serviceData }) => {
                                         <Col>
                                             <div className="form-outline mb-4">
                                                 <label className="form-label" htmlFor="form3Example3">Mobile No.</label>
-                                                <Input type="text" id="form3Example3" name="mobileNo" className="form-control" value={formData.mobileno} onChange={handleInputChange} />
-                                            </div>
+                                                <Input  
+                                                    id="form3Example3" 
+                                                    name="mobileNo" 
+                                                    className="form-control" 
+                                                    value={formData.mobileno} 
+                                                    onChange={(e) => {
+                                                        const value = e.target.value.replace(/\D/g, '').slice(0, 10)
+                                                        handleInputChange({
+                                                            ...e,
+                                                            target: {
+                                                                ...e.target,
+                                                                value,
+                                                                name: 'mobileno'
+                                                            }
+                                                        })
+                                                    }}
+                                                    pattern="[0-9]{10}"
+                                                />
+
+                                        </div>
                                         </Col>
                                         <Col>
                                             <div className="form-outline mb-4">
@@ -165,7 +184,20 @@ const EditProfile = ({ serviceData }) => {
                                     <Col>
                                             <div className="form-outline mb-4">
                                                 <label className="form-label" htmlFor="form3Example6">Aadhar</label>
-                                                <Input type="number" id="form3Example6" name="aadhar_no" className="form-control" value={formData.aadhar_no} onChange={handleInputChange} />
+                                                <Input id="form3Example6" name="aadhar_no" className="form-control" value={formData.aadhar_no} 
+                                                onChange={(e) => {
+                                                    const value = e.target.value.replace(/\D/g, '').slice(0, 12)
+                                                    handleInputChange({
+                                                        ...e,
+                                                        target: {
+                                                            ...e.target,
+                                                            value,
+                                                            name: 'aadhar_no'
+                                                        }
+                                                    })
+                                                }}
+                                                pattern="[0-9]{12}"
+                                                />
                                             </div>
                                         </Col>
                                        

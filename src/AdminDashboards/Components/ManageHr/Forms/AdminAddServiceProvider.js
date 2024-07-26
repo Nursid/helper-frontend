@@ -190,6 +190,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
 			.catch(error => {
 				console.error('Error:', error);
 			});
+            setIsLoading(false)
     };
    
     const handleChangeservices = (selected) => {
