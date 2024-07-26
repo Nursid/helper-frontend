@@ -26,7 +26,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     pincode: orderData?.pincode || '',
     status: orderData?.pending || 'Pending',
     booktime: orderData?.booktime || '',
-    bookdate: moment(orderData?.bookdate).format('YYYY-MM-DD') || '',
+    bookdate: moment(orderData?.bookdate, 'DD-MM-YY').format('YYYY-MM-DD') || '',   
     servicep_id: orderData?.servicep_id || '',
     problem_des: orderData?.problem_des || '',
     paymethod: orderData?.paymethod || '',

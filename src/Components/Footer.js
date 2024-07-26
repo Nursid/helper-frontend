@@ -23,11 +23,12 @@ import SelectBox from '../AdminDashboards/Elements/SelectBox';
 
 const Footer = ({ hide, reqrem, paddingForm }) => {
 
-    console.log(reqrem)
 
     const [message, setMessage] = useState('');
     const [getAllService, setAllservices] = useState([])
+    const [errors, setErrors] = useState([])
     const [service, setService] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
     const handleMessageChange = (event) => {
         setMessage(event.target.value);
     };
@@ -71,19 +72,54 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        let errors = {};
+		setIsLoading(true)
+		if (!formData.name) {
+            errors.name = "Name is required";
+        }
+		if (!formData.mobileNo) {
+			errors.mobileNo = "Mobile number is required";
+		} else if (!/^\d{10}$/.test(formData.mobileNo)) {
+			errors.mobileNo = "Mobile number should be 10 digits";
+		}
+
+		if (!formData.service) {
+            errors.service = "service  is required";
+        }
+
+        if (errors && Object.keys(errors).length === 0) {
+			// Form is valid, handle form submission here
+			console.log("Form submitted successfully!",);
+		  } else {
+			// Form is invalid, display validation errors
+			console.log("Validation Errors:", errors);
+			setErrors(errors);
+			setIsLoading(false)
+			return false;
+		  }
+
         const apiUrl = `${API_URL}/enquiry/register`;
 		axios.post(apiUrl, formData)
 			.then(response => {
-				if (response.status === 200) {
-                    setFormData([])
+				if (response.data.status === true) {
+                    setFormData({
+                        name: '',
+                        email: '',
+                        refName: '', 
+                        mobileNo: '',
+                        message: '',
+                        address: '',
+                        service: ''
+                    });
 					Swal.fire(
-						'Successfully!',
+						'Thank You!',
 						response.data.message,
 						'success'
 					)
 				} else {
 					Swal.fire({
-						title: 'failed to add try again',
+						title: response.data.message,
 						icon: "error",
 					})
 				}
@@ -92,11 +128,10 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
 			.catch(error => {
 				console.error('Error:', error);
 			});
-
+            setIsLoading(false)
     };
 
-    const ServicePage = (id) =>{
-       
+    const ServicePage = (id) => {
         setItems(id);
         navigate('/ServicePage');
     }
@@ -167,9 +202,9 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
                     <Col sm={12} xl='4'>
                         <div className="Enquiry text-center container animate__animated animate__backInRight">
                             <b><h2 className='txtColour font-weight-bold p-1' >Enquiry Form</h2> </b>
-                            <form className="pb-2 px-2" onSubmit={handleSubmit}>
+                            <form className="pb-2 px-2">
                                 <div className="form-group">
-                                    <label htmlFor="name">Full Name:</label>
+                                    <label htmlFor="name">Full Name <span style={{color: "red"}}>*</span></label>
                                     <input
                                         type="text"
                                         id="name"
@@ -178,11 +213,16 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
                                         value={formData?.name}
                                         onChange={(e) => handleInputChange(e, 50)}
                                         onKeyPress={handleKeyPressName}
-                                        required
+                                        
                                     />
+                                    {errors?.name && (
+							<span style={{color: "red", float: "left", fontSize: '13px', paddingLeft: '3px'}}>
+								{errors?.name}
+							</span>
+						)}
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="mobileNumber">Mobile Number:</label>
+                                    <label htmlFor="mobileNumber">Mobile Number <span style={{color: "red"}}>*</span></label>
                                     <input
                                         type="text"
                                         id="mobileNo"
@@ -190,34 +230,35 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
                                         placeholder="Enter Mobile Number"
                                         value={formData?.mobileNo}
                                         onChange={(e) => handleInputChange(e, 10)}
-                                        required
+                                        
                                         onKeyPress={handleKeyPress}
                                     />
+                                    {errors?.mobileNo && (
+							<span style={{color: "red", float: "left", fontSize: '13px', paddingLeft: '3px'}}>
+								{errors?.mobileNo}
+							</span>
+						)}
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="services">Services</label>
+                                    <label htmlFor="services">Services <span style={{color: "red"}}>*</span></label>
                                     <select
                                         name="service"
                                         value={formData?.service}
                                         onChange={(e) => handleInputChange(e, 50)}
-                                        required
+                                        
                                     >
                                          <option value="" disabled>Please select a service</option>
                                        {getAllService.map((service, index) => (
                                             <option key={index} value={service.label}>{service.label}</option>
                                         ))}
                                         </select>
-
+                                        {errors?.service && (
+							<span style={{color: "red", float: "left", fontSize: '13px', paddingLeft: '3px'}}>
+								{errors?.service}
+							</span>
+						)}
                                 </div>
 
-                                {/* <Col md={12}>
-					<FormGroup>
-						<Label>Service Type</Label>
-						<SelectBox options={getAllService}
-							setSelcted={setService}
-							selectOption={service}/>
-					</FormGroup>
-				</Col> */}
                                 <div className="form-group">
                                     <label htmlFor="services">Referance By</label>
                                     <input
@@ -227,7 +268,7 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
                                         placeholder="Please Referance Name"
                                         value={formData?.refName}
                                         onChange={(e) => handleInputChange(e, 50)}
-                                        required
+                                        
                                     />
                                 </div>
                                 <div className="form-group">
@@ -239,11 +280,13 @@ const Footer = ({ hide, reqrem, paddingForm }) => {
                                         rows="3"
                                         value={formData?.message}
                                         onChange={(e) => handleInputChange(e, 50)}
-                                        required
+                                        
                                     ></textarea>
                                 </div>
                                 <div className="form-group">
-                                    <input type="submit" value="Submit" />
+                                <Button  variant='contained'
+					onClick={handleSubmit} disabled={isLoading}>Submit</Button>
+                                    {/* <Button disabled={isLoading} onClick={handleSubmit}  variant="text">Submit</Button> */}
                                 </div>
                             </form>
                         </div>

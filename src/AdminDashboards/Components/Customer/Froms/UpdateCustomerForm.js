@@ -183,7 +183,7 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 		const apiUrl = `${API_URL}/customer/getupdate/${updateData.user_id}`;
 		axios.put(apiUrl, formData2, { 'Content-Type': 'multipart/form-data'})
 			.then(response => {
-				if (response.status === 200) {
+				if (response.data.status === true) {
 					prop();
 					Swal.fire(
 						'Updated!',
@@ -193,7 +193,7 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 					dispatch(GetAllCustomers())
 				} else {
 					Swal.fire({
-						title: 'failed to add try again',
+						title: response.data.messaage,
 						icon: "error",
 					})
 				}
@@ -202,6 +202,7 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 			.catch(error => {
 				console.error('Error:', error);
 			});
+			SetIsLoading(false);
 	};
 
 	const handleKeyPress = (e) => {

@@ -69,21 +69,34 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 			const response = await axios.get(API_URL + '/get/customerByMobile/' + formData?.mobile);
 			
 			let item = response.data.data
-			let lastService = item?.recentOrder[item?.recentOrder.length - 1];
-			console.log("lastService---",lastService)
+			if (item?.recentOrder) {
+				let lastService = item.recentOrder[item.recentOrder.length - 1];
 				setFormData(prevFormData => ({
-				  ...prevFormData,
-				  name: item?.customerData?.NewCustomer?.name,
-				  email: item?.customerData?.NewCustomer?.email,
-				  age: item?.customerData?.age,
-				  membership: item.member_id,
-				  address: item?.customerData?.address,
-				  city: item?.customerData?.location,
-				  registered_id: item?.customerData?.NewCustomer?.id,
-				  lst_serv_date: new Date(lastService?.createdAt).toISOString().split('T')[0],
-				  lst_serv_type: lastService?.service_name,
+					...prevFormData,
+					name: item?.customerData?.NewCustomer?.name,
+					email: item?.customerData?.NewCustomer?.email,
+					age: item?.customerData?.age,
+					membership: item.member_id,
+					address: item?.customerData?.address,
+					city: item?.customerData?.location,
+					registered_id: item?.customerData?.NewCustomer?.id,
+					lst_serv_date: lastService ? new Date(lastService.createdAt).toISOString().split('T')[0] : '',
+					lst_serv_type: lastService?.service_name || '',
 				}));
-
+			} else {
+				setFormData(prevFormData => ({
+					...prevFormData,
+					name: item?.customerData?.NewCustomer?.name,
+					email: item?.customerData?.NewCustomer?.email,
+					age: item?.customerData?.age,
+					membership: item.member_id,
+					address: item?.customerData?.address,
+					city: item?.customerData?.location,
+					registered_id: item?.customerData?.NewCustomer?.id,
+					lst_serv_date: '',
+					lst_serv_type: '',
+				}));
+			}
 		} catch (error) {
 			console.error('Error fetching data:', error);
 		}
