@@ -164,12 +164,13 @@ const ManageServiceProvider = () => {
         { field: "_id", headerName: "Sr No", minWidth: 50, editable: true },
         { field: "name", headerName: "Name", minWidth: 120, editable: true },
         { field: "ref_name", headerName: "Ref Name", minWidth: 120, editable: true }, 
-        { field: "provider_type", headerName: "Provider Type", minWidth: 120, editable: true },
-        { field: "about", headerName: "Service Name", minWidth: 220, editable: true },
-        { field: "aadhar_no", headerName: "Aadhaar No.", minWidth: 120, editable: true },
-        { field: "mobile_no", headerName: "Mobile No.", minWidth: 120, editable: true },
+        // { field: "provider_type", headerName: "Provider Type", minWidth: 120, editable: true },
+       
+        { field: "aadhar_no", headerName: "Aadhaar No", minWidth: 120, editable: true },
+        { field: "mobile_no", headerName: "Mobile No", minWidth: 120, editable: true },
         { field: "email", headerName: "Email", minWidth: 120, editable: true },
-        { field: "current_address", headerName: "Address", minWidth: 250, editable: true },
+        { field: "permanent_address", headerName: "Address", minWidth: 250, editable: true },
+        { field: "about", headerName: "About", minWidth: 220, editable: true },
         {
             field: "status",
             minWidth: 150,

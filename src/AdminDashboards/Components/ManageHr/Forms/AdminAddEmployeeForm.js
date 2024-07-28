@@ -87,7 +87,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
         const newFormData = {
             ...formData,
             department_id: department?.value,
-            designation_id: slectedDesignation?.value,
+            designation_id: (department?.value === 2 || department?.value === 3) ? 3 : slectedDesignation?.value,
             pan_image: pan_image,
             adhar_image: adhar_image, 
             image: image, 

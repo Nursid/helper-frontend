@@ -123,9 +123,11 @@ const ServicePage = () => {
 									}
 							}>
 								<p>"We provide the best facial services ever, and we highly recommend trying it once to experience our affordable and convenient at-home service."</p>
-								<Button onClick={
+								{/* <Button 
+								onClick={
 									() => setserveRequestModalOpen(!serveRequestModalOpen)
-								}>Service Request</Button>
+								}
+								>Service Request</Button> */}
 							</div>
 						</Col>
 						<Col xl={6}

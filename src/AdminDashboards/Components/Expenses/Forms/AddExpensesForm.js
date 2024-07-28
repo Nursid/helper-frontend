@@ -57,7 +57,7 @@ const AddExpensesForm = ({toggleModal,data}) => {
     const handleKeyPress = (e) => {
         const charCode = e.which || e.keyCode;
         const charStr = String.fromCharCode(charCode);
-        if (!/^[a-zA-Z]+$/.test(charStr)) {
+        if (!/^[a-zA-Z\s]+$/.test(charStr)) {
             e.preventDefault();
             }
         };
