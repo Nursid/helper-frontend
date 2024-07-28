@@ -35,6 +35,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 		lst_serv_type: '',
 		serviceDateTime: '',
 		address: '',
+		member_id: '',
 		city: '',
 		zip_code: '',
 		registered_id: '',
@@ -76,7 +77,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 					name: item?.customerData?.NewCustomer?.name,
 					email: item?.customerData?.NewCustomer?.email,
 					age: item?.customerData?.age,
-					membership: item.member_id,
+					member_id: item?.customerData?.member_id,
 					address: item?.customerData?.address,
 					city: item?.customerData?.location,
 					registered_id: item?.customerData?.NewCustomer?.id,
@@ -89,7 +90,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 					name: item?.customerData?.NewCustomer?.name,
 					email: item?.customerData?.NewCustomer?.email,
 					age: item?.customerData?.age,
-					membership: item.member_id,
+					member_id: item?.customerData?.member_id,
 					address: item?.customerData?.address,
 					city: item?.customerData?.location,
 					registered_id: item?.customerData?.NewCustomer?.id,
@@ -269,9 +270,9 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 						<Label>MemberShip Id</Label>
 						<Input 
 						onChange={(e) => handleChange(e, 10)}
-							value={formData?.membership}
-							name='membership'
-							placeholder='Enter Your MemberShip'/>
+							value={formData?.member_id}
+							name='member_id'
+							placeholder='Enter Your member Id'/>
 					</FormGroup>
 				</Col>
 
