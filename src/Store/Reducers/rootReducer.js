@@ -17,7 +17,7 @@ import GetAllOrderReducer from "./Dashboard/OrderReducers/GetAllOrderReducer";
 import GetAllMonthlyServiceDataReducer from "./Dashboard/EmployeeReducers/GetAllMonthlyServiceReducer";
 import { GetAllTestimonialsReducer,GetAllPostReducer,GetAllOfferReducer,GetAllAdvertisementReducer } from "./Dashboard/ManageWebstiteReducers/TestimonialsReducers";
 // import { GetAllOrdersByID } from "../Actions/Dashboard/Orders/OrderAction";
-import { GetAllOrderByIdReducer } from "./Dashboard/OrderReducers/GetAllOrderReducer";
+import { GetAllOrderByIdReducer, GetAllTimeSlotReducer } from "./Dashboard/OrderReducers/GetAllOrderReducer";
 import {GetAllInventryReducers,GetAllAllotedItemReducers} from "./Dashboard/GetAllInventryReducers";
 import GetALLLastServicesReducers from "./CustomersReducers.js/GetALLLastServicesReducers"
 import AccountReducers from "./Dashboard/AccountReducers";
@@ -53,7 +53,8 @@ const rootReducer = combineReducers({
     GetAllAllotedItemReducers:GetAllAllotedItemReducers,
     GetALLLastServicesReducers:GetALLLastServicesReducers,
     AccountReducers:AccountReducers,
-    AvailabilityReducers: AvailabilityReducers
+    AvailabilityReducers: AvailabilityReducers,
+    GetAllTimeSlotReducer: GetAllTimeSlotReducer
 })
 
 

@@ -2,7 +2,8 @@ import React, { Fragment, useState } from "react";
 import "./AdminDashboard.css";
 import { DataGrid, GridToolbar, GridToolbarDensitySelector, GridToolbarExportContainer, GridToolbarFilterButton, GridToolbarQuickFilter,GridToolbarColumnsButton } from "@mui/x-data-grid";
 import StackBox from "./Elements/StackBox";
-import { Form, Row, Col, Card, FormGroup, Label, Input,Table } from 'reactstrap';
+import { Form, Row, Col, Card, FormGroup, Label, Input,Table, Modal,
+  ModalHeader, ModalBody } from 'reactstrap';
 // import { columns } from "./GridTableCredentials/Colums";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
@@ -113,7 +114,16 @@ const AdminDashboard = () => {
   const [cancel, setCancel]=useState(false);
   const [update, setUpdate]=useState(false);
   const [transfer, setTransfer]=useState(false)
-  const toggleAddOrders = () => setShow(!Show);
+
+  const toggleAddOrders = () => {
+    setShow(!Show);
+    if (Show) {
+      setMobileNo('');
+    }
+  };
+
+
+
   const toggleCancelOrder= () => setCancel(!cancel);
   const toggleUpdateOrder = () => setUpdate(!update)
   const toggleTransferOrder= () => setTransfer(!transfer)
@@ -128,7 +138,7 @@ const AdminDashboard = () => {
         <GridToolbarFilterButton />
         <GridToolbarExport />
         <GridToolbarDensitySelector />
-        <div
+        {/* <div
 
           onClick={toggleAddOrders}
 
@@ -137,7 +147,7 @@ const AdminDashboard = () => {
           className="cursor-p "
         >
           <FiPlusSquare /> ADD ORDER
-        </div>
+        </div> */}
       </GridToolbarContainer>
     );
   };
@@ -408,6 +418,9 @@ const AdminDashboard = () => {
   const [allotedItems,setAllotedItems]=useState(false);
   const [allotItemModalOpen, setallotItemModalOpen]=useState(false)
   const [AddInventryModalOpen, setAddInventryModalOpen] = useState(false)
+  const [customerTypeOpen, setCustomerTypeOpenFunction] =useState(false)
+  const [errors, setErrors] = useState([])
+  const customerTypeOpenFunction = () =>setCustomerTypeOpenFunction(!customerTypeOpen)
 
   const GetSubmmary = ()=>{
     setSummary(true)
@@ -588,6 +601,30 @@ onClick={()=>AssignAmount(params.row.order_no)}
     { field: "pending", headerName: "Order Status", minWidth: 150, editable: true },
     { field: "cancle_reson", headerName: "Cancel Reason", minWidth: 150, editable: true },
   ];
+
+  const handleComplain = () =>{
+    let errors = {};
+        if (!mobileNo) {
+            errors.mobileNo = "Mobile number is required";
+        } else if (!/^\d{10}$/.test(mobileNo)) {
+            errors.mobileNo = "Mobile number should be 10 digits";
+        } else if (mobileNo.startsWith("1") || mobileNo.startsWith("2") || mobileNo.startsWith("3") || mobileNo.startsWith("4") || mobileNo.startsWith("5")) {
+            errors.mobileNo = "This mobile number does not exist in India";
+        }
+
+        if (errors && Object.keys(errors).length === 0) {
+        console.log("Form submitted successfully!");
+
+        customerTypeOpenFunction()
+        toggleAddOrders()
+       
+        } else {
+        // Form is invalid, display validation errors
+        console.log("Validation Errors:", errors);
+        setErrors(errors);
+        return false;
+        }
+  }
   
   return (
     <Fragment>
@@ -663,7 +700,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
         modal={Show}
         toggle={toggleAddOrders}
         data={<AddOrderForm prop={toggleAddOrders } GetAllOrders={GetAllOrders} role={role}
-        currentUser={currentUser.id}  />}
+        currentUser={currentUser.id}  mobileNo={mobileNo} />}
         size={"xl"} scrollable={true}
       />
 
@@ -690,6 +727,44 @@ onClick={()=>AssignAmount(params.row.order_no)}
         currentUser={currentUser.id}/>}
         size={"xl"} scrollable={true}
         />
+
+      {customerTypeOpen &&   <Modal className="modal-dialog-centered"
+          isOpen={customerTypeOpen}
+          toggle={customerTypeOpenFunction}>
+          <ModalHeader toggle={customerTypeOpenFunction}>
+            Customer Type
+          </ModalHeader>
+              <ModalBody>
+                <Row>
+                    <Col md={12}>
+                      <FormGroup>
+                        <Label for="mobile">Mobile No <span style={{color: "red"}}>*</span></Label>
+                        <Input
+                          id="mobile"
+                          name="mobile"
+                          type="number"
+                          value={mobileNo}
+                          placeholder="Mobile No"
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^\d{0,10}$/.test(value)) {  
+                                setMobileNo(value);  
+                            }
+                        }}
+                        />
+                        {errors?.mobileNo && (
+                      <span className='validationError'>
+                          {errors?.mobileNo}
+                      </span>
+                      )}
+                </FormGroup>
+                </Col>                        
+              <Button variant='contained' color='primary' onClick={handleComplain}>Proceed Now</Button>
+              </Row>
+                </ModalBody>
+              </Modal>
+        }
+
 
       <div className="position-relative">
         <AnimatedBackground />
@@ -805,8 +880,19 @@ onClick={()=>AssignAmount(params.row.order_no)}
             </> : null }
           </div>
 
+          <div className='flex'>
+            <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}> All Order List</h4>
+
+            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
+                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "18rem", maxWidth: "18rem" }} onClick={() => customerTypeOpenFunction(!customerTypeOpen)}>
+                Add New Order
+                </div>
+            </div>
+          </div>
+
           <div className="p-4 ">
-          {!complain && !inventry && summary && <Card className="p-4">
+          {!complain && !inventry && summary && 
+          <Card className="p-4">
           <div className="">
           <h3>Order Summary</h3>
           <div className="flex flex-col justify-between w-full mb-3 ">

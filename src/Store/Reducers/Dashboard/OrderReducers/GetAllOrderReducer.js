@@ -61,6 +61,31 @@ export const GetAllOrderByIdReducer = (state = initialState, action) => {
             return state;
     }
 }
+export const GetAllTimeSlotReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case constant.GET_ALL_TIMESLOT_LOADING:
+            return {
+                ...state,
+                isLoading: true
+            }
+        case constant.GET_ALL_TIMESLOT_SUCCESS:
+            return {
+                ...state,
+                data: action.payload,
+                isLoading: false,
+            }
+
+        case constant.GET_ALL_TIMESLOT_ERROR:
+            return {
+                ...state,
+                isError: true,
+                isLoading: false
+            }
+
+        default:
+            return state;
+    }
+}
 
 
 

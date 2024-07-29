@@ -1,4 +1,5 @@
 import React, {Fragment, useEffect, useState} from 'react'
+import { useSelector } from 'react-redux'
 import {UseStateManager} from '../../../Context/StateManageContext'
 import {
 	Button,
@@ -14,60 +15,87 @@ import {API_URL} from '../../../config'
 import SelectBox from '../../Elements/SelectBox';
 import Swal from 'sweetalert2'
 import {useDispatch} from 'react-redux'
-const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
+import { GetAllTimeSlot } from '../../../Store/Actions/Dashboard/Orders/OrderAction'
+const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 	const {rows, setRows, Show, setShow} = UseStateManager()
 	const [getAllService, setAllservices] = useState([])
+	const [getAlltimeSlot, setGetAlltimeSlot] = useState([])
+	const [getAllServiceProvider, setGetAllServiceProvider] = useState([])
+	const [getAllSupervisor, setGetAllSupervisor] = useState([])
+	const [timeslot, setTimeslot] = useState(null)
+	const [supervisor, setSupervisor] = useState(null)
+	const [serviceProvider, setServiceProvider] = useState(null)
+
 	const dispatch = useDispatch()
 	const [errors, setErrors]= useState([]);
-	const [isLoading, setIsLoading] = useState(false)
+	const [isLoadings, setIsLoading] = useState(false)
+	const { data, isLoading } = useSelector(state => state.GetAllTimeSlotReducer);
+
+	const DataWithID = (data) => {
+		const transformedData = data?.map(item => ({label: item.time_range, value: item.time_range}));
+		setGetAlltimeSlot(transformedData);
+	}
+
+	useEffect(() => {
+		dispatch(GetAllTimeSlot())
+	}, []);
+
+	useEffect(() => {
+		if(!isLoading && data?.data){
+			DataWithID(data?.data);
+		}
+	}, [isLoading, data?.data]);
+
 	const [formData, setFormData] = useState({
 		name: '',
 		email: '',
 		user_type: '',
 		age: '',
-		mobile: '',
-		membership: '',
-		services: '',
+		mobile: mobileNo || '',
 		service_des: '',
 		approx_duration: '',
 		supervisor_name: '',
 		lst_serv_date: '',
 		lst_serv_type: '',
-		serviceDateTime: '',
 		address: '',
 		member_id: '',
 		city: '',
 		zip_code: '',
 		registered_id: '',
+		servicep_id: '',
+		suprvisor_id: ''
 	  });
 
-	  const UserTypes =[
-		{
-			label: 'regular',
-			value: 'Regular',
-		},
-		{
-			label: 'Urgent',
-			value: 'urgent',
-		},
-		{
-			label: 'Booking',
-			value: 'booking',
-		}
+	const UserTypes =[
+	{
+		label: 'Regular',
+		value: 'Regular',
+	},
+	{
+		label: 'Urgent',
+		value: 'Urgent',
+	},
+	{
+		label: 'Booking',
+		value: 'Booking',
+	}
 	]
 
-	  const [service, setService] = useState('')
-	  const [userType, setUsertype] = useState('')
+	const [service, setService] = useState('')
+	const [userType, setUsertype] = useState('')
 
-	  useEffect(() => {
+	useEffect(() => {
 		if (formData?.mobile && formData.mobile.length === 10) {
-		  fetchData();
+			fetchData();
 		}
-	  }, [formData?.mobile]);
+	}, []);
 
 	const fetchData = async () => {
+		if (!formData.mobile || formData.mobile.length !== 10) {
+			return;
+		}
 		try {
-			const response = await axios.get(API_URL + '/get/customerByMobile/' + formData?.mobile);
+			const response = await axios.get(API_URL + '/get/customerByMobile/' + formData.mobile);
 			
 			let item = response.data.data
 			if (item?.recentOrder) {
@@ -104,8 +132,13 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 	};
 
 	useEffect(() => {
-		getAllServices();
+		getAllServices()
+		getAllServicesProvider()
+		GetAllSupervisor()
 	}, []);
+
+
+
 
 	const getAllServices = async () => {
 		const response = await axios.get(API_URL + '/service/getall')
@@ -134,9 +167,6 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 		if (!service.value) {
             errors.service = "service  is required";
         }
-		if (!formData.serviceDateTime) {
-            errors.serviceDateTime = "serviceDateTime  is required";
-        }
 		
 
 
@@ -154,10 +184,15 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 		const data ={
 			...formData,
 			service_name: service.value,
-			services: service.value,
-			user_type: userType.value
+			user_type: userType.value,
+			servicep_id: serviceProvider?.value,
+			suprvisor_id: supervisor?.value
 		}
 
+		console.log("data----",data)
+
+
+		return;
 		const apiUrl = `${API_URL}/order/add/${formData?.registered_id}`;
 		// Make a POST request using Axios
 		axios.post(apiUrl, data).then(response => {
@@ -199,18 +234,34 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
         }
     };
 
+	const getAllServicesProvider = async () => {
+		const response = await axios.get(API_URL + '/service-provider/getall')
+		if (response.status === 200) {
+			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
+			setGetAllServiceProvider(transformedData);
+		}
+	}
+
+	const GetAllSupervisor = async () => {
+		const response = await axios.get(API_URL + '/employee/getall/supervisor')
+		if (response.status === 200) {
+			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
+			setGetAllSupervisor(transformedData);
+		}
+	}
+
 	return (
 		<Fragment>
 			<Row>
 				<Col md={6}>
 					<FormGroup>
-					
 						<Label for="firstname">Mobile Number <span style={{color: "red"}}>*</span></Label>
 						<Input 
 						onChange={(e) => handleChange(e, 10)}
 							name='mobile'
 							type='number'
 							value={formData?.mobile}
+							readOnly={!!formData?.registered_id}
 							placeholder='Enter Your Mobile Number'/>
 					</FormGroup>
 					{errors?.mobile && (
@@ -228,6 +279,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 							value={formData?.name}
 							placeholder='Enter Your Name'
 							name='name'
+							readOnly={!!formData?.registered_id}
 							/>
 							 {errors?.name && (
 							<span className='validationError'>
@@ -250,6 +302,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 							onChange={(e) => handleChange(e, 50)}
 							value={formData?.email}
 							name='email'
+							readOnly={!!formData?.registered_id}
 							placeholder='Enter Your Email'/>
 					</FormGroup>
 				</Col>
@@ -262,9 +315,11 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 							type='number'
 							value={formData?.age}
 							name='age'
+							readOnly={!!formData?.registered_id}
 							placeholder='Enter Your Age'/>
 					</FormGroup>
 				</Col>
+				{formData?.registered_id && 
 				<Col md={6}>
 					<FormGroup>
 						<Label>MemberShip Id</Label>
@@ -272,10 +327,11 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 						onChange={(e) => handleChange(e, 10)}
 							value={formData?.member_id}
 							name='member_id'
+							readOnly={!!formData?.registered_id}
 							placeholder='Enter Your member Id'/>
 					</FormGroup>
 				</Col>
-
+				}
 				<Col md={6}>
 					<FormGroup>
 						<Label>Service Type <span style={{color: "red"}}>*</span></Label>
@@ -290,6 +346,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 					</FormGroup>
 				</Col>
 
+
 				<Col md={6}>
 					<FormGroup>
 						<Label>Service Description</Label>
@@ -300,6 +357,23 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 							placeholder='Enter Your Service Description'/>
 					</FormGroup>
 				</Col>
+
+				{/* <Col md={6}>
+					<FormGroup>
+						<Label>
+							Service Date & Time <span style={{color: "red"}}>*</span></Label>
+						<Input 
+							onChange={(e) => handleChange(e, 20)}
+							value={formData?.serviceDateTime}
+							name='serviceDateTime'
+							type='datetime-local'/>
+							{errors?.serviceDateTime && (
+							<span className='validationError'>
+								{errors?.serviceDateTime}
+							</span>
+						)}
+					</FormGroup>
+				</Col> */}
 
 				<Col md={6}>
 					<FormGroup>
@@ -315,12 +389,33 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 				<Col md={6}>
 					<FormGroup>
 						<Label>Supervisor Name</Label>
-						<Input 
-						onChange={(e) => handleChange(e, 50)}
-							onKeyPress={handleKeyPress}
-							value={formData?.supervisor_name}
-							name='supervisor_name'
-							placeholder='Enter Your Supervisor Name'/>
+						<SelectBox 
+						options={getAllSupervisor}
+						initialValue={supervisor}
+						setSelcted={setSupervisor}
+						/>
+					</FormGroup>
+				</Col>
+				<Col md={6}>
+					<FormGroup>
+						<Label>Service Provider</Label>
+						<SelectBox 
+						options={getAllServiceProvider}
+						initialValue={serviceProvider}
+						setSelcted={setServiceProvider}
+						/>
+					</FormGroup>
+				</Col>
+				
+
+				<Col md={6}>
+					<FormGroup>
+						<Label>Time Slot</Label>
+						<SelectBox 
+							setSelcted={setTimeslot}
+							initialValue={timeslot}
+							options={getAlltimeSlot}
+							/>
 					</FormGroup>
 				</Col>
 
@@ -331,6 +426,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 						onChange={(e) => handleChange(e, 20)}
 							value={formData?.lst_serv_date}
 							placeholder=''
+							readOnly={!!formData?.registered_id}
 							name='lst_serv_date'
 							type='date'/>
 					</FormGroup>
@@ -342,25 +438,23 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 							onChange={(e) => handleChange(e, 20)}
 							onKeyPress={handleKeyPress}
 							value={formData?.lst_serv_type}
+							readOnly={!!formData?.registered_id}
 							placeholder='Enter Last Service Type'
 							name='lst_serv_type'
 							/>
 					</FormGroup>
 				</Col>
+				
+				
 				<Col md={6}>
 					<FormGroup>
-						<Label>
-							Service Date & Time <span style={{color: "red"}}>*</span></Label>
-						<Input 
-							onChange={(e) => handleChange(e, 20)}
-							value={formData?.serviceDateTime}
-							name='serviceDateTime'
-							type='datetime-local'/>
-							{errors?.serviceDateTime && (
-							<span className='validationError'>
-								{errors?.serviceDateTime}
-							</span>
-						)}
+						<Label>City</Label>
+						<Input type='text'
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.city}
+							name='city'
+							readOnly={!!formData?.registered_id}
+							placeholder='Enter Your City'/>
 					</FormGroup>
 				</Col>
 				<Col md={6}>
@@ -370,50 +464,13 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser}) => {
 						onChange={(e) => handleChange(e, 20)}
 							value={formData?.address}
 							name='address'
+							type='textarea'
+							readOnly={!!formData?.registered_id}
 							placeholder='Enter Your Address'/>
 					</FormGroup>
 				</Col>
-				<Col md={6}>
-					<FormGroup>
-						<Label>City</Label>
-						<Input type='text'
-							onChange={(e) => handleChange(e, 50)}
-							value={formData?.city}
-							name='city'
-							placeholder='Enter Your City'/>
-					</FormGroup>
-				</Col>
-
-				{/* <Col md={6}>
-					<FormGroup>
-						
-						<Label for="firstname">ZipCode</Label>
-						<Input type='number'
-							onChange={(e) => handleChange(e, 10)}
-							value={formData?.zip_code}
-							name='zip_code'
-							placeholder='Enter Your ZipCode'/>
-					</FormGroup>
-					{errors?.zip_code && (
-							<span className='validationError'>
-								{errors?.zip_code}
-							</span>
-						)}
-				</Col> */}
-
-				<Col md={6}>
-					<FormGroup>
-						<Label>Register Id</Label>
-						<Input 
-							onChange={(e) => handleChange(e, 20)}
-							value={formData?.registered_id}
-							type='number'
-							name='registered_id'
-							placeholder='Enter Your Register Id'/>
-					</FormGroup>
-				</Col>
 				<Button className='bg-primary text-white'
-					onClick={onsubmitDate} disabled={isLoading}>Submit</Button>
+					onClick={onsubmitDate} disabled={isLoadings}>Submit</Button>
 			</Row>
 		</Fragment>
 	)

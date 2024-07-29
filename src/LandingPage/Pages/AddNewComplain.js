@@ -64,13 +64,13 @@ export const AddNewComplain = ({complainModalOpen, complainModalOpenfunction, mo
 	const getAllType = [
 		{
 			label: "Booking",
-			value: "booking"
+			value: "Booking"
 		}, {
 			label: "Urgent",
-			value: "urgent"
+			value: "Urgent"
 		}, {
 			label: "Regular",
-			value: "regular"
+			value: "Regular"
 		}
 	]
 

@@ -40,8 +40,6 @@ const GetAllOrders = (filter, assign , role) => {
 };
 
 
-
-
 export const GetAllOrdersByID = (id) => {
     return async (dispatch) => {
         dispatch({ type: constant.GET_ALL_ORDER_LOADING })
@@ -58,5 +56,19 @@ export const GetAllOrdersByID = (id) => {
     }
 }
 
+export const GetAllTimeSlot = () => {
+    return async (dispatch) => {
+        dispatch({ type: constant.GET_ALL_TIMESLOT_LOADING })
+        try {
+            
+            const response = await axios.get(`${API_URL}/order/time-slot`);
+            if (response.data.status === true) {
+                dispatch({ type: constant.GET_ALL_TIMESLOT_SUCCESS, payload: response.data });
+            }
+        } catch (error) {
+            dispatch({ type: constant.GET_ALL_TIMESLOT_ERROR });
+        }
+    };
+};
 
 export default GetAllOrders;

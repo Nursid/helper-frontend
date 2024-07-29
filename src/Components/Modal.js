@@ -451,9 +451,9 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 													formData.user_type
 												}
 												onChange={(e) => handleInputChange(e, 10)}>
-												<MenuItem value="booking">Booking</MenuItem>
-												<MenuItem value="urgent">Urgent</MenuItem>
-												<MenuItem value="regular">Regular</MenuItem>
+												<MenuItem value="Booking">Booking</MenuItem>
+												<MenuItem value="Urgent">Urgent</MenuItem>
+												<MenuItem value="Regular">Regular</MenuItem>
 											</Select>
 										</div>
 									</Col>
@@ -895,9 +895,9 @@ export const AddComplainModal = ({ complainModalOpen, complainModalOpenfunction,
 	};
 
 	const getAllType = [
-		{ label: "Booking", value: "booking" },
-		{ label: "Urgent", value: "urgent" },
-		{ label: "Regular", value: "regular" }
+		{ label: "Booking", value: "Booking" },
+		{ label: "Urgent", value: "Urgent" },
+		{ label: "Regular", value: "Regular" }
 	];
 
 	const handleChange = (e) => {
