@@ -33,6 +33,8 @@ import { GetAllInventry,GetAllAllotedItems } from "../Store/Actions/Dashboard/In
 import { AssignSupervisorModal,AssignServiceProviderModal,AddComplainModal,AddAmount,SuperAdminRemarkModal,AdminRemarkModal,BackOfficeRemarkModal,AllotItemModal,AddInventryModal } from "../Components/Modal";
 import { useAuth } from "../Context/userAuthContext";
 import { ServiceProviderRemarkModal } from "../Components/Modal";
+import Switch from '@mui/material/Switch';
+import Tooltip from '@mui/material/Tooltip';
 
 const AdminDashboard = () => {
   const { rows, Show, setShow } = UseStateManager();
@@ -95,21 +97,28 @@ const AdminDashboard = () => {
   }
 
   const DataWithID = (data) => {
-    const NewData = []
+    const NewData = [];
     if (data !== undefined) {
-        for (let item of data) {
-            let orderProcess = item.orderProcess;
-            let mergedItem = {...item, ...orderProcess};
-            NewData.push({ ...mergedItem,pending: getStatusByKey(item.pending), _id: data.indexOf(item), date: moment(item.createdAt).format("D / M / Y"), bookdate:moment(item.bookdate).format("DD-MM-YYYY"),
-            booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
-            userRole:userRole
-          })
-        }
+      for (let item of data) {
+        const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
+        const customer = NewCustomer.customer || {}; // Ensure customer is an object
+        const mergedItem = { ...item, ...NewCustomer, ...customer };
+        NewData.push({
+          ...mergedItem,
+          pending: getStatusByKey(item.pending),
+          _id: data.indexOf(item),
+          date: moment(item.createdAt).format("D / M / Y"),
+          bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
+          booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
+          userRole: userRole
+        });
+      }
     } else {
-        NewData.push({ id: 0 })
+      NewData.push({ id: 0 });
     }
-    return NewData
-  }
+    return NewData;
+  };
+  
 
   const [cancel, setCancel]=useState(false);
   const [update, setUpdate]=useState(false);
@@ -421,6 +430,7 @@ const AdminDashboard = () => {
   const [customerTypeOpen, setCustomerTypeOpenFunction] =useState(false)
   const [errors, setErrors] = useState([])
   const customerTypeOpenFunction = () =>setCustomerTypeOpenFunction(!customerTypeOpen)
+  const [adminAprove, setAdminAprove] = useState(false)
 
   const GetSubmmary = ()=>{
     setSummary(true)
@@ -459,8 +469,9 @@ const AdminDashboard = () => {
     setAmountModalOpen(!AmountModalOpen)
   }
 
-  const SuperAdminRemark = (order_no) => { 
+  const SuperAdminRemark = (order_no, admin_approve) => { 
     SetOrderNo(order_no)
+    setAdminAprove(admin_approve)
     setSuperAdminRemarkModalOpen(!superAdminRemarkModalOpen)
   }
 
@@ -502,12 +513,17 @@ const AdminDashboard = () => {
     { field: "member_id", headerName: "Member ID", minWidth: 120, editable: true,  },
     { field: "order_no", headerName: "Order Number", minWidth: 120, editable: true },
     { field: "name", headerName: "Customer Name",minWidth: 150, editable: true },
-    { field: "mobile", headerName: "Mobile",minWidth: 150, editable: true },
+    { field: "mobileno", headerName: "Mobile",minWidth: 150, editable: true },
     { field: "user_type", headerName: "Type", minWidth: 80, editable: true },
     { field: "service_name", headerName: "Service Type",minWidth: 150, editable: true },
     { field: "booktime", headerName: "Booking Time", minWidth: 120, editable: true },
     { field: "bookdate", headerName: "Booking Date", minWidth: 120, editable: true },
-    { field: "problem_des", headerName: "Service Description ", minWidth: 150, editable: true },
+    { field: "problem_des", headerName: "Service Description ", minWidth: 150, editable: true, renderCell: (params) => (
+        <Tooltip title={params.value}>
+            <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {params.value}</div>
+        </Tooltip>
+    ) },    { field: "allot_time_range", headerName: "Alloted Time Slot ", minWidth: 150, editable: true },
     { field: "suprvisor_id", headerName: "Supervisor",
     renderCell: (params) => ( 
         <>
@@ -568,39 +584,120 @@ onClick={()=>AssignAmount(params.row.order_no)}
     renderCell: (params) => ( 
         <>
         { params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
-        (params.row?.userRole?.role==="office" && !params.row.bakof_remark) ? (<><Button variant='contained' color='primary' onClick={()=>backOfficeRemark(params.row.order_no)}>Remark</Button></> ) : <>{params.row.bakof_remark} </>) : params.row.bakof_remark } </> ),
-
+        (params.row?.userRole?.role==="office" && !params.row.bakof_remark) ? (
+            <Tooltip title="Add a remark">
+                <Button variant='contained' color='primary' onClick={()=>backOfficeRemark(params.row.order_no)}>Remark</Button>
+            </Tooltip>
+        ) : (
+            <Tooltip title={params.row.bakof_remark}>
+                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {params.row.bakof_remark}
+                </div>
+            </Tooltip>
+        )) : (
+            <Tooltip title={params.row.bakof_remark}>
+                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {params.row.bakof_remark}
+                </div>
+            </Tooltip>
+        )}
+        </>
+    ),
     minWidth: 180, editable: true},
-    { field: "admin_remark", headerName: "Admin Remark",
+
+    { field: "suerv_remark", headerName: "Supervisor Remark",
     renderCell: (params) => ( 
         <>
         {params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
         
-        (params?.row?.userRole?.role==="admin" && !params.row.admin_remark) ? (<><Button variant='contained' color='primary' onClick={()=>AdminRemark(params.row.order_no)}>Remark</Button></> ) : <>{params.row.admin_remark} </> ) : params.row.admin_remark } </> ),
+        (params?.row?.userRole?.role==="supervisor" && !params.row.suerv_remark) ? (
+            <Tooltip title="Add a remark">
+                <Button variant='contained' color='primary' onClick={()=>AdminRemark(params.row.order_no)}>Remark</Button>
+            </Tooltip>
+        ) : (
+            <Tooltip title={params.row.suerv_remark}>
+                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {params.row.suerv_remark}
+                </div>
+            </Tooltip>
+        )) : (
+            <Tooltip title={params.row.suerv_remark}>
+                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {params.row.suerv_remark}
+                </div>
+            </Tooltip>
+        )}
+        </>
+    ),
     minWidth: 150, editable: true },
 
-    { field: "sueadmin_remark", headerName: "Super Admin Remark",
-    renderCell: (params) => ( 
-        <>
-        {
-        params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
-        (params.row?.userRole?.role==="super" && !params.row.sueadmin_remark) ? (<><Button variant='contained' color='primary' onClick={()=>SuperAdminRemark(params.row.order_no)}>Remark</Button></> ) : <>{params.row.sueadmin_remark} </> ) : params.row.sueadmin_remark} </> ),
-
-    minWidth: 180, editable: true,},
     { field: "servp_remark",
         headerName: "Service Provider Remark",
 
         renderCell: (params) => ( 
             <>
             {params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
-            ( params.row?.userRole?.role==="service" && !params.row.servp_remark) ? (<><Button variant='contained' color='primary' onClick={()=>ServiceProviderRemark(params.row.order_no)} >Remark</Button></> ) : <>{params.row.servp_remark} </>) : params.row.servp_remark }
-            </> ),
+            (params.row?.userRole?.role==="service" && !params.row.servp_remark) ? (
+                <Tooltip title="Add a remark">
+                    <Button variant='contained' color='primary' onClick={()=>ServiceProviderRemark(params.row.order_no)}>Remark</Button>
+                </Tooltip>
+            ) : (
+                <Tooltip title={params.row.servp_remark}>
+                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {params.row.servp_remark}
+                    </div>
+                </Tooltip>
+            )) : (
+                <Tooltip title={params.row.servp_remark}>
+                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {params.row.servp_remark}
+                    </div>
+                </Tooltip>
+            )}
+            </> 
+        ),
         minWidth: 180,
         editable: true,
     },
     { field: "pending", headerName: "Order Status", minWidth: 150, editable: true },
     { field: "cancle_reson", headerName: "Cancel Reason", minWidth: 150, editable: true },
-  ];
+    { 
+      field: "sueadmin_remark", 
+      headerName: "Super Admin Remark",
+      minWidth: 180, 
+      editable: true,
+      renderCell: (params) => ( 
+        <Tooltip title={params.row.sueadmin_remark}>
+          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {params.row.sueadmin_remark}
+          </div>
+        </Tooltip>
+      )
+    },   
+       { 
+        field: "admin_approve", 
+        headerName: "Final Status", 
+        minWidth: 150, 
+        editable: true,
+        type: 'boolean',
+        renderCell: (params) => {
+          if (params.row?.userRole?.role === "super") {
+            return (
+              <Switch
+                checked={params.row.admin_approve}
+                onChange={(event) => {
+                  SuperAdminRemark(params.row.order_no, !params.row.admin_approve)             
+                }}
+                color="primary"
+                size="small"
+              />
+            )
+          } else{
+            return params.row.admin_approve ? "Verified" : "Unverified"
+          }
+        },
+      },
+      ];
 
   const handleComplain = () =>{
     let errors = {};
@@ -652,6 +749,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
         superAdminRemarkModalfunction={() => setSuperAdminRemarkModalOpen(!superAdminRemarkModalOpen)}
         OrderNo={OrderNo}
         GetAllOrders={GetAllOrders}
+        adminAprove={adminAprove}
       />
 
       <BackOfficeRemarkModal
@@ -666,6 +764,8 @@ onClick={()=>AssignAmount(params.row.order_no)}
         adminRemarkModalfunction={() => setAdminRemarkModalOpen(!adminRemarkModalOpen)}
         OrderNo={OrderNo}
         GetAllOrders={GetAllOrders}
+        role={role}
+        currentUser={currentUser.id}
       />
       
       <AssignServiceProviderModal
@@ -983,7 +1083,6 @@ onClick={()=>AssignAmount(params.row.order_no)}
                                       OrderCancel(params.row.order_no,params.row.cust_id);
                                     }
                                     else if(selectedValue === 'Edit'){
-
                                       OrderUpdate(params.row)
                                     }
                                     else if(selectedValue === 'Hold'){
@@ -995,9 +1094,10 @@ onClick={()=>AssignAmount(params.row.order_no)}
                                     else if(selectedValue === 'Transfer'){
                                       OrderTransfers(params.row.order_no)
                                     }
+                                    e.target.value = 'Action';
                                 }}
                               >
-                              <option desabled selected>Action</option>
+                              <option disabled selected>Action</option>
                              
                               {params.row.pending === "Completed" || params.row.pending === "Cancel" ? (
                           <>
@@ -1029,59 +1129,6 @@ onClick={()=>AssignAmount(params.row.order_no)}
                           })}    
                          />
                         }
-          {/* {!inventry && !summary && complain && 
-                  <div className='d-grid place-items-center'>
-                    <Card className="p-4 border-0">
-                      <div className="mx-auto">
-                        <Row>
-                            <Col md={12}>
-                            <FormGroup>
-                              <Label for="complaint">New Complaint</Label>
-                              <Input
-                                id="exampleSelect"
-                                name="select"
-                                type="select"
-                                onChange={(e) => {
-                                  setMemberType(e.target.value);
-                                  setMobileNo('');
-                                }}
-                              >
-                                <option disabled>Select Member Type</option>
-                                <option value={false}>Not Member</option>
-                                <option value={true}>Member</option>
-                              </Input>
-                            </FormGroup>
-                            </Col>
-                            </Row>
-                            <Row>
-                            {memberType && JSON.parse(memberType) && (
-                              <Col md={12}>
-                              <FormGroup>
-                                <Label for="mobile">Mobile No</Label>
-                                <Input
-                                  id="mobile"
-                                  name="mobile"
-                                  type="number"
-                                  value={mobileNo}
-                                  placeholder="Mobile No"
-                                  onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (/^\d{0,10}$/.test(value)) {  
-                                        setMobileNo(value);  
-                                    }
-                                }}
-                                />
-                                </FormGroup>
-                                </Col>
-                            )}
-                            </Row>
-                            <Row>
-                            <Button variant='contained' color='primary' onClick={HandleComplainBook}>Book Now</Button>
-                            </Row>
-                      </div>
-                    </Card>
-                  </div>
-                } */}
             {inventry && !allotedItems && <AdminDataTable rows={inventories} CustomToolbar={InventryToolbar} columns={Inventrycolumns} />}  
 
             {!complain && !summary && inventry && allotedItems && <AdminDataTable rows={allotedItem} CustomToolbar={InventryToolbar} columns={AllotedItemsCollums} />}   

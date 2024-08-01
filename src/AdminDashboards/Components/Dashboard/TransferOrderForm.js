@@ -11,18 +11,17 @@ const TransferOrderForm = ({orderNo,prop,GetAllOrders}) => {
 
 const [order_no, setOrderNo]=useState(orderNo);
 const [admin_remark,setAdminRemark]=useState('');
-const [time, setTime]=useState('10:02');
+const [time, setTime]= useState('');
 const [date, setDate]=useState('');
 const dispatch = useDispatch()
 const onsubmitDate =() => {
 
     const data={
-        admin_remark: admin_remark,
+        sueadmin_remark: admin_remark,
         booktime:time,
         bookdate:date,
         order_no:order_no
     }
-
 
     const apiUrl = `${API_URL}/order/assign/${order_no}`;
 		axios.put(apiUrl, data)

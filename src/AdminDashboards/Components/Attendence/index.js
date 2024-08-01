@@ -47,10 +47,12 @@ const AdminAttendance = () => {
                         <AdminNavItems />
                         <div className="AttendenceTabs px-3">
                             {/* set role wise display  */}
-                            {userRole && userRole.AttendenceEmployee || userRole.AttendenceServiceProvider ? <span className={` ${attendanceActive === "in" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("in") }}>In Attendence</span> : null}
-                            {userRole && userRole.AttendenceEmployee || userRole.AttendenceServiceProvider ? <span className={` ${attendanceActive === "out" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("out") }}>Out Attendence</span> : null}
-                            {userRole && userRole.AttendenceReport ? <span className={` ${attendanceActive === "report" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("report") }}>Attendance Report</span> : null}
-                            {userRole && userRole.AttendenceModify ? <span className={` ${attendanceActive === "modify" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("modify") }}>Attendance Modify</span> : null}
+
+                            {userRole && userRole.AttendenceEmployee ? <span className={` ${attendanceActive === "in" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("in") }}>Supervisor Attendance</span> : null}
+                            {userRole && userRole.AttendenceServiceProvider ? <span className={` ${attendanceActive === "out" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("out") }}>Service Provider Attendance</span> : null}
+
+                            {/* {userRole && userRole.AttendenceReport ? <span className={` ${attendanceActive === "report" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("report") }}>Attendance Report</span> : null}
+                            {userRole && userRole.AttendenceModify ? <span className={` ${attendanceActive === "modify" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("modify") }}>Attendance Modify</span> : null} */}
                         </div>
                         <TabContent activeTab={attendanceActive} >
                             {userRole && userRole.AttendenceEmployee || userRole.AttendenceServiceProvider ? <>
@@ -61,7 +63,7 @@ const AdminAttendance = () => {
                                     <OutAttendenceTable />
                                 </TabPane>
                             </> : null}
-                            {userRole && userRole.AttendenceReport ?
+                            {/* {userRole && userRole.AttendenceReport ?
                                 <TabPane tabId="report">
                                     <AttendenceReport />
                                 </TabPane>
@@ -70,7 +72,7 @@ const AdminAttendance = () => {
                                 <TabPane tabId="modify">
                                     <AttendenceModify />
                                 </TabPane>
-                                : null}
+                                : null} */}
                         </TabContent>
                     </div>
                 </div>

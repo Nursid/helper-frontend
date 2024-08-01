@@ -1615,29 +1615,28 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 };
 
 
-export const SuperAdminRemarkModal = ({superAdminRemarkModalOpen, superAdminRemarkModalfunction, OrderNo, GetAllOrders}) => {
+export const SuperAdminRemarkModal = ({superAdminRemarkModalOpen, superAdminRemarkModalfunction, OrderNo, GetAllOrders, adminAprove}) => {
 
 	const [sueadminRemark, SetsueadminRemark] = useState(false)
 	const dispatch = useDispatch();
 
 	const handleSubmit = () => {
 		const formData = {
-			sueadmin_remark: sueadminRemark
+			sueadmin_remark: sueadminRemark,
+			admin_approve: adminAprove
 		}
 		const apiUrl = `${API_URL}/order/assign/${OrderNo}`;
 		// Make a POST request using Axios
 		axios.put(apiUrl, formData).then(response => {
 			if (response.status === 200) {
 				superAdminRemarkModalfunction();
-				Swal.fire('Successfully!', response.data.message, 'success')
+				Swal.fire('Successfully!', 'Order Varified Successfully', 'success')
 			} else {
 				Swal.fire({title: 'failed to add try again', icon: "error"})
 			} dispatch(GetAllOrders());
 		}).catch(error => {
 			console.error('Error:', error);
 		});
-
-		// Close the modal after submission
 	};
 
 	return (
@@ -1689,14 +1688,14 @@ export const SuperAdminRemarkModal = ({superAdminRemarkModalOpen, superAdminRema
 };
 
 
-export const AdminRemarkModal = ({adminRemarkModalOpen, adminRemarkModalfunction, OrderNo, GetAllOrders}) => {
+export const AdminRemarkModal = ({adminRemarkModalOpen, adminRemarkModalfunction, OrderNo, GetAllOrders, role, currentUser}) => {
 
-	const [adminRemark, SetadminRemark] = useState(false)
+	const [suerv_remark, setSuerv_remark] = useState(false)
 	const dispatch = useDispatch();
 
 	const handleSubmit = () => {
 		const formData = {
-			admin_remark: adminRemark
+			suerv_remark: suerv_remark
 		}
 		const apiUrl = `${API_URL}/order/assign/${OrderNo}`;
 		// Make a POST request using Axios
@@ -1706,7 +1705,14 @@ export const AdminRemarkModal = ({adminRemarkModalOpen, adminRemarkModalfunction
 				Swal.fire('Successfully!', response.data.message, 'success')
 			} else {
 				Swal.fire({title: 'failed to add try again', icon: "error"})
-			} dispatch(GetAllOrders());
+			}
+			
+			if (role === "service" || role === "supervisor") {
+                const status = undefined;
+                dispatch(GetAllOrders(status, currentUser, role));
+            } else {
+                dispatch(GetAllOrders());
+            }
 		}).catch(error => {
 			console.error('Error:', error);
 		});
@@ -1717,23 +1723,23 @@ export const AdminRemarkModal = ({adminRemarkModalOpen, adminRemarkModalfunction
 			isOpen={adminRemarkModalOpen}
 			toggle={adminRemarkModalfunction}>
 			<ModalHeader toggle={adminRemarkModalfunction}>
-				Admin Remark
+				Supervisor Remark
 			</ModalHeader>
 			<ModalBody>
 				<Row>
 					<Col xs={12}>
 						<div className="form-outline mb-2">
 							<label className="form-label" htmlFor="serviceRemark">
-								Admin Remark
+							Supervisor Remark
 							</label>
 							<Input type="textarea"
 								onChange={
-									(e) => SetadminRemark(e.target.value)
+									(e) => setSuerv_remark(e.target.value)
 								}
 								className="w-100"
 								rows="6"
 								cols="50"
-								placeholder="Admin Remark"
+								placeholder="Supervisor Remark"
 							/>
 						</div>
 						<div className="d-flex justify-content-end">

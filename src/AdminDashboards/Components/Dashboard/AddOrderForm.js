@@ -52,18 +52,18 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 		user_type: '',
 		age: '',
 		mobile: mobileNo || '',
-		service_des: '',
+		problem_des: '',
 		approx_duration: '',
-		supervisor_name: '',
 		lst_serv_date: '',
 		lst_serv_type: '',
 		address: '',
 		member_id: '',
 		city: '',
-		zip_code: '',
-		registered_id: '',
+		cust_id: '',
 		servicep_id: '',
-		suprvisor_id: ''
+		suprvisor_id: '',
+		serviceDateTime: '',
+		allot_time_range: ''
 	  });
 
 	const UserTypes =[
@@ -108,7 +108,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 					member_id: item?.customerData?.member_id,
 					address: item?.customerData?.address,
 					city: item?.customerData?.location,
-					registered_id: item?.customerData?.NewCustomer?.id,
+					cust_id: item?.customerData?.NewCustomer?.id,
 					lst_serv_date: lastService ? new Date(lastService.createdAt).toISOString().split('T')[0] : '',
 					lst_serv_type: lastService?.service_name || '',
 				}));
@@ -121,7 +121,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 					member_id: item?.customerData?.member_id,
 					address: item?.customerData?.address,
 					city: item?.customerData?.location,
-					registered_id: item?.customerData?.NewCustomer?.id,
+					cust_id: item?.customerData?.NewCustomer?.id,
 					lst_serv_date: '',
 					lst_serv_type: '',
 				}));
@@ -186,19 +186,16 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 			service_name: service.value,
 			user_type: userType.value,
 			servicep_id: serviceProvider?.value,
-			suprvisor_id: supervisor?.value
+			suprvisor_id: supervisor?.value,
+			allot_time_range: timeslot.value
+
 		}
-
-		console.log("data----",data)
-
-
-		return;
-		const apiUrl = `${API_URL}/order/add/${formData?.registered_id}`;
+		const apiUrl = `${API_URL}/order/add`;
 		// Make a POST request using Axios
 		axios.post(apiUrl, data).then(response => {
-			if (response.status === 200) {
+			if (response.data.status === true) {
 				prop();
-				Swal.fire('Successfully!', 'Your Order has been Added.', 'success')
+				Swal.fire('Successfully!', response.data.message, 'success')
 			} else {
 				Swal.fire({title: 'failed to add try again', icon: "error"})
 			}
@@ -261,7 +258,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 							name='mobile'
 							type='number'
 							value={formData?.mobile}
-							readOnly={!!formData?.registered_id}
+							readOnly={!!formData?.cust_id}
 							placeholder='Enter Your Mobile Number'/>
 					</FormGroup>
 					{errors?.mobile && (
@@ -279,7 +276,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 							value={formData?.name}
 							placeholder='Enter Your Name'
 							name='name'
-							readOnly={!!formData?.registered_id}
+							readOnly={!!formData?.cust_id}
 							/>
 							 {errors?.name && (
 							<span className='validationError'>
@@ -302,7 +299,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 							onChange={(e) => handleChange(e, 50)}
 							value={formData?.email}
 							name='email'
-							readOnly={!!formData?.registered_id}
+							readOnly={!!formData?.cust_id}
 							placeholder='Enter Your Email'/>
 					</FormGroup>
 				</Col>
@@ -315,11 +312,11 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 							type='number'
 							value={formData?.age}
 							name='age'
-							readOnly={!!formData?.registered_id}
+							readOnly={!!formData?.cust_id}
 							placeholder='Enter Your Age'/>
 					</FormGroup>
 				</Col>
-				{formData?.registered_id && 
+				{formData?.cust_id && 
 				<Col md={6}>
 					<FormGroup>
 						<Label>MemberShip Id</Label>
@@ -327,7 +324,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 						onChange={(e) => handleChange(e, 10)}
 							value={formData?.member_id}
 							name='member_id'
-							readOnly={!!formData?.registered_id}
+							readOnly={!!formData?.cust_id}
 							placeholder='Enter Your member Id'/>
 					</FormGroup>
 				</Col>
@@ -352,13 +349,13 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 						<Label>Service Description</Label>
 						<Input 
 						onChange={(e) => handleChange(e, 100)}
-							value={formData?.service_des}
-							name='service_des'
+							value={formData?.problem_des}
+							name='problem_des'
 							placeholder='Enter Your Service Description'/>
 					</FormGroup>
 				</Col>
 
-				{/* <Col md={6}>
+			<Col md={6}>
 					<FormGroup>
 						<Label>
 							Service Date & Time <span style={{color: "red"}}>*</span></Label>
@@ -373,7 +370,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 							</span>
 						)}
 					</FormGroup>
-				</Col> */}
+				</Col> 
 
 				<Col md={6}>
 					<FormGroup>
@@ -426,7 +423,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 						onChange={(e) => handleChange(e, 20)}
 							value={formData?.lst_serv_date}
 							placeholder=''
-							readOnly={!!formData?.registered_id}
+							readOnly={!!formData?.cust_id}
 							name='lst_serv_date'
 							type='date'/>
 					</FormGroup>
@@ -438,7 +435,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 							onChange={(e) => handleChange(e, 20)}
 							onKeyPress={handleKeyPress}
 							value={formData?.lst_serv_type}
-							readOnly={!!formData?.registered_id}
+							readOnly={!!formData?.cust_id}
 							placeholder='Enter Last Service Type'
 							name='lst_serv_type'
 							/>
@@ -453,7 +450,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 							onChange={(e) => handleChange(e, 50)}
 							value={formData?.city}
 							name='city'
-							readOnly={!!formData?.registered_id}
+							readOnly={!!formData?.cust_id}
 							placeholder='Enter Your City'/>
 					</FormGroup>
 				</Col>
@@ -465,8 +462,13 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 							value={formData?.address}
 							name='address'
 							type='textarea'
-							readOnly={!!formData?.registered_id}
+							readOnly={!!formData?.cust_id}
 							placeholder='Enter Your Address'/>
+							{errors?.address && (
+							<span className='validationError'>
+								{errors?.address}
+							</span>
+						)}
 					</FormGroup>
 				</Col>
 				<Button className='bg-primary text-white'

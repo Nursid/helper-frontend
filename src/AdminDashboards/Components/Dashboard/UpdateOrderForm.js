@@ -6,23 +6,27 @@ import Swal from 'sweetalert2';
 import moment from 'moment';
 import SelectBox from '../../Elements/SelectBox';
 import { API_URL } from '../../../config';
-
+import { GetAllTimeSlot } from '../../../Store/Actions/Dashboard/Orders/OrderAction';
+import { useSelector } from 'react-redux';
 const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) => {
+
   const dispatch = useDispatch();
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
+  const [getAlltimeSlot, setGetAlltimeSlot] = useState([])
+  const [timeslot, setTimeslot] = useState(orderData?.allot_time_range || '')
   const [formData, setFormData] = useState({
     user_type: orderData?.user_type || '',
-    name: orderData?.orderProcess?.name || '',
-    email: orderData?.orderProcess?.email || '',
+    name: orderData?.NewCustomer?.name || '',
+    email: orderData?.NewCustomer?.email || '',
     age: orderData?.age || '',
     service_name: orderData?.service_name || '',
-    mobile: orderData?.orderProcess?.mobile || '',
+    mobile: orderData?.NewCustomer?.mobileno || '',
     service_des: orderData?.service_des || '',
     suprvisor_id: orderData?.suprvisor_id || '',
     serviceDateTime: moment(orderData.serviceDateTime).format('YYYY-MM-DDTHH:mm') || '',
-    address: orderData?.address || '',
-    city: orderData?.city || '',
+    address: orderData?.customer?.address || '',
+    city: orderData?.customer?.city || '',
     pincode: orderData?.pincode || '',
     status: orderData?.pending || 'Pending',
     booktime: orderData?.booktime || '',
@@ -33,6 +37,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     netpayamt: orderData?.netpayamt || '',
     piadamt: orderData?.piadamt || '',
     totalamt: orderData?.totalamt || '',
+    allot_time_range: orderData?.allot_time_range || ''
   });
 
   const [allServices, setAllServices] = useState([]);
@@ -63,6 +68,23 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
       setFormData((prev) => ({ ...prev, totalamt: bill - paid }));
     }
   };
+
+  const { data, isLoading: isLoadingTime } = useSelector(state => state.GetAllTimeSlotReducer);
+
+	const DataWithID = (data) => {
+		const transformedData = data?.map(item => ({label: item.time_range, value: item.time_range}));
+		setGetAlltimeSlot(transformedData);
+	}
+
+	useEffect(() => {
+		dispatch(GetAllTimeSlot())
+	}, []);
+
+	useEffect(() => {
+		if(!isLoading && data?.data){
+			DataWithID(data?.data);
+		}
+	}, [isLoading, data?.data]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -118,7 +140,8 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
           user_type: formData.user_type.value,
           paymethod: formData.paymethod.value,
           servicep_id: formData.servicep_id.value,
-          suprvisor_id: formData.suprvisor_id.value
+          suprvisor_id: formData.suprvisor_id.value,
+          allot_time_range: timeslot.value
         }
         try {
       const response = await axios.patch(`${API_URL}/order/update/${orderData.order_no}`, data);
@@ -158,7 +181,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         <Col md={6}>
           <FormGroup>
             <Label>Customer Name <span style={{color: "red"}}>*</span></Label>
-            <Input name="name" onChange={(e) => handleInputChange(e, 50)} value={formData.name} placeholder="Enter Your Name" />
+            <Input name="name" onChange={(e) => handleInputChange(e, 50)} value={formData.name} placeholder="Enter Your Name" readOnly/>
             {errors?.name && (
 							<span className='validationError'>
 								{errors?.name}
@@ -169,7 +192,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         <Col md={6}>
           <FormGroup>
             <Label>Email</Label>
-            <Input name="email" type="email" onChange={(e) => handleInputChange(e, 50)} value={formData.email} placeholder="Enter Your Email" />
+            <Input name="email" type="email" onChange={(e) => handleInputChange(e, 50)} value={formData.email} placeholder="Enter Your Email" readOnly />
           </FormGroup>
         </Col>
         <Col md={6}>
@@ -208,6 +231,16 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
           </FormGroup>
         </Col>
         <Col md={6}>
+					<FormGroup>
+						<Label>Time Slot</Label>
+						<SelectBox 
+							setSelcted={setTimeslot}
+							initialValue={timeslot}
+							options={getAlltimeSlot}
+							/>
+					</FormGroup>
+				</Col>
+        <Col md={6}>
           <FormGroup>
             <Label>Service Provider</Label>
             <SelectBox options={allServiceProviders} setSelcted={(value) => setFormData((prev) => ({ ...prev, servicep_id: value }))} initialValue={formData.servicep_id} />
@@ -222,13 +255,13 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         <Col md={6}>
           <FormGroup>
             <Label>Address</Label>
-            <Input name="address" onChange={(e) => handleInputChange(e, 200)} value={formData.address} placeholder="Enter Your Address" />
+            <Input name="address" onChange={(e) => handleInputChange(e, 200)} value={formData.address} placeholder="Enter Your Address" readOnly />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>City</Label>
-            <Input name="city" type="text" onChange={(e) => handleInputChange(e, 50)} value={formData.city} placeholder="Enter Your City" />
+            <Input name="city" type="text" onChange={(e) => handleInputChange(e, 50)} value={formData.city} placeholder="Enter Your City" readOnly />
           </FormGroup>
         </Col>
         <Col md={6}>
