@@ -1623,7 +1623,8 @@ export const SuperAdminRemarkModal = ({superAdminRemarkModalOpen, superAdminRema
 	const handleSubmit = () => {
 		const formData = {
 			sueadmin_remark: sueadminRemark,
-			admin_approve: adminAprove
+			admin_approve: adminAprove,
+			pending: 3
 		}
 		const apiUrl = `${API_URL}/order/assign/${OrderNo}`;
 		// Make a POST request using Axios

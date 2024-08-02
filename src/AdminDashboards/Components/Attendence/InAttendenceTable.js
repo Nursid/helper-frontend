@@ -1,22 +1,52 @@
-import { Box } from '@mui/material'
-import React, { Fragment, useEffect, useState } from 'react'
+import { Box } from '@mui/material';
+import React, { Fragment, useEffect, useState } from 'react';
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import AdminDataTable from '../../Elements/AdminDataTable';
 import { useUserRoleContext } from '../../../Context/RolesContext';
-import { mockDataContacts } from "../../data/mockData";
-// import DashHeader from '../../DashboardComponents/Global/DashHeader';
-// import { Card } from 'reactstrap'
-
+import { API_URL } from '../../../config';
+import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { AttendanceAction } from '../../../Store/Actions/Dashboard/AttendanceAction';
+import Swal from 'sweetalert2';
 const InAttendenceTable = () => {
-
-    const { userRole, setUserRole, UserRoleCalled } = useUserRoleContext();
+    const { UserRoleCalled } = useUserRoleContext();
+    const { data, isSuccess } = useSelector(state => state.AttendanceReducers);
+    const dispatch = useDispatch();
+    const [attendanceData, setAttendanceData] = useState([{id: 0}]);
 
     useEffect(() => {
-        UserRoleCalled()
-    }, [])
+        UserRoleCalled();
+        dispatch(AttendanceAction());
+    }, []);
 
-     const columns = [
-        { field: "id", headerName: "Sr.No", minWidth: 10, editable: true, hidden: true },        {
+    useEffect(() => {
+        if (isSuccess) {
+            setAttendanceData(data);
+        }
+    }, [data, isSuccess]);
+
+
+    const onAttendance = async (status, emp_id) => {
+       
+        const formData = {
+            action: status === true ? 'check_out' : 'check_in',
+            emp_id: emp_id,
+            createdby: 'Super Admin'
+        };
+        const response = await axios.post(`${API_URL}/attendance/supervisor/add`, formData);
+        if (response.status === 200) {
+            dispatch(AttendanceAction());
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: response.data.message
+            })
+        }
+    };
+
+    const columns = [
+        {
             field: "status",
             headerName: "Status",
             renderCell: (params) => (
@@ -27,36 +57,30 @@ const InAttendenceTable = () => {
                         cursor: "pointer",
                         margin: 0,
                     }}
+                    onClick={() => onAttendance(params.row.status, params.row.emp_id)}
                 >
-                    Check In
+                    {(!params.row.status) ? 'Check In' : 'Check Out'}
                 </p>
             ),
             minWidth: 150,
             editable: true,
         },
         { field: "name", headerName: "Supervisor Name", flex: 1, minWidth: 120, editable: true },
-        { field: "date", headerName: "Date",flex: 1, minWidth: 120, editable: true },
-        { field: "start_time", headerName: "Check In", minWidth: 80,flex: 1, editable: true },
-        { field: "end_time", headerName: "Check Out",flex: 1, minWidth: 120, editable: true },
-        { field: "createdby", headerName: "Created By",flex: 1, minWidth: 120, editable: true },
-    ]
+        { field: "in_date", headerName: "In Date", flex: 1, minWidth: 120, editable: true },
+        { field: "check_in", headerName: "Check In", minWidth: 80, flex: 1, editable: true },
+        { field: "out_date", headerName: "Out Date", minWidth: 80, flex: 1, editable: true },
+        { field: "check_out", headerName: "Check Out", flex: 1, minWidth: 120, editable: true },
+        { field: "createdby", headerName: "Created By", flex: 1, minWidth: 120, editable: true },
+    ];
 
     return (
         <Fragment>
-            {/* <DashHeader /> */}
             <div className='p-3'>
-                <h3 className='headingBelowBorder py-3 text-white' style={{ maxWidth: "fit-content" }}  >Supervisor Attendence Listing </h3>
-                {/* <div className='AttendenceNavBtn w-100 py-2 gap-3'>
-                    {RoleWiseBtn(Office) && RoleWiseBtn(Office).map((item, index) => (
-                        <div className={`py-2 px-4 border shadow rounded-2 cursor-p text-white hoverThis Fw_500 d-flex align-items-center justify-content-center  ${selctedAttendence === item ? "hoverThis_active" : ""}`} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={() => { setSelectedAttendence(item) }}>
-                            {item}
-                        </div>
-                    ))}
-                </div> */}
-                <AdminDataTable rows={mockDataContacts} columns={columns} CustomToolbar={GridToolbar} />
+                <h3 className='headingBelowBorder py-3 text-white' style={{ maxWidth: "fit-content" }}>Supervisor Attendance Listing</h3>
+                <AdminDataTable rows={attendanceData} columns={columns} CustomToolbar={GridToolbar} />
             </div>
         </Fragment>
-    )
-}
+    );
+};
 
-export default InAttendenceTable
+export default InAttendenceTable;

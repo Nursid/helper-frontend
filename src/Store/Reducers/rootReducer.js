@@ -22,6 +22,9 @@ import {GetAllInventryReducers,GetAllAllotedItemReducers} from "./Dashboard/GetA
 import GetALLLastServicesReducers from "./CustomersReducers.js/GetALLLastServicesReducers"
 import AccountReducers from "./Dashboard/AccountReducers";
 import AvailabilityReducers from "./Dashboard/AvailabilityReduces";
+
+import AttendanceReducers from "./Dashboard/AttendanceReducers";
+
 const rootReducer = combineReducers({
     SeviceAddReducer: SeviceAddReducer,
     GetAllServicesReducer: GetAllServicesReducer,
@@ -54,7 +57,9 @@ const rootReducer = combineReducers({
     GetALLLastServicesReducers:GetALLLastServicesReducers,
     AccountReducers:AccountReducers,
     AvailabilityReducers: AvailabilityReducers,
-    GetAllTimeSlotReducer: GetAllTimeSlotReducer
+    GetAllTimeSlotReducer: GetAllTimeSlotReducer,
+    AttendanceReducers: AttendanceReducers
+
 })
 
 
