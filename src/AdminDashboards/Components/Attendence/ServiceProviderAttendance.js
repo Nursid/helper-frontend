@@ -1,22 +1,27 @@
-import { Box } from '@mui/material';
-import React, { Fragment, useEffect, useState } from 'react';
+import { Box } from '@mui/material'
+import React, { Fragment, useEffect, useState } from 'react'
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { mockDataContacts } from "../../data/mockData";
 import AdminDataTable from '../../Elements/AdminDataTable';
 import { useUserRoleContext } from '../../../Context/RolesContext';
+// import DashHeader from '../../DashboardComponents/Global/DashHeader';
+// import { Card } from 'reactstrap'
+import Swal from 'sweetalert2';
 import { API_URL } from '../../../config';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
-import { AttendanceAction } from '../../../Store/Actions/Dashboard/AttendanceAction';
-import Swal from 'sweetalert2';
-const InAttendenceTable = () => {
+
+import { ServiceProviderAttendancaAction } from '../../../Store/Actions/Dashboard/AttendanceAction/ServiceProviderAttendance';
+
+const ServiceProviderAttendance = () => {
     const { UserRoleCalled } = useUserRoleContext();
-    const { data, isSuccess } = useSelector(state => state.AttendanceReducers);
+    const { data, isSuccess } = useSelector(state => state.ServiceProviderAttendanceReducers);
     const dispatch = useDispatch();
     const [attendanceData, setAttendanceData] = useState([{id: 0}]);
 
     useEffect(() => {
         UserRoleCalled();
-        dispatch(AttendanceAction());
+        dispatch(ServiceProviderAttendancaAction());
     }, []);
 
     useEffect(() => {
@@ -26,16 +31,16 @@ const InAttendenceTable = () => {
     }, [data, isSuccess]);
 
 
-    const onAttendance = async (status, emp_id) => {
+    const onAttendance = async (status, servp_id) => {
        
         const formData = {
             action: status === true ? 'check_out' : 'check_in',
-            emp_id: emp_id,
+            servp_id: servp_id,
             createdby: 'Super Admin'
         };
-        const response = await axios.post(`${API_URL}/attendance/supervisor/add`, formData);
+        const response = await axios.post(`${API_URL}/attendance/service-provider/add`, formData);
         if (response.status === 200) {
-            dispatch(AttendanceAction());
+            dispatch(ServiceProviderAttendancaAction());
         }else{
             Swal.fire({
                 icon: 'error',
@@ -57,7 +62,7 @@ const InAttendenceTable = () => {
                         cursor: "pointer",
                         margin: 0,
                     }}
-                    onClick={() => onAttendance(params.row.status, params.row.emp_id)}
+                    onClick={() => onAttendance(params.row.status, params.row.servp_id)}
                 >
                     {(!params.row.status) ? 'Check In' : 'Check Out'}
                 </p>
@@ -75,12 +80,13 @@ const InAttendenceTable = () => {
 
     return (
         <Fragment>
+            {/* <DashHeader /> */}
             <div className='p-3'>
-                <h3 className='headingBelowBorder py-3 text-white' style={{ maxWidth: "fit-content" }}>Supervisor Attendance Listing</h3>
+                <h3 className='headingBelowBorder py-3 text-white' style={{ maxWidth: "fit-content" }} >ServiceProvider Attendence Listing</h3>
                 <AdminDataTable rows={attendanceData} columns={columns} CustomToolbar={GridToolbar} />
             </div>
         </Fragment>
-    );
-};
+    )
+}
 
-export default InAttendenceTable;
+export default ServiceProviderAttendance

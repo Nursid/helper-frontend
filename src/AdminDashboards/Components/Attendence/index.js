@@ -1,8 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import AdminHeader from '../AdminHeader'
 import { TabContent, TabPane } from 'reactstrap'
-import InAttendenceTable from './InAttendenceTable'
-import OutAttendenceTable from './OutAttendenceTable'
+import SupervisorAttendance from './SupervisorAttendance'
+import OutAttendenceTable from './ServiceProviderAttendance'
 import AttendenceReport from './AttendenceReport'
 import AttendenceModify from './AttendenceModify'
 import AdminNavItems from '../../Elements/AdminNavItems'
@@ -57,7 +57,7 @@ const AdminAttendance = () => {
                         <TabContent activeTab={attendanceActive} >
                             {userRole && userRole.AttendenceEmployee || userRole.AttendenceServiceProvider ? <>
                                 <TabPane tabId="in">
-                                    <InAttendenceTable />
+                                    <SupervisorAttendance />
                                 </TabPane>
                                 <TabPane tabId="out">
                                     <OutAttendenceTable />
