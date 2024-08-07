@@ -9,8 +9,6 @@ import { API_URL } from "../../../config";
 
 export const GetAvailability = (formdata) => {
 
-    console.log(formdata)
-
     return async (dispatch) => {
         dispatch({ type: constant.AVAILABILITY_API_LOADING })
         try {

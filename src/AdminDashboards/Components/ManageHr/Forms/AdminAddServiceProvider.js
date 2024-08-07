@@ -74,7 +74,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
     }, []);
 
     const [selectedCity, setSelectedCity] = useState(null)
-    // const [selectedServiceType, setSeletedServiceType] = useState(null)
+    const [selectedServiceType, setSeletedServiceType] = useState(data2.provider_type || '')
    // selected services
    const [selectedServices, setSelected] = useState([]);
 
@@ -134,6 +134,9 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
         if (!formData.mobile_no) {
             errors.mobile_no = "Mobile Number is required";
         }
+        if (!selectedServiceType.value) {
+            errors.selectedServiceType = "ServiceProvider type is required";
+        }
 
         if (errors && Object.keys(errors).length === 0) {
 			// Form is valid, handle form submission here
@@ -150,6 +153,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
         const updatedFormData = {
             ...formData,
             multiServices: JSON.stringify(serviceValues),
+            provider_type: selectedServiceType.value,
             ...files
         };
 
@@ -199,10 +203,10 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
 
 
 
-    // const ServiceProviderType = [
-    //     { value: 'staff', label: 'Staff' },
-    //     { value: 'outsource', label: 'Out Source' },
-    // ];
+    const ServiceProviderType = [
+        { value: 'staff', label: 'Staff' },
+        { value: 'outsource', label: 'Out Source' },
+    ];
 
     const handleFileChange = (e) => {
         const { name, files: newFiles } = e.target;
@@ -323,6 +327,17 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                  {errors?.mobile_no && (
                                                     <span className='validationError'>
                                                         {errors?.mobile_no}
+                                                    </span>
+                                                )}
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="serviceprovidertype">Service Provider Type <span style={{color: "red"}}>*</span></Label>
+                                                <SelectBox options={ServiceProviderType} setSelcted={setSeletedServiceType} initialValue={selectedServiceType} />
+                                                {errors?.selectedServiceType && (
+                                                    <span className='validationError'>
+                                                        {errors?.selectedServiceType}
                                                     </span>
                                                 )}
                                             </FormGroup>
@@ -600,12 +615,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        {/* <Col md={12}>
-                                            <FormGroup>
-                                                <Label for="serviceprovidertype">Service Provider Type</Label>
-                                                <SelectBox options={ServiceProviderType} setSelcted={setSeletedServiceType} />
-                                            </FormGroup>
-                                        </Col> */}
+                                       
                                         <Col md={12}>
                                             <FormGroup>
                                                 <Label for="aboutserviceprover">About Service Provider</Label>

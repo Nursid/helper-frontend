@@ -15,7 +15,7 @@ import {
 	Label,
 	FormGroup
 } from "reactstrap";
-import {UseStateManager} from "../Context/StateManageContext";
+import { UseStateManager } from "../Context/StateManageContext";
 import Logo from "../assets/svg/we_logo.png";
 import {Formik} from "formik";
 import {GetCustomerLogIn, GetLogIn} from "../Store/Actions/LandingPage/AuthAction";
@@ -46,9 +46,7 @@ export const LoginModal = () => {
 		Customer: "Customer"
 	};
 	const {LoginOpen, setLoginOpen} = UseStateManager();
-
 	const [loginPerson, setLoginPerson] = useState(users.Customer);
-
 	const LoginResult = useSelector((pre) => pre.GetLogInReducers);
 	const [isTimerComplete, setIsTimerComplete] = useState(false);
 	const [timeRemaining, setTimeRemaining] = useState(60);
@@ -319,7 +317,8 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 		address: Data?.customerData?.address || "",
 		land_mark: Data?.customerData?.land_mark || "",
 		location: Data?.customerData?.location || "",
-		problem_des: ""
+		problem_des: "",
+		cust_id: Data?.customerData?.NewCustomer?.id || ""
 	});
 
 	const [errors, setErrors] = useState([]);
@@ -374,7 +373,7 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 			setIsLoading(false)
 			return false;
 		  }
-		const apiUrl = `${API_URL}/order/add/${Data?.customerData?.NewCustomer?.id}`;
+		const apiUrl = `${API_URL}/order/add`;
 		axios.post(apiUrl, formData).then(response => {
 			if (response.status === 200) {
 				dispatch(GetAllOrders(Data?.customerData?.NewCustomer?.id));
@@ -1183,7 +1182,8 @@ export const AssignSupervisorModal = ({supervisorModalOpen, supervisorModalOpenF
 	const handleSubmit = () => {
 
 		const formData = {
-			suprvisor_id: supervisor.value
+			suprvisor_id: supervisor.value,
+			pending: 4
 		}
 		const apiUrl = `${API_URL}/order/assign/${OrderNo}`;
 		// Make a POST request using Axios
@@ -1344,7 +1344,8 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 
 	const handleSubmit = () => {
 		const formData = {
-			servicep_id: serviceProvider.value
+			servicep_id: serviceProvider.value,
+			pending: 4
 		}
 		const apiUrl = `${API_URL}/order/assign/${OrderNo}`;
 		// Make a POST request using Axios

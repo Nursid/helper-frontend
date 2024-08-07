@@ -232,6 +232,11 @@ const ManageServiceProvider = () => {
         );
     }
 
+    const ServiceProviderType = [
+        { value: 'staff', label: 'Staff' },
+        { value: 'outsource', label: 'Out Source' },
+    ];
+
     useEffect(() => {
         dispatch(GetAllServiceProvider())
     }, [])

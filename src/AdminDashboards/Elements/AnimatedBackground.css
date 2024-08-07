@@ -117,6 +117,22 @@
   color: #ffff;
 }
 
+.class-green {
+  background-color: #27ae60 !important;
+  color: #ffff;
+  margin: 1px !important;
+}
+.class-yellow {
+  background-color: #e67e22 !important;
+  color: #ffff;
+  margin: 1px 1px 1px 0px !important;
+}
+.class-red {
+  background-color: #ff1900 !important;
+  color: #ffff;
+  margin: 1px !important;
+}
+
 .css-wop1k0-MuiDataGrid-footerContainer {
   display: -webkit-box;
   display: -webkit-flex;

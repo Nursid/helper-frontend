@@ -11,8 +11,6 @@ export const ServiceProviderAttendancaAction = () => {
             const employeeResponse = await axios.get(`${API_URL}/service-provider/getall`);
             const attendanceResponse = await axios.get(`${API_URL}/attendance/service-provider/getall`);
 
-            console.log("attendanceResponse---",attendanceResponse.data.data)
-            console.log("attendanceResponse---",employeeResponse.data.data)
 
             if (employeeResponse.status === 200 && attendanceResponse.status === 200) {
                 const employees = employeeResponse?.data?.data || [];

@@ -1,10 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
 import AdminDataTable from "../../Elements/AdminDataTable";
 import { useUserRoleContext } from "../../../Context/RolesContext";
-import { useAuth } from "../../../Context/userAuthContext";
 import AdminNavItems from "../../Elements/AdminNavItems";
 import AnimatedBackground from "../../Elements/AnimatedBacground";
-import { FaRegClock } from "react-icons/fa";
+// import { FaRegClock } from "react-icons/fa";
 import { GetAvailability } from "../../../Store/Actions/Dashboard/AvailabilityAction";
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@mui/material';
@@ -27,7 +26,6 @@ const Availability = () => {
     useEffect(() => {
         dispatch(GetAvailability(filterDate))
     }, []);
-
    
     const [Toggle, setToggle] = useState(false);
     const toggleAddAvailability = () => setToggle(!Toggle);
@@ -35,11 +33,8 @@ const Availability = () => {
     const DataWithID = (data) => {
         const NewData = []
         if (data !== undefined) {
-            
             for (let item of data) {
-                let Employee = item.Employee;
-            let mergedItem = {...item, ...Employee};
-                NewData.push({ ...mergedItem, date: moment(item.date).format("DD-MM-YYYY") })
+                NewData.push({ ...item, _id: data.indexOf(item)})
             }
         } else {
             NewData.push({ id: 0 })
@@ -53,200 +48,52 @@ const Availability = () => {
         setDate(moment(data.date, "DD-MM-YYYY").format("YYYY-MM-DD")) 
         setEmployeeAvailabilityModalOpen(!EmployeeAvailabilityModalOpen);
     }
+
+    const getCellClassName = (params) => {
+        if (!params.field) {
+          return 'class-green';
+        }
+        if (params.value === 'leave' || params.value === 'Lunch') {
+          return 'class-red';
+        }
+        if (params.field && !params.value) {
+          return 'class-green';
+        }
+        if (params.field) {
+          return 'class-yellow';
+        }
+        return '';
+      };
+      
   
     const colums = [
-        { field: "date",  headerName: "Date", minWidth: 150, editable: true },
-        { field: "name",  headerName: "Name", minWidth: 150, editable: true },
+        { field: "name",  headerName: "Name", minWidth: 150, editable: true,
+            cellClassName: getCellClassName
+         },
+        { field: "provider_type",  headerName: "Provider Type", minWidth: 100, editable: true ,cellClassName: getCellClassName},
         {
             field: "09:00-09:30",
             headerName: "09:00-09:30 AM",
             minWidth: 150,
-            renderCell: (params) => (
-                <>  
-                    {!params.row[params.field] ? (
-                        <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                    ) : (
-                        <>{params.row[params.field]}</>
-                    )}
-                </>
-            )
+            cellClassName: getCellClassName
         },
-        { field: "09:30-10:00", headerName: "09:30-10:00 AM ", minWidth: 150, 
-        renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "10:00-10:30", headerName: "10:00-10:30 AM ", minWidth: 150, 
-
-        renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "10:30-11:00", headerName: "10:30-11:00 AM ", minWidth: 150,
-        
-        renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "11:00-11:30", headerName: "11:00-11:30 AM ", minWidth: 150, 
-        renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "11:30-12:00", headerName: "11:30-12:00 AM ", minWidth: 150,   renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "12:00-12:30", headerName: "12:00-12:30 PM ", minWidth: 150,   renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "12:30-01:00", headerName: "12:30-01:00 PM ", minWidth: 150,  renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "01:00-01:30", headerName: "01:00-01:30 PM ", minWidth: 150,  renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "01:30-02:00", headerName: "01:30-02:00 PM ", minWidth: 150,  renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "02:00-02:30", headerName: "02:00-02:30 PM ", minWidth: 150,  renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "02:30-03:00", headerName: "02:30-03:00 PM ", minWidth: 150,  renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "03:00-03:30", headerName: "03:00-03:30 PM ", minWidth: 150, renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "03:30-04:00", headerName: "03:30-04:00 PM ", minWidth: 150,  renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "04:00-04:30", headerName: "04:00-04:30 PM ", minWidth: 150, renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "04:30-05:00", headerName: "04:30-05:00 PM ", minWidth: 150,  renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "05:00-05:30", headerName: "05:00-05:30 PM ", minWidth: 150,  renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
-        { field: "05:30-06:00", headerName: "05:30-06:00 PM ", minWidth: 150,  renderCell: (params) => (
-            <>  
-                {!params.row[params.field] ? (
-                    <Button variant='contained' color='primary' onClick={() => AssignDate(params.field, params.row)}>Assign</Button>
-                ) : (
-                    <>{params.row[params.field]}</>
-                )}
-            </>
-        )
-    },
+        { field: "09:30-10:00", headerName: "09:30-10:00 AM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "10:00-10:30", headerName: "10:00-10:30 AM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "10:30-11:00", headerName: "10:30-11:00 AM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "11:00-11:30", headerName: "11:00-11:30 AM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "11:30-12:00", headerName: "11:30-12:00 AM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "12:00-12:30", headerName: "12:00-12:30 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "12:30-01:00", headerName: "12:30-01:00 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "01:00-01:30", headerName: "01:00-01:30 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "01:30-02:00", headerName: "01:30-02:00 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "02:00-02:30", headerName: "02:00-02:30 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "02:30-03:00", headerName: "02:30-03:00 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "03:00-03:30", headerName: "03:00-03:30 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "03:30-04:00", headerName: "03:30-04:00 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "04:00-04:30", headerName: "04:00-04:30 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "04:30-05:00", headerName: "04:30-05:00 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "05:00-05:30", headerName: "05:00-05:30 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "05:30-06:00", headerName: "05:30-06:00 PM ", minWidth: 150, cellClassName: getCellClassName},
     ]
 
     return (

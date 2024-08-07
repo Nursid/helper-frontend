@@ -78,7 +78,7 @@ const AdminDataTable = ({ rows, columns, CustomToolbar, ...args }) => {
                 rows={rows}
                 columns={columns}
                 components={{ Toolbar: CustomToolbar }}
-                getRowClassName={getRowClassName} // Set the getRowClassName function
+                getRowClassName={getRowClassName}
             />
         </Box>
     )
