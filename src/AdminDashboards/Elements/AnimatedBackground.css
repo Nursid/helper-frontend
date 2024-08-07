@@ -120,7 +120,7 @@
 .class-green {
   background-color: #27ae60 !important;
   color: #ffff;
-  margin: 1px !important;
+  margin: 1px 1px 1px 0px !important;
 }
 .class-yellow {
   background-color: #e67e22 !important;
@@ -130,7 +130,7 @@
 .class-red {
   background-color: #ff1900 !important;
   color: #ffff;
-  margin: 1px !important;
+  margin: 1px 1px 1px 0px !important;
 }
 
 .css-wop1k0-MuiDataGrid-footerContainer {
