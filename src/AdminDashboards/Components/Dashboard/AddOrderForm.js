@@ -170,6 +170,15 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 		if (!formData.serviceDateTime) {
             errors.serviceDateTime = "serviceDateTime  is required";
         }
+		if (!timeslot.value) {
+            errors.timeslot = "timeslot  is required";
+        }
+		// if (!serviceProvider.value) {
+        //     errors.serviceProvider = "service Provider  is required";
+        // }
+		// if (!supervisor.value) {
+        //     errors.supervisor = "supervisor  is required";
+        // }
 		
 
 
@@ -252,6 +261,8 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 			setGetAllSupervisor(transformedData);
 		}
 	}
+
+	const currentDate = new Date().toISOString().slice(0, 16);
 
 	return (
 		<Fragment>
@@ -369,7 +380,9 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 							onChange={(e) => handleChange(e, 20)}
 							value={formData?.serviceDateTime}
 							name='serviceDateTime'
-							type='datetime-local'/>
+							type='datetime-local'
+							min={currentDate} // Disable previous dates
+							/>
 							{errors?.serviceDateTime && (
 							<span className='validationError'>
 								{errors?.serviceDateTime}
@@ -391,36 +404,53 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 
 				<Col md={6}>
 					<FormGroup>
-						<Label>Supervisor Name</Label>
-						<SelectBox 
-						options={getAllSupervisor}
-						initialValue={supervisor}
-						setSelcted={setSupervisor}
-						/>
-					</FormGroup>
-				</Col>
-				<Col md={6}>
-					<FormGroup>
-						<Label>Service Provider</Label>
-						<SelectBox 
-						options={getAllServiceProvider}
-						initialValue={serviceProvider}
-						setSelcted={setServiceProvider}
-						/>
-					</FormGroup>
-				</Col>
-				
-
-				<Col md={6}>
-					<FormGroup>
-						<Label>Time Slot</Label>
+						<Label>Time Slot <span style={{color: "red"}}>*</span></Label>
 						<SelectBox 
 							setSelcted={setTimeslot}
 							initialValue={timeslot}
 							options={getAlltimeSlot}
 							/>
+							{errors?.timeslot && (
+							<span className='validationError'>
+								{errors?.timeslot}
+							</span>
+						)}
 					</FormGroup>
 				</Col>
+
+				<Col md={6}>
+					<FormGroup>
+						<Label>Supervisor Name <span style={{color: "red"}}>*</span></Label>
+						<SelectBox 
+						options={getAllSupervisor}
+						initialValue={supervisor}
+						setSelcted={setSupervisor}
+						/>
+						{errors?.supervisor && (
+							<span className='validationError'>
+								{errors?.supervisor}
+							</span>
+						)}
+					</FormGroup>
+				</Col>
+				<Col md={6}>
+					<FormGroup>
+						<Label>Service Provider <span style={{color: "red"}}>*</span></Label>
+						<SelectBox 
+						options={getAllServiceProvider}
+						initialValue={serviceProvider}
+						setSelcted={setServiceProvider}
+						/>
+						{errors?.serviceProvider && (
+							<span className='validationError'>
+								{errors?.serviceProvider}
+							</span>
+						)}
+					</FormGroup>
+				</Col>
+				
+
+				
 
 				<Col md={6}>
 					<FormGroup>

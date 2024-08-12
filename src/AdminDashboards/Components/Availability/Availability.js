@@ -12,6 +12,8 @@ import ModalComponent from "../../Elements/ModalComponent";
 import moment from "moment";
 import { AssignEmployeeAvailability } from "../../../Components/Modal";
 import { Input } from "reactstrap";
+import AdminHeader from "../AdminHeader";
+
 const Availability = () => {
 
     const { userRole } = useUserRoleContext();
@@ -98,6 +100,7 @@ const Availability = () => {
 
     return (
         <Fragment>
+            <AdminHeader />
         <ModalComponent
         modalTitle={"Add Availability"}
         modal={Toggle}

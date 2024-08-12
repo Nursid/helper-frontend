@@ -57,6 +57,8 @@ const AdminDashboard = () => {
     }
   }, [role, currentUser.id, dispatch]);
 
+  console.log(role)
+
   useEffect(() => {
     dispatch(GetAllInventry())
     dispatch(GetAllAllotedItems())
@@ -549,7 +551,7 @@ const AdminDashboard = () => {
         <>
         {
       params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
-        !params.row.servicep_id ? (
+        !params.row.servicep_id && params?.row?.userRole?.role !== "service"  ? (
        
           <Button variant='contained' color='primary' onClick={() => AssignServiceProvider(params.row.order_no)} >
             Service Provider
@@ -983,13 +985,20 @@ onClick={()=>AssignAmount(params.row.order_no)}
           <div className='flex'>
             <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}> All Order List</h4>
 
-            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
-                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "18rem", maxWidth: "18rem" }} onClick={() => customerTypeOpenFunction(!customerTypeOpen)}>
-                Add New Order
+           
+              <div className="AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end">
+              {(role === "super" || role === "office") && (
+                <div
+                  className="py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center"
+                  style={{ minWidth: "18rem", maxWidth: "18rem" }}
+                  onClick={() => customerTypeOpenFunction(!customerTypeOpen)}
+                >
+                  Add New Order
                 </div>
-            </div>
-          </div>
-
+                 )}
+              </div>
+           
+        </div>
           <div className="p-4 ">
           {!complain && !inventry && summary && 
           <Card className="p-4">

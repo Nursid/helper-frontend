@@ -319,7 +319,8 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 		land_mark: Data?.customerData?.land_mark || "",
 		location: Data?.customerData?.location || "",
 		problem_des: "",
-		cust_id: Data?.customerData?.NewCustomer?.id || ""
+		cust_id: Data?.customerData?.NewCustomer?.id || "",
+		pending: 0
 	});
 
 	const [errors, setErrors] = useState([]);
@@ -374,7 +375,7 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 			setIsLoading(false)
 			return false;
 		  }
-		const apiUrl = `${API_URL}/order/add`;
+		const apiUrl = `${API_URL}/order/add-customer-order`;
 		axios.post(apiUrl, formData).then(response => {
 			if (response.status === 200) {
 				dispatch(GetAllOrders(Data?.customerData?.NewCustomer?.id));
@@ -388,6 +389,9 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 		});
 
 	};
+	
+	const currentDate = new Date().toISOString().split('T')[0];
+
 
 	return (
 		<Modal className="modal-dialog-centered modal-lg"
@@ -480,12 +484,15 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 											<label className="form-label" htmlFor="serviceType">
 												Service Date 
 											</label>
-											<Input type="date" name="bookdate" className="form-control"
-												value={
-													formData.bookdate
-												}
-												
-												onChange={(e) => handleInputChange(e, 50)}/>
+											
+												<Input
+													type="date"
+													name="bookdate"
+													className="form-control"
+													value={formData.bookdate}
+													min={currentDate} // Disable previous dates
+													onChange={(e) => handleInputChange(e, 50)}
+													/>
 										</div>
 									</Col>
 								</Row>
@@ -2152,8 +2159,6 @@ export const AssignEmployeeAvailability = ({EmployeeAvailabilityModalOpen, Emplo
 		</Modal>
 	);
 };
-
-
 
 export const ForgetPasswordModal = ({ForgetPasswordModalOpen, ForgetPasswordModalOpenFunction}) => {
 

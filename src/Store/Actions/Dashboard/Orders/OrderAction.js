@@ -14,7 +14,7 @@ const GetAllOrders = (filter, assign , role) => {
                 if (filter !== undefined && assign !== undefined) {
                     url += `/${assign}/${filter}`;
                 } else if (assign !== undefined) {
-                    url += `/service/${assign}`;
+                    url += `-service-provider/${assign}`;
                 } 
             } else if(role === "supervisor"){
                 if (filter !== undefined && assign !== undefined) {
