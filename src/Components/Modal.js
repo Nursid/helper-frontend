@@ -31,6 +31,7 @@ import axios from "axios";
 import { GetAvailability } from "../Store/Actions/Dashboard/AvailabilityAction";
 import SelectBox from "../AdminDashboards/Elements/SelectBox";
 import moment from "moment";
+import { GetAllTimeSlot } from "../Store/Actions/Dashboard/Orders/OrderAction";
 
 export const LoginModal = () => {
 	const [mobileNo, setMobileNo] = useState("");
@@ -1328,6 +1329,24 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 
 	const [GetAllServiceProvider, setAllServiceProvider] = useState([]);
 	const [serviceProvider, setServiceProvider] = useState('');
+	const [getAlltimeSlot, setGetAlltimeSlot] = useState([])
+	const [timeslot, setTimeslot] = useState([])
+	const { data, isLoading } = useSelector(state => state.GetAllTimeSlotReducer);
+
+	const DataWithID = (data) => {
+		const transformedData = data?.map(item => ({label: item.time_range, value: item.time_range}));
+		setGetAlltimeSlot(transformedData);
+	}
+
+	useEffect(() => {
+		dispatch(GetAllTimeSlot())
+	}, []);
+
+	useEffect(() => {
+		if(!isLoading && data?.data){
+			DataWithID(data?.data);
+		}
+	}, [isLoading, data?.data]);
 
 	const dispatch = useDispatch();
 	useEffect(() => {
@@ -1345,24 +1364,27 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 	const handleSubmit = () => {
 		const formData = {
 			servicep_id: serviceProvider.value,
+			allot_time_range: timeslot.value,
 			pending: 4
+			
 		}
-		const apiUrl = `${API_URL}/order/assign/${OrderNo}`;
+		const apiUrl = `${API_URL}/order/assign-service-provider/${OrderNo}`;
 		// Make a POST request using Axios
-		axios.put(apiUrl, formData).then(response => {
+		axios.post(apiUrl, formData).then(response => {
 			if (response.status === 200) {
 				serviceProviderModalOpenFunction();
 				Swal.fire('Successfully!', response.data.message, 'success')
+				if (role === "service" || role === "supervisor") {
+					const status = undefined;
+					dispatch(GetAllOrders(status, currentUser, role));
+				  } else {
+					dispatch(GetAllOrders());
+				  }
 			} else {
-				Swal.fire({title: 'failed to add try again', icon: "error"})
+				Swal.fire({title:  response.data.message, icon: "error"})
 			} 
 
-			if (role === "service" || role === "supervisor") {
-                const status = undefined;
-                dispatch(GetAllOrders(status, currentUser, role));
-              } else {
-                dispatch(GetAllOrders());
-              }
+			
 		}).catch(error => {
 			console.error('Error:', error);
 		});
@@ -1373,10 +1395,20 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 			isOpen={serviceProviderModalOpen}
 			toggle={serviceProviderModalOpenFunction}>
 			<ModalHeader toggle={serviceProviderModalOpenFunction}>
-				Choose The Service Provider
+				Assign Service Provider
 			</ModalHeader>
 			<ModalBody>
 				<Row>
+				<Col xs={12}>
+					<FormGroup>
+						<Label>Time Slot</Label>
+						<SelectBox 
+							setSelcted={setTimeslot}
+							initialValue={timeslot}
+							options={getAlltimeSlot}
+							/>
+					</FormGroup>
+				</Col>
 					<Col xs={12}>
 						<FormGroup>
 							<label className="form-label" htmlFor="serviceRemark">
@@ -1387,6 +1419,7 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 								selectOption={serviceProvider}/>
 						</FormGroup>
 					</Col>
+
 					<div className="d-flex justify-content-end ">
 						<Button color="success"
 							onClick={handleSubmit}

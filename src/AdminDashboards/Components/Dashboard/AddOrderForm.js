@@ -167,6 +167,9 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 		if (!service.value) {
             errors.service = "service  is required";
         }
+		if (!formData.serviceDateTime) {
+            errors.serviceDateTime = "serviceDateTime  is required";
+        }
 		
 
 
@@ -195,9 +198,9 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 		axios.post(apiUrl, data).then(response => {
 			if (response.data.status === true) {
 				prop();
-				Swal.fire('Successfully!', response.data.message, 'success')
+				Swal.fire('Successfully!', 'Order Placed Successfully' , 'success')
 			} else {
-				Swal.fire({title: 'failed to add try again', icon: "error"})
+				Swal.fire({title: response.data.message, icon: "error"})
 			}
 			if (role === "service" || role === "supervisor") {
 				const status = undefined;
@@ -205,8 +208,11 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 			  } else {
 				dispatch(GetAllOrders());
 			  }
+			  setIsLoading(false)
 		}).catch(error => {
+			Swal.fire({title: error, icon: "error"})
 			console.error('Error:', error);
+			setIsLoading(false)
 		});
 	};
 
