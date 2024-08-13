@@ -10,24 +10,30 @@ import {
 	Button
 } from 'reactstrap';
 import Select from 'react-select';
-import { GetAllEmployeeAction } from '../../../../Store/Actions/Dashboard/EmployeeActions/GetAllEmployee';
+
 import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
 import { GetAvailability } from '../../../../Store/Actions/Dashboard/AvailabilityAction';
 import { API_URL } from '../../../../config';
+import SelectBox from '../../../Elements/SelectBox';
+import { GetAllServiceProvider } from '../../../../Store/Actions/Dashboard/Authentication/ServiceProviderActions';
+import axios from 'axios';
 
 const AddAvailability = ({ prop}) => {
 
 	const [selectedOptions, setSelectedOptions] = useState([]);
-	const [inputValue, setInputValue] = useState([]);
+	const [isServiceProvider, setIsServiceProvider] = useState();
+	const [leaveDay, setLeaveDay] = useState('');
+	const [half, sethalf] = useState('');
+	const [inputValue, setInputValue] = useState();
     const [errors, setErrors]= useState([]);
     const [isLoading, SetIsLoading]= useState(false)
-	const { data } = useSelector(state => state.GetAllEmployeeDataReducer);
+	const { data } = useSelector(state => state.GetAllServiceProviderReducer);
 	const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(GetAllEmployeeAction())
-    }, []);
 
+    useEffect(() => {
+        dispatch(GetAllServiceProvider())
+    }, []);
 
 	const DataWithID = (data) => {
         const NewData = []
@@ -35,7 +41,7 @@ const AddAvailability = ({ prop}) => {
             for (let item of data) {
                 NewData.push({
 					label: item.name,
-					value: item.mobile_no
+					value: item.id
 				})
             }
         } else {
@@ -44,113 +50,148 @@ const AddAvailability = ({ prop}) => {
         return NewData
     }
 
-	const handleChangeservices = (selected) => {
-		setSelectedOptions(selected);
-		const employeeNames = selected.map(option => option.value);
-        setInputValue({...inputValue, employees: employeeNames})
-		
-	};
-
 	const handleChange = (e)=>{
         const {name, value} = e.target;
         setInputValue({...inputValue, [name]:value})
     }
 
-	const onsubmit = async (e) =>{
+	const onsubmit = async (e) => {
 		e.preventDefault();
         SetIsLoading(true)
         let errors = {};
-
-		
 
 		if (!inputValue.date) {
             errors.date = "Date is required";
         }
 
-        if (!selectedOptions) {
-            errors.employees = "Employee is required";
+        if (!isServiceProvider.value) {
+            errors.isServiceProvider = "Service Provider is required";
+        }
+        if (!leaveDay.value) {
+            errors.leaveDay = "LeaveDay is required";
         }
 
+		if (leaveDay && leaveDay.value === '2' && !half.value) {
+			errors.half = 'Half Day is required';
+		}
+
 		if (errors && Object.keys(errors).length === 0) {
-			// Form is valid, handle form submission here
 			console.log("Form submitted successfully!",);
 		  } else {
-			// Form is invalid, display validation errors
-			console.log("Validation Errors:", errors);
 			setErrors(errors);
 			SetIsLoading(false);
 			return false;
 		  }
 
+		  const formdata = {
+			...inputValue,
+			emp_id: isServiceProvider.value,
+			leaveDay: leaveDay.value,
+			half: half ? half.value : null,
+		  }
 
-		  const response = await fetch(API_URL + "/api/add-availability", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(inputValue),
-          });
-          const IsAvailable = await response.json();
-      
-          if (IsAvailable.status === true) {
+		  const response = await axios.post(`${API_URL}/api/add-leave`, formdata)
+
+          if (response.status === 200) {
             Swal.fire({
                 icon: "success",
-                title: IsAvailable.message,
-                showConfirmButton: false,
+                title: response.data.message,
                 timer: 1500
               });
             setErrors([]);
             setTimeout(() => SetIsLoading(false), 5000);
             prop();
             dispatch(GetAvailability({date: inputValue.date}))
-		  }else{
+		  } 
+		else {
 			Swal.fire({
                 icon: "error",
-                title: IsAvailable.message,
+                title:  response.data.message,
                 showConfirmButton: false,
                 timer: 1500
               });
 		  }
-
+		  SetIsLoading(false)
 	}
 
-
-	const today = new Date().toISOString().split('T')[0];
+	
+	const DayLeave = [
+		{ label: 'One day', value: '1' },
+		{ label: 'Half Day', value: '2'}
+	  ]
+	  const HalfLeave = [
+		{ label: 'First Half', value: '1' },
+		{ label: 'Second Half', value: '2'}
+	  ]
 
 	return (
 		<Fragment>
 			<Form>
 				<Row>
-					<Col md={12}>
-						<FormGroup>
-							<Label>Date  <span style={{color: "red"}}>*</span></Label>
-							<Input type='date' name='date' onChange={handleChange}
-                          defaultValue={inputValue?.date}  min={today} />
 
-					{errors?.date && (
-                        <span className='validationError'>
-                            {errors?.date}
-                        </span>
-                    )}
-						</FormGroup>
-					</Col>
 					<Col md={12}>
 						<FormGroup>
-                        <Label> Employees  <span style={{color: "red"}}>*</span> </Label>
-							<Select isMulti
-								value={selectedOptions}
-								onChange={handleChangeservices}
+                    <Label>Service Provider<span style={{color: "red"}}>*</span></Label>
+							<SelectBox
 								options={DataWithID(data)}
-								className="basic-multi-select"
-								classNamePrefix="select"/>
-
-					{errors?.employees && (
-                        <span className='validationError'>
-                            {errors?.employees}
-                        </span>
-                    )}
+								initialValue={isServiceProvider}
+								setSelcted={setIsServiceProvider}
+								/>
+							{errors?.isServiceProvider && (
+								<span className='validationError'>
+									{errors?.isServiceProvider}
+								</span>
+							)}
 						</FormGroup>
 					</Col>
+					
+					<Col md={12}>
+						<FormGroup>
+							<Label>Date<span style={{color: "red"}}>*</span></Label>
+							<Input type='date' name='date' onChange={handleChange}
+                          defaultValue={inputValue?.date} />
+							{errors?.date && (
+								<span className='validationError'>
+									{errors?.date}
+								</span>
+							)}
+						</FormGroup>
+					</Col>
+
+					<Col md={12}>
+						<FormGroup>
+                    <Label>Day Wise<span style={{color: "red"}}>*</span></Label>
+							<SelectBox
+								options={DayLeave}
+								initialValue={leaveDay}
+								setSelcted={setLeaveDay}
+								/>
+							{errors?.leaveDay && (
+								<span className='validationError'>
+									{errors?.leaveDay}
+								</span>
+							)}
+						</FormGroup>
+					</Col>
+
+					{leaveDay.value === '2' && ( // Conditionally render this section
+						<Col md={12}>
+							<FormGroup>
+							<Label>
+								Half Day<span style={{ color: 'red' }}>*</span>
+							</Label>
+							<SelectBox
+								options={HalfLeave}
+								initialValue={half}
+								setSelcted={sethalf}
+							/>
+							{errors?.half && (
+								<span className="validationError">{errors?.half}</span>
+							)}
+							</FormGroup>
+						</Col>
+						)}
+
 					<Button className='bg-primary text-white' onClick={onsubmit} disabled={isLoading}>
 						Submit
 					</Button>

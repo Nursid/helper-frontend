@@ -33,8 +33,7 @@ const Availability = () => {
     const toggleAddAvailability = () => setToggle(!Toggle);
 
     const DataWithID = (data) => {
-        const NewData = [];
-        
+        const NewData = [];  
         if (data !== undefined) {
             for (let item of data) {
                 // Extract availabilities
@@ -47,8 +46,10 @@ const Availability = () => {
                         NewData.push({
                             ...mergedItem,
                             id: item.id,
-                            date: moment(availability.date).format("DD-MM-YYYY")
+                            date: moment(availability.date).format("DD-MM-YYYY"),
+                             "01:00-01:30": availability["01:00-01:30"] === 'leave' ? 'leave' : 'lunch'
                         });
+                        console.log(availability["01:00-01:30"])
                     }
                 } else {
                     // If no availabilities, push item with just the ID
@@ -61,8 +62,6 @@ const Availability = () => {
         
         return NewData;
     };
-    
-    console.log(DataWithID(data))
     
 
     const AssignDate = (field, data) =>{
@@ -123,7 +122,7 @@ const Availability = () => {
         <Fragment>
             <AdminHeader />
         <ModalComponent
-        modalTitle={"Add Availability"}
+        modalTitle={"Add Leave"}
         modal={Toggle}
         toggle={toggleAddAvailability}
         data={<AddAvailability prop={toggleAddAvailability}  />}
@@ -154,14 +153,11 @@ const Availability = () => {
 
                 </div>
 
-                <div className={`border py-2 px-4  shadow rounded-2 cursor-p hoverThis text-white`} style={{ minWidth: "15rem", maxWidth: "17rem" 
-                 }} 
+                <div className={`border py-2 px-2  shadow rounded-2 cursor-p hoverThis text-white`}
                  onClick={toggleAddAvailability}
                 >
-                Add Employee Availability
+                Add Leave
                 </div>
-
-                
 
             </div>
 
