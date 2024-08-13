@@ -33,16 +33,37 @@ const Availability = () => {
     const toggleAddAvailability = () => setToggle(!Toggle);
 
     const DataWithID = (data) => {
-        const NewData = []
+        const NewData = [];
+        
         if (data !== undefined) {
             for (let item of data) {
-                NewData.push({ ...item, _id: data.indexOf(item)})
+                // Extract availabilities
+                const availabilities = item.availabilities;
+                
+                if (availabilities.length > 0) {
+                    for (let availability of availabilities) {
+                        // Merge item with availability details
+                        let mergedItem = { ...item, ...availability };
+                        NewData.push({
+                            ...mergedItem,
+                            id: item.id,
+                            date: moment(availability.date).format("DD-MM-YYYY")
+                        });
+                    }
+                } else {
+                    // If no availabilities, push item with just the ID
+                    NewData.push({ ...item, id: item.id });
+                }
             }
         } else {
-            NewData.push({ id: 0 })
+            NewData.push({ id: 0 });
         }
-        return NewData
-    }
+        
+        return NewData;
+    };
+    
+    console.log(DataWithID(data))
+    
 
     const AssignDate = (field, data) =>{
         setField(field);
