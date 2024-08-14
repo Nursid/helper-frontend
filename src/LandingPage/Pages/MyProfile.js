@@ -99,9 +99,9 @@ const MyProfile = ({ serviceData }) => {
         { field: 'problem_des', headerName: 'Service Details', width: 200, headerCenter: true },
         { field: 'suprvisor_id', headerName: 'Supervisor', width: 100, headerCenter: true },
         { field: 'servicep_id', headerName: 'Service Provider', width: 150, headerCenter: true },
-        { field: 'totalamt', headerName: 'Billing Amount', width: 150, headerCenter: true },
+        { field: 'netpayamt', headerName: 'Billing Amount', width: 150, headerCenter: true },
         { field: 'piadamt', headerName: 'Paid Amount', width: 150, headerCenter: true },
-        { field: 'netpayamt', headerName: 'Balance Amount', width: 150, headerCenter: true },
+        { field: 'totalamt', headerName: 'Balance Amount', width: 150, headerCenter: true },
         { field: 'paymethod', headerName: 'Payment Method', width: 180, headerCenter: true },
         {
             field: 'cust_remark', headerName: 'Customer Remark', width: 180, headerCenter: true,
