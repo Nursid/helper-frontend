@@ -30,7 +30,6 @@ const AddAvailability = ({ prop}) => {
     const [isLoading, SetIsLoading]= useState(false)
 	const { data } = useSelector(state => state.GetAllServiceProviderReducer);
 	const dispatch = useDispatch();
-
     useEffect(() => {
         dispatch(GetAllServiceProvider())
     }, []);
@@ -114,21 +113,19 @@ const AddAvailability = ({ prop}) => {
 		  SetIsLoading(false)
 	}
 
-	
 	const DayLeave = [
 		{ label: 'One day', value: '1' },
 		{ label: 'Half Day', value: '2'}
 	  ]
-	  const HalfLeave = [
-		{ label: 'First Half', value: '1' },
-		{ label: 'Second Half', value: '2'}
-	  ]
+	const HalfLeave = [
+	{ label: 'First Half', value: '1' },
+	{ label: 'Second Half', value: '2'}
+	]
 
 	return (
 		<Fragment>
 			<Form>
 				<Row>
-
 					<Col md={12}>
 						<FormGroup>
                     <Label>Service Provider<span style={{color: "red"}}>*</span></Label>

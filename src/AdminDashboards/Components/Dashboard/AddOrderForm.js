@@ -16,7 +16,7 @@ import SelectBox from '../../Elements/SelectBox';
 import Swal from 'sweetalert2'
 import {useDispatch} from 'react-redux'
 import { GetAllTimeSlot } from '../../../Store/Actions/Dashboard/Orders/OrderAction'
-const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
+const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModalTitle}) => {
 	const {rows, setRows, Show, setShow} = UseStateManager()
 	const [getAllService, setAllservices] = useState([])
 	const [getAlltimeSlot, setGetAlltimeSlot] = useState([])
@@ -66,6 +66,18 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 		allot_time_range: ''
 	  });
 
+	  useEffect(()=>{
+		if(formData.serviceDateTime && timeslot?.value){
+			const assignData = formData.serviceDateTime.split('T')[0];
+            const filterData = {
+				date: assignData,
+				[timeslot.value]: timeslot.value
+			}
+			
+		  }
+	  }, [formData.serviceDateTime, timeslot?.value])
+	  
+
 	const UserTypes =[
 	{
 		label: 'Regular',
@@ -99,6 +111,11 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 			
 			let item = response.data.data
 			if (item?.recentOrder) {
+				setModalTitle(
+					<>
+						Add Order (<span style={{ color: 'red' }}>Member</span>)
+					</>
+				);
 				let lastService = item.recentOrder[item.recentOrder.length - 1];
 				setFormData(prevFormData => ({
 					...prevFormData,
@@ -113,7 +130,13 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 					lst_serv_type: lastService?.service_name || '',
 				}));
 			} else {
+				setModalTitle(
+					<>
+						Add Order (<span style={{ color: 'red' }}>Not Member</span>)
+					</>
+				);
 				setFormData(prevFormData => ({
+					
 					...prevFormData,
 					name: item?.customerData?.NewCustomer?.name,
 					email: item?.customerData?.NewCustomer?.email,
@@ -224,8 +247,6 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo}) => {
 			setIsLoading(false)
 		});
 	};
-
-
 
 	const handleChange = (e, maxLength) => {
         const { name, value } = e.target;

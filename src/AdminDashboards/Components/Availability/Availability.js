@@ -49,10 +49,8 @@ const Availability = () => {
                             date: moment(availability.date).format("DD-MM-YYYY"),
                              "01:00-01:30": availability["01:00-01:30"] === 'leave' ? 'leave' : 'lunch'
                         });
-                        console.log(availability["01:00-01:30"])
                     }
                 } else {
-                    // If no availabilities, push item with just the ID
                     NewData.push({ ...item, id: item.id });
                 }
             }
@@ -62,7 +60,6 @@ const Availability = () => {
         
         return NewData;
     };
-    
 
     const AssignDate = (field, data) =>{
         setField(field);
@@ -85,9 +82,8 @@ const Availability = () => {
           return 'class-yellow';
         }
         return '';
-      };
+    };
       
-  
     const colums = [
         { field: "name",  headerName: "Name", minWidth: 150, editable: true,
             cellClassName: getCellClassName
@@ -122,11 +118,11 @@ const Availability = () => {
         <Fragment>
             <AdminHeader />
         <ModalComponent
-        modalTitle={"Add Leave"}
-        modal={Toggle}
-        toggle={toggleAddAvailability}
-        data={<AddAvailability prop={toggleAddAvailability}  />}
-      />
+            modalTitle={"Add Leave"}
+            modal={Toggle}
+            toggle={toggleAddAvailability}
+            data={<AddAvailability prop={toggleAddAvailability}  />}
+        />
         <AssignEmployeeAvailability
             EmployeeAvailabilityModalOpen={EmployeeAvailabilityModalOpen}
             EmployeeAvailabilityModalfunction={() => setEmployeeAvailabilityModalOpen(!EmployeeAvailabilityModalOpen)}

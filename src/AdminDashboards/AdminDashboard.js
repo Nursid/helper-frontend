@@ -57,7 +57,7 @@ const AdminDashboard = () => {
     }
   }, [role, currentUser.id, dispatch]);
 
-  console.log(role)
+  
 
   useEffect(() => {
     dispatch(GetAllInventry())
@@ -412,7 +412,7 @@ const AdminDashboard = () => {
     { field: "aqty", headerName: "Quantity", minWidth: 220, editable: true },
     { field: "remark", headerName: "Remark", minWidth: 220, editable: true }
   ]
-
+  const [modalTitle, setModalTitle] = useState('Add Order');
   const [summary, setSummary] = useState(false);
   const [inventry, setInventry] =useState(false);
   const [complain, setComplain]=useState(false);
@@ -440,7 +440,7 @@ const AdminDashboard = () => {
     setComplain(false);
   }
   
-  const GetInventry = ()=>{
+  const GetInventry = ()=> {
     setInventry(true)
     setSummary(false)
     setComplain(false);
@@ -798,11 +798,11 @@ onClick={()=>AssignAmount(params.row.order_no)}
       />
 
       <ModalComponent
-        modalTitle={"Add Order"}
+        modalTitle={modalTitle}
         modal={Show}
         toggle={toggleAddOrders}
         data={<AddOrderForm prop={toggleAddOrders } GetAllOrders={GetAllOrders} role={role}
-        currentUser={currentUser.id}  mobileNo={mobileNo} />}
+        currentUser={currentUser.id}  mobileNo={mobileNo}  setModalTitle={setModalTitle}/>}
         size={"xl"} scrollable={true}
       />
 
