@@ -38,10 +38,12 @@ const AddAvailability = ({ prop}) => {
         const NewData = []
         if (data !== undefined) {
             for (let item of data) {
-                NewData.push({
-					label: item.name,
-					value: item.id
-				})
+				if(item.block_id !==1){
+					NewData.push({
+						label: item.name,
+						value: item.id
+					})
+				}
             }
         } else {
             NewData.push({ id: 0 })

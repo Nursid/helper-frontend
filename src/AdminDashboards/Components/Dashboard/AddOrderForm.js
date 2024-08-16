@@ -71,9 +71,9 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 			const assignData = formData.serviceDateTime.split('T')[0];
             const filterData = {
 				date: assignData,
-				[timeslot.value]: timeslot.value
+				time_range: timeslot.value
 			}
-			
+			getAllServicesProvider(filterData)
 		  }
 	  }, [formData.serviceDateTime, timeslot?.value])
 	  
@@ -156,12 +156,8 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 
 	useEffect(() => {
 		getAllServices()
-		getAllServicesProvider()
 		GetAllSupervisor()
 	}, []);
-
-
-
 
 	const getAllServices = async () => {
 		const response = await axios.get(API_URL + '/service/getall')
@@ -267,13 +263,18 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
         }
     };
 
-	const getAllServicesProvider = async () => {
-		const response = await axios.get(API_URL + '/service-provider/getall')
-		if (response.status === 200) {
-			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
+	const getAllServicesProvider = async (filterData) => {
+		try {
+		  const queryParams = new URLSearchParams(filterData).toString()
+		  const response = await axios.get(`${API_URL}/service-provider/getall?${queryParams}`);
+		  if (response.status === 200) {
+			const transformedData = response.data.data.map(item => ({ label: item.name, value: item.name }));
 			setGetAllServiceProvider(transformedData);
+		  }
+		} catch (error) {
+		  console.error("Error fetching service providers:", error);
 		}
-	}
+	  }
 
 	const GetAllSupervisor = async () => {
 		const response = await axios.get(API_URL + '/employee/getall/supervisor')
@@ -438,22 +439,6 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 						)}
 					</FormGroup>
 				</Col>
-
-				<Col md={6}>
-					<FormGroup>
-						<Label>Supervisor Name <span style={{color: "red"}}>*</span></Label>
-						<SelectBox 
-						options={getAllSupervisor}
-						initialValue={supervisor}
-						setSelcted={setSupervisor}
-						/>
-						{errors?.supervisor && (
-							<span className='validationError'>
-								{errors?.supervisor}
-							</span>
-						)}
-					</FormGroup>
-				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label>Service Provider <span style={{color: "red"}}>*</span></Label>
@@ -469,10 +454,21 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 						)}
 					</FormGroup>
 				</Col>
-				
-
-				
-
+				<Col md={6}>
+					<FormGroup>
+						<Label>Supervisor Name <span style={{color: "red"}}>*</span></Label>
+						<SelectBox 
+						options={getAllSupervisor}
+						initialValue={supervisor}
+						setSelcted={setSupervisor}
+						/>
+						{errors?.supervisor && (
+							<span className='validationError'>
+								{errors?.supervisor}
+							</span>
+						)}
+					</FormGroup>
+				</Col>
 				<Col md={6}>
 					<FormGroup>
 						<Label>Last Date Service</Label>

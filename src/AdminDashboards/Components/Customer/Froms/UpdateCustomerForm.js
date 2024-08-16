@@ -43,7 +43,7 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 		land_mark: updateData?.land_mark || '',
 		email: updateData?.email || '',
 		location: updateData?.location || '',
-		mobile: updateData?.mobile || '',
+		mobile: updateData?.mobileno || '',
 		tel_no: updateData?.tel_no ||'',
 		office_no: updateData?.office_no || '',
 		alternate_no: updateData?.alternate_no || '',
