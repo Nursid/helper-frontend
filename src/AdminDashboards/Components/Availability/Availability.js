@@ -89,6 +89,9 @@ const Availability = () => {
             cellClassName: getCellClassName
          },
         { field: "provider_type",  headerName: "Provider Type", minWidth: 100, editable: true ,cellClassName: getCellClassName},
+        { field: "date",  headerName: "Date", minWidth: 150, editable: true,
+            cellClassName: getCellClassName
+         },
         {
             field: "09:00-09:30",
             headerName: "09:00-09:30 AM",

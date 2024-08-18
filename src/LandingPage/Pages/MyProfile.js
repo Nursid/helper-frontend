@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useRef } from 'react'
 // import { Card, CardBody, Col, Row } from 'reactstrap'
 import { DataGrid } from '@mui/x-data-grid';
 import { CustomerRemarkModal, ServeiceRequestModal,CustomerCancelOrderModal } from '../../Components/Modal';
@@ -12,13 +12,16 @@ import axios from 'axios';
 import { AddNewComplain } from './AddNewComplain'
 import { IMG_URL } from '../../config';
 import { AddComplainModal } from '../../Components/Modal';
+import { useReactToPrint } from 'react-to-print';
+import Invoice from '../../Components/Invoice';
+
 const MyProfile = ({ serviceData }) => {
 
     const dispatch = useDispatch()
     const { data, isLoading } = useSelector(state => state.GetAllOrderByIdReducer)
     const [lastOrder, setData] = useState([])
     const [isComplain, setComplain] = useState(false)
-
+    const componentRef = useRef();
     const [complainModalOpen, setComplainModalOpen] = useState(false)
 
     const status = [
@@ -93,6 +96,7 @@ const MyProfile = ({ serviceData }) => {
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 100, headerCenter: true },
+        { field: 'order_no', headerName: 'Order No.', width: 150, headerCenter: true },
         { field: 'service_name', headerName: 'Service Name', width: 180, headerCenter: true },
         { field: 'bookdate', headerName: 'Bookig Date', width: 150, headerCenter: true },
         { field: 'booktime', headerName: 'Bookig Time', width: 100, headerCenter: true },
@@ -120,22 +124,34 @@ const MyProfile = ({ serviceData }) => {
             headerName: 'Cancel',
             renderCell: (params) => (
                 <>
-                    {params.row.pending === 3 ? (
+                    {params.row.admin_approve ? ( // Check if admin_approve is true
                         <>Completed</>
                     ) : params.row.pending === 5 ? (
                         <>Cancelled</>
                     ) : (
                         <Button 
                             color="danger"
-                            variant='contained' 
+                            variant="contained" 
                             onClick={() => CancelOrderForm(params.row.order_no, params.row.cust_id)}
+                            disabled={params.row.pending === 3}
                         >
                             Cancel
                         </Button>
                     )}
                 </>
             )
-        }
+        },
+        { field: "", headerName: "Invoice", minWidth: 150, editable: true,
+            renderCell: (params) => {
+            if(params.row.admin_approve){
+              return (
+                  <Button variant='contained' color='primary' onClick={() => handleInvoice(params.row)}>
+                    Invoice
+                  </Button>
+                )
+            }
+           },
+          }
         
     ];
 
@@ -144,15 +160,37 @@ const MyProfile = ({ serviceData }) => {
         const NewData = []
         if (data !== undefined) {
             for (let item of data) {
-                let orderProcess = item.orderProcess;
-                let mergedItem = {...item, ...orderProcess};
-                NewData.push({ ...mergedItem, id: data.indexOf(item), bookdate: moment(item.createdAt).format("DD-MM-YYYY") })
+                // let orderProcess = item.orderProcess;
+                // let mergedItem = {...item, ...orderProcess};
+                // NewData.push({ ...mergedItem, id: data.indexOf(item), bookdate: moment(item.createdAt).format("DD-MM-YYYY") })
+
+                const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
+                const customer = NewCustomer.customer || {}; // Ensure customer is an object
+                const mergedItem = { ...item, ...NewCustomer, ...customer };
+                NewData.push({
+                ...mergedItem,
+                _id: data.indexOf(item),
+                date: moment(item.createdAt).format("D / M / Y"),
+                bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
+                booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
+                });
+
             }
         } else {
             NewData.push({ id: 0 })
         }
         return NewData
       }
+
+      const [invoiceData, setInvoice] = useState([])
+        const handleInvoice = (data) => {
+            setInvoice(data)
+            handlePrint()
+        }
+
+        const handlePrint = useReactToPrint({
+            content: () => componentRef.current,
+        });
 
 
       
@@ -161,6 +199,12 @@ const MyProfile = ({ serviceData }) => {
 
     return (
         <div>
+
+            
+      <div style={{ display: 'none' }}>
+        <Invoice ref={componentRef} data={invoiceData} />
+      </div>
+
             {customerRemarkModalOpen && <CustomerRemarkModal
                 customerRemarkModalOpen={customerRemarkModalOpen}
                 customerRemarkModalfunction={() => setCustomerRemarkModalOpen(!customerRemarkModalOpen)}

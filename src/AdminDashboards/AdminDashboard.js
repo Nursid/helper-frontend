@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useRef } from "react";
 import "./AdminDashboard.css";
 import { DataGrid, GridToolbar, GridToolbarDensitySelector, GridToolbarExportContainer, GridToolbarFilterButton, GridToolbarQuickFilter,GridToolbarColumnsButton } from "@mui/x-data-grid";
 import StackBox from "./Elements/StackBox";
@@ -35,6 +35,8 @@ import { useAuth } from "../Context/userAuthContext";
 import { ServiceProviderRemarkModal } from "../Components/Modal";
 import Switch from '@mui/material/Switch';
 import Tooltip from '@mui/material/Tooltip';
+import Invoice from "../Components/Invoice";
+import { useReactToPrint } from 'react-to-print';
 
 const AdminDashboard = () => {
   const { rows, Show, setShow } = UseStateManager();
@@ -42,6 +44,8 @@ const AdminDashboard = () => {
   const { currentUser, setCurrentUser } = useAuth();
   const [role, setRole] = useState(userRole.role || '');
   const dispatch = useDispatch();
+  const componentRef = useRef(null);
+
   const {  data: orders, isLoading: isOrderLoading} = useSelector(state => state.GetAllOrderReducer);
   const { data: inventories, isLoading: isInventoryLoading } = useSelector(state => state.GetAllInventryReducers);
 
@@ -676,30 +680,41 @@ onClick={()=>AssignAmount(params.row.order_no)}
         </Tooltip>
       )
     },   
-       { 
-        field: "admin_approve", 
-        headerName: "Final Status", 
-        minWidth: 150, 
-        editable: true,
-        type: 'boolean',
-        renderCell: (params) => {
-          if (params.row?.userRole?.role === "super") {
-            return (
-              <Switch
-                checked={params.row.admin_approve}
-                onChange={(event) => {
-                  SuperAdminRemark(params.row.order_no, !params.row.admin_approve)             
-                }}
-                color="primary"
-                size="small"
-              />
-            )
-          } else{
-            return params.row.admin_approve ? "Verified" : "Unverified"
-          }
-        },
+    { 
+      field: "admin_approve", 
+      headerName: "Final Status", 
+      minWidth: 150, 
+      editable: true,
+      type: 'boolean',
+      renderCell: (params) => {
+        if (params.row?.userRole?.role === "super") {
+          return (
+            <Switch
+              checked={params.row.admin_approve}
+              onChange={(event) => {
+                SuperAdminRemark(params.row.order_no, !params.row.admin_approve)             
+              }}
+              color="primary"
+              size="small"
+            />
+          )
+        } else{
+          return params.row.admin_approve ? "Verified" : "Unverified"
+        }
       },
-      ];
+      },
+      { field: "", headerName: "Invoice", minWidth: 150, editable: true,
+        renderCell: (params) => {
+        if(params.row.admin_approve){
+          return (
+              <Button variant='contained' color='primary' onClick={() => handleInvoice(params.row)}>
+                Invoice
+              </Button>
+            )
+        }
+       },
+      }
+    ];
 
   const handleComplain = () =>{
     let errors = {};
@@ -724,9 +739,24 @@ onClick={()=>AssignAmount(params.row.order_no)}
         return false;
         }
   }
+
+  const [invoiceData, setInvoice] = useState([])
+  const handleInvoice = (data) => {
+    setInvoice(data)
+    handlePrint()
+  }
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   
   return (
     <Fragment>
+
+      <div style={{ display: 'none' }}>
+        <Invoice ref={componentRef} data={invoiceData} />
+      </div>
+
       <AssignSupervisorModal
         supervisorModalOpen={supervisorModalOpen}
         supervisorModalOpenFunction={() => setsupervisorModalOpen(!supervisorModalOpen)}

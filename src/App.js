@@ -23,6 +23,8 @@ import AdminProfile from './AdminDashboards/Components/profile/AdminProfile';
 import Availability from './AdminDashboards/Components/Availability/Availability';
 import { ServiceProvider } from './Store/context/serviceProvider';
 import AdminComplain from './AdminDashboards/Components/Complain';
+import MemberInvoice from './Components/MemberInvoice';
+
 function App() {
   return (
     <ServiceProvider>
@@ -38,6 +40,7 @@ function App() {
           <Route path='/Term-&-Condition' element={<TermAndCondition />} />
           <Route path='/YourProfile' element={<ProfileHistory />} />
           <Route path='/email' element={<ProfileHistory />} />
+          <Route path='/invoice' element={<MemberInvoice />} />
 
           {/* Admin Dashboard Routes */}
           <Route path='/admin/*' element={<AdminSignIn />}>

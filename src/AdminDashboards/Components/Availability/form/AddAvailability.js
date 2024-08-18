@@ -116,7 +116,7 @@ const AddAvailability = ({ prop}) => {
 	}
 
 	const DayLeave = [
-		{ label: 'One day', value: '1' },
+		{ label: 'Full day', value: '1' },
 		{ label: 'Half Day', value: '2'}
 	  ]
 	const HalfLeave = [
@@ -159,7 +159,7 @@ const AddAvailability = ({ prop}) => {
 
 					<Col md={12}>
 						<FormGroup>
-                    <Label>Day Wise<span style={{color: "red"}}>*</span></Label>
+                    <Label>Leave Type<span style={{color: "red"}}>*</span></Label>
 							<SelectBox
 								options={DayLeave}
 								initialValue={leaveDay}
@@ -177,7 +177,7 @@ const AddAvailability = ({ prop}) => {
 						<Col md={12}>
 							<FormGroup>
 							<Label>
-								Half Day<span style={{ color: 'red' }}>*</span>
+								Half Day Type<span style={{ color: 'red' }}>*</span>
 							</Label>
 							<SelectBox
 								options={HalfLeave}

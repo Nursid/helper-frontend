@@ -78,6 +78,8 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
    // selected services
    const [selectedServices, setSelected] = useState([]);
 
+    console.log("data2.mobile_no---",data2.provider_type)
+
     const [formData, setFormData] = useState({
         name: data2.name || "", 
         first_name: data2.first_name || "",
@@ -205,7 +207,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
 
     const ServiceProviderType = [
         { value: 'staff', label: 'Staff' },
-        { value: 'outsource', label: 'Out Source' },
+        { value: 'outsource', label: 'Outsource' },
     ];
 
     const handleFileChange = (e) => {
