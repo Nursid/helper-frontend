@@ -740,15 +740,22 @@ onClick={()=>AssignAmount(params.row.order_no)}
         }
   }
 
-  const [invoiceData, setInvoice] = useState([])
-  const handleInvoice = (data) => {
-    setInvoice(data)
-    handlePrint()
-  }
+  const [invoiceData, setInvoice] = useState([]);
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
+    onAfterPrint: () => setInvoice([]), // Reset invoiceData after printing
   });
+
+  const handleInvoice = (data) => {
+    setInvoice(data);
+  };
+
+  useEffect(()=>{
+    if (invoiceData && Object.keys(invoiceData).length > 0) {
+      handlePrint();
+    }
+  }, [invoiceData,handlePrint ])
   
   return (
     <Fragment>

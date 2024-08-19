@@ -2,7 +2,6 @@ import React from 'react';
 const Invoice = React.forwardRef((props, ref) => {
   const { data } = props;
 
-  console.log(data)
 
     return (
       <>
