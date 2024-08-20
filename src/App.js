@@ -24,6 +24,7 @@ import Availability from './AdminDashboards/Components/Availability/Availability
 import { ServiceProvider } from './Store/context/serviceProvider';
 import AdminComplain from './AdminDashboards/Components/Complain';
 import MemberInvoice from './Components/MemberInvoice';
+import OrderReports from './AdminDashboards/Components/OrderReports';
 
 function App() {
   return (
@@ -55,7 +56,8 @@ function App() {
             <Route path='roles-&-permission' element={<AdminRolesAndPermission />} />
             <Route path='profile' element={<AdminProfile />} />
             <Route path='availability' element={<Availability />} />
-            <Route path='complain' element={<AdminComplain />} />
+            <Route path='support' element={<AdminComplain />} />
+            <Route path='reports' element={<OrderReports />} />
           </Route>
         </Routes>
       </BrowserRouter>

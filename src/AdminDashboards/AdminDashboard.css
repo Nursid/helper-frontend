@@ -445,3 +445,8 @@ span.validationError {
     min-height: auto;
   }
 }
+
+.ReportsTabs_Active{
+  background-color: #ffffff !important;
+  color: #000 !important;
+}

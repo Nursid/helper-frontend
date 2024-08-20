@@ -148,3 +148,9 @@
   min-height: 35px;
   border-top: 1px solid;
 }
+
+
+.activeNavItem {
+  color: var(--blue) !important;
+  background-color: var(--yellow) !important;
+}
