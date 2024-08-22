@@ -29,13 +29,14 @@ import TransferOrderForm from "./Components/Dashboard/TransferOrderForm";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Button } from '@mui/material';
 import SelectBox from "./Elements/SelectBox";
-import { GetAllInventry,GetAllAllotedItems } from "../Store/Actions/Dashboard/InventryAction";
+import { GetAllInventry, GetAllAllotedItems } from "../Store/Actions/Dashboard/InventryAction";
 import { AssignSupervisorModal,AssignServiceProviderModal,AddComplainModal,AddAmount,SuperAdminRemarkModal,AdminRemarkModal,BackOfficeRemarkModal,AllotItemModal,AddInventryModal } from "../Components/Modal";
 import { useAuth } from "../Context/userAuthContext";
 import { ServiceProviderRemarkModal } from "../Components/Modal";
 import Switch from '@mui/material/Switch';
 import Tooltip from '@mui/material/Tooltip';
 import Invoice from "../Components/Invoice";
+import MemberInvoice from "../Components/MemberInvoice";
 import { useReactToPrint } from 'react-to-print';
 
 const AdminDashboard = () => {
@@ -44,8 +45,7 @@ const AdminDashboard = () => {
   const { currentUser, setCurrentUser } = useAuth();
   const [role, setRole] = useState(userRole.role || '');
   const dispatch = useDispatch();
-  const componentRef = useRef(null);
-
+  
   const {  data: orders, isLoading: isOrderLoading} = useSelector(state => state.GetAllOrderReducer);
   const { data: inventories, isLoading: isInventoryLoading } = useSelector(state => state.GetAllInventryReducers);
 
@@ -60,8 +60,6 @@ const AdminDashboard = () => {
       dispatch(GetAllOrders());
     }
   }, [role, currentUser.id, dispatch]);
-
-  
 
   useEffect(() => {
     dispatch(GetAllInventry())
@@ -78,11 +76,10 @@ const AdminDashboard = () => {
     setTotalSummary(res.data.data)
    }
     }
-    useEffect(() => {
-      GetTotalSummary()
 
+  useEffect(() => {
+    GetTotalSummary()
   }, []);
-
  
   const status= [
   {0: "Pending"},
@@ -136,8 +133,6 @@ const AdminDashboard = () => {
       setMobileNo('');
     }
   };
-
-
 
   const toggleCancelOrder= () => setCancel(!cancel);
   const toggleUpdateOrder = () => setUpdate(!update)
@@ -254,7 +249,7 @@ const AdminDashboard = () => {
     toggleCancelOrder()
   }
 
-  const OrderUpdate = (orderData)=>{
+  const OrderUpdate = (orderData)=> {
     // SetOrderNo(orderNo)
     // SetRegisterId(registerId)
     setOrderData(orderData)
@@ -714,7 +709,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
         }
        },
       }
-    ];
+  ];
 
   const handleComplain = () =>{
     let errors = {};
@@ -740,13 +735,16 @@ onClick={()=>AssignAmount(params.row.order_no)}
         }
   }
 
+
+  const nonMemberRef = useRef(null);
+  const memberRef = useRef(null);
   const [invoiceData, setInvoice] = useState([]);
 
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    onAfterPrint: () => setInvoice([]), // Reset invoiceData after printing
+    content: () => (invoiceData.NewCustomer.customer.member_id == null) ? nonMemberRef.current : memberRef.current,
+    onAfterPrint: () => setInvoice([])
   });
-
+  
   const handleInvoice = (data) => {
     setInvoice(data);
   };
@@ -756,12 +754,16 @@ onClick={()=>AssignAmount(params.row.order_no)}
       handlePrint();
     }
   }, [invoiceData,handlePrint ])
+
+
+  
   
   return (
     <Fragment>
 
       <div style={{ display: 'none' }}>
-        <Invoice ref={componentRef} data={invoiceData} />
+        <Invoice ref={nonMemberRef} data={invoiceData} /> 
+        <MemberInvoice ref={memberRef} data={invoiceData} /> 
       </div>
 
       <AssignSupervisorModal
