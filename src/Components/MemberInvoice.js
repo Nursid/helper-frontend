@@ -29,11 +29,11 @@ const MemberInvoice = React.forwardRef((props, ref) => {
                     <thead className="bg-secondary-subtle">
                         <tr>
                             <th className=" bg-secondary-subtle border boder-1 border-secondary" scope="col">Valid From</th>
-                            <th className=" bg-secondary-subtle border boder-1 border-secondary" scope="col">12-08-2024</th>
+                            <th className=" bg-secondary-subtle border boder-1 border-secondary" scope="col">N/A</th>
 
                             <th  className=" bg-secondary-subtle border border-1 border-secondary"scope="col">Valid To</th>
 
-                            <th  className=" bg-secondary-subtle border border-1 border-secondary"scope="col">12-09-2024</th>
+                            <th  className=" bg-secondary-subtle border border-1 border-secondary"scope="col">N/A</th>
 
                             <th className="bg-secondary-subtle border border-1 border-secondary" scope="col">Member Id</th>
                             <th className="bg-secondary-subtle border border-1 border-secondary" scope="col">{data?.member_id}</th>
