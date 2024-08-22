@@ -1,4 +1,10 @@
-export default function MemberInvoice() {
+import React from "react";
+
+const MemberInvoice = React.forwardRef((props, ref) => {
+    const { data } = props;
+
+    console.log("data---m-", data);
+    
     return (
         <>
             <div className="container">
@@ -32,10 +38,6 @@ export default function MemberInvoice() {
                             <th  className=" bg-secondary-subtle border border-1 border-secondary"scope="col">12-09-2024</th>
                             <th className="bg-secondary-subtle border border-1 border-secondary" scope="col">Member Id</th>
                             <th className="bg-secondary-subtle border border-1 border-secondary" scope="col">MN1001</th>
-                            
-
-                            
-
                         </tr>
                     </thead>
                     <tbody className="">
@@ -109,15 +111,8 @@ export default function MemberInvoice() {
                         <tr>
                             <th scope="row">Address</th>
                             <td colSpan={2}>Mark</td>
-                            <th scope="row">pakri pull,lko</th>
-                            <td colSpan={2}>business</td>
-                        </tr>
-
-                        <tr>
                             <th scope="row">LamdMark</th>
                             <td colSpan={2}>Mark</td>
-                            <th scope="row">pakri pull,lko,neahram showroom</th>
-                            <td colSpan={2}>business</td>
                         </tr>
 
                         <tr>
@@ -164,5 +159,7 @@ export default function MemberInvoice() {
                 </table>
             </div>
         </>
-    )
-}
+   );
+});
+
+export default MemberInvoice

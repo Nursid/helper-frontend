@@ -79,13 +79,15 @@ export default function OrderReports({reportType}) {
 
       
   const FilterData = async () => {
+  
     try {
-      const response = await axios.get(`${API_URL}/order/reports/${reportType}`);
+      const response = await axios.post(`${API_URL}/order/reports/${reportType}`, {from: from, to: to});
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+
 
   useEffect(() => {
     FilterData();
@@ -139,7 +141,17 @@ export default function OrderReports({reportType}) {
          <Fragment>
          <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}> All Order List</h4>
 
-
+      {reportType === '6' ? (<div className="flex flex-col justify-between w-full mb-3 ">
+            <div className="flex justify-between gap-6 items-center">
+                <label htmlFor="startDate" className="text-light">From:</label>
+                <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
+                <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
+                <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
+                <Button className="btn btn-primary ml-3" size="small"  variant="contained" onClick={FilterData}>Search</Button>
+            </div>
+        </div>  
+      ) : null
+      }
          <AdminDataTable
               rows={DataWithID(data.data)}
               CustomToolbar={CustomToolbar}
