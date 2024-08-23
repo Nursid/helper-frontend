@@ -10,6 +10,7 @@ import { GetAllTimeSlot } from '../../../Store/Actions/Dashboard/Orders/OrderAct
 import { useSelector } from 'react-redux';
 const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) => {
 
+  console.log(orderData)
   const dispatch = useDispatch();
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
@@ -26,7 +27,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     suprvisor_id: orderData?.suprvisor_id || '',
     serviceDateTime: moment(orderData.serviceDateTime).format('YYYY-MM-DDTHH:mm') || '',
     address: orderData?.customer?.address || '',
-    city: orderData?.customer?.city || '',
+    city: orderData?.customer?.location || '',
     pincode: orderData?.pincode || '',
     status: orderData?.pending || 'Pending',
     booktime: orderData?.booktime || '',

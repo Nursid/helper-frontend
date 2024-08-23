@@ -69,7 +69,6 @@ const AddNewCustomerForm = ({prop, data}) => {
 		}
 	];
 
-
 	const gender_option = [
 		{
 			value: 'Male',
@@ -84,7 +83,6 @@ const AddNewCustomerForm = ({prop, data}) => {
 		},
 	];
 
-
 	const membershipOptions = [
 		{
 			value: "already_joined",
@@ -97,10 +95,10 @@ const AddNewCustomerForm = ({prop, data}) => {
 
 	const house_options = [
 		{
-			value: "own_house",
+			value: "Own House",
 			label: 'Own House'
 		}, {
-			value: "rented_house",
+			value: "Rented House",
 			label: 'Rented House'
 		},
 	];
@@ -472,7 +470,7 @@ const AddNewCustomerForm = ({prop, data}) => {
 					</FormGroup>
 				</Col>
 
-				<Col md={6}>
+				{/* <Col md={6}>
 					<FormGroup>
 						<Label for="sdob">Spouse Name-3</Label>
 						<Input type='text'
@@ -492,7 +490,7 @@ const AddNewCustomerForm = ({prop, data}) => {
 							name='spouse_dob3'
 							placeholder='Spouse spouse_dob3 '/>
 					</FormGroup>
-				</Col>
+				</Col> */}
 
 
 
@@ -551,11 +549,11 @@ const AddNewCustomerForm = ({prop, data}) => {
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="ramount">Received Amount  </Label>
+						<Label for="recieved_amount">Received Amount  </Label>
 						<Input type='number'
 							onChange={(e) => handleChange(e, 10)}
-							value={inputValue?.received_amount}
-							name='received_amount'
+							value={inputValue?.recieved_amount}
+							name='recieved_amount'
 							placeholder='Please Enter Received Amount'/>
 							
 					</FormGroup>
@@ -568,10 +566,8 @@ const AddNewCustomerForm = ({prop, data}) => {
 							value={inputValue?.balance_amount}
 							name='balance_amount'
 							placeholder='Please Enter Balance Amount'/>
-					
 					</FormGroup>
 				</Col>
-				
 
 				<Col md={6}>
 					<FormGroup>

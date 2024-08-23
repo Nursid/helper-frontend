@@ -20,6 +20,7 @@ function Header() {
   const [currentUser, setCurrentUser] = useState(
     JSON.parse(sessionStorage.getItem("customer"))
   );
+
   const LoginResult = useSelector((pre) => pre.GetLogInReducers);
   const { LoginOpen, setLoginOpen } = UseStateManager();
 
@@ -35,8 +36,6 @@ function Header() {
     });
     navigate("/");
   };
-
-
 
   useEffect(() => {
     if (LoginResult.isSuccess === true) {
@@ -58,7 +57,7 @@ function Header() {
         timer: 1500,
       });
     }
-  }, [LoginResult, setLoginOpen]);
+  }, [LoginResult.isSuccess, setLoginOpen]);
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -213,13 +212,13 @@ function Header() {
           </Nav>
           {/* <Nav.Link className='txtColour' href='/Contact-Us'><b>HELP</b></Nav.Link> */}
         </Navbar.Collapse>
-        <div
+        {/* <div
           style={{ border: "1px solid #4a59e4" }}
           className="bgColour d-flex align-items-center rounded-pill px-2 m-1 d-none d-md-block"
         >
           <BsFillTelephoneFill color="#4a59e4" />
           <Typography variant="caption">&nbsp;0522-4300589</Typography>
-        </div>
+        </div> */}
       </Container>
       <LoginModal />
       <SingupModal />

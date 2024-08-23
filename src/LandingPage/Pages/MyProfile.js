@@ -14,7 +14,7 @@ import { IMG_URL } from '../../config';
 import { AddComplainModal } from '../../Components/Modal';
 import { useReactToPrint } from 'react-to-print';
 import Invoice from '../../Components/Invoice';
-
+import MemberInvoice from '../../Components/MemberInvoice';
 const MyProfile = ({ serviceData }) => {
 
     const dispatch = useDispatch()
@@ -182,24 +182,41 @@ const MyProfile = ({ serviceData }) => {
         return NewData
       }
 
-      const [invoiceData, setInvoice] = useState([]);
+    //   const [invoiceData, setInvoice] = useState([]);
 
-      const handlePrint = useReactToPrint({
-        content: () => componentRef.current,
-        onAfterPrint: () => setInvoice([]), // Reset invoiceData after printing
-      });
+    //   const handlePrint = useReactToPrint({
+    //     content: () => componentRef.current,
+    //     onAfterPrint: () => setInvoice([]), // Reset invoiceData after printing
+    //   });
     
-      const handleInvoice = (data) => {
-        setInvoice(data);
-      };
+    //   const handleInvoice = (data) => {
+    //     setInvoice(data);
+    //   };
     
-      useEffect(()=>{
-        if (invoiceData && Object.keys(invoiceData).length > 0) {
-          handlePrint();
-        }
-      }, [invoiceData,handlePrint ])
+    //   useEffect(()=>{
+    //     if (invoiceData && Object.keys(invoiceData).length > 0) {
+    //       handlePrint();
+    //     }
+    //   }, [invoiceData,handlePrint ])
 
-      
+    const nonMemberRef = useRef(null);
+    const memberRef = useRef(null);
+    const [invoiceData, setInvoice] = useState([]);
+  
+    const handlePrint = useReactToPrint({
+      content: () => (invoiceData.NewCustomer.customer.member_id == null) ? nonMemberRef.current : memberRef.current,
+      onAfterPrint: () => setInvoice([])
+    });
+    
+    const handleInvoice = (data) => {
+      setInvoice(data);
+    };
+  
+    useEffect(()=>{
+      if (invoiceData && Object.keys(invoiceData).length > 0) {
+        handlePrint();
+      }
+    }, [invoiceData,handlePrint ])
  
 
 
@@ -209,6 +226,7 @@ const MyProfile = ({ serviceData }) => {
             
       <div style={{ display: 'none' }}>
         <Invoice ref={componentRef} data={invoiceData} />
+        <MemberInvoice ref={memberRef} data={invoiceData} /> 
       </div>
 
             {customerRemarkModalOpen && <CustomerRemarkModal

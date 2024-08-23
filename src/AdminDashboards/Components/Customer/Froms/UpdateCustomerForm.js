@@ -15,15 +15,11 @@ import * as ALlIcon from "react-icons/fa"
 import {useDispatch, useSelector} from 'react-redux';
 import SeviceAddReducer from '../../../../Store/Reducers/Dashboard/ServiceAddReducer';
 // import { GetAllCustomers } from '../../Store/Actions/Dashboard/Customer/CustomerActions';
-
 import { GetAllCustomers } from '../../../../Store/Actions/Dashboard/Customer/CustomerActions';
-
-
+import moment from 'moment'
 import axios from 'axios';
 import {API_URL} from '../../../../config';
-
 import Swal from 'sweetalert2';
-
 import ImageUploadReducer from '../../../../Store/Reducers/ImageUploadReducers';
 import {ImageUploadAction} from '../../../../Store/Actions/ImageUploadAction';
 import {BounceLoader} from 'react-spinners';
@@ -52,16 +48,25 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 		designation:  updateData?.designation || '',
 		image: updateData?.image || '',
 		own_house: updateData?.own_house || null, 
-		dob: updateData?.dob || '',
+		dob: moment(updateData?.dob).format("YYYY-MM-DD") || '',
 		doa: updateData?.doa || '',
 		membership: updateData?.membership ||  '',
 		familyMember: updateData?.familyMember || '',  
 		reference: updateData?.reference || '',
 		payment: updateData?.payment || '',
 		discount_amount: updateData?.discount_amount || '',
-		received_amount: updateData?.received_amount || '',
+		recieved_amount: updateData?.recieved_amount || '',
 		balance_amount: updateData?.balance_amount || '',
 		payment_method: updateData?.payment_method || '',
+		spouse_name1: updateData?.spouse_name1 || '',
+		spouse_name2: updateData?.spouse_name2 || '',
+		spouse_dob1: moment(updateData?.spouse_dob1).format("YYYY-MM-DD") || '',
+		spouse_dob2: moment(updateData?.spouse_dob2).format("YYYY-MM-DD") || '',
+		service1: updateData?.service5 || '',
+		service2: updateData?.service2 || '',
+		service3: updateData?.service3 || '',
+		service4: updateData?.service4 || '',
+		service5: updateData?.service5 || '',
 	  });
 
 	  const [isLoading, SetIsLoading]= useState(false)
@@ -75,16 +80,17 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 
 	const payment_options = [
 		{
-			value: 'online_mode',
-			label: 'Online Mode'
-		}, {
-			value: 'offline_mode',
-			label: 'Offline Mode'
-		},
+			label: "Cash",
+			value: "Cash"
+		}, 
 		{
-			value: 'Cash',
-			label: 'Cash'
-		},
+			label: "Online",
+			value: "Online"
+		}, 
+		{
+			label: "Cheque",
+			value: "Cheque"
+		}
 	];
 
 
@@ -446,6 +452,79 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 						/>
 					</FormGroup>
 				</Col>
+
+				<Col md={6}>
+					<FormGroup>
+						<Label for="membership">Type of Membership</Label>
+						<SelectBox options={membershipOptions} setSelcted={setMembership} initialValue={membership}/>
+					</FormGroup>
+				</Col>
+
+				<Col md={6}>
+					<FormGroup>
+						<Label for="sdob">Spouse Name-1</Label>
+						<Input type='text'
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.spouse_name1}
+							name='spouse_name1'
+							placeholder='Spouse Name -1'/>
+					</FormGroup>
+				</Col>
+				<Col md={6}>
+					<FormGroup>
+						<Label for="sdob">Spouse DOB-1</Label>
+						<Input type='date'
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.spouse_dob1}
+							name='spouse_dob1'
+							placeholder='Spouse spouse_dob1 -1'/>
+					</FormGroup>
+				</Col>
+
+				<Col md={6}>
+					<FormGroup>
+						<Label for="sdob">Spouse Name-2</Label>
+						<Input type='text'
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.spouse_name2}
+							name='spouse_name2'
+							placeholder='Spouse Name -1'/>
+					</FormGroup>
+				</Col>
+
+				<Col md={6}>
+					<FormGroup>
+						<Label for="sdob">Spouse DOB-2</Label>
+						<Input type='date'
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.spouse_dob2}
+							name='spouse_dob2'
+							placeholder='Spouse spouse_dob 2'/>
+					</FormGroup>
+				</Col>
+
+				{/* <Col md={6}>
+					<FormGroup>
+						<Label for="sdob">Spouse Name-3</Label>
+						<Input type='text'
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.spouse_name3}
+							name='spouse_name3'
+							placeholder='Spouse Name -3'/>
+					</FormGroup>
+				</Col>
+
+				<Col md={6}>
+					<FormGroup>
+						<Label for="sdob">Spouse DOB-3</Label>
+						<Input type='date'
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.spouse_dob3}
+							name='spouse_dob3'
+							placeholder='Spouse spouse_dob3 '/>
+					</FormGroup>
+				</Col> */}
+
 		
 				<Col md={6}>
 					<FormGroup>
@@ -469,13 +548,7 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 					</FormGroup>
 				</Col>
 				
-				<Col md={6}>
-					<FormGroup>
-						<Label for="membership">Type of Membership</Label>
-						{/* <Input type='date' name='tom' placeholder='Type of Membership ' /> */}
-						<SelectBox options={membershipOptions} setSelcted={setMembership} initialValue={membership}/>
-					</FormGroup>
-				</Col>
+				
 				<h6 className='fs-5 fw-bold py-3 px-3'>For Payment Section</h6>
 				<Col md={6}>
 					<FormGroup>
@@ -502,8 +575,8 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 						<Label for="ramount">Received Amount</Label>
 						<Input type='number'
 							onChange={(e) => handleChange(e, 10)}
-							value={formData?.received_amount}
-							name='received_amount'
+							value={formData?.recieved_amount}
+							name='recieved_amount'
 							placeholder='Please Enter Received Amount'/>
 					</FormGroup>
 				</Col>
@@ -523,6 +596,66 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 						<SelectBox options={payment_options}  setSelcted={setPaymentMethod} initialValue={paymentMethod}/>
 					</FormGroup>
 				</Col>
+
+				<Col md={6}>
+					<FormGroup>
+						<Label for="service1">Free Service - 1</Label>
+						<Input type="text" id="service1"
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.service1}
+							name='service1'
+							placeholder='Free service 1'
+							/>
+					</FormGroup>
+				</Col>
+
+				<Col md={6}>
+					<FormGroup>
+						<Label for="freeService2">Free Service - 2</Label>
+						<Input type="text" id="freeService2"
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.service2}
+							name='service2'
+							placeholder='Free service 2'
+							
+							/>
+					</FormGroup>
+				</Col> 
+				<Col md={6}>
+					<FormGroup>
+						<Label for="freeService2">Free Service - 3</Label>
+						<Input type="text" id="freeService3"
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.service3}
+							name='service3'
+							placeholder='Free service 3'
+							
+							/>
+					</FormGroup>
+				</Col> 
+				<Col md={6}>
+					<FormGroup>
+						<Label for="freeService2">Free Service - 4</Label>
+						<Input type="text" id="freeService4"
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.service4}
+							name='service4'
+							placeholder='Free service 4'
+							/>
+					</FormGroup>
+				</Col> 
+				<Col md={6}>
+					<FormGroup>
+						<Label for="freeService2">Free Service - 5</Label>
+						<Input type="text" id="freeService4"
+							onChange={(e) => handleChange(e, 50)}
+							value={formData?.service5}
+							name='service5'
+							placeholder='Free service 5'
+							/>
+					</FormGroup>
+				</Col> 
+
 				<Button className='bg-primary h-fit text-blue'
 					onClick={UpdateCustomer}
 					disabled={isLoading}

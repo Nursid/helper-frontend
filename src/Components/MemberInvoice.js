@@ -2,8 +2,6 @@ import React from "react";
 import moment from 'moment'
 const MemberInvoice = React.forwardRef((props, ref) => {
     const { data } = props;
-
-    console.log(data.name)
     
     return (
         <div className='container' style={{maxWidth: "210mm", margin: "0 auto"}} ref={ref}>
