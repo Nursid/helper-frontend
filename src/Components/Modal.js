@@ -700,14 +700,14 @@ export const CustomerRemarkModal = ({customerRemarkModalOpen, customerRemarkModa
 			isOpen={customerRemarkModalOpen}
 			toggle={customerRemarkModalfunction}>
 			<ModalHeader toggle={customerRemarkModalfunction}>
-				Service Remark
+				Customer Remark
 			</ModalHeader>
 			<ModalBody>
 				<Row>
 					<Col xs={12}>
 						<div className="form-outline mb-2">
 							<label className="form-label" htmlFor="serviceRemark">
-								Service Remark
+							Customer Remark
 							</label>
 							<Input type="textarea" name="cust_remark" className="w-100"
 								value={
@@ -1339,7 +1339,7 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 	const [getAlltimeSlot, setGetAlltimeSlot] = useState([])
 	const [timeslot, setTimeslot] = useState([])
 	const { data, isLoading } = useSelector(state => state.GetAllTimeSlotReducer);
-
+	const dispatch = useDispatch();
 	const DataWithID = (data) => {
 		const transformedData = data?.map(item => ({label: item.time_range, value: item.time_range}));
 		setGetAlltimeSlot(transformedData);
@@ -1355,7 +1355,7 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 		}
 	}, [isLoading, data?.data]);
 
-	const dispatch = useDispatch();
+	
 	useEffect(() => {
 		getAllServices();
 	}, []);
@@ -1373,7 +1373,6 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 			servicep_id: serviceProvider.value,
 			allot_time_range: timeslot.value,
 			pending: 4
-			
 		}
 		const apiUrl = `${API_URL}/order/assign-service-provider/${OrderNo}`;
 		// Make a POST request using Axios
@@ -1389,9 +1388,7 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 				  }
 			} else {
 				Swal.fire({title:  response.data.message, icon: "error"})
-			} 
-
-			
+			} 			
 		}).catch(error => {
 			console.error('Error:', error);
 		});
@@ -1553,6 +1550,10 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 			if (response.status === 200) {
 				AmountModalOpenFunction();
 				Swal.fire('Successfully!', response.data.message, 'success')
+				setPaymethod('')
+				setBillAmount(0)
+				setPaidAmount(0)
+				setBalanceAmount(0)
 			} else {
 				Swal.fire({title: 'failed to add try again', icon: "error"})
 			}

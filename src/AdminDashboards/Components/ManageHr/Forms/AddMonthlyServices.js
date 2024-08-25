@@ -25,11 +25,12 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { API_URL } from '../../../../config';
 import { GetAllMonthlyServiceAction } from '../../../../Store/Actions/Dashboard/EmployeeActions/GetAllMonthlyServices';
+import { GetAllTimeSlot } from '../../../../Store/Actions/Dashboard/Orders/OrderAction';
 
-const AddMonthlyServices = ({toggleModal,data}) => {
+const AddMonthlyServices = ({toggleModal, data}) => {
 
 	const dispatch = useDispatch();
-
+	const [GetAlltimeSlot , setGetAlltimeSlot] = useState([])
 	const [formData, setFormData] = useState({
         cust_name: data.cust_name || "",
         mobile_no: data.mobile_no || "",
@@ -38,15 +39,38 @@ const AddMonthlyServices = ({toggleModal,data}) => {
         serviceServeType: data.serviceServeType || "",
         selectedTimeSlot: data.selectedTimeSlot || "",
         serviceFees: data.serviceFees || "",
-        feesPaidDateTime: data.feesPaidDateTime || "",
+        feesPaidDateTime: data.feesPaidDateTime ? new Date(data.feesPaidDateTime).toISOString().slice(0, 16) : "",
         specialInterest: data.specialInterest || ""
     });
 
-	const formattedDateTime = formData.feesPaidDateTime ? new Date(formData.feesPaidDateTime).toISOString().slice(0, 16) : "";
+
+	const [timeslot, setTimeslot] = useState(data.selectedTimeSlot || '')
+	const [errors, setErrors] = useState([]);
+	const [allservices, setAllservices] = useState([]);
+	const [serviceType, setServiceType] = useState(data.serviceType || '');
+	const [isLoadingSubmit, setIsLoading] = useState(false);
+
 
 	// Simulated data for monthly services and hourly time slots
 	const allMonthlyServices = ['Service A', 'Service B', 'Service C'];
-	const allHourlyTimeSlots = ['10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM',"2:00 PM","3:00 PM","4:00 PM"];
+
+
+	const { data: timeSLotData, isLoading } = useSelector(state => state.GetAllTimeSlotReducer);
+
+	const DataWithID = (data) => {
+		const transformedData = data?.map(item => ({label: item.time_range, value: item.time_range}));
+		setGetAlltimeSlot(transformedData);
+	}
+
+	useEffect(() => {
+		dispatch(GetAllTimeSlot())
+	}, []);
+
+	useEffect(() => {
+		if(!isLoading && timeSLotData?.data){
+			DataWithID(timeSLotData?.data);
+		}
+	}, [isLoading, timeSLotData?.data]);
 	
 
 	// Handle change for text inputs and dropdowns
@@ -61,7 +85,68 @@ const AddMonthlyServices = ({toggleModal,data}) => {
         }
     };
 
-	const onsubmit=() => {
+
+	const getAllServices = async () => {
+		const response = await axios.get(API_URL + '/service/getall')
+		if (response.status === 200) {
+			const transformedData = response.data.data.map(item => ({label: item.serviceName, value: item.serviceName}));
+			setAllservices(transformedData);
+		}
+	}
+
+	useEffect(()=>{
+		getAllServices()
+	}, [])
+
+	const onsubmit=(e) => {
+
+
+		e.preventDefault();
+        let errors = {};
+		setIsLoading(true)
+
+		if (!formData?.cust_name) {
+            errors.cust_name = "Name is required";
+        }
+
+		if (!formData?.mobile_no) {
+			errors.mobile_no = "Mobile number is required";
+		} else if (!/^\d{10}$/.test(formData.mobile_no)) {
+			errors.mobile_no = "Mobile number should be 10 digits";
+		}
+		
+		if (!serviceType?.value) {
+            errors.serviceType = "service Name is required";
+        }
+		if (!timeslot?.value) {
+            errors.timeslot = "timeslot is required";
+        }
+		if (!formData?.serviceFees) {
+            errors.serviceFees = "serviceFees is required";
+        }
+		if (!formData?.feesPaidDateTime) {
+            errors.feesPaidDateTime = "Date is required";
+        }
+		
+
+		if (errors && Object.keys(errors).length === 0) {
+			// Form is valid, handle form submission here
+			console.log("Form submitted successfully!",);
+		  } else {
+			// Form is invalid, display validation errors
+			console.log("Validation Errors:", errors);
+			setErrors(errors);
+			setIsLoading(false)
+			return false;
+		  }
+
+		const  OriginalData = {
+			...formData,
+			selectedTimeSlot: timeslot?.value,
+			serviceType: serviceType?.value,
+		}
+		console.log(OriginalData)
+
 		var apiUrl =""
 		if(data.id!=null){
 			 apiUrl = `${API_URL}/monthly-service/update/${data.id}`;
@@ -69,9 +154,9 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 			apiUrl = `${API_URL}/monthly-service/add`;
 		}
 
-		axios.post(apiUrl, formData)
+		axios.post(apiUrl, OriginalData)
 			.then(response => {
-
+				setIsLoading(false)
 				if (response.status === 200) {
 					toggleModal();
 					Swal.fire(
@@ -83,18 +168,26 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 					
 				} else {
 					Swal.fire({
-						title: 'failed to add try again',
+						title: response?.data.message,
 						icon: "error",
 					})
 				}
-			
 			})
 			.catch(error => {
+				setIsLoading(false)
 				console.error('Error:', error);
+				Swal.fire({
+					title: error,
+					icon: "error",
+				})
 			});
-
+			setIsLoading(false)
 		
 	}
+
+
+
+
 
 
 	const handleKeyPress = (e) => {
@@ -113,7 +206,7 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 
 				<Col md={6}>
 								<FormGroup>
-									<Label for="cust_name">Customer Name </Label>
+									<Label for="cust_name">Customer Name <span style={{color: "red"}}>*</span> </Label>
 									<Input 
 									onKeyPress={handleKeyPress}
 									name="cust_name"
@@ -121,22 +214,32 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 										id="cust_name"
 										value={formData?.cust_name}
 										placeholder="Enter Customer Name "/>
+										{errors?.cust_name && (
+										<span className='validationError'>
+											{errors?.cust_name}
+										</span>
+									)}
 								</FormGroup>
 							</Col>
 
 							<Col md={6}>
 								<FormGroup>
-									<Label for="mobile_no">Mobile No</Label>
+									<Label for="mobile_no">Mobile No <span style={{color: "red"}}>*</span></Label>
 									<Input type="number" name="mobile_no"
 										onChange={(e) => handleChange(e, 10)}
 										value={formData?.mobile_no}
 										id="mobile_no"
 										placeholder="Enter Mobile No"/>
+										{errors?.mobile_no && (
+										<span className='validationError'>
+											{errors?.mobile_no}
+										</span>
+									)}
 								</FormGroup>
 							</Col>
 							<Col md={6}>
 								<FormGroup>
-									<Label for="monthlyServices">Monthly Services</Label>
+									<Label for="monthlyServices">Monthly Services </Label>
 									<Input 
 										type="select" 
 										name="monthlyServices"
@@ -161,16 +264,20 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 
 							<Col md={6}>
 								<FormGroup>
-									<Label for="serviceType">Service Type</Label>
-									<Input type="text" name="serviceType"
-										onChange={(e) => handleChange(e, 50)}
-										id="serviceType"
-										placeholder="Enter Service Type"
-										value={formData.serviceType}
-										onKeyPress={handleKeyPress}
+									<Label>Service Name <span style={{color: "red"}}>*</span></Label>
+									<SelectBox 
+										setSelcted={setServiceType}
+										initialValue={serviceType}
+										options={allservices}
 										/>
+										{errors?.serviceType && (
+										<span className='validationError'>
+											{errors?.serviceType}
+										</span>
+									)}
 								</FormGroup>
 							</Col>
+
 
 							<Col md={6}>
 								<FormGroup>
@@ -186,41 +293,51 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 							</Col>
 
 							<Col md={6}>
-								<FormGroup>
-									<Label for="selectedTimeSlot">Hourly Time Slots</Label>
-									<Input type="select" name="selectedTimeSlot"
-										onChange={(e) => handleChange(e, 50)}
-										id="selectedTimeSlot" value={formData.selectedTimeSlot}>
-										<option value="">Select Time Slot</option>
-										{
-										allHourlyTimeSlots.map((timeSlot, index) => (
-											<option key={index}
-												value={timeSlot}>
-												{timeSlot} </option>
-										))
-									} </Input>
-								</FormGroup>
-							</Col>
+					<FormGroup>
+						<Label>Time Slot <span style={{color: "red"}}>*</span></Label>
+						<SelectBox 
+							setSelcted={setTimeslot}
+							initialValue={timeslot}
+							options={GetAlltimeSlot}
+							/>
+							{errors?.timeslot && (
+							<span className='validationError'>
+								{errors?.timeslot}
+							</span>
+						)}
+					</FormGroup>
+				</Col>
+
                             <Col md={6}>
 								<FormGroup>
-									<Label for="serviceFees">Service Fees</Label>
+									<Label for="serviceFees">Service Fees <span style={{color: "red"}}>*</span></Label>
 									<Input type="number" name="serviceFees"
 										onChange={(e) => handleChange(e, 10)}
 										id="serviceFees"
 										placeholder="Enter service fees"
 										value={formData.serviceFees}
 										/>
+										{errors?.serviceFees && (
+							<span className='validationError'>
+								{errors?.serviceFees}
+							</span>
+						)}
 								</FormGroup>
 							</Col>
 
 							<Col md={6}>
 								<FormGroup>
-									<Label for="feesPaidDateTime">Fees Paid Date & Time</Label>
+									<Label for="feesPaidDateTime">Fees Paid Date & Time <span style={{color: "red"}}>*</span></Label>
 									<Input type="datetime-local" name="feesPaidDateTime"
 										onChange={(e) => handleChange(e, 50)}
 										id="feesPaidDateTime"
-										value={formattedDateTime}
+										value={formData?.feesPaidDateTime}
 										/>
+										{errors?.feesPaidDateTime && (
+							<span className='validationError'>
+								{errors?.feesPaidDateTime}
+							</span>
+						)}
 								</FormGroup>
 							</Col>
 
@@ -237,7 +354,7 @@ const AddMonthlyServices = ({toggleModal,data}) => {
 							</Col>
 
 							
-                            <Button onClick={onsubmit} className='bg-primary text-white'>  {data ? "Update" : "Submit"} </Button>
+                            <Button onClick={onsubmit} className='bg-primary text-white' disabled={isLoadingSubmit}>  {data ? "Update" : "Submit"} </Button>
                         </Row>
 				</Form>
 		</Fragment>
