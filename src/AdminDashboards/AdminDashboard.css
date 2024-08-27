@@ -323,21 +323,27 @@ button.dropdownMenu-btn-header.btn.btn-secondary {
 
 .complete-cell {
   background-color: green !important;
+  color: black !important;
 }
 .running-cell {
   background-color: yellow !important;
+  color: black !important;
 }
 .cancel-cell {
   background-color: gray !important;
+  color: black !important;
 }
 .hold-cell {
   background-color: #f08080 !important;
+  color: black !important;
 }
 .due-cell {
   background-color: #adadec !important;
+  color: black !important;
 }
 .pending-cell {
   background-color: #ffa500 !important;
+  color: black !important;
 }
 
 span.validationError {
