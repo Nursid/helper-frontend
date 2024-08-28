@@ -39,17 +39,20 @@ const AddMonthlyServices = ({toggleModal, data}) => {
         serviceServeType: data.serviceServeType || "",
         selectedTimeSlot: data.selectedTimeSlot || "",
         serviceFees: data.serviceFees || "",
-        feesPaidDateTime: data.feesPaidDateTime ? new Date(data.feesPaidDateTime).toISOString().slice(0, 16) : "",
-        specialInterest: data.specialInterest || ""
+        feesPaidDateTime: data.feesPaidDateTime || "",
+        specialInterest: data.specialInterest || "",
+		service_provider: data?.service_provider || ""
     });
 
+	
 
 	const [timeslot, setTimeslot] = useState(data.selectedTimeSlot || '')
 	const [errors, setErrors] = useState([]);
 	const [allservices, setAllservices] = useState([]);
 	const [serviceType, setServiceType] = useState(data.serviceType || '');
 	const [isLoadingSubmit, setIsLoading] = useState(false);
-
+	const [getAllServiceProvider, setGetAllServiceProvider] = useState([])
+	const [serviceProvider, setServiceProvider] = useState(data?.service_provider || "")
 
 	// Simulated data for monthly services and hourly time slots
 	const allMonthlyServices = ['Service A', 'Service B', 'Service C'];
@@ -82,8 +85,34 @@ const AddMonthlyServices = ({toggleModal, data}) => {
             ...prevState,
             [name]: value
         }));
+
         }
     };
+
+	useEffect(()=>{
+		if(formData.feesPaidDateTime && timeslot?.value){
+			const assignDate = formData.feesPaidDateTime;
+            const filterData = {
+				date: assignDate,
+				time_range: timeslot.value
+			}
+			getAllServicesProvider(filterData)
+		  }
+	  }, [formData.feesPaidDateTime, timeslot?.value])
+
+	  const getAllServicesProvider = async (filterData) => {
+		try {
+			console.log("filterData---",filterData)
+		  const queryParams = new URLSearchParams(filterData).toString()
+		  const response = await axios.get(`${API_URL}/service-provider/getall?${queryParams}`);
+		  if (response.status === 200) {
+			const transformedData = response.data.data.map(item => ({ label: item.name, value: item.name }));
+			setGetAllServiceProvider(transformedData);
+		  }
+		} catch (error) {
+		  console.error("Error fetching service providers:", error);
+		}
+	  }
 
 
 	const getAllServices = async () => {
@@ -127,6 +156,13 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		if (!formData?.feesPaidDateTime) {
             errors.feesPaidDateTime = "Date is required";
         }
+		if (!formData?.serviceServeType) {
+            errors.serviceServeType = "serviceServeType is required";
+        }
+
+		if (!serviceProvider?.value) {
+            errors.service_provider = "service provider is required";
+        }
 		
 
 		if (errors && Object.keys(errors).length === 0) {
@@ -144,6 +180,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			...formData,
 			selectedTimeSlot: timeslot?.value,
 			serviceType: serviceType?.value,
+			service_provider: serviceProvider?.value
 		}
 		console.log(OriginalData)
 
@@ -184,12 +221,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			setIsLoading(false)
 		
 	}
-
-
-
-
-
-
+ 
 	const handleKeyPress = (e) => {
 		const charCode = e.which || e.keyCode;
 		const charStr = String.fromCharCode(charCode);
@@ -197,6 +229,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			e.preventDefault();
 		}
 	};
+	const today = new Date().toISOString().split('T')[0];
 
 	return (
 		<Fragment>
@@ -237,7 +270,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 									)}
 								</FormGroup>
 							</Col>
-							<Col md={6}>
+							{/* <Col md={6}>
 								<FormGroup>
 									<Label for="monthlyServices">Monthly Services </Label>
 									<Input 
@@ -260,7 +293,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 										}
 									</Input>
 								</FormGroup>
-							</Col>
+							</Col> */}
 
 							<Col md={6}>
 								<FormGroup>
@@ -281,18 +314,41 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 
 							<Col md={6}>
 								<FormGroup>
-									<Label for="serviceServeType">Service Serve Type</Label>
+									<Label for="serviceServeType">Monthly Service Type <span style={{color: "red"}}>*</span></Label>
 									<Input type="select" name="serviceServeType"
 										onChange={(e) => handleChange(e, 50)}
 										id="serviceServeType" value={formData.serviceServeType}>
-										<option value="">Select Serve Type</option>
-										<option value="After">After</option>
+										<option value="" defaultChecked disabled>Select Serve Type</option>
 										<option value="Daily">Daily</option>
+										<option value="Weekly">Weekly</option>
 									</Input>
+									{errors?.serviceServeType && (
+										<span className='validationError'>
+											{errors?.serviceServeType}
+										</span>
+									)}
 								</FormGroup>
 							</Col>
 
 							<Col md={6}>
+								<FormGroup>
+									<Label for="feesPaidDateTime"> Date  <span style={{color: "red"}}>*</span></Label>
+									<Input type="date" name="feesPaidDateTime"
+										onChange={(e) => handleChange(e, 50)}
+										id="feesPaidDateTime"
+										value={formData?.feesPaidDateTime}
+										min={today}
+										/>
+										{errors?.feesPaidDateTime && (
+							<span className='validationError'>
+								{errors?.feesPaidDateTime}
+							</span>
+						)}
+								</FormGroup>
+							</Col>
+
+							<Col md={6}>
+
 					<FormGroup>
 						<Label>Time Slot <span style={{color: "red"}}>*</span></Label>
 						<SelectBox 
@@ -307,6 +363,24 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 						)}
 					</FormGroup>
 				</Col>
+
+				<Col md={6}>
+					<FormGroup>
+						<Label>Service Provider <span style={{color: "red"}}>*</span></Label>
+						<SelectBox 
+						options={getAllServiceProvider}
+						initialValue={serviceProvider}
+						setSelcted={setServiceProvider}
+						/>
+						{errors?.service_provider && (
+							<span className='validationError'>
+								{errors?.service_provider}
+							</span>
+						)}
+					</FormGroup>
+				</Col>
+
+
 
                             <Col md={6}>
 								<FormGroup>
@@ -325,21 +399,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								</FormGroup>
 							</Col>
 
-							<Col md={6}>
-								<FormGroup>
-									<Label for="feesPaidDateTime">Fees Paid Date & Time <span style={{color: "red"}}>*</span></Label>
-									<Input type="datetime-local" name="feesPaidDateTime"
-										onChange={(e) => handleChange(e, 50)}
-										id="feesPaidDateTime"
-										value={formData?.feesPaidDateTime}
-										/>
-										{errors?.feesPaidDateTime && (
-							<span className='validationError'>
-								{errors?.feesPaidDateTime}
-							</span>
-						)}
-								</FormGroup>
-							</Col>
+							
 
 							<Col md={12}>
 								<FormGroup>

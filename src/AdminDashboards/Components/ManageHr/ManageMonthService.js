@@ -88,7 +88,7 @@ const ManageMonthService = () => {
         { field: "_id", headerName: "Sr No", minWidth: 50, editable: true },
         { field: "cust_name", headerName: "Customer Name", minWidth: 120, editable: true },
         { field: "mobile_no", headerName: "Mobile", minWidth: 120, editable: true },
-        { field: "monthlyServices", headerName: "Monthly Services", minWidth: 120, editable: true },
+        { field: "service_provider", headerName: "Service Provider", minWidth: 120, editable: true },
         { field: "serviceType", headerName: "Service Type", minWidth: 120, editable: true },
         { field: "serviceServeType", headerName: "Service Serve Type", minWidth: 120, editable: true },
         { field: "selectedTimeSlot", headerName: "Hourly Time Slot", minWidth: 120, editable: true },
