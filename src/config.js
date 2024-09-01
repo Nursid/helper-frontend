@@ -2,7 +2,6 @@
 // export const API_URL = "https://api.ssquickhelper.com";
 // export const IMG_URL = "https://api.ssquickhelper.com/uploads/";
 
-
 export const API_URL = "http://localhost:8080";
 export const IMG_URL = "http://localhost:8080/uploads/";
 
