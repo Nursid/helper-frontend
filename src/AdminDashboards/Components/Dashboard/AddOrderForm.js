@@ -63,7 +63,8 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 		servicep_id: '',
 		suprvisor_id: '',
 		serviceDateTime: '',
-		allot_time_range: ''
+		allot_time_range: '',
+		alterno: ''
 	  });
 
 	  useEffect(()=>{
@@ -324,6 +325,19 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 						)}
 					</FormGroup>
 				</Col>
+
+				<Col md={6}>
+					<FormGroup>
+						<Label for="firstname">Alternate Number</Label>
+						<Input 
+						onChange={(e) => handleChange(e, 10)}
+							name='alterno'
+							type='number'
+							value={formData?.alterno}
+							placeholder='Enter Your Alternate Number'/>
+					</FormGroup>
+				</Col>
+
 				<Col md={6}>
 				<Label for="firstname">User Type </Label>
 				<SelectBox options={UserTypes}

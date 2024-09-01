@@ -515,6 +515,7 @@ const AdminDashboard = () => {
     { field: "order_no", headerName: "Order Number", minWidth: 120, editable: true },
     { field: "name", headerName: "Customer Name",minWidth: 150, editable: true },
     { field: "mobileno", headerName: "Mobile",minWidth: 150, editable: true },
+    { field: "alterno", headerName: "Alternate No",minWidth: 150, editable: true },
     { field: "user_type", headerName: "Type", minWidth: 80, editable: true },
     { field: "service_name", headerName: "Service Type",minWidth: 150, editable: true },
     { field: "booktime", headerName: "Booking Time", minWidth: 120, editable: true },

@@ -173,6 +173,7 @@ const ManageEmployee = () => {
         { field: "design_name", headerName: "Designation", minWidth: 120, editable: true },
         { field: "dept_name", headerName: "Department", minWidth: 120, editable: true },
         { field: "mobile_no", headerName: "Mobile No.", minWidth: 120, editable: true },
+        { field: "alterno", headerName: "Alternate No.", minWidth: 120, editable: true },
         { field: "aadhar_no", headerName: "Aadhaar No.", minWidth: 150, editable: true },
         { field: "pan_no", headerName: "Pan No", minWidth: 120, editable: true },
         { field: "address", headerName: "Address", minWidth: 250, editable: true },

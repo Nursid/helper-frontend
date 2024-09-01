@@ -1,5 +1,5 @@
 import { GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton, GridToolbarQuickFilter } from '@mui/x-data-grid';
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom/dist';
 import AddNewCustomerForm from './Froms/AddNewCustomerForm';
 import ModalComponent from '../../Elements/ModalComponent';
@@ -11,6 +11,7 @@ import axios from 'axios';
 import { API_URL } from '../../../config';
 import Swal from 'sweetalert2';
 import VisibilityIcon from '@mui/icons-material/Visibility'
+import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import BlockIcon from '@mui/icons-material/Block'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
@@ -18,6 +19,9 @@ import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import { Button } from '@mui/material';
 import UpdateCustomerForm from './Froms/UpdateCustomerForm';
 import CustomerView from './View/CustomerView';
+import PrintCustomer from './View/PrintCustomer';
+import { useReactToPrint } from 'react-to-print';
+
 
 const ManageCustomer = () => {
     const navigate = useNavigate()
@@ -57,6 +61,7 @@ const ManageCustomer = () => {
     const [isBlocked, setIsBlocked] = useState({})
     const [update, setUpdate]=useState([]);
     const [viewModal, setViewModel] = useState(false)
+    const [print, setPrint] = useState(false)
 
     const DataWithID = (data) => {
         const NewData = []
@@ -136,8 +141,6 @@ const ManageCustomer = () => {
        
     };
 
-
-
     useEffect(() => {
         dispatch(GetAllCustomers())
     }, [])
@@ -151,6 +154,26 @@ const ManageCustomer = () => {
         setUpdate(data);
         setViewModel(!viewModal)
     }
+
+    const [printCustomerData, setPrintCustomerData] = useState([]);
+
+    const PrintCustomerButton = (data) =>{
+        setPrintCustomerData(data);
+    }
+
+    const customerRef = useRef(null);
+  
+    const handlePrint = useReactToPrint({
+      content: () => customerRef.current,
+      onAfterPrint: () => setPrintCustomerData([])
+    });
+    
+  
+    useEffect(()=>{
+      if (printCustomerData && Object.keys(printCustomerData).length > 0) {
+        handlePrint();
+      }
+    }, [printCustomerData])
 
     
 
@@ -180,6 +203,13 @@ const ManageCustomer = () => {
                 style={{minWidth: "40px", maxWidth: "40px"}}
                 >
                     <VisibilityIcon />
+                </Button>
+
+                <Button variant="contained" color="primary" 
+                onClick={(e)=>{PrintCustomerButton(params.row)}}
+                style={{minWidth: "40px", maxWidth: "40px"}}
+                >
+                    <LocalPrintshopIcon />
                 </Button>
 
                 <Button  onClick={(e) => {
@@ -230,6 +260,11 @@ const ManageCustomer = () => {
     const ToggleUpdateCustomer = () => setUpdateCustomer(!updateCustomer)
 
     return (
+    <>
+        <div style={{ display: 'none' }}>
+        <PrintCustomer ref={customerRef} data={printCustomerData} /> 
+      </div>
+
         <Fragment>
             <ModalComponent modal={addCustomer} toggle={ToggleAddCustomer} data={<AddNewCustomerForm  prop={ToggleAddCustomer } />} modalTitle={"Add New Customer"} size={"xl"} scrollable={true} />
 
@@ -242,6 +277,7 @@ const ManageCustomer = () => {
                 size={"xl"} scrollable={true}
             />
 
+   
             <ModalComponent modal={updateCustomer} toggle={ToggleUpdateCustomer} data={<UpdateCustomerForm  prop={ToggleUpdateCustomer } updateData={update} />} modalTitle={"Update Customer"} size={"xl"} scrollable={true} />
 
             <div className='flex'>
@@ -257,6 +293,7 @@ const ManageCustomer = () => {
                 <AdminDataTable rows={DataWithID(data.data)} columns={column} CustomToolbar={CustomToolbar} loading={isLoading} />
             </div>
         </Fragment>
+        </>
     )
 }
 

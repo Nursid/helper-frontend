@@ -25,7 +25,8 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
         about: data.address || "",
         salary: data.salary || "",
         duty_hours: data.duty_hours || "",
-        week_off: data.week_off || ""
+        week_off: data.week_off || "",
+        alterno: data.alterno || ""
     });
 
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -159,7 +160,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
     const Designation = async () => {
 		const response = await axios.get(API_URL + '/designation/getall')
 		if (response.status === 200) {
-            const filteredData = response.data.filter(item => item.id !== 1 && item.id !== 7);
+            const filteredData = response.data.filter(item => item.id !== 1 && item.id !== 7 && item.id !== 3);
             const transformedData = filteredData.map(item => ({
                 label: item.name,
                 value: item.id
@@ -341,6 +342,18 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                         {errors?.mobile_no}
                                                     </span>
                                                 )}
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="mobileno">Alternate No </Label>
+                                                <Input
+                                                    type="number"
+                                                    name="alterno"
+                                                    onChange={(e) => handleChange(e, 10)}
+                                                    placeholder='Enter ALternate No'
+                                                    value={formData?.alterno}
+                                                />
                                             </FormGroup>
                                         </Col>
                                         <Col md={6}>
