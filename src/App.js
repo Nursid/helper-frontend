@@ -23,9 +23,9 @@ import AdminProfile from './AdminDashboards/Components/profile/AdminProfile';
 import Availability from './AdminDashboards/Components/Availability/Availability';
 import { ServiceProvider } from './Store/context/serviceProvider';
 import AdminComplain from './AdminDashboards/Components/Complain';
-import MemberInvoice from './Components/MemberInvoice';
+import Invoice from './Components/Invoice';
 import OrderReports from './AdminDashboards/Components/OrderReports';
-import PrintCustomer from './AdminDashboards/Components/Customer/View/PrintCustomer';
+
 
 function App() {
   return (
@@ -42,7 +42,7 @@ function App() {
           <Route path='/Term-&-Condition' element={<TermAndCondition />} />
           <Route path='/YourProfile' element={<ProfileHistory />} />
           <Route path='/email' element={<ProfileHistory />} />
-          <Route path='/invoice' element={<PrintCustomer />} />
+          <Route path='/invoice' element={<Invoice />} />
 
           {/* Admin Dashboard Routes */}
           <Route path='/admin/*' element={<AdminSignIn />}>

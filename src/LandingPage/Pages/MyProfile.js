@@ -182,29 +182,13 @@ const MyProfile = ({ serviceData }) => {
         return NewData
       }
 
-    //   const [invoiceData, setInvoice] = useState([]);
 
-    //   const handlePrint = useReactToPrint({
-    //     content: () => componentRef.current,
-    //     onAfterPrint: () => setInvoice([]), // Reset invoiceData after printing
-    //   });
-    
-    //   const handleInvoice = (data) => {
-    //     setInvoice(data);
-    //   };
-    
-    //   useEffect(()=>{
-    //     if (invoiceData && Object.keys(invoiceData).length > 0) {
-    //       handlePrint();
-    //     }
-    //   }, [invoiceData,handlePrint ])
 
-    const nonMemberRef = useRef(null);
-    const memberRef = useRef(null);
+    const InvoiceRef = useRef(null);
     const [invoiceData, setInvoice] = useState([]);
   
     const handlePrint = useReactToPrint({
-      content: () => (invoiceData.NewCustomer.customer.member_id == null) ? nonMemberRef.current : memberRef.current,
+      content: () => InvoiceRef.current,
       onAfterPrint: () => setInvoice([])
     });
     
@@ -222,12 +206,9 @@ const MyProfile = ({ serviceData }) => {
 
     return (
         <div>
-
-            
-      <div style={{ display: 'none' }}>
-        <Invoice ref={componentRef} data={invoiceData} />
-        <MemberInvoice ref={memberRef} data={invoiceData} /> 
-      </div>
+            <div style={{ display: 'none' }}>
+                <Invoice ref={InvoiceRef} data={invoiceData} />
+            </div>
 
             {customerRemarkModalOpen && <CustomerRemarkModal
                 customerRemarkModalOpen={customerRemarkModalOpen}

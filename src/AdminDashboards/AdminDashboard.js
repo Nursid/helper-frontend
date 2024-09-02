@@ -737,12 +737,12 @@ onClick={()=>AssignAmount(params.row.order_no)}
   }
 
 
-  const nonMemberRef = useRef(null);
-  const memberRef = useRef(null);
+  const InvoiceRef = useRef(null);
+
   const [invoiceData, setInvoice] = useState([]);
 
   const handlePrint = useReactToPrint({
-    content: () => (invoiceData.NewCustomer.customer.member_id == null) ? nonMemberRef.current : memberRef.current,
+    content: () => InvoiceRef.current,
     onAfterPrint: () => setInvoice([])
   });
   
@@ -763,8 +763,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
     <Fragment>
 
       <div style={{ display: 'none' }}>
-        <Invoice ref={nonMemberRef} data={invoiceData} /> 
-        <MemberInvoice ref={memberRef} data={invoiceData} /> 
+        <Invoice ref={InvoiceRef} data={invoiceData} /> 
       </div>
 
       <AssignSupervisorModal
