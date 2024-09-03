@@ -117,43 +117,57 @@ const Invoice = React.forwardRef((props, ref) => {
         <div className="receipt-main col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3 w-100">
           <div className="row">
             <div className="receipt-header d-flex">
-              <div className="col-xs-6 col-sm-6 col-md-6">
+              <div className="col-md-8">
                 <div className="receipt-left">
+                  <div className='d-flex gap-4'> 
                   <img
                     className="img-responsive"
                     alt="iamgurdeeposahan"
-                    src="https://bootdey.com/img/Content/avatar/avatar6.png"
-                    style={{ width: '71px', borderRadius: '43px' }}
+                    src="https://mytotalhelper.com/webcss/images/we_logo.png"
+                    width={120}
                   />
-                </div>
-              </div>
-              <div className="col-xs-6 col-sm-6 col-md-6 text-right">
-                <div className="receipt-right">
-                  <h1>Helper</h1>
-                  <p>
-                  9682077000, 
+
+               <h1>Helper</h1>
+               </div>
+
+          
+                  <figcaption>
+     <cite title="Source Title">  9682077000, 
 							<BiLogoWhatsapp color="#25D366"
 								size={20}/>
 							7307676622, 05224300589 
-                  </p>
-                  
+              </cite>
+  </figcaption>
+                 
                   <p>
-                 <FaLocationDot size={16}/> 2/6, Heeru Villa Rajani Khand, Sharda Nagar, Lucknow - 226012 
+                  <figcaption>
+     <cite title="Source Title"> <FaLocationDot size={16}/> 2/6, Heeru Villa Rajani Khand, Sharda Nagar, Lucknow - 226012 </cite>
+  </figcaption>
                   </p>
                 </div>
+
+
+              </div>
+              <div className="col-md-4 text-right">
+               <div className="receipt-right">
+                  <h4>INVOICE</h4>
+                 
+                </div> 
               </div>
             </div>
           </div>
 
           <div className="row">
             <div className="receipt-header receipt-header-mid d-flex">
-              <div className="col-xs-8 col-sm-8 col-md-8 text-left">
-                <div className="receipt-right">
-                  <h3>{data?.name}</h3>
-                  <p>
+              <div className="col-xs-6 col-sm-6 col-md-6 text-left">
+                <div className="">
+                <h2>
+    {data?.name ? data.name.charAt(0).toUpperCase() + data.name.slice(1).toLowerCase() : ''}
+  </h2>
+                  <p >
                     <b>Mobile :</b> {data?.mobileno}
                   </p>
-                  <p>
+                  <p >
                     <b>Email :</b> {data?.email}
                   </p>
                   <p>
@@ -161,9 +175,10 @@ const Invoice = React.forwardRef((props, ref) => {
                   </p>
                 </div>
               </div>
-              <div className="col-xs-4 col-sm-4 col-md-4">
+              <div className="col-xs-6 col-sm-6 col-md-6">
                 <div className="receipt-left">
-                  <h3>INVOICE # {data?.order_no}</h3>
+                  <p><b>Date :</b> {currentDate}</p>
+                  <p> <b>Invoice No : </b> {data?.order_no}</p>
                 </div>
               </div>
             </div>
@@ -232,9 +247,6 @@ const Invoice = React.forwardRef((props, ref) => {
             <div className="receipt-header receipt-header-mid receipt-footer ">
               <div className="col-xs-8 col-sm-8 col-md-8 text-left">
                 <div className="receipt-right">
-                  <p>
-                    <b>Date :</b> {currentDate}
-                  </p>
                   <h5 style={{ color: 'rgb(140, 140, 140)' }}>Thank you for choosing Helper.!</h5>
                 </div>
               </div>

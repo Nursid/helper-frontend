@@ -12,6 +12,7 @@ import { Form, Row, Col, Card, FormGroup, Label, Input,Table, Modal,
 import ColoredBtn from "../../Elements/ColoredBtn";
 import axios from "axios";
 import { API_URL } from "../../../config";
+import SelectBox from "../../Elements/SelectBox";
 
 export default function OrderReports({reportType}) {
 
@@ -19,7 +20,8 @@ export default function OrderReports({reportType}) {
     const { userRole } = useUserRoleContext();
     const dispatch = useDispatch()
     const [data, setData] = useState([])
-
+    const [GetAllServiceProvider, setAllServiceProvider] = useState([]);
+	  const [serviceProvider, setServiceProvider] = useState('');
     const [from, setFrom] = useState(null)
     const [to, setTo] = useState(null)
 
@@ -79,9 +81,15 @@ export default function OrderReports({reportType}) {
 
       
   const FilterData = async () => {
+
+    const data ={
+      from: from,
+      to: to,
+      serviceProvider: serviceProvider?.value
+    }
   
     try {
-      const response = await axios.post(`${API_URL}/order/reports/${reportType}`, {from: from, to: to});
+      const response = await axios.post(`${API_URL}/order/reports/${reportType}`, data);
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -91,6 +99,7 @@ export default function OrderReports({reportType}) {
 
   useEffect(() => {
     FilterData();
+    getAllServices();
   }, [reportType]);
 
     const columns = [
@@ -136,6 +145,20 @@ export default function OrderReports({reportType}) {
         ];
       
 
+
+        const getAllServices = async () => {
+          const response = await axios.get(API_URL + '/service-provider/getall')
+          
+          if (response.status === 200) {
+            const transformedData = response.data.data
+                .filter(item => item.block_id === 0) // Filter where block_id is false
+                .map(item => ({ label: item.name, value: item.name })); 
+                
+              setAllServiceProvider(transformedData);
+          }
+        }
+
+
     return(
         <>
          <Fragment>
@@ -143,11 +166,27 @@ export default function OrderReports({reportType}) {
 
       {reportType === '6' ? (<div className="flex flex-col justify-between w-full mb-3 ">
             <div className="flex justify-between gap-6 items-center">
+              <div className="ml-4">
                 <label htmlFor="startDate" className="text-light">From:</label>
                 <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
+          </div>
+                <div className="ml-4">
                 <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
                 <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
-                <Button className="btn btn-primary ml-3" size="small"  variant="contained" onClick={FilterData}>Search</Button>
+          </div>
+              <div className="ml-4" style={{width: '12rem'}}>
+							<label className="form-label text-light ml-2 mr-2" htmlFor="serviceRemark">
+								 Service Provider
+							</label>
+							<SelectBox options={GetAllServiceProvider}
+								setSelcted={setServiceProvider}
+								selectOption={serviceProvider}/>
+                </div>
+                <div className="ml-4" style={{marginTop: '32px'}}>
+                <Button className="btn btn-primary" size="small" variant="contained" onClick={FilterData}>
+                  Search
+                </Button>
+              </div>
             </div>
         </div>  
       ) : null

@@ -9,8 +9,7 @@ import React from 'react';
 const PrintCustomer = React.forwardRef((props, ref) => {
 	const { data } = props;
 
-	console.log("data--------------",data)
-
+	
 	return (
 		<div className="p-2 mx-auto" ref={ref}>
 		
@@ -38,7 +37,9 @@ const PrintCustomer = React.forwardRef((props, ref) => {
 					alt="Logo 2"
 					className="img-fluid"
 					width={100}
-					height={80}/>
+					height={80}
+					
+					/>
 			</div>
 			<hr className="border border-dark mt-2"/> {/* Subheading Section */}
 
