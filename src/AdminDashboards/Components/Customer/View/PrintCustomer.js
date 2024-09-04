@@ -33,13 +33,13 @@ const PrintCustomer = React.forwardRef((props, ref) => {
 							7307676622,05224300589</p>
 					</div>
 				</div>
-				<img src={logo2}
+				{/* <img src={logo2}
 					alt="Logo 2"
 					className="img-fluid"
 					width={100}
 					height={80}
 					
-					/>
+					/> */}
 			</div>
 			<hr className="border border-dark mt-2"/> {/* Subheading Section */}
 

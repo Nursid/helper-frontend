@@ -119,15 +119,16 @@ const Invoice = React.forwardRef((props, ref) => {
             <div className="receipt-header d-flex">
               <div className="col-md-8">
                 <div className="receipt-left">
-                  <div className='d-flex gap-4'> 
+                  <div className=''> 
                   <img
-                    className="img-responsive"
+                    className="img-responsive mr-4"
                     alt="iamgurdeeposahan"
-                    src="https://mytotalhelper.com/webcss/images/we_logo.png"
-                    width={120}
+                    src="/main_logo.jpg"
+                    width={300}
+                    
                   />
 
-               <h1>Helper</h1>
+               {/* <h1>Helper</h1> */}
                </div>
 
           
@@ -139,18 +140,21 @@ const Invoice = React.forwardRef((props, ref) => {
               </cite>
   </figcaption>
                  
-                  <p>
+                  
                   <figcaption>
      <cite title="Source Title"> <FaLocationDot size={16}/> 2/6, Heeru Villa Rajani Khand, Sharda Nagar, Lucknow - 226012 </cite>
+
   </figcaption>
-                  </p>
+     
+        
+                  <p style={{color: 'blue'}}>www.ssquickhelper.com </p>
                 </div>
 
 
               </div>
               <div className="col-md-4 text-right">
                <div className="receipt-right">
-                  <h4>INVOICE</h4>
+                  <h1>INVOICE</h1>
                  
                 </div> 
               </div>
@@ -162,8 +166,8 @@ const Invoice = React.forwardRef((props, ref) => {
               <div className="col-xs-6 col-sm-6 col-md-6 text-left">
                 <div className="">
                 <h2>
-    {data?.name ? data.name.charAt(0).toUpperCase() + data.name.slice(1).toLowerCase() : ''}
-  </h2>
+              {data?.name ? data.name.charAt(0).toUpperCase() + data.name.slice(1).toLowerCase() : ''}
+              </h2>
                   <p >
                     <b>Mobile :</b> {data?.mobileno}
                   </p>
@@ -247,7 +251,7 @@ const Invoice = React.forwardRef((props, ref) => {
             <div className="receipt-header receipt-header-mid receipt-footer ">
               <div className="col-xs-8 col-sm-8 col-md-8 text-left">
                 <div className="receipt-right">
-                  <h5 style={{ color: 'rgb(140, 140, 140)' }}>Thank you for choosing Helper.!</h5>
+                  <h5 style={{ color: 'rgb(140, 140, 140)' }}>Thank you for choosing Helper!</h5>
                 </div>
               </div>
             </div>

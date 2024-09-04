@@ -26,7 +26,13 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
         salary: data.salary || "",
         duty_hours: data.duty_hours || "",
         week_off: data.week_off || "",
-        alterno: data.alterno || ""
+        alterno: data.alterno || "",
+        f_name: data.f_name || "",
+        f_mobile: data.f_mobile || "",
+        m_name: data.m_name || "",
+        m_mobile: data.m_mobile || "",
+        v_name: data.v_name || "",
+        v_date: data.v_date || ""
     });
 
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -177,7 +183,6 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
 	}, []);
 
 
-
     useEffect(() => {
         const fetchData = async () => {
             const deptValue = parseInt(department?.value);
@@ -250,7 +255,6 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
 
     return (
         <Fragment>
-            {/* <h3 className='p-3 mt-3 bg-transparent headingBelowBorder text-blue' style={{ maxWidth: "fit-content" }}>Add Employee</h3> */}
             <div className='d-grid place-items-center'>
                 <Card className=" p-4 border-0">
                     <div className='AddServiceMan_Main'>
@@ -461,6 +465,67 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 />
                                             </FormGroup>
                                         </Col>
+
+
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="name">Father Name </Label>
+                                                <Input
+                                                   onKeyPress={handleKeyPress}
+                                                    name="f_name"
+                                                    onChange={(e) => handleChange(e, 50)}
+                                                    
+                                                    placeholder='Enter Father Name'
+                                                    value={formData?.f_name}
+                                                />
+                                                
+                                            </FormGroup>
+                                        </Col>
+
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="name">Mobile No </Label>
+                                                <Input
+                                               
+                                                    name="f_mobile"
+                                                    onChange={(e) => handleChange(e, 10)}
+                                                    type='number'
+                                                    placeholder='Enter Father Mobile No'
+                                                    value={formData?.f_mobile}
+                                                />
+                                                
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="name">Mother Name </Label>
+                                                <Input
+                                                   onKeyPress={handleKeyPress}
+                                                    name="m_name"
+                                                    onChange={(e) => handleChange(e, 50)}
+                                                    
+                                                    placeholder='Enter Mother Name'
+                                                    value={formData?.m_name}
+                                                />
+                                                
+                                            </FormGroup>
+                                        </Col>
+
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="name">Mobile No </Label>
+                                                <Input
+                                                 
+                                                    name="m_mobile"
+                                                    onChange={(e) => handleChange(e, 10)}
+                                                    type='number'
+                                                    placeholder='Enter Mother Mobile No'
+                                                    value={formData?.m_mobile}
+                                                />
+                                                
+                                            </FormGroup>
+                                        </Col>
+
                                         <Col md={6}>
                                             <FormGroup>
                                                 <Label for="about">Duty Hours</Label>
@@ -499,6 +564,35 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                         </Col>
 
                                     </Row>
+                                    <Row>
+
+                                        <h2 className='text-center'>Verification</h2>
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="about">Name</Label>
+                                                <Input
+                                                    type="text"
+                                                    name="v_name"
+                                                    onChange={(e) => handleChange(e, 50)}
+                                                    placeholder=' Name'
+                                                    value={formData.v_name}
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="about">Date</Label>
+                                                <Input
+                                                    type="date"
+                                                    name="v_date"
+                                                    onChange={(e) => handleChange(e, 10)}
+                                                    placeholder='Week Off'
+                                                    value={formData.v_date}
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                    </Row>
+
 
                                     <Button
                                         color="primary"

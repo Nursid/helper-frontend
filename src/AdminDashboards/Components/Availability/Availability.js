@@ -69,6 +69,10 @@ const Availability = () => {
     }
 
     const getCellClassName = (params) => {
+        if (params?.value?.includes("MonthlyService")) {
+            return "bg-primary";
+          }
+
         if (!params.field) {
           return 'class-green';
         }
