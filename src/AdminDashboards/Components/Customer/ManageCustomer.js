@@ -79,6 +79,7 @@ const ManageCustomer = () => {
     }
     
     const [blockStatus, setBlockStatus] = useState({});
+    const [isMember, setIsmember] = useState(false)
 
     // Set initial block status when data changes
     useEffect(() => {
@@ -167,6 +168,17 @@ const ManageCustomer = () => {
       content: () => customerRef.current,
       onAfterPrint: () => setPrintCustomerData([])
     });
+
+    const NonMemberSample = () =>{
+        setIsmember(true)
+        
+    }
+
+    useEffect(()=> {
+        if(isMember) {
+            handlePrint();
+        }
+    }, [isMember])
     
   
     useEffect(()=>{
@@ -262,7 +274,7 @@ const ManageCustomer = () => {
     return (
     <>
         <div style={{ display: 'none' }}>
-        <PrintCustomer ref={customerRef} data={printCustomerData} /> 
+        <PrintCustomer ref={customerRef} data={printCustomerData} member={isMember} /> 
       </div>
 
         <Fragment>
@@ -287,6 +299,15 @@ const ManageCustomer = () => {
                 <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={ToggleAddCustomer} >
                 Add New Customer
                 </div>
+
+                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center w-full `}  onClick={handlePrint} >
+                Member Sample 
+                </div>
+                
+                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={NonMemberSample} >
+                 Non Member Sample
+                </div>
+
             </div>
             </div>
             <div className='p-4'>
