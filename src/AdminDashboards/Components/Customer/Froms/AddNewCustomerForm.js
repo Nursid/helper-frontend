@@ -24,6 +24,8 @@ import { ImageUploadAction } from '../../../../Store/Actions/ImageUploadAction';
 import { BounceLoader } from 'react-spinners';
 import zIndex from '@mui/material/styles/zIndex';
 import { useAuth } from '../../../../Context/userAuthContext';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 
 const AddNewCustomerForm = ({prop, data}) => {
@@ -193,10 +195,18 @@ const AddNewCustomerForm = ({prop, data}) => {
     };
 
 	const handleChange = (e, maxLength) => {
-		const { name, value } = e.target;
-		if (value.length <= maxLength) {
-			setInputValue({...inputValue, [name]:value})
-		}
+		const { name, type, checked, value } = e.target;
+
+    // Determine the new value based on input type
+    const newValue = type === 'checkbox' ? checked : value;
+	if (value.length <= maxLength) {
+    // Update the state with the new value
+    setInputValue((prevState) => ({
+      ...prevState,
+      [name]: newValue
+    })); 
+}
+
 	};
 
 
@@ -248,14 +258,24 @@ const AddNewCustomerForm = ({prop, data}) => {
                     )}
 					</FormGroup>
 				</Col>
-				<Col md={6}>
-					<FormGroup>
+				<Col md={6} className='mt-4'>
+
+				<FormGroup>
+					<FormControlLabel control={<Checkbox 
+					name="member_id"
+					checked={inputValue.member_id}
+					onChange={(e) => handleChange(e, 10)}
+					/>} label="Is Member" labelPlacement='start'/>
+					</FormGroup>
+					{/* <FormGroup className='d-flex'>
+					
 						<Label for="memeber">Member Id </Label>
 						<Input name='member_id' placeholder='Member Id'
 							onChange={(e) => handleChange(e, 10)}
 							value={inputValue?.member_id}
-							/>
-					</FormGroup>
+							type='checkbox'
+							/> */}
+				
 				</Col>
 				<Col md={6}>
 					<FormGroup>

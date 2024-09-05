@@ -25,6 +25,8 @@ import {ImageUploadAction} from '../../../../Store/Actions/ImageUploadAction';
 import {BounceLoader} from 'react-spinners';
 import zIndex from '@mui/material/styles/zIndex';
 import {useAuth} from '../../../../Context/userAuthContext';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 
 const UpdateCustomerForm = ({prop,updateData}) => {
@@ -189,17 +191,18 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 		const apiUrl = `${API_URL}/customer/getupdate/${updateData.user_id}`;
 		axios.put(apiUrl, formData2, { 'Content-Type': 'multipart/form-data'})
 			.then(response => {
+			
 				if (response.data.status === true) {
 					prop();
 					Swal.fire(
 						'Updated!',
-						'Your Customer has been Updated.',
+						response.data.message,
 						'success'
 					)
 					dispatch(GetAllCustomers())
 				} else {
 					Swal.fire({
-						title: response.data.messaage,
+						title: response.data.message,
 						icon: "error",
 					})
 				}
@@ -208,6 +211,7 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 			.catch(error => {
 				console.error('Error:', error);
 			});
+			
 			SetIsLoading(false);
 	};
 
@@ -221,13 +225,18 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 
 
 		const handleChange = (e, maxLength) => {
-			const { name, value } = e.target;
-			if (value.length <= maxLength) {
-			setFormData(prevState => ({
-				...prevState,
-				[name]: value
-			}));
-			}
+			const { name, type, checked, value } = e.target;
+	
+		// Determine the new value based on input type
+		const newValue = type === 'checkbox' ? checked : value;
+		if (value.length <= maxLength) {
+		// Update the state with the new value
+		setFormData((prevState) => ({
+		  ...prevState,
+		  [name]: newValue
+		})); 
+	}
+	
 		};
 
 		const handleImageChange = (event) => {
@@ -292,14 +301,27 @@ const UpdateCustomerForm = ({prop,updateData}) => {
                     )}
 					</FormGroup>
 				</Col>
-				<Col md={6}>
+
+
+			{(updateData?.member_id) ?	<Col md={6}>
 					<FormGroup>
 						<Label for="memeber">Member Id</Label>
-						<Input name='member_id' placeholder='Member Id'
-							onChange={(e) => handleChange(e, 10)}
-							value={formData?.member_id}/>
+						<Input  placeholder='Member Id'
+							
+							value={formData?.member_id} readOnly/>
 					</FormGroup>
-				</Col>
+				</Col> : <Col md={6} className='mt-4'>
+
+				<FormGroup>
+					<FormControlLabel control={<Checkbox 
+					name="member_id"
+					checked={formData.member_id}
+					onChange={(e) => handleChange(e, 10)}
+					/>} label="Is Member" labelPlacement='start'/>
+					</FormGroup>
+					</Col>
+			}	
+
 				<Col md={6}>
 					<FormGroup>
 						<Label for="address">Address <span style={{color: "red"}}>*</span></Label>

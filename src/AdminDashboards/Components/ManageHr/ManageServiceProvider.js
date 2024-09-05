@@ -255,7 +255,7 @@ const ManageServiceProvider = () => {
 
             <ModalComponent
                 data={<ViewServiceProvider
-                data={editData} toggleModal={toggleView} />}
+                data2={editData} toggleModal={toggleView} />}
                 modalTitle={"Service Provider Profile"}
                 modal={viewModel}
                 toggle={toggleView}

@@ -32,7 +32,8 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
         m_name: data.m_name || "",
         m_mobile: data.m_mobile || "",
         v_name: data.v_name || "",
-        v_date: data.v_date || ""
+        v_date: data.v_date || "",
+        gender: data.gender || "",
     });
 
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -370,6 +371,19 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                     value={formData.email}
                                                     id="email"
                                                     placeholder='Enter Employee Email'
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="emai">Gender</Label>
+                                                <Input
+                                                    type="text"
+                                                    name="gender"
+                                                    onChange={(e) => handleChange(e, 50)}
+                                                    value={formData.gender}
+                                                    id="gender"
+                                                    placeholder='Enter gender'
                                                 />
                                             </FormGroup>
                                         </Col>

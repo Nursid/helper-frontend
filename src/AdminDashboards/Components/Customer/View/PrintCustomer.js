@@ -8,7 +8,7 @@ import React from 'react';
 
 const PrintCustomer = React.forwardRef((props, ref) => {
 	const { data, member } = props;
-	
+
 	return (
 		<div className="p-2 mx-auto" ref={ref}>
 		
@@ -58,8 +58,6 @@ const PrintCustomer = React.forwardRef((props, ref) => {
 							<hr className="border border-dark mt-4 flex-grow-1" />
 							<span className="position-absolute start-50 translate-middle bg-white text-dark px-2">{data?.NewCustomer?.name ?? ""}</span>
 							</div>
-
-
 						</div>
 
 						{/* Mobile and Alternate Mobile */}
@@ -68,7 +66,7 @@ const PrintCustomer = React.forwardRef((props, ref) => {
 							<div className="d-flex flex-row align-items-center position-relative">
 							<p className="fw-bold mb-0 me-2">Mobile:</p>
 							<hr className="border border-dark mt-4 flex-grow-1" />
-							<span className="position-absolute start-50 translate-middle bg-white text-dark px-2"> {data?.mobile ?? ""}</span>
+							<span className="position-absolute start-50 translate-middle bg-white text-dark px-2"> {data?.mobile ?? data?.mobileno ?? ""}</span>
 							</div>
 
 							<div className="d-flex flex-row align-items-center position-relative">

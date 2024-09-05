@@ -169,9 +169,8 @@ const ManageCustomer = () => {
       onAfterPrint: () => setPrintCustomerData([])
     });
 
-    const NonMemberSample = () =>{
-        setIsmember(true)
-        
+    const NonMemberSample = () => {
+        setIsmember(!isMember)
     }
 
     useEffect(()=> {
