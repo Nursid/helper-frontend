@@ -490,8 +490,55 @@ const AdminDashboard = () => {
     SetOrderNo(order_no)
     setbackOfficeRemarkModalfunction(!backOfficeRemarkModalOpen)
   }
+
+  const check_in = async (order_no) => {
+       
+      const formData = {
+        pending: 4
+      }
+      const apiUrl =  `${API_URL}/order/assign/${order_no}`;;
+      // Make a POST request using Axios
+      axios.put(apiUrl, formData).then(response => {
+        if (response.status === 200) {
+          Swal.fire('Successfully!', "Order Is on Running", 'success')
+          if (role === "service" || role === "supervisor") {
+            const status = undefined;
+            dispatch(GetAllOrders(status, currentUser, role));
+            } else {
+            dispatch(GetAllOrders());
+            }
+        } else {
+          Swal.fire({title:  response.data.message, icon: "error"})
+        } 			
+      }).catch(error => {
+        console.error('Error:', error);
+      });
+};
   
   const columns = [
+    {
+      field: "Status",
+      headerName: "Status",
+      renderCell: (params) => {
+        const isPending = params.row.pending === "Pending";
+        return (
+          <p
+            className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"
+            style={{
+              borderRadius: "5px",
+              cursor: isPending ? "pointer" : "default", // Set cursor to pointer only if it's Pending
+              margin: 0,
+            }}
+            onClick={isPending ? () => check_in(params.row.order_no) : undefined} // Attach onClick only if it's Pending
+          >
+            {isPending ? 'Check In' : 'Check Out'}
+          </p>
+        );
+      },
+      minWidth: 150,
+      editable: true,
+    },
+    
     {
         field: "action",
         headerName: "Action",
