@@ -37,13 +37,15 @@ const AddAdvertisementForm = ({GetAllAdvertisementAction,data,toggleModal}) => {
             setImageFile(file);
         }
     };
-   
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setFormData(prevFormData => ({
-            ...prevFormData,
-            [name]: value
-        }));
+
+    const handleInputChange = (e, maxLength) => {
+        const { name, value } = e.target;
+        if (value.length <= maxLength) {
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                [name]: value
+            }));
+        }
     };
 
     const handleSubmit = async (event) => {
@@ -112,15 +114,19 @@ const AddAdvertisementForm = ({GetAllAdvertisementAction,data,toggleModal}) => {
                                 <FormGroup>
                                     <Label for="department">Company Name</Label>
                                     {/* <SelectBox options={options} /> */}
-                                    <Input type='text' name='company_name' onChange={handleInputChange} value={Data.company_name} placeholder='Enter Your Company Name' onKeyPress={handleKeyPress}/>
+                                    <Input type='text' name='company_name'
+                                    onChange={(e) => handleInputChange(e, 50)} 
+                                     value={Data.company_name} placeholder='Enter Your Company Name' onKeyPress={handleKeyPress}/>
                                 </FormGroup>
                             </Col>
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="designation">GST No.</Label>
                                     {/* <SelectBox options={options} /> */}
-                                    <Input type='number'
-                                    name='gst_no' onChange={handleInputChange} value={Data.gst_no}
+                                    <Input type='text'
+                                    name='gst_no' 
+                                    onChange={(e) => handleInputChange(e, 15)} 
+                                    value={Data.gst_no}
                                     placeholder='Enter Your GST No.'/>
                                 </FormGroup>
                             </Col>
@@ -128,8 +134,9 @@ const AddAdvertisementForm = ({GetAllAdvertisementAction,data,toggleModal}) => {
                                 <FormGroup>
                                     <Label for="payment">Payment</Label>
                                     {/* <SelectBox options={options} /> */}
-                                    <Input type='text' name='payment'
-                                     onChange={handleInputChange} value={Data.payment}
+                                    <Input type='number' name='payment'
+                                     onChange={(e) => handleInputChange(e, 10)} 
+                                     value={Data.payment}
                                      placeholder='Enter Your Payment'/>
                                 </FormGroup>
                             </Col>
@@ -138,7 +145,8 @@ const AddAdvertisementForm = ({GetAllAdvertisementAction,data,toggleModal}) => {
                                     <Label for="contact">Mobile No.</Label>
                                     {/* <SelectBox options={options} /> */}
                                     <Input type='number' name='mobile'
-                                   onChange={handleInputChange} value={Data.mobile}
+                                   onChange={(e) => handleInputChange(e, 10)} 
+                                   value={Data.mobile}
                                     placeholder='Enter Your Mobile No.'/>
                                 </FormGroup>
                             </Col>
@@ -146,14 +154,18 @@ const AddAdvertisementForm = ({GetAllAdvertisementAction,data,toggleModal}) => {
                                 <FormGroup>
                                     <Label for="fromdate">From Date</Label>
                                     {/* <SelectBox options={options} /> */}
-                                    <Input type='date' name='start_date' onChange={handleInputChange} value={Data.start_date}/>
+                                    <Input type='date' name='start_date'
+                                    onChange={(e) => handleInputChange(e, 50)} 
+                                     value={Data.start_date}/>
                                 </FormGroup>
                             </Col>
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="enddate">End Date</Label>
                                     {/* <SelectBox options={options} /> */}
-                                    <Input type='date' name='end_date' onChange={handleInputChange} value={Data.end_date} />
+                                    <Input type='date' name='end_date' 
+                                    onChange={(e) => handleInputChange(e, 50)} 
+                                     value={Data.end_date} />
                                 </FormGroup>
                             </Col>
                             <Col md={6}>

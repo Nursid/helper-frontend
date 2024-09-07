@@ -34,12 +34,15 @@ const AddNewPost = ({ GetAllPostAction,toggleModal,data }) => {
         }
     };
    
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setFormData(prevFormData => ({
-            ...prevFormData,
-            [name]: value
-        }));
+
+    const handleInputChange = (e, maxLength) => {
+        const { name, value } = e.target;
+        if (value.length <= maxLength) {
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                [name]: value
+            }));
+        }
     };
 
     const handleSubmit = async (event) => {
@@ -112,7 +115,8 @@ const AddNewPost = ({ GetAllPostAction,toggleModal,data }) => {
                                     <Label for="department">To Date.</Label>
                                     {/* <SelectBox options={options} /> */}
                                     <Input type='date' name='from_date' 
-                                    value={Data.from_date} onChange={handleInputChange}
+                                    value={Data.from_date}
+                                    onChange={(e) => handleInputChange(e, 50)} 
                                     />
                                 </FormGroup>
                             </Col>
@@ -121,14 +125,17 @@ const AddNewPost = ({ GetAllPostAction,toggleModal,data }) => {
                                     <Label for="designation">End Date.</Label>
                                     {/* <SelectBox options={options} /> */}
                                     <Input type='date' name='end_date'
-                                    value={Data.end_date} onChange={handleInputChange}
+                                    value={Data.end_date} 
+                                    onChange={(e) => handleInputChange(e, 50)} 
                                     />
                                 </FormGroup>
                             </Col>
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="refname">Type</Label>
-                                    <Select id="stateSelect" name="type" className="form-control" value={Data.type} onChange={handleInputChange}>
+                                    <Select id="stateSelect" name="type" className="form-control" value={Data.type} 
+                                    onChange={(e) => handleInputChange(e, 50)} 
+                                    >
                                                     <MenuItem value="buy" >Buy</MenuItem>
                                                     <MenuItem value="sell">Sell</MenuItem>
                                                     <MenuItem value="rent">Rent</MenuItem>
@@ -143,7 +150,8 @@ const AddNewPost = ({ GetAllPostAction,toggleModal,data }) => {
                                         name="name"
                                         placeholder='Enter Your Name'
                                         id="name"
-                                        value={Data.name} onChange={handleInputChange}
+                                        value={Data.name}
+                                        onChange={(e) => handleInputChange(e, 50)} 
                                         onKeyPress={handleKeyPress}
                                     />
                                 </FormGroup>
@@ -156,7 +164,8 @@ const AddNewPost = ({ GetAllPostAction,toggleModal,data }) => {
                                         name="mobile"
                                         id="mobile"
                                         placeholder='Enter Your Mobile'
-                                        value={Data.mobile} onChange={handleInputChange}
+                                        value={Data.mobile}
+                                        onChange={(e) => handleInputChange(e, 10)} 
                                     />
                                 </FormGroup>
                             </Col>
@@ -175,7 +184,8 @@ const AddNewPost = ({ GetAllPostAction,toggleModal,data }) => {
                                         name="address"
                                         placeholder='Enter Your Address'
                                         id="address"
-                                        value={Data.address} onChange={handleInputChange}
+                                        value={Data.address} 
+                                        onChange={(e) => handleInputChange(e, 200)} 
                                     />
                                 </FormGroup>
                             </Col>
@@ -188,7 +198,8 @@ const AddNewPost = ({ GetAllPostAction,toggleModal,data }) => {
                                         name="property"
                                         id="property"
                                         placeholder='Enter your Description'
-                                        value={Data.property} onChange={handleInputChange}
+                                        value={Data.property} 
+                                        onChange={(e) => handleInputChange(e, 200)} 
                                     />
                                 </FormGroup>
                             </Col>

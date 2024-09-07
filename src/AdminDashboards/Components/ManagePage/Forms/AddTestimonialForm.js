@@ -34,12 +34,14 @@ const AddTestimonialForm = ({GetAllTestimonialsAction,toggleModal,data}) => {
         }
     };
    
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setFormData(prevFormData => ({
-            ...prevFormData,
-            [name]: value
-        }));
+    const handleInputChange = (e, maxLength) => {
+        const { name, value } = e.target;
+        if (value.length <= maxLength) {
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                [name]: value
+            }));
+        }
     };
 
     const handleSubmit = async (event) => {
@@ -103,26 +105,33 @@ const AddTestimonialForm = ({GetAllTestimonialsAction,toggleModal,data}) => {
                     <Col md={12}>
                         <FormGroup>
                             <Label for="name">Name</Label>
-                            <Input name='name' placeholder='Name' onChange={handleInputChange} value={Data.name} onKeyPress={handleKeyPress}  />
+                            <Input name='name' placeholder='Name' 
+                           onChange={(e) => handleInputChange(e, 50)} 
+                            value={Data.name} onKeyPress={handleKeyPress}  />
                         </FormGroup>
                     </Col>
                     <Col md={6}>
                         <FormGroup>
                             <Label for="mobno">Mobile No.</Label>
-                            <Input type='number' name='mobile' placeholder='Mobile No'  onChange={handleInputChange} value={Data.mobile}/>
+                            <Input type='number' name='mobile' placeholder='Mobile No' 
+                             onChange={(e) => handleInputChange(e, 10)} 
+                              value={Data.mobile}/>
                         </FormGroup>
                     </Col>
                     <Col md={6}>
                         <FormGroup>
                             <Label for="email">Email</Label>
-                            <Input type='email' name='email' placeholder='Email' onChange={handleInputChange} value={Data.email} />
+                            <Input type='email' name='email' placeholder='Email' 
+                            onChange={(e) => handleInputChange(e, 50)} 
+                            value={Data.email} />
                         </FormGroup>
                     </Col>
                     <Col md={6}>
                         <FormGroup>
                             <Label for="occupation">Occupation</Label>
                             <Input type='text' name='occupation' placeholder='Occupation'
-                            onChange={handleInputChange} value={Data.occupation} />
+                            onChange={(e) => handleInputChange(e, 50)}  
+                            value={Data.occupation} />
                         </FormGroup>
                     </Col>
                     <Col md={6}>
@@ -140,7 +149,8 @@ const AddTestimonialForm = ({GetAllTestimonialsAction,toggleModal,data}) => {
                         <FormGroup>
                             <Label for="address">Address</Label>
                             <Input type='textarea' name='address' placeholder='Address' 
-                            onChange={handleInputChange} value={Data.address}
+                            onChange={(e) => handleInputChange(e, 200)} 
+                             value={Data.address}
                             />
                         </FormGroup>
                     </Col>
@@ -148,7 +158,8 @@ const AddTestimonialForm = ({GetAllTestimonialsAction,toggleModal,data}) => {
                         <FormGroup>
                             <Label for="about">About The Testimonial</Label>
                             <Input type='textarea' name='about' placeholder='Type....' 
-                             onChange={handleInputChange} value={Data.about}
+                             onChange={(e) => handleInputChange(e, 50)} 
+                              value={Data.about}
                             />
                         </FormGroup>
                     </Col>

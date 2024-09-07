@@ -13,7 +13,7 @@ import moment from "moment";
 import { AssignEmployeeAvailability } from "../../../Components/Modal";
 import { Input } from "reactstrap";
 import AdminHeader from "../AdminHeader";
-
+import TransferAvailability from "./form/TransferAvailability";
 const Availability = () => {
 
     const { userRole } = useUserRoleContext();
@@ -22,6 +22,7 @@ const Availability = () => {
     const [field, setField] = useState("");
     const [mobileNo, setMobileNo] = useState("");
     const [date, setDate] = useState("");
+    const [transferData, setTransferData] = useState([])
     const [filterDate, setFilterDate] = useState({date: moment().format("YYYY-MM-DD")});
     const dispatch = useDispatch();
 
@@ -31,6 +32,13 @@ const Availability = () => {
    
     const [Toggle, setToggle] = useState(false);
     const toggleAddAvailability = () => setToggle(!Toggle);
+   
+    const [isTransfer, setToggleTransfer] = useState(false);
+    const toggleTransfer = () => setToggleTransfer(!isTransfer);
+    const toggleTransferData = (data) => {
+        setTransferData(data);
+        toggleTransfer();
+    }
 
     const DataWithID = (data) => {
         const NewData = [];  
@@ -89,6 +97,24 @@ const Availability = () => {
     };
       
     const colums = [
+
+        {
+            field: "status",
+            headerName: "Status",
+            renderCell: (params) => (
+                <Button 
+                variant='contained' 
+                color='primary' 
+                onClick={() => toggleTransferData(params.row)}
+              >
+                Transfer
+              </Button>
+            ),
+            minWidth: 100,
+            editable: true,
+            cellClassName: "class-yellow"
+        },
+
         { field: "name",  headerName: "Name", minWidth: 150, editable: true,
             cellClassName: getCellClassName
          },
@@ -130,6 +156,14 @@ const Availability = () => {
             toggle={toggleAddAvailability}
             data={<AddAvailability prop={toggleAddAvailability}  />}
         />
+
+        <ModalComponent
+            modalTitle={"Transfer"}
+            modal={isTransfer}
+            toggle={toggleTransfer}
+            data={<TransferAvailability prop={toggleTransfer} transferData={transferData} />}
+        />
+
         <AssignEmployeeAvailability
             EmployeeAvailabilityModalOpen={EmployeeAvailabilityModalOpen}
             EmployeeAvailabilityModalfunction={() => setEmployeeAvailabilityModalOpen(!EmployeeAvailabilityModalOpen)}
