@@ -46,6 +46,7 @@ export default function ViewServiceProvider({ data2, toggleModal }) {
     { label: 'Location ', value: data2.location || "", },
   ];
   const items9 = [
+    { label: 'Service Provider Type', value: data2.supervisor_type || "", },
     { label: 'About', value: data2.about || "", },
   ];
 

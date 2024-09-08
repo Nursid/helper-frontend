@@ -140,14 +140,6 @@ const UpdateCustomerForm = ({prop,updateData}) => {
         if (!formData.name) {
 			errors.name = "Name is required";
 		}
-		
-		if (!gender) {
-			errors.gender = "Gender is required";
-		}
-		
-		if (!formData.age) {
-			errors.age = "Age is required";
-		}
 
 		
 		
@@ -276,29 +268,21 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="gender">Gender <span style={{color: "red"}}>*</span></Label>
+						<Label for="gender">Gender </Label>
 						<SelectBox options={gender_option} setSelcted={setGender} initialValue={gender}/>
-						{errors?.gender && (
-                        <span className='validationError'>
-                            {errors?.gender}
-                        </span>
-                    )}
+						
 						
 					</FormGroup>
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label for="age">Age <span style={{color: "red"}}>*</span></Label>
+						<Label for="age">Age </Label>
 						<Input name='age'
 							type='number'
 							onChange={(e) => handleChange(e, 2)}
 							value={formData?.age}
 							placeholder='Enter Customer Age'/>
-							{errors?.age && (
-                        <span className='validationError'>
-                            {errors?.age}
-                        </span>
-                    )}
+							
 					</FormGroup>
 				</Col>
 

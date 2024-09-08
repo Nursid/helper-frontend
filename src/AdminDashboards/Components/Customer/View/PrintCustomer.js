@@ -196,7 +196,7 @@ const PrintCustomer = React.forwardRef((props, ref) => {
                                 </div>
 
 			                </div>
-				{(!member)  ? <div>
+				{(data?.member_id) ? <div>
 					 <div className="p-2">
                             <div className="d-flex flex-row align-items-center">
 								<p className="fw-bold mb-0 me-2">Any Specific name:</p>

@@ -25,6 +25,20 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
     const [isLoading, setIsLoading] = useState(false)
     const { isSuccess, data } = useSelector(pre => pre.GetAllServicesReducer);
     const [errors, setErrors]= useState([]);
+    const [department, setDepartment] = useState(data2.supervisor_type || "");
+
+
+    const [allDepartments,setAllDepartments]=useState([
+        {
+            label: 'HELPER',
+            value: 'HELPER',
+        },
+        {
+            label: 'Technician',
+            value: 'Technician',
+        },
+    ]);
+
     const DataWithID = (data) => {
         if (data && Array.isArray(data.data)) {
             const transformedData = data.data.map(item => ({
@@ -78,7 +92,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
    // selected services
    const [selectedServices, setSelected] = useState([]);
 
-    console.log("data2.mobile_no---",data2.provider_type)
+    
 
     const [formData, setFormData] = useState({
         name: data2.name || "", 
@@ -109,6 +123,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
         document3_name: data2.document3_name || "",
         document3: data2.document3 || "",
         provider_type: data2.provider_type || "",
+        supervisor_type: data2.supervisor_type || ""
     });
    const [checkbox , setCheckbox]=useState(false);
 
@@ -147,7 +162,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
 			// Form is invalid, display validation errors
 			console.log("Validation Errors:", errors);
 			setErrors(errors);
-			setIsLoading(true)
+			setIsLoading(false)
 			return false;
 		  }
 
@@ -156,6 +171,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
             ...formData,
             multiServices: JSON.stringify(serviceValues),
             provider_type: selectedServiceType.value,
+            supervisor_type: department?.value,
             ...files
         };
 
@@ -241,19 +257,19 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                 <Form>
                                     <Row>
                                         <h6 className='pb-3 fw-bold fs-5'>Personal Info</h6>
-                                        {/* <Col md={6}>
+                                        
+                                        <Col md={6}>
                                             <FormGroup>
-                                                <Label for="username">Username</Label>
-                                                <Input
-                                                    type="text"
-                                                    name="username"
-                                                    id="username"
-                                                    onChange={(e) => handleChange(e, 50)}
-                                                    value={formData.username}
-                                                    placeholder='Enter User Name'
-                                                />
+                                            <Label for="first_name">Service Provider Type</Label>
+                                            <SelectBox options={allDepartments} setSelcted={setDepartment} initialValue={department} />
+                                                {errors?.department && (
+                                            <span className='validationError'>
+                                                {errors?.department}
+                                            </span>
+                                        )}
+                                    
                                             </FormGroup>
-                                        </Col> */}
+                                        </Col>
 
                                         <Col md={6}>
                                             <FormGroup>
@@ -274,6 +290,8 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                 )}
                                             </FormGroup>
                                         </Col>
+
+                                        
 
                                         {/* <Col md={6}>
                                             <FormGroup>

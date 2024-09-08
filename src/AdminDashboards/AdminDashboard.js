@@ -503,17 +503,17 @@ const AdminDashboard = () => {
           Swal.fire('Successfully!', "Order Is on Running", 'success')
           if (role === "service" || role === "supervisor") {
             const status = undefined;
-            dispatch(GetAllOrders(status, currentUser, role));
-            } else {
+            dispatch(GetAllOrders(status, currentUser.id, role));
+          } else {
             dispatch(GetAllOrders());
-            }
+          }
         } else {
           Swal.fire({title:  response.data.message, icon: "error"})
         } 			
       }).catch(error => {
         console.error('Error:', error);
       });
-};
+  };
   
   const columns = [
     {
@@ -1115,8 +1115,8 @@ onClick={()=>AssignAmount(params.row.order_no)}
                       <td>{totalSummary?.totalOrders}</td>
                       <td>{totalSummary?.totalMonthlyService}</td>
                       <td>{totalSummary?.totalCompleted}</td>
-                      <td>{totalSummary?.totalHold}</td>
                       <td>{totalSummary?.totalCancel}</td>
+                      <td>{totalSummary?.totalHold}</td>
                       <td>{totalSummary?.totalPending}</td>
                       
                   </tr>
