@@ -572,7 +572,9 @@ const AdminDashboard = () => {
             <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {params.value}</div>
         </Tooltip>
-    ) },    { field: "allot_time_range", headerName: "Alloted Time Slot ", minWidth: 150, editable: true },
+    ) },   
+    { field: "allot_time_range", headerName: "Alloted Time Slot ", minWidth: 150, editable: true },
+
     { field: "suprvisor_id", headerName: "Supervisor",
     renderCell: (params) => ( 
         <>
@@ -748,13 +750,11 @@ onClick={()=>AssignAmount(params.row.order_no)}
       },
       { field: "", headerName: "Invoice", minWidth: 150, editable: true,
         renderCell: (params) => {
-        if(params.row.admin_approve){
           return (
               <Button variant='contained' color='primary' onClick={() => handleInvoice(params.row)}>
                 Invoice
               </Button>
             )
-        }
        },
       }
   ];
@@ -784,17 +784,37 @@ onClick={()=>AssignAmount(params.row.order_no)}
   }
 
 
-  const InvoiceRef = useRef(null);
+  // const InvoiceRef = useRef(null);
 
+  // const [invoiceData, setInvoice] = useState([]);
+
+  // const handlePrint = useReactToPrint({
+  //   content: () => InvoiceRef.current,
+  //   onAfterPrint: () => setInvoice([])
+  // });
+  
+  // const handleInvoice = (data) => {
+  //   setInvoice(data);
+  // };
+
+  // useEffect(()=>{
+  //   if (invoiceData && Object.keys(invoiceData).length > 0) {
+  //     handlePrint();
+  //   }
+  // }, [invoiceData,handlePrint ])
+
+  const nonMemberRef = useRef(null);
+  const memberRef = useRef(null);
   const [invoiceData, setInvoice] = useState([]);
 
   const handlePrint = useReactToPrint({
-    content: () => InvoiceRef.current,
+    content: () => (invoiceData.NewCustomer.customer.member_id == null) ? nonMemberRef.current : memberRef.current,
     onAfterPrint: () => setInvoice([])
   });
   
   const handleInvoice = (data) => {
-    setInvoice(data);
+    // setInvoice(data);
+    console.log("data---",data)
   };
 
   useEffect(()=>{
@@ -802,15 +822,14 @@ onClick={()=>AssignAmount(params.row.order_no)}
       handlePrint();
     }
   }, [invoiceData,handlePrint ])
-
-
   
   
   return (
     <Fragment>
 
       <div style={{ display: 'none' }}>
-        <Invoice ref={InvoiceRef} data={invoiceData} /> 
+        <Invoice ref={memberRef} data={invoiceData} /> 
+        <MemberInvoice ref={nonMemberRef} data={invoiceData} /> 
       </div>
 
       <AssignSupervisorModal
@@ -881,6 +900,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
         GetAllOrders={GetAllOrders}
         role={role}
         currentUser={currentUser.id}
+        GetTotalSummary={GetTotalSummary}
       />
 
       <ModalComponent
@@ -1108,6 +1128,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
                       <th>Cancelled Service</th>
                       <th>Hold Service</th>
                       <th>Pending</th>
+                      <th>Running</th>
                   </tr>
               </thead>
               <tbody>
@@ -1118,6 +1139,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
                       <td>{totalSummary?.totalCancel}</td>
                       <td>{totalSummary?.totalHold}</td>
                       <td>{totalSummary?.totalPending}</td>
+                      <td>{totalSummary?.totalRunning}</td>
                       
                   </tr>
               </tbody>

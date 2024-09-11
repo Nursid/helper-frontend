@@ -1517,19 +1517,16 @@ export const AssignServiceProviderForComplainModal = ({serviceProviderModalOpen,
 	);
 };
 
-export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, GetAllOrders,role, currentUser}) => {
+export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, GetAllOrders,role, currentUser, GetTotalSummary}) => {
 
 	const GetAllPayMethod = [
 		{
-			label: "Cash In Hand",
+			label: "Cash",
 			value: "Cash"
 		}, {
 			label: "Online",
 			value: "Online"
-		}, {
-			label: "Cheque",
-			value: "Cheque"
-		}
+		},
 	]
 	const [paymethod, setPaymethod] = useState('');
 	const [billAmount, setBillAmount] = useState(0)
@@ -1544,24 +1541,40 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 			netpayamt: billAmount,
 			paymethod: paymethod.value
 		}
+
+		const AddAccountAmount = {
+			payment_mode: formData?.paymethod,
+			cash: formData?.paymethod === "Cash" ? paidAmount : 0,
+			upi: formData?.paymethod === "Online" ? paidAmount : 0
+		}
+
 		const apiUrl = `${API_URL}/order/assign/${OrderNo}`;
 		// Make a POST request using Axios
-		axios.put(apiUrl, formData).then(response => {
+		axios.put(apiUrl, formData).then(async(response) => {
 			if (response.status === 200) {
-				AmountModalOpenFunction();
-				Swal.fire('Successfully!', response.data.message, 'success')
-				setPaymethod('')
-				setBillAmount(0)
-				setPaidAmount(0)
-				setBalanceAmount(0)
+
+				const AddAccount = await axios.post(`${API_URL}/api/add-balance`,AddAccountAmount)
+
+				if(AddAccount.status === 200){
+					AmountModalOpenFunction();
+					Swal.fire('Successfully!', response.data.message, 'success')
+					setPaymethod('')
+					setBillAmount(0)
+					setPaidAmount(0)
+					setBalanceAmount(0)
+					
+				}
+				
 			} else {
 				Swal.fire({title: 'failed to add try again', icon: "error"})
 			}
 			if (role === "service" || role === "supervisor") {
                 const status = undefined;
                 dispatch(GetAllOrders(status, currentUser, role));
+				GetTotalSummary()
               } else {
                 dispatch(GetAllOrders());
+				GetTotalSummary()
               }
 
 		}).catch(error => {

@@ -19,7 +19,6 @@ const AdminTransactionForm = ({toggleModal,data,AccountListing,TotalBalance}) =>
         SetIsLoading(true)
         let errors = {};
 
-// Checking if payment mode is provided
         if (!inputValue.payment_mode) {
             errors.payment_mode = "Payment Mode is required";
         } else {

@@ -1,20 +1,30 @@
 import React from "react";
-import moment from 'moment'
+import moment from 'moment';
+import {BiLogoWhatsapp} from "react-icons/bi";
+import { FaLocationDot } from "react-icons/fa6";
+
 const MemberInvoice = React.forwardRef((props, ref) => {
     const { data } = props;
     
     return (
-        <div className='container' style={{maxWidth: "210mm", margin: "0 auto"}} ref={ref}>
+        <div className='container mt-5' style={{maxWidth: "210mm", margin: "0 auto"}} ref={ref}>
         
             <div className="container">
                 <div className='d-flex flex-col justify-content-start .bg- w-100 mt-2'>
-                    <img style={{ height: "70px" }} src='https://mytotalhelper.com/webcss/images/logo.jpg' alt='logo' />
+                    <img style={{ height: "70px" }}  src="/main_logo.jpg" alt='logo' />
                     <div className='m-auto'>
 
                         <h3 className='text-uppercase font-weight-bold .b m-0'>helper service</h3>
-                        <p className='m-0'>A-1417,Sec-I,Ashiyana,Lucknow</p>
-                        <p className='m-0'>Help Line No. : 0522-4300589,9682077000,9682066000</p>
-                        <p className=''>Medical Help Line: 9839730378</p>
+                        <figcaption>
+                  <cite title="Source Title">
+                    <FaLocationDot size={16} /> 2/6, Heeru Villa Rajani Khand, Sharda Nagar, Lucknow - 226012</cite>
+                </figcaption>
+                <figcaption>
+                  <cite title="Source Title">9682077000,
+                    <BiLogoWhatsapp color="#25D366" size={20} />
+                    7307676622, 05224300589
+                  </cite>
+                </figcaption>
                     </div>
 
                 </div>
@@ -33,8 +43,6 @@ const MemberInvoice = React.forwardRef((props, ref) => {
 
                             <th  className=" bg-secondary-subtle border border-1 border-secondary"scope="col">N/A</th>
 
-                            <th className="bg-secondary-subtle border border-1 border-secondary" scope="col">Member Id</th>
-                            <th className="bg-secondary-subtle border border-1 border-secondary" scope="col">{data?.member_id}</th>
 
                         </tr>
                     </thead>

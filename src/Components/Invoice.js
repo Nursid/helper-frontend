@@ -17,13 +17,20 @@ const Invoice = React.forwardRef((props, ref) => {
     return (
       <>
        
-  {/* <div className='d-flex flex-col justify-content-start w-100 mt-2'>
-    <img style={{height: "70px"}} src='https://mytotalhelper.com/webcss/images/logo.jpg' alt='logo' />
+<div className='container' style={{maxWidth: "210mm", margin: "0 auto"}} ref={ref}>
+  <div className='d-flex flex-col justify-content-start w-100 mt-4'>
+    <img style={{height: "70px"}}  src="/main_logo.jpg" alt='logo' />
     <div className='m-auto text-center'>
       <h3 className='text-uppercase font-weight-bold m-0'>Helper Service</h3>
-      <p className='m-0'>A-1417, Sec-I, Ashiyana, Lucknow</p>
-      <p className='m-0'>Help Line No.: 0522-4300589, 9682077000, 9682066000</p>
-      <p className='m-0'>Medical Help Line: 9839730378</p>
+      <figcaption>
+                  <cite title="Source Title"><FaLocationDot size={16} /> 2/6, Heeru Villa Rajani Khand, Sharda Nagar, Lucknow - 226012</cite>
+                </figcaption>
+                <figcaption>
+                  <cite title="Source Title">9682077000,
+                    <BiLogoWhatsapp color="#25D366" size={20} />
+                    7307676622, 05224300589
+                  </cite>
+                </figcaption>
     </div>
   </div>
   <div className='container border border-1 mt-3'>
@@ -66,8 +73,10 @@ const Invoice = React.forwardRef((props, ref) => {
       <div className='col-3 border border-1 p-3'></div>
     </div>
     <div className='row'>
-      <div className='col-3 border border-1 p-3'>Aadhaar No.</div>
-      <div className='col-9 border border-1 p-3'></div>
+      <div className='col-3 border border-1 p-3'>Profile Picture</div>
+      <div className='col-9 border border-1 p-3'>
+      <img src="https://i.pinimg.com/564x/d5/b0/4c/d5b04cc3dcd8c17702549ebc5f1acf1a.jpg" class="img-thumbnail float-end" alt="logo" height={80} width={80}></img>
+      </div>
     </div>
     <div className='row'>
       <div className='col-3 border border-1 p-3'>Supervisor Name</div>
@@ -76,8 +85,10 @@ const Invoice = React.forwardRef((props, ref) => {
       <div className='col-3 border border-1 p-3'></div>
     </div>
     <div className='row'>
-      <div className='col-3 border border-1 p-3'>Aadhaar No.</div>
-      <div className='col-9 border border-1 p-3'></div>
+      <div className='col-3 border border-1 p-3'>Profile Picture</div>
+      <div className='col-9 border border-1 p-3'>
+      <img src="https://i.pinimg.com/564x/d5/b0/4c/d5b04cc3dcd8c17702549ebc5f1acf1a.jpg" class="img-thumbnail float-end" alt="logo" height={80} width={80}></img>
+      </div>
     </div>
     <div className="row">
       <div className='col-3 border border-1 p-3'>Service Name</div>
@@ -99,7 +110,7 @@ const Invoice = React.forwardRef((props, ref) => {
     </div>
     <div className="row">
       <div className='col-6 border border-1 p-3'>For Service Provider:</div>
-      <div className='col-6 border border-1 p-3'>For Customer Provider:</div>
+      <div className='col-6 border border-1 p-3'>For Customer:</div>
     </div>
     <div className="row">
       <div className='col-3 border border-1 p-3'>Signature</div>
@@ -111,9 +122,10 @@ const Invoice = React.forwardRef((props, ref) => {
   
   <p className='text-center mt-3'>Log on to our website 
     <a href='https://www.ssquickhelpers.com' className="ml-2">www.ssquickhelpers.com</a>
-  </p> */}
-<div className='container d-flex flex-column justify-content-between' style={{ maxWidth: "210mm", margin: "0 auto", height: "100vh" }} ref={ref}>
-  {/* Main Content */}
+  </p>
+</div>
+
+{/* <div className='container d-flex flex-column justify-content-between' style={{ maxWidth: "210mm", margin: "0 auto", height: "100vh" }} ref={ref}>
   <div>
     <div className="row">
       <div className="receipt-main col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3 w-100">
@@ -208,8 +220,6 @@ const Invoice = React.forwardRef((props, ref) => {
       </div>
     </div>
   </div>
-
-  {/* Footer */}
   <div className="row mt-auto mb-4">
     <div className="col-xs-8 col-sm-8 col-md-8 text-left">
       <div>
@@ -217,7 +227,7 @@ const Invoice = React.forwardRef((props, ref) => {
       </div>
     </div>
   </div>
-</div>
+</div> */}
 
       </>
      );
