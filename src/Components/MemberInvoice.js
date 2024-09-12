@@ -32,116 +32,113 @@ const MemberInvoice = React.forwardRef((props, ref) => {
             </div>
 
             <img src="https://i.pinimg.com/564x/d5/b0/4c/d5b04cc3dcd8c17702549ebc5f1acf1a.jpg" class="img-thumbnail float-end me-4 mb-4" alt="logo" height={200} width={200}></img>
-            <div className="p-4">
+            <div className="p-2">
                 <table className="table table-bordered" >
                     <thead className="bg-secondary-subtle">
                         <tr>
-                            <th className=" bg-secondary-subtle border boder-1 border-secondary" scope="col">Valid From</th>
-                            <th className=" bg-secondary-subtle border boder-1 border-secondary" scope="col">N/A</th>
-
-                            <th  className=" bg-secondary-subtle border border-1 border-secondary"scope="col">Valid To</th>
-
-                            <th  className=" bg-secondary-subtle border border-1 border-secondary"scope="col">N/A</th>
-
+                           <th scope="row" className="p-3 fixed-width-name">Valid From</th>
+                            <td colSpan={2} className="p-3 fixed-width-data"></td>
+                            <th scope="row" className="p-3 fixed-width-name">Valid To</th>
+                            <td colSpan={2} className="p-3 fixed-width-data"></td>
 
                         </tr>
                     </thead>
                     <tbody className="">
                         <tr>
-                            <th scope="row" className="p-3">Name</th>
-                            <td colSpan={2} className="p-3">{data?.name ?? "N/A"}</td>
-                            <th scope="row" className="p-3">Gender</th>
-                            <td colSpan={2} className="p-3">{data?.gender ?? "N/A"}</td>
+                            <th scope="row" className="p-3 fixed-width-name">Name</th>
+                            <td colSpan={2} className="p-3 fixed-width-data">{data?.name ?? ""}</td>
+                            <th scope="row" className="p-3 fixed-width-name">Gender</th>
+                            <td colSpan={2} className="p-3 fixed-width-data">{data?.gender ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Age</th>
-                            <td colSpan={2} className="p-3">{data?.age ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.age ?? ""}</td>
                             <th scope="row" className="p-3">Email</th>
-                            <td colSpan={2} className="p-3">{data?.email ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.email ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Mobile No.</th>
-                            <td colSpan={2} className="p-3">{data?.mobileno ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.mobileno ?? ""}</td>
                             <th scope="row" className="p-3">Tel No.</th>
-                            <td colSpan={2} className="p-3">{data?.tel_no ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.tel_no ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Office No.</th>
-                            <td colSpan={2} className="p-3">{data?.office_no ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.office_no ?? ""}</td>
                             <th scope="row" className="p-3">Alternate No.</th>
-                            <td colSpan={2} className="p-3">{data?.alternate_no ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.alternate_no ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Aadhar No.</th>
-                            <td colSpan={2} className="p-3">{data?.aadhar_no ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.aadhar_no ?? ""}</td>
                             <th scope="row" className="p-3">Occupation</th>
-                            <td colSpan={2} className="p-3">{data?.occupation ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.occupation ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Designation</th>
-                            <td colSpan={2} className="p-3">{data?.designation ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.designation ?? ""}</td>
                             <th scope="row" className="p-3">Location</th>
-                            <td colSpan={2} className="p-3">{data?.location ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.location ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Own House</th>
-                            <td colSpan={2} className="p-3">{data?.own_house ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.own_house ?? ""}</td>
                             <th scope="row" className="p-3">Date Of Birth</th>
-                            <td colSpan={2} className="p-3">{data?.dob ? moment(data.dob).format("DD-MM-YYYY") : "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.dob ? moment(data.dob).format("DD-MM-YYYY") : ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Service Name</th>
-                            <td colSpan={2} className="p-3">{data?.service_name ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.service_name ?? ""}</td>
                             <th scope="row" className="p-3">Service details</th>
-                            <td colSpan={2} className="p-3">{data?.problem_des ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.problem_des ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Payment method</th>
-                            <td colSpan={2} className="p-3">{data?.paymethod ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.paymethod ?? ""}</td>
                             <th scope="row" className="p-3">Total Amount</th>
-                            <td colSpan={2} className="p-3">{data?.netpayamt ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.netpayamt ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Paid Amount</th>
-                            <td colSpan={2} className="p-3">{data?.piadamt ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.piadamt ?? ""}</td>
                             <th scope="row" className="p-3">Balance Amount</th>
-                            <td colSpan={2} className="p-3">{data?.totalamt ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.totalamt ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Spouse Name-1</th>
-                            <td colSpan={2} className="p-3">{data?.spouse_name1 ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.spouse_name1 ?? ""}</td>
                             <th scope="row" className="p-3">Spouse Date Of Birth</th>
-                            <td colSpan={2} className="p-3">{data?.spouse_dob1 ? moment(data.spouse_dob1).format("DD-MM-YYYY") : "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.spouse_dob1 ? moment(data.spouse_dob1).format("DD-MM-YYYY") : ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Spouse Name-2</th>
-                            <td colSpan={2} className="p-3">{data?.spouse_name2 ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.spouse_name2 ?? ""}</td>
                             <th scope="row" className="p-3">Spouse Date Of Birth</th>
-                            <td colSpan={2} className="p-3">{data?.spouse_dob2 ? moment(data.spouse_dob2).format("DD-MM-YYYY") : "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.spouse_dob2 ? moment(data.spouse_dob2).format("DD-MM-YYYY") : ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Spouse Name-3</th>
-                            <td colSpan={2} className="p-3">{data?.spouse_name3 ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.spouse_name3 ?? ""}</td>
                             <th scope="row" className="p-3">Spouse Date Of Birth</th>
-                            <td colSpan={2} className="p-3">{data?.spouse_dob3 ? moment(data.spouse_dob3).format("DD-MM-YYYY") : "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.spouse_dob3 ? moment(data.spouse_dob3).format("DD-MM-YYYY") : ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Address</th>
-                            <td colSpan={2} className="p-3">{data?.address ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.address ?? ""}</td>
                             <th scope="row" className="p-3">LandMark</th>
-                            <td colSpan={2} className="p-3">{data?.land_mark ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.land_mark ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Free Services-1</th>
-                            <td colSpan={2} className="p-3">{data?.service1 ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.service1 ?? ""}</td>
                             <th scope="row" className="p-3">Free-Services-2</th>
-                            <td colSpan={2} className="p-3">{data?.service2 ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.service2 ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Free Services-3</th>
-                            <td colSpan={2} className="p-3">{data?.service3 ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.service3 ?? ""}</td>
                             <th scope="row" className="p-3">Free-Services-4</th>
-                            <td colSpan={2} className="p-3">{data?.service4 ?? "N/A"}</td>
+                            <td colSpan={2} className="p-3">{data?.service4 ?? ""}</td>
                         </tr>
                     </tbody>
                 </table>

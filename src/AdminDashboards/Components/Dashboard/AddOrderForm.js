@@ -523,7 +523,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 				</Col>
 				<Col md={6}>
 					<FormGroup>
-						<Label>Address</Label>
+						<Label>Address <span style={{color: "red"}}>*</span></Label>
 						<Input 
 						onChange={(e) => handleChange(e, 20)}
 							value={formData?.address}

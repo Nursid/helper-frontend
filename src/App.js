@@ -23,7 +23,7 @@ import AdminProfile from './AdminDashboards/Components/profile/AdminProfile';
 import Availability from './AdminDashboards/Components/Availability/Availability';
 import { ServiceProvider } from './Store/context/serviceProvider';
 import AdminComplain from './AdminDashboards/Components/Complain';
-import Invoice from './Components/Invoice';
+import Invoice from './Components/MemberInvoice';
 import OrderReports from './AdminDashboards/Components/OrderReports';
 import PrintCustomer from './AdminDashboards/Components/Customer/View/PrintCustomer';
 

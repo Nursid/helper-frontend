@@ -413,3 +413,11 @@ button.Dash_dropdown_item.dropdown-item:hover {
 .table-bordered tr {
   border: 1px solid #dee2e6 !important; /* Add border to table rows */
 }
+
+.fixed-width-name {
+  width: 150px;
+}
+
+.fixed-width-data {
+  width: 200px;
+}
