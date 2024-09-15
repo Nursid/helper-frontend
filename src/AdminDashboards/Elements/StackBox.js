@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { FaMonero, FaMoneyCheck } from 'react-icons/fa';
 import { useState } from 'react';
 
-const StackBox = ({ title, amount, rupee, className, style, handleFilterChange,selectedFilterData}) => {
+const StackBox = ({ title, amount, rupee, className, style, handleFilterChange,selectedFilterData, hidden}) => {
 
     const [selectedFilter, setSelectedFilter] = useState(selectedFilterData);
 
@@ -19,8 +19,8 @@ const StackBox = ({ title, amount, rupee, className, style, handleFilterChange,s
                     <FaMonero size={25} />
                     <h5>{title}</h5>
                 </div>
-                <div className="AmountSection d-flex flex-column align-items-end justify-content-center gap-3">
-                    <select className='StackSelectBox bg-transparent cursor-p'
+                <div className={`AmountSection d-flex flex-column align-items-end justify-content-center gap-3 `}>
+                    <select className={`StackSelectBox bg-transparent cursor-p ${hidden}`}
                     onChange={handleChange} defaultValue={selectedFilter}
                     >
                         <option value="1">Today</option>

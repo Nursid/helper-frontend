@@ -56,7 +56,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 		approx_duration: '',
 		lst_serv_date: '',
 		lst_serv_type: '',
-		address: '',
+		service_address: '',
 		member_id: '',
 		city: '',
 		cust_id: '',
@@ -124,7 +124,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 					email: item?.customerData?.NewCustomer?.email,
 					age: item?.customerData?.age,
 					member_id: item?.customerData?.member_id,
-					address: item?.customerData?.address,
+					service_address: item?.customerData?.address,
 					city: item?.customerData?.location,
 					cust_id: item?.customerData?.NewCustomer?.id,
 					lst_serv_date: lastService ? new Date(lastService.createdAt).toISOString().split('T')[0] : '',
@@ -143,7 +143,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 					email: item?.customerData?.NewCustomer?.email,
 					age: item?.customerData?.age,
 					member_id: item?.customerData?.member_id,
-					address: item?.customerData?.address,
+					service_address: item?.customerData?.address,
 					city: item?.customerData?.location,
 					cust_id: item?.customerData?.NewCustomer?.id,
 					lst_serv_date: '',
@@ -181,8 +181,8 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 		} else if (!/^\d{10}$/.test(formData.mobile)) {
 			errors.mobile = "Mobile number should be 10 digits";
 		}
-		if (!formData.address) {
-            errors.address = "address  is required";
+		if (!formData.service_address) {
+            errors.service_address = "address  is required";
         }
 		if (!service.value) {
             errors.service = "service  is required";
@@ -517,7 +517,6 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 							onChange={(e) => handleChange(e, 50)}
 							value={formData?.city}
 							name='city'
-							readOnly={!!formData?.cust_id}
 							placeholder='Enter Your City'/>
 					</FormGroup>
 				</Col>
@@ -525,15 +524,14 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 					<FormGroup>
 						<Label>Address <span style={{color: "red"}}>*</span></Label>
 						<Input 
-						onChange={(e) => handleChange(e, 20)}
-							value={formData?.address}
-							name='address'
+						onChange={(e) => handleChange(e, 200)}
+							value={formData?.service_address}
+							name='service_address'
 							type='textarea'
-							readOnly={!!formData?.cust_id}
 							placeholder='Enter Your Address'/>
-							{errors?.address && (
+							{errors?.service_address && (
 							<span className='validationError'>
-								{errors?.address}
+								{errors?.service_address}
 							</span>
 						)}
 					</FormGroup>

@@ -46,10 +46,6 @@ const Cashbook = () => {
         return NewData
     }
 
-
-    console.log("-----",selectedFilter)
-
-
     // const getRowsFromCurrentPage = ({ apiRef }) =>
     //     gridPaginatedVisibleSortedGridRowIdsSelector(apiRef);
 
@@ -135,7 +131,6 @@ const Cashbook = () => {
               },
             });
             const total_balance_data = await response.json();
-            console.log("total_balance_data-----",total_balance_data);
             setTotalCash(total_balance_data.data[0].total_cash);
             setTotalUpi(total_balance_data.data[0].total_upi);
           } catch (error) {

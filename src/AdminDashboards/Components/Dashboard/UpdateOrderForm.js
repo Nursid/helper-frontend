@@ -10,7 +10,6 @@ import { GetAllTimeSlot } from '../../../Store/Actions/Dashboard/Orders/OrderAct
 import { useSelector } from 'react-redux';
 const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) => {
 
-  console.log(orderData)
   const dispatch = useDispatch();
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
@@ -26,7 +25,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     service_des: orderData?.service_des || '',
     suprvisor_id: orderData?.suprvisor_id || '',
     serviceDateTime: moment(orderData.serviceDateTime).format('YYYY-MM-DDTHH:mm') || '',
-    address: orderData?.customer?.address || '',
+    service_address: orderData?.service_address || '',
     city: orderData?.customer?.location || '',
     pincode: orderData?.pincode || '',
     status: orderData?.pending || 'Pending',
@@ -256,13 +255,13 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         <Col md={6}>
           <FormGroup>
             <Label>Address</Label>
-            <Input name="address" onChange={(e) => handleInputChange(e, 200)} value={formData.address} placeholder="Enter Your Address" readOnly />
+            <Input name="service_address" onChange={(e) => handleInputChange(e, 200)} value={formData.service_address} placeholder="Enter Your Address"  />
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>City</Label>
-            <Input name="city" type="text" onChange={(e) => handleInputChange(e, 50)} value={formData.city} placeholder="Enter Your City" readOnly />
+            <Input name="city" type="text" onChange={(e) => handleInputChange(e, 50)} value={formData.city} placeholder="Enter Your City"  />
           </FormGroup>
         </Col>
         <Col md={6}>
