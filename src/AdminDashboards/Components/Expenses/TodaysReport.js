@@ -19,6 +19,7 @@ const TodaysReport = () => {
     const [selctedAttendence, setSelectedAttendence] = useState("All")
     const {  data: orders, isLoading: isOrderLoading} = useSelector(state => state.GetAllOrderReducer);
     const [openingbalance, setOpeningBalance] = useState(0)
+    const { data, isLoading } = useSelector(state => state.GetAllExpenseReducers);
 
     const CustomToolbar = () => {
         return (
@@ -39,7 +40,7 @@ const TodaysReport = () => {
 
     useEffect(() => {
         dispatch(GetALLExpenses())
-    }, []);
+    }, [GetALLExpenses, data]);
 
     // useEffect(() => {
     //     dispatch(GetAllCollection())
@@ -47,9 +48,9 @@ const TodaysReport = () => {
 
     useEffect(() => {
         dispatch(GetAllOrders(3, currentUser.id, role))
-    }, []);
+    }, [orders, GetAllOrders]);
 
-    const { data, isLoading } = useSelector(state => state.GetAllExpenseReducers);
+ 
 
 
     const all_columns = [
@@ -105,11 +106,11 @@ const TodaysReport = () => {
 
     useEffect(() => {
         const totalPaidAmt = orders?.data?.reduce((acc, item) => {
-            return acc + parseInt(item.piadamt);
+            return acc + parseInt(item?.piadamt);
         }, 0);
         
         const TotalExpenses = data?.reduce((acc, item) => {
-            return acc + parseInt(item.amount);
+            return acc + parseInt(item?.amount);
         }, 0);
 
         
@@ -150,57 +151,53 @@ const TodaysReport = () => {
     const UpdatedData = [...(NewExpenseFormate(data)), ...(DataWithID(orders?.data))]
 
 
-    // console.log('combinedData-------',processedExpenses)
 
+    const Cash = () => {
+    const DataWithIDCash = (data) => {
+        const NewData = []
+        if (data !== undefined) {
+            for (let item of data) {
 
-    // const ExpensesComponent = () => {
-    //     const { data, isLoading } = useSelector(state => state.GetAllExpenseReducers);
-   
-    // const DataWithID = (data) => {
-    //     const NewData = []
-    //     if (data !== undefined) {
-    //         for (let item of data) {
-
-    //             let headExp = item.headExp;
-    //             let mergedItem = {...item, ...headExp};
-    //             NewData.push({ ...mergedItem, id: data.indexOf(item), date: moment(item.createdAt).format("D / M / Y") })
-
-    //         }
-    //     } else {
-    //         NewData.push({ id: 0 })
-    //     }
-    //     return NewData
-    // }
+                if (item.paymentMethod === 'Cash') {
+                    NewData.push({ ...item })
+                    }
+               
+            }
+        } else {
+            NewData.push({ id: 0 })
+        }
+        return NewData
+    }
       
-    //     return (
-    //         <div className='p-4'>
-    //             <AdminDataTable rows={DataWithID(data)} columns={expense_columns} CustomToolbar={CustomToolbar} />
-    //        </div>
-    //     );
-    //   };
+        return (
+            <div className='p-4'>
+                <AdminDataTable rows={DataWithIDCash(UpdatedData)} columns={all_columns} CustomToolbar={CustomToolbar} />
+           </div>
+        );
+      };
 
-    //   const CollectionsComponent = () => {
-    //     const { data, isLoading } = useSelector(state => state.GetAllCollectionReducers);
+      const Bank = () => {
+      
+        const DataWithBank = (data) => {
+            const NewData = []
+            if (data !== undefined) {
+                for (let item of data) {
+                    if (item.paymentMethod === 'Online') {
+                    NewData.push({ ...item })
+                    }
+                }
+            } else {
+                NewData.push({ id: 0 })
+            }
+            return NewData
+        }
         
-    //     const DataWithID = (data) => {
-    //         const NewData = []
-    //         if (data !== undefined) {
-    //             for (let item of data) {
-    //                 NewData.push({ ...item, id: data.indexOf(item), date: moment(item.createdAt).format("D / M / Y") })
-    //             }
-    //         } else {
-    //             NewData.push({ id: 0 })
-    //         }
-    //         return NewData
-    //     }
-    //     // Your component logic here
-      
-    //     return (
-    //         <div className='p-4'>
-    //         <AdminDataTable rows={DataWithID(data)} columns={collectable_columns} CustomToolbar={CustomToolbar} />
-    //     </div>
-    //     );
-    //   };
+        return (
+            <div className='p-4'>
+            <AdminDataTable rows={DataWithBank(UpdatedData)} columns={all_columns} CustomToolbar={CustomToolbar} />
+        </div>
+        );
+      };
 
 
 
@@ -224,28 +221,27 @@ const TodaysReport = () => {
                         />
                 </div>
             </div>     
-            {/* <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3'>
-                {["All", "Expenses", "Income/Order"].map((item, index) => (
+            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3'>
+                {["All", "Bank", "Cash"].map((item, index) => (
                     <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center  ${selctedAttendence === item ? "hoverThis_active" : ""}`} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={() => { setSelectedAttendence(item) }}>
                         {item}
                     </div>
                 ))}
+            </div>
 
-                    
-            </div> */}
-
-           
+            {selctedAttendence === "All" && (
                 <div className='p-4'>
                     <AdminDataTable rows={DataWithIDExpense(UpdatedData)} columns={all_columns} CustomToolbar={CustomToolbar} />
                 </div>
-            {/* )}
-
-            {selctedAttendence === "Expenses" && (
-               <ExpensesComponent/>
             )}
-            {selctedAttendence === "Income/Order" && (
-               <CollectionsComponent/>
-            )} */}
+
+            {selctedAttendence === "Cash" && (
+                <Cash/>
+            )}
+            {selctedAttendence === "Bank" && (
+              
+               <Bank/>
+            )} 
 
 
 

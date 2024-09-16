@@ -14,6 +14,8 @@ import { AssignEmployeeAvailability } from "../../../Components/Modal";
 import { Input } from "reactstrap";
 import AdminHeader from "../AdminHeader";
 import TransferAvailability from "./form/TransferAvailability";
+import axios from "axios";
+import { API_URL } from "../../../config";
 const Availability = () => {
 
     const { userRole } = useUserRoleContext();
@@ -76,24 +78,67 @@ const Availability = () => {
         setEmployeeAvailabilityModalOpen(!EmployeeAvailabilityModalOpen);
     }
 
-    const getCellClassName = (params) => {
-        if (params?.value?.includes("MonthlyService")) {
-            return "bg-primary";
-          }
+   
 
-        if (!params.field) {
-          return 'class-green';
+    const [statusClasses, setStatusClasses] = useState({}); // Cache for order statuses
+
+    const getCellClassName = (params) => {
+      if (!params?.value) return ''; // Ensure value exists
+  
+      if (params?.value?.includes("MonthlyService")) {
+        return "bg-primary";
+      }
+  
+      if (params.value === 'leave' || params.value === 'Lunch') {
+        return 'class-red';
+      }
+  
+      if (params?.value && !params.value.includes("MonthlyService")) {
+        const splitValue = params.value.split('-');  // Split by '-'
+        const numericPart = splitValue[1];           // Get the second part (the number)
+  
+        const statusAvailability = statusClasses[numericPart]; // Check cache first
+  
+        if (!statusAvailability) {
+          // If not cached, fetch the status asynchronously
+          fetchStatus(numericPart);
+          return ''; // Return empty string until status is fetched
         }
-        if (params.value === 'leave' || params.value === 'Lunch') {
-          return 'class-red';
-        }
-        if (params.field && !params.value) {
-          return 'class-green';
-        }
-        if (params.field) {
-          return 'class-yellow';
-        }
-        return '';
+  
+        return statusAvailability; // Return cached status
+      }
+  
+      return '';
+    };
+  
+    const fetchStatus = async (order_no) => {
+      try {
+        const GetStatus = await axios.get(`${API_URL}/order/getbyorderno/${order_no}`);
+        const pendingStatus = GetStatus?.data?.data?.pending;
+  
+        const statusMap = {
+          0: "Pending-availability",
+          1: "Hold-availability",
+          2: "Due-availability",
+          3: "class-green",
+          4: "Running-availability",
+          5: "Cancel-availability"
+        };
+  
+        const status = statusMap[pendingStatus] || ''; // Map status to class name
+  
+        // Update state and cache the result for future use
+        setStatusClasses((prev) => ({
+          ...prev,
+          [order_no]: status
+        }));
+      } catch (error) {
+        console.error("Error fetching order status", error);
+        setStatusClasses((prev) => ({
+          ...prev,
+          [order_no]: '' // Cache empty string in case of error
+        }));
+      }
     };
       
     const colums = [
@@ -112,15 +157,12 @@ const Availability = () => {
             ),
             minWidth: 100,
             editable: true,
-            cellClassName: "class-yellow"
         },
 
         { field: "name",  headerName: "Name", minWidth: 150, editable: true,
-            cellClassName: getCellClassName
          },
-        { field: "provider_type",  headerName: "Provider Type", minWidth: 100, editable: true ,cellClassName: getCellClassName},
-        { field: "date",  headerName: "Date", minWidth: 150, editable: true,
-            cellClassName: getCellClassName
+        { field: "provider_type",  headerName: "Provider Type", minWidth: 100, editable: true},
+        { field: "date",  headerName: "Date", minWidth: 150, editable: true
          },
         {
             field: "09:00-09:30",

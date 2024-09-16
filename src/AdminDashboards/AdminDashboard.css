@@ -346,6 +346,29 @@ button.dropdownMenu-btn-header.btn.btn-secondary {
   color: black !important;
 }
 
+
+.Pending-availability{
+  background-color: #e67e22 !important;
+  color: black !important;
+}
+.Hold-availability{
+  background-color: #e74c3c !important;
+  color: black !important;
+}
+.Due-availability{
+  background-color: #a29bfe !important;
+  color: black !important;
+}
+.Running-availability{
+  background-color: #f1c40f !important;
+  color: black !important;
+}
+.Cancel-availability{
+  background-color: #95a5a6 !important;
+  color: black !important;
+}
+
+
 span.validationError {
   position: absolute;
   bottom: 0px;

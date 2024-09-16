@@ -522,7 +522,7 @@ const AdminDashboard = () => {
       field: "Status",
       headerName: "Status",
       renderCell: (params) => {
-        const isPending = params.row.pending === "Pending";
+        const isPending = params.row.pending === "Pending" || params.row.pending === "Due"  || params.row.pending === "Hold";
         return (
           <p
             className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"

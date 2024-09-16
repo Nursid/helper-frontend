@@ -69,9 +69,8 @@ const AddExpense = ({ setActiveAttendance }) => {
 
   // STATIC PAYMENT METHOD
   const PaymentOptions = [
-    { value: "cash in hand", label: "Cash in hand" },
-    { value: "online", label: "Online" },
-    { value: "cheque", label: "Cheque" },
+    { value: "Cash", label: "Cash" },
+    { value: "Online", label: "Online" }
   ];
 
   const GetSubmitAddExpense = () => {

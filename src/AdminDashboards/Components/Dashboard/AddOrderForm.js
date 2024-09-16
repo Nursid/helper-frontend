@@ -220,7 +220,6 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 			servicep_id: serviceProvider?.value,
 			suprvisor_id: supervisor?.value,
 			allot_time_range: timeslot.value
-
 		}
 		const apiUrl = `${API_URL}/order/add`;
 		// Make a POST request using Axios

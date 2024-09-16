@@ -28,7 +28,8 @@ const StackBox = ({ title, amount, rupee, className, style, handleFilterChange,s
                         <option value="6">Last 6 Month</option>
                         <option value="">Total</option>
                     </select>
-                    <h6>{rupee === true ? "₹" : ""}  { (!amount) ? '0' : amount }</h6>
+                    {/* <h6>{rupee === true ? "₹" : ""}  { (!amount) ? '0' : amount }</h6> */}
+                    <h6>₹ {amount}</h6>
                 </div>
             </div>
         </Fragment>
