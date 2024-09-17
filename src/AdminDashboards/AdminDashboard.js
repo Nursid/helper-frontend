@@ -522,24 +522,50 @@ const AdminDashboard = () => {
       field: "Status",
       headerName: "Status",
       renderCell: (params) => {
-        const isPending = params.row.pending === "Pending" || params.row.pending === "Due"  || params.row.pending === "Hold";
+        const { pending, order_no, cust_id } = params.row;
+    
+        // Check for the different statuses
+        const isPending = pending === "Pending" || pending === "Due" || pending === "Hold";
+        const isCompleted = pending === "Completed";
+        
+        const isCancelled = pending === "Cancel";
+
+        // Determine the action label and handler based on the status
+        let label = '';
+        let clickHandler = null;
+    
+        if (isPending) {
+          label = 'Check In';
+          clickHandler = () => check_in(order_no);
+        } else if (isCancelled) {
+          label = 'Cancelled';
+          clickHandler = null; // Disable clicking for cancelled orders
+        } else if (!isCompleted) {
+          label = 'Check Out';
+          clickHandler = () => OrderComplete(order_no, cust_id);
+        } else {
+          label = 'Done';
+          clickHandler = null; // Disable clicking for completed orders
+        }
+    
         return (
           <p
             className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"
             style={{
               borderRadius: "5px",
-              cursor: isPending ? "pointer" : "default", // Set cursor to pointer only if it's Pending
+              cursor: clickHandler ? "pointer" : "default", // Set cursor to pointer only if there is a click handler
               margin: 0,
             }}
-            onClick={isPending ? () => check_in(params.row.order_no) : undefined} // Attach onClick only if it's Pending
+            onClick={clickHandler} // Only set onClick if there's a clickHandler
           >
-            {isPending ? 'Check In' : 'Check Out'}
+            {label}
           </p>
         );
       },
       minWidth: 150,
       editable: true,
     },
+    
     
     {
         field: "action",
@@ -1145,6 +1171,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
                       <th>Hold Service</th>
                       <th>Pending</th>
                       <th>Running</th>
+                      <th>Due</th>
                   </tr>
               </thead>
               <tbody>
@@ -1156,6 +1183,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
                       <td>{totalSummary?.totalHold}</td>
                       <td>{totalSummary?.totalPending}</td>
                       <td>{totalSummary?.totalRunning}</td>
+                      <td>{totalSummary?.totalDue}</td>
                       
                   </tr>
               </tbody>

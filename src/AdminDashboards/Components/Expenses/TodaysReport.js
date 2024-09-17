@@ -89,10 +89,13 @@ const TodaysReport = () => {
         if (data !== undefined) {
             for (let item of data) {
 
-             
+             if(item?.paymethod){
                 NewData.push({ ...item, id: data.indexOf(item), date: moment(item.createdAt).format("DD-MM-YYYY"),
-                   personName: item?.NewCustomer?.name, paymentMethod: item?.paymethod,  amount: item?.piadamt
-                 })
+                    personName: item?.NewCustomer?.name, paymentMethod: item?.paymethod,  amount: item?.piadamt
+                  })
+
+             }
+               
 
             }
         } else {
@@ -174,6 +177,8 @@ const TodaysReport = () => {
                 <AdminDataTable rows={DataWithIDCash(UpdatedData)} columns={all_columns} CustomToolbar={CustomToolbar} />
            </div>
         );
+
+        
       };
 
       const Bank = () => {

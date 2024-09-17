@@ -86,7 +86,7 @@ const Availability = () => {
       if (!params?.value) return ''; // Ensure value exists
   
       if (params?.value?.includes("MonthlyService")) {
-        return "bg-primary";
+        return "class-monthly";
       }
   
       if (params.value === 'leave' || params.value === 'Lunch') {

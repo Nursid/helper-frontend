@@ -315,7 +315,7 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 		bookdate: "",
 		name: Data?.customerData?.NewCustomer?.name || "",
 		mobile: Data?.customerData?.NewCustomer?.mobileno || "",
-		address: Data?.customerData?.address || "",
+		service_address: Data?.customerData?.address || "",
 		land_mark: Data?.customerData?.land_mark || "",
 		location: Data?.customerData?.location || "",
 		problem_des: "",
@@ -343,6 +343,12 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 	useEffect(() => {
 		dispatch(GetAllServices());
 	}, []);
+
+	const today = new Date();
+	const currentDate = today.getFullYear() + '-' + 
+                    String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                    String(today.getDate()).padStart(2, '0');
+
 
 	const handleSubmit = (e) => {
 
@@ -375,6 +381,12 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 			setIsLoading(false)
 			return false;
 		  }
+
+		if (currentDate !== formData?.bookdate) {
+			console.log('--',currentDate, formData?.bookdate)
+			formData.pending = 2;
+		}
+
 		const apiUrl = `${API_URL}/order/add-customer-order`;
 		axios.post(apiUrl, formData).then(response => {
 			if (response.status === 200) {
@@ -390,8 +402,6 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 
 	};
 	
-	const currentDate = new Date().toISOString().split('T')[0];
-
 
 	return (
 		<Modal className="modal-dialog-centered modal-lg"
@@ -556,7 +566,6 @@ export const ServeiceRequestModal = ({serveRequestModalOpen, serveRequestModalOp
 												}
 												placeholder="Enter your address"
 												onChange={(e) => handleInputChange(e, 200)}
-												readOnly={!!Data?.customerData?.NewCustomer?.id}
 												/>
 												
 										</div>
@@ -1191,7 +1200,7 @@ export const AssignSupervisorModal = ({supervisorModalOpen, supervisorModalOpenF
 
 		const formData = {
 			suprvisor_id: supervisor.value,
-			pending: 4
+			pending: 0
 		}
 		const apiUrl = `${API_URL}/order/assign/${OrderNo}`;
 		// Make a POST request using Axios
@@ -1372,7 +1381,7 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 		const formData = {
 			servicep_id: serviceProvider.value,
 			allot_time_range: timeslot.value,
-			pending: 4
+			pending: 0
 		}
 		const apiUrl = `${API_URL}/order/assign-service-provider/${OrderNo}`;
 		// Make a POST request using Axios
