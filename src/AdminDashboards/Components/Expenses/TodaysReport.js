@@ -108,18 +108,21 @@ const TodaysReport = () => {
 
 
     useEffect(() => {
+
         const totalPaidAmt = orders?.data?.reduce((acc, item) => {
-            return acc + parseInt(item?.piadamt);
+            return acc + (Number(item?.piadamt) || 0); // Ensure piadamt is a number
         }, 0);
-        
+    
         const TotalExpenses = data?.reduce((acc, item) => {
-            return acc + parseInt(item?.amount);
+            return acc + (Number(item?.amount) || 0); // Ensure amount is a number
         }, 0);
-
-        
-        setOpeningBalance(totalPaidAmt - TotalExpenses)
-
+    
+        const OpeningBalance = totalPaidAmt - TotalExpenses;
+    
+        setOpeningBalance(OpeningBalance);
+    
     }, [orders, data]);
+    
 
   
 

@@ -17,6 +17,7 @@ export const AttendanceAction = () => {
 
                 const combinedData = employees.map((employee) => {
                     const matchingAttendance = attendances.find(attendance => attendance.emp_id === employee.emp_id);
+                    
                     if (matchingAttendance) {
                         return { id: employee.emp_id, name: employee.name, ...matchingAttendance };
                     } else {

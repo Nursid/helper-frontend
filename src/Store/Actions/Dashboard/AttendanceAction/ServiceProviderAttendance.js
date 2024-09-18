@@ -16,17 +16,28 @@ export const ServiceProviderAttendancaAction = () => {
                 const employees = employeeResponse?.data?.data || [];
                 const attendances = attendanceResponse?.data?.data || [];
 
+
+                
+
                 const combinedData = employees.map((employee) => {
                     const matchingAttendance = attendances.find(attendance => 
-                        parseInt(attendance.servp_id, 10) === parseInt(employee.id, 10)
+                        attendance.servp_id === employee.id
                       );
-                    console.log('=====',matchingAttendance)
+                      if(matchingAttendance){
+                        matchingAttendance.id=employee.id
+                      }
+                      console.log('----', matchingAttendance)
+
                     if (matchingAttendance) {
                         return { id: employee.id, name: employee.name, ...matchingAttendance };
                     } else {
                         return { id: employee.id, name: employee.name, servp_id: employee.id };
                     }
+
                 });
+                console.log(combinedData, '----')
+
+               
 
                 dispatch({ type: constant.SERATTENDANCE_API_SUCCESS, payload: combinedData });
             }

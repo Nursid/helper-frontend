@@ -85,13 +85,16 @@ const Availability = () => {
     const getCellClassName = (params) => {
       if (!params?.value) return ''; // Ensure value exists
   
+
+      if (params.value === 'leave' || params.value === 'Lunch' || params.value === 'lunch') {
+        return 'class-red';
+      }
+
       if (params?.value?.includes("MonthlyService")) {
         return "class-monthly";
       }
   
-      if (params.value === 'leave' || params.value === 'Lunch') {
-        return 'class-red';
-      }
+      
   
       if (params?.value && !params.value.includes("MonthlyService")) {
         const splitValue = params.value.split('-');  // Split by '-'

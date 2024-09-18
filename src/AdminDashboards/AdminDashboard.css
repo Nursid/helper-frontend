@@ -346,6 +346,11 @@ button.dropdownMenu-btn-header.btn.btn-secondary {
   color: black !important;
 }
 
+.class-red {
+  background-color: red !important;
+  color: black !important;
+}
+
 .class-monthly{
   background-color: #74b9ff !important;
   color: black !important;

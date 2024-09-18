@@ -185,11 +185,11 @@ const handleToggleBlock = (userId) => {
                     <Button variant='contained' color='primary' onClick={(e)=>{toggleEditMode(params.row)}}
                         style={{minWidth: "40px", maxWidth: "40px"}}
                         ><BorderColorIcon /></Button>
-                    <Button variant="contained" color="success"
+                    {/* <Button variant="contained" color="success"
                     style={{minWidth: "40px", maxWidth: "40px"}}
                     >
                         <VisibilityIcon />
-                    </Button>
+                    </Button> */}
                     <Button variant="contained" color="error"
                     onClick={(e) => {
                         GetDeleteByID(params.row.id)

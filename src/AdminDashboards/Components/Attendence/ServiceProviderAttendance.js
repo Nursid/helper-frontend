@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 import { API_URL } from '../../../config';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { useAuth } from '../../../Context/userAuthContext';
 import { ServiceProviderAttendancaAction } from '../../../Store/Actions/Dashboard/AttendanceAction/ServiceProviderAttendance';
 
 const ServiceProviderAttendance = () => {
@@ -18,6 +18,10 @@ const ServiceProviderAttendance = () => {
     const { data, isSuccess } = useSelector(state => state.ServiceProviderAttendanceReducers);
     const dispatch = useDispatch();
     const [attendanceData, setAttendanceData] = useState([{id: 0}]);
+    const { currentUser, setCurrentUser } = useAuth();
+
+
+    console.log("data--------------",data)
 
     useEffect(() => {
         UserRoleCalled();
@@ -30,14 +34,16 @@ const ServiceProviderAttendance = () => {
         }
     }, [data, isSuccess]);
 
+     const role = currentUser && currentUser.role ? currentUser.role : currentUser && currentUser.designation.name ? currentUser.designation.name : ""
 
     const onAttendance = async (status, servp_id) => {
        
         const formData = {
-            action: status === true ? 'check_out' : 'check_in',
+            action: status === 'Working' ? 'check_out' : 'check_in',
             servp_id: servp_id,
-            createdby: 'Super Admin'
+            createdby: role
         };
+
         const response = await axios.post(`${API_URL}/attendance/service-provider/add`, formData);
         if (response.status === 200) {
             dispatch(ServiceProviderAttendancaAction());
@@ -52,24 +58,48 @@ const ServiceProviderAttendance = () => {
 
     const columns = [
         {
-            field: "status",
-            headerName: "Status",
-            renderCell: (params) => (
-                <p
-                    className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"
-                    style={{
+            field: "",
+            headerName: "Action",
+            renderCell: (params) => {
+
+                const { status } = params.row;
+    
+                // Check for the different statuses
+                const Working = status === "Working";
+                const Present = status === "Present";
+        
+                // Determine the action label and handler based on the status
+                let label = '';
+                let clickHandler = null;
+            
+                if (!status) {
+                  label = 'Check In';
+                  clickHandler = () => onAttendance(params.row.status, params.row.servp_id)
+                } else if (Working) {
+                  label = 'Check Out';
+                  clickHandler = () => onAttendance(params.row.status, params.row.servp_id)
+                } else {
+                  label = 'Done';
+                  clickHandler = null; // Disable clicking for completed orders
+                }
+                return (
+                    <p
+                      className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"
+                      style={{
                         borderRadius: "5px",
-                        cursor: "pointer",
+                        cursor: clickHandler ? "pointer" : "default", // Set cursor to pointer only if there is a click handler
                         margin: 0,
-                    }}
-                    onClick={() => onAttendance(params.row.status, params.row.servp_id)}
-                >
-                    {(!params.row.status) ? 'Check In' : 'Check Out'}
-                </p>
-            ),
-            minWidth: 150,
-            editable: true,
-        },
+                      }}
+                      onClick={clickHandler} // Only set onClick if there's a clickHandler
+                    >
+                      {label}
+                    </p>
+                  );
+                },
+                minWidth: 150,
+                editable: true,
+              },       
+        { field: "status", headerName: "Attendance Mark", flex: 1, minWidth: 120, editable: true },
         { field: "name", headerName: "Supervisor Name", flex: 1, minWidth: 120, editable: true },
         { field: "in_date", headerName: "In Date", flex: 1, minWidth: 120, editable: true },
         { field: "check_in", headerName: "Check In", minWidth: 80, flex: 1, editable: true },
