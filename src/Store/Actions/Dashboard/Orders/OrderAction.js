@@ -64,7 +64,7 @@ export const GetAllTimeSlot = () => {
             const response = await axios.get(`${API_URL}/order/time-slot`);
             if (response.data.status === true) {
 
-                dispatch({ type: constant.GET_ALL_TIMESLOT_SUCCESS, payload: response.data });
+                 dispatch({ type: constant.GET_ALL_TIMESLOT_SUCCESS, payload: response.data });
 
             }
         } catch (error) {
