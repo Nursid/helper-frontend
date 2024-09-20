@@ -16,9 +16,6 @@ export const ServiceProviderAttendancaAction = () => {
                 const employees = employeeResponse?.data?.data || [];
                 const attendances = attendanceResponse?.data?.data || [];
 
-
-                
-
                 const combinedData = employees.map((employee) => {
                     const matchingAttendance = attendances.find(attendance => 
                         attendance.servp_id === employee.id

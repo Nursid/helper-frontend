@@ -524,6 +524,7 @@ const AdminDashboard = () => {
       renderCell: (params) => {
         const { pending, order_no, cust_id } = params.row;
     
+        // console.log("------------",params.row.updatedAt)
         // Check for the different statuses
         const isPending = pending === "Pending" || pending === "Due" || pending === "Hold";
         const isCompleted = pending === "Completed";
@@ -1135,7 +1136,6 @@ onClick={()=>AssignAmount(params.row.order_no)}
 
            
               <div className="AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end">
-              {(role === "super" || role === "office") && (
                 <div
                   className="py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center"
                   style={{ minWidth: "18rem", maxWidth: "18rem" }}
@@ -1143,7 +1143,6 @@ onClick={()=>AssignAmount(params.row.order_no)}
                 >
                   Add New Order
                 </div>
-                 )}
               </div>
            
         </div>

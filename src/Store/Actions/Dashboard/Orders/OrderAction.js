@@ -64,28 +64,7 @@ export const GetAllTimeSlot = () => {
             const response = await axios.get(`${API_URL}/order/time-slot`);
             if (response.data.status === true) {
 
-                const currentTime = new Date(); // Current time
-
-                const filteredTimeSlots = response.data.timeSlots.filter(slot => {
-                    const [start, end] = slot.time_range.split('-');
-
-                    // Convert start and end times to Date objects with today's date
-                    const [startHours, startMinutes] = start.split(':').map(Number);
-                    const [endHours, endMinutes] = end.split(':').map(Number);
-
-                    const startTime = new Date(currentTime);
-                    startTime.setHours(startHours, startMinutes, 0, 0);
-
-                    const endTime = new Date(currentTime);
-                    endTime.setHours(endHours, endMinutes, 0, 0);
-
-                    // Return only time slots where the current time is before the end time
-                    return currentTime < endTime;
-                });
-
-                dispatch({ type: constant.GET_ALL_TIMESLOT_SUCCESS, payload: filteredTimeSlots });
-
-                // dispatch({ type: constant.GET_ALL_TIMESLOT_SUCCESS, payload: response.data });
+                dispatch({ type: constant.GET_ALL_TIMESLOT_SUCCESS, payload: response.data });
 
             }
         } catch (error) {
