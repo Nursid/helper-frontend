@@ -246,12 +246,12 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
             <SelectBox options={allServiceProviders} setSelcted={(value) => setFormData((prev) => ({ ...prev, servicep_id: value }))} initialValue={formData.servicep_id} />
           </FormGroup>
         </Col>
-        <Col md={6}>
+        {/* <Col md={6}>
           <FormGroup>
             <Label>Service Date & Time</Label>
             <Input name="serviceDateTime" type="datetime-local" onChange={handleInputChange} value={formData.serviceDateTime} />
           </FormGroup>
-        </Col>
+        </Col> */}
         <Col md={6}>
           <FormGroup>
             <Label>Address</Label>

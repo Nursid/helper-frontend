@@ -59,8 +59,8 @@ const MemberInvoice = React.forwardRef((props, ref) => {
                         <tr>
                             <th scope="row" className="p-3">Mobile No.</th>
                             <td colSpan={2} className="p-3">{data?.mobileno ?? ""}</td>
-                            <th scope="row" className="p-3">Tel No.</th>
-                            <td colSpan={2} className="p-3">{data?.tel_no ?? ""}</td>
+                            <th scope="row" className="p-3">Non Member Id</th>
+                            <td colSpan={2} className="p-3">{data?.member_id ?? ""}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Office No.</th>
@@ -124,7 +124,7 @@ const MemberInvoice = React.forwardRef((props, ref) => {
                         </tr>
                         <tr>
                             <th scope="row" className="p-3">Address</th>
-                            <td colSpan={2} className="p-3">{data?.address ?? ""}</td>
+                            <td colSpan={2} className="p-3">{data?.service_address ?? ""}</td>
                             <th scope="row" className="p-3">LandMark</th>
                             <td colSpan={2} className="p-3">{data?.land_mark ?? ""}</td>
                         </tr>

@@ -67,7 +67,7 @@ const Invoice2 = React.forwardRef((props, ref) => {
                   <b>Email :</b> {data?.email}
                 </p>
                 <p>
-                  <b>Address :</b> {data?.address}
+                  <b>Address :</b> {data?.service_address}
                 </p>
               </div>
             </div>

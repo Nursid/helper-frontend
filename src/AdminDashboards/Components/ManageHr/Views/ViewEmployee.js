@@ -170,7 +170,7 @@ export default function ViewEmployee({ data, toggleModal }) {
           <p className="fw-bold mb-0 me-2">Join Date:</p>
           <hr className="border border-dark mt-4 flex-grow-1" />
           <span className="position-absolute start-50 translate-middle bg-white text-dark px-2">
-          { moment(data?.doj).format("DD-MM-YYYY") ?? ""}
+          { moment(data?.createdAt).format("DD-MM-YYYY") ?? ""}
           </span>
           </div>
            

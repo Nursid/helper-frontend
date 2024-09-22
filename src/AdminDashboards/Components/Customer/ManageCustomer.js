@@ -69,7 +69,15 @@ const ManageCustomer = () => {
             for (let item of data) {
                 let newCustomer = item.NewCustomer;
                 let mergedItem = {...item, ...newCustomer};
-                NewData.push({ ...mergedItem, id: data.indexOf(item), date: moment(item.createdAt).format("DD-MM-YYYY") })
+                const paddedId = String(item.id).padStart(5, '0');
+                NewData.push({
+                    ...mergedItem,
+                    id: data.indexOf(item),
+                    date: moment(item.createdAt).format("DD-MM-YYYY"),
+                    member_id: item.member_id === null 
+                        ? 'NM' + paddedId 
+                        : item.member_id
+                });
 
             }
         } else {

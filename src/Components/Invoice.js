@@ -48,7 +48,7 @@ const Invoice = React.forwardRef((props, ref) => {
     </div>
     <div className="row">
       <div className='col-3 border border-1 p-3'>Address</div>
-      <div className='col-9 border border-1 p-3'>{data?.address}</div>
+      <div className='col-9 border border-1 p-3'>{data?.service_address}</div>
     </div>
     <div className="row">
       <div className='col-3 border border-1 p-3'>Customer Type</div>

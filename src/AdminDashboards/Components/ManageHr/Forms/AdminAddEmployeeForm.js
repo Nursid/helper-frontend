@@ -11,6 +11,7 @@ import SelectBox from '../../../Elements/SelectBox';
 import Select from 'react-select';
 import { GetAllEmployeeAction } from '../../../../Store/Actions/Dashboard/EmployeeActions/GetAllEmployee';
 import Swal from 'sweetalert2';
+import moment from 'moment';
 
 const AdminAddEmployeeForm = ({ toggleModal,data }) => {
 
@@ -20,7 +21,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
         email: data.email || "",
         aadhar_no:  data.aadhar_no ||"",
         pan_no: data.pan_no || "",
-        doj: data.doj || "",
+        createdAt: moment(data.createdAt).format('YYYY-MM-DD') || "",
         address: data.address ||"",
         about: data.address || "",
         salary: data.salary || "",
@@ -35,6 +36,8 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
         v_date: data.v_date || "",
         gender: data.gender || "",
     });
+
+    console.log('data.doj-----',data.doj)
 
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [allDepartments,setAllDepartments]=useState({});
@@ -252,7 +255,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
 		}
 	};
       
-    const formattedDate = formData.doj ? new Date(formData.doj).toISOString().slice(0, 10) : "";
+    const formattedDate = formData.createdAt ? new Date(formData.createdAt).toISOString().slice(0, 10) : "";
 
     return (
         <Fragment>
@@ -417,7 +420,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                 <Label for="pannumber">Join Date</Label>
                                                 <Input
                                                     type="date"
-                                                    name="doj"
+                                                    name="createdAt"
                                                     onChange={(e) => handleChange(e, 50)}
                                                     value={formattedDate}
                                                 />
@@ -601,7 +604,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                     name="v_date"
                                                     onChange={(e) => handleChange(e, 10)}
                                                     placeholder='Week Off'
-                                                    value={formData.v_date}
+                                                    value={formData?.v_date}
                                                 />
                                             </FormGroup>
                                         </Col>

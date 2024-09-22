@@ -108,6 +108,7 @@ const AdminDashboard = () => {
         const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
         const customer = NewCustomer.customer || {}; // Ensure customer is an object
         const mergedItem = { ...item, ...NewCustomer, ...customer };
+        const paddedId = String(customer.user_id).padStart(5, '0');
         NewData.push({
           ...mergedItem,
           pending: getStatusByKey(item.pending),
@@ -115,7 +116,10 @@ const AdminDashboard = () => {
           date: moment(item.createdAt).format("D / M / Y"),
           bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
           booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
-          userRole: userRole
+          userRole: userRole,
+          member_id: customer.member_id === null 
+          ? 'NM' + paddedId 
+          : customer.member_id
         });
       }
     } else {
@@ -123,6 +127,8 @@ const AdminDashboard = () => {
     }
     return NewData;
   };
+
+ 
   
 
   const [cancel, setCancel]=useState(false);
@@ -150,16 +156,6 @@ const AdminDashboard = () => {
         <GridToolbarFilterButton />
         <GridToolbarExport />
         <GridToolbarDensitySelector />
-        {/* <div
-
-          onClick={toggleAddOrders}
-
-
-          style={{ color: "#ffffff" }}
-          className="cursor-p "
-        >
-          <FiPlusSquare /> ADD ORDER
-        </div> */}
       </GridToolbarContainer>
     );
   };
@@ -524,8 +520,6 @@ const AdminDashboard = () => {
       renderCell: (params) => {
         const { pending, order_no, cust_id } = params.row;
     
-        // console.log("------------",params.row.updatedAt)
-        // Check for the different statuses
         const isPending = pending === "Pending" || pending === "Due" || pending === "Hold";
         const isCompleted = pending === "Completed";
         
@@ -559,7 +553,10 @@ const AdminDashboard = () => {
             }}
             onClick={clickHandler} // Only set onClick if there's a clickHandler
           >
-            {label}
+            {(label ==='Done') ? 
+             <Tooltip title={moment(params.row.updatedAt).format('Do MMMM YYYY, h:mm A')}>
+             {label}
+             </Tooltip> : label}
           </p>
         );
       },
