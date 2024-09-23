@@ -10,22 +10,13 @@ import {
 	Input,
 	Button
 } from 'reactstrap';
-import SelectBox from '../../../Elements/SelectBox';
-import {Formik} from 'formik';
+import SelectBox from '../../Elements/SelectBox';
 import {useDispatch, useSelector} from 'react-redux';
-// import GetAllServicesReducer from '../../../../Store/Reducers/Dashboard/GetAllServicesReducer';
-import {GetAllServices} from '../../../../Store/Actions/Dashboard/servicesAction';
-import {ImageUploadAction} from '../../../../Store/Actions/ImageUploadAction';
-import ImageUploadReducer from '../../../../Store/Reducers/ImageUploadReducers';
-import {GetServiceProviderSignupAction} from '../../../../Store/Actions/Dashboard/Authentication/ServiceProviderActions';
-import {WaitLoader} from '../../../Elements/WaitLoader';
-import {useStateManager} from 'react-select';
-import {useAuth} from '../../../../Context/userAuthContext';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { API_URL } from '../../../../config';
-import { GetAllMonthlyServiceAction } from '../../../../Store/Actions/Dashboard/EmployeeActions/GetAllMonthlyServices';
-import { GetAllTimeSlot } from '../../../../Store/Actions/Dashboard/Orders/OrderAction';
+import { API_URL } from '../../../config';
+import { GetAllMonthlyServiceAction } from '../../../Store/Actions/Dashboard/EmployeeActions/GetAllMonthlyServices';
+import { GetAllTimeSlot } from '../../../Store/Actions/Dashboard/Orders/OrderAction';
 
 const AddMonthlyServices = ({toggleModal, data}) => {
 

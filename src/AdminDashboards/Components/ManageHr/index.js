@@ -6,7 +6,7 @@ import { TabContent, TabPane } from 'reactstrap'
 import ManageEmployee from './ManageEmployee'
 import ManageServiceProvider from './ManageServiceProvider'
 import { useUserRoleContext } from '../../../Context/RolesContext'
-import ManageMonthService from './ManageMonthService'
+// import ManageMonthService from './ManageMonthService'
 
 const AdminManageHr = () => {
   const [attendanceActive, setActiveAttendance] = useState("employee")
@@ -18,9 +18,9 @@ const AdminManageHr = () => {
     } else if (userRole.ManageServiceProvider) {
       setActiveAttendance("service-provider")
     }
-    else if (userRole.ManageMonthService) {
-      setActiveAttendance("monthly-services")
-    }
+    // else if (userRole.ManageMonthService) {
+    //   setActiveAttendance("monthly-services")
+    // }
   }
   useEffect(() => {
     ActiveTabFunction()
@@ -37,7 +37,7 @@ const AdminManageHr = () => {
           <div className="AttendenceTabs px-3">
             {userRole && userRole.ManageEmployee ? <span className={` ${attendanceActive === "employee" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("employee") }}>Manage Employee</span> : null}
 
-            {userRole && userRole.ManageMonthService ? <span className={` ${attendanceActive === "monthly-services" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("monthly-services") }}>Manage Monthly Service </span> : null}
+            {/* {userRole && userRole.ManageMonthService ? <span className={` ${attendanceActive === "monthly-services" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("monthly-services") }}>Manage Monthly Service </span> : null} */}
 
             {userRole && userRole.ManageServiceProvider ? <span className={` ${attendanceActive === "service-provider" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("service-provider") }}>Manage Service Provider</span> : null}
           </div>
@@ -51,9 +51,9 @@ const AdminManageHr = () => {
               <ManageServiceProvider setActiveAttendance={setActiveAttendance} />
             </TabPane>
 
-            <TabPane tabId="monthly-services">
+            {/* <TabPane tabId="monthly-services">
               <ManageMonthService setActiveAttendance={setActiveAttendance} />
-            </TabPane>
+            </TabPane> */}
 
 
           </TabContent>

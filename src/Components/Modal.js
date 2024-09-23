@@ -1541,9 +1541,16 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 	const [billAmount, setBillAmount] = useState(0)
 	const [paidAmount, setPaidAmount] = useState(0);
 	const [balanceAmount, setBalanceAmount] = useState(0);
+	const [errors, setErrors] = useState({});
+	const [isLoading, setIsLoading] = useState(false);
+
 	const dispatch = useDispatch();
 
-	const handleSubmit = () => {
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		setIsLoading(true)
+		  let errors = {};
+
 		const formData = {
 			totalamt: balanceAmount,
 			piadamt: paidAmount,
@@ -1557,11 +1564,33 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 			upi: formData?.paymethod === "Online" ? paidAmount : 0
 		}
 
+		if (!formData.netpayamt) {
+			errors.netpayamt = "Total Amount is required";
+		}
+		if (!formData.piadamt) {
+			errors.piadamt = "Paid Amount is required";
+		}
+		if (!formData.paymethod) {
+			errors.paymethod = "payment method is required";
+		}
+
+		if (errors && Object.keys(errors).length === 0) {
+		// Form is valid, handle form submission here
+		console.log("Form submitted successfully!");
+		setErrors([]);
+		} else {
+		// Form is invalid, display validation errors
+		console.log("Validation Errors:", errors);
+		setErrors(errors);
+		setIsLoading(false)
+		return false;
+		}
+
 		const apiUrl = `${API_URL}/order/assign/${OrderNo}`;
 		// Make a POST request using Axios
 		axios.put(apiUrl, formData).then(async(response) => {
 			if (response.status === 200) {
-
+				setIsLoading(false)
 				const AddAccount = await axios.post(`${API_URL}/api/add-balance`,AddAccountAmount)
 
 				if(AddAccount.status === 200){
@@ -1576,6 +1605,7 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 				
 			} else {
 				Swal.fire({title: 'failed to add try again', icon: "error"})
+				setIsLoading(false)
 			}
 			if (role === "service" || role === "supervisor") {
                 const status = undefined;
@@ -1585,7 +1615,7 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
                 dispatch(GetAllOrders());
 				GetTotalSummary()
               }
-
+			  setIsLoading(false)
 		}).catch(error => {
 			console.error('Error:', error);
 		});
@@ -1621,31 +1651,46 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 					<Col xs={12}>
 						<FormGroup>
 							<label className="form-label" htmlFor="serviceRemark">
-								Payment Method
+								Payment Method <span style={{color: "red"}}>*</span>
 							</label>
 							<SelectBox options={GetAllPayMethod}
 								setSelcted={setPaymethod}
 								selectOption={paymethod}/>
+								{errors?.paymethod && (
+							<span className='validationError'>
+								{errors?.paymethod}
+							</span>
+						)}
 						</FormGroup>
 					</Col>
 
 
 					<Col md={12}>
 						<FormGroup>
-							<Label>Bill Amount</Label>
+							<Label>Bill Amount <span style={{color: "red"}}>*</span> </Label>
 							<Input onChange={handleBillChange}
 								value={billAmount}
 								placeholder='Bill Amount'
 								type='number'/>
+								{errors?.netpayamt && (
+							<span className='validationError'>
+								{errors?.netpayamt}
+							</span>
+						)}
 						</FormGroup>
 					</Col>
 					<Col md={12}>
 						<FormGroup>
-							<Label>Paid Amount</Label>
+							<Label>Paid Amount <span style={{color: "red"}}>*</span></Label>
 							<Input onChange={handlePaidChange}
 								type='number'
 								value={paidAmount}
 								placeholder='Paid Amount'/>
+								{errors?.piadamt && (
+							<span className='validationError'>
+								{errors?.piadamt}
+							</span>
+						)}
 						</FormGroup>
 					</Col>
 
@@ -1664,7 +1709,10 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 							onClick={handleSubmit}
 							style={
 								{marginRight: '10px'}
-						}>
+								
+						}
+						disabled={isLoading}
+						>
 							Save
 						</Button>
 						<Button color="danger"

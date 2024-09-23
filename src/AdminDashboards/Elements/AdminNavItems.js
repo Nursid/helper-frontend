@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUserRoleContext } from '../../Context/RolesContext'
 import { CiGrid41, CiViewList } from 'react-icons/ci';
+import { TbCalendarCheck } from "react-icons/tb";
 import { GiPayMoney } from 'react-icons/gi';
 import { TbReport } from 'react-icons/tb';
 import { MdOutlinePeople, MdPeopleOutline } from 'react-icons/md';
@@ -20,6 +21,7 @@ const AdminNavItems = () => {
 
   const NavItems = [
     { field: "Dashboard", title: "Dashboard", icon: <CiViewList size={30} /> },
+    { field: "MonthlyService", title: "Monthly Service", icon: <TbCalendarCheck size={30} /> },
     { field: "Expenses", title: "Account", icon: <GiPayMoney size={30} /> },
     { field: "Attendence", title: "Attendance", icon: <TbReport size={30} /> },
     { field: "ManageHR", title: "Manage HR", icon: <MdPeopleOutline size={30} /> },

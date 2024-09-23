@@ -69,7 +69,7 @@ const ManageCustomer = () => {
             for (let item of data) {
                 let newCustomer = item.NewCustomer;
                 let mergedItem = {...item, ...newCustomer};
-                const paddedId = String(item.id).padStart(5, '0');
+                const paddedId = String(item.id).padStart(6, '0');
                 NewData.push({
                     ...mergedItem,
                     id: data.indexOf(item),

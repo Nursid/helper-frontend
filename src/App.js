@@ -26,6 +26,7 @@ import AdminComplain from './AdminDashboards/Components/Complain';
 import Invoice from './Components/MemberInvoice';
 import OrderReports from './AdminDashboards/Components/OrderReports';
 import PrintCustomer from './AdminDashboards/Components/Customer/View/PrintCustomer';
+import MonthService from './AdminDashboards/Components/MonthlyService';
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
             <Route path='availability' element={<Availability />} />
             <Route path='support' element={<AdminComplain />} />
             <Route path='reports' element={<OrderReports />} />
+            <Route path='monthly-service' element={<MonthService />} />
           </Route>
         </Routes>
       </BrowserRouter>

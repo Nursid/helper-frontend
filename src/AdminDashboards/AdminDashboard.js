@@ -108,7 +108,7 @@ const AdminDashboard = () => {
         const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
         const customer = NewCustomer.customer || {}; // Ensure customer is an object
         const mergedItem = { ...item, ...NewCustomer, ...customer };
-        const paddedId = String(customer.user_id).padStart(5, '0');
+        const paddedId = String(customer.user_id).padStart(6, '0');
         NewData.push({
           ...mergedItem,
           pending: getStatusByKey(item.pending),
@@ -305,7 +305,17 @@ const AdminDashboard = () => {
     
   }
 
-  const OrderComplete= (orderNo) =>{
+  const OrderComplete= (orderNo, piadamt, totalamt) =>{
+
+
+    if(piadamt==null && totalamt==null){
+      Swal.fire({
+        title: 'failed to Completed, Please Add Amount',
+        icon: "error",
+    })
+    return;
+    }
+
     Swal.fire({
       title: 'Are you sure?',
       text: "You Want to Complete this!",
@@ -372,9 +382,9 @@ const AdminDashboard = () => {
   }
 
   const Inventrycolumns = [
-    { field: "_id", headerName: "Sr No.", minWidth: 200, editable: true},
-    { field: "item", headerName: "Name", minWidth: 220, editable: true },
-    { field: "qty", headerName: "Quantity", minWidth: 220, editable: true },
+    { field: "_id", headerName: "Sr No.", minWidth: 200,  editable: false},
+    { field: "item", headerName: "Name", minWidth: 220,  editable: false },
+    { field: "qty", headerName: "Quantity", minWidth: 220,  editable: false },
     {
       field: "action",
       headerName: "Action",
@@ -402,12 +412,12 @@ const AdminDashboard = () => {
   },
   ]
   const AllotedItemsCollums = [
-    { field: "_id", headerName: "Sr No.  ", minWidth: 200, editable: true },
-    { field: "allotdate", headerName: "Date", minWidth: 220, editable: true },
-    { field: "spname", headerName: "Item", minWidth: 220, editable: true },
-    { field: "item", headerName: "Alloted To", minWidth: 220, editable: true },
-    { field: "aqty", headerName: "Quantity", minWidth: 220, editable: true },
-    { field: "remark", headerName: "Remark", minWidth: 220, editable: true }
+    { field: "_id", headerName: "Sr No.  ", minWidth: 200,  editable: false },
+    { field: "allotdate", headerName: "Date", minWidth: 220,  editable: false },
+    { field: "spname", headerName: "Item", minWidth: 220,  editable: false },
+    { field: "item", headerName: "Alloted To", minWidth: 220,  editable: false },
+    { field: "aqty", headerName: "Quantity", minWidth: 220,  editable: false },
+    { field: "remark", headerName: "Remark", minWidth: 220,  editable: false }
   ]
   const [modalTitle, setModalTitle] = useState('Add Order');
   const [summary, setSummary] = useState(false);
@@ -518,7 +528,7 @@ const AdminDashboard = () => {
       field: "Status",
       headerName: "Status",
       renderCell: (params) => {
-        const { pending, order_no, cust_id } = params.row;
+        const { pending, order_no, cust_id, piadamt, totalamt } = params.row;
     
         const isPending = pending === "Pending" || pending === "Due" || pending === "Hold";
         const isCompleted = pending === "Completed";
@@ -537,7 +547,7 @@ const AdminDashboard = () => {
           clickHandler = null; // Disable clicking for cancelled orders
         } else if (!isCompleted) {
           label = 'Check Out';
-          clickHandler = () => OrderComplete(order_no, cust_id);
+          clickHandler = () => OrderComplete(order_no, piadamt, totalamt);
         } else {
           label = 'Done';
           clickHandler = null; // Disable clicking for completed orders
@@ -553,7 +563,7 @@ const AdminDashboard = () => {
             }}
             onClick={clickHandler} // Only set onClick if there's a clickHandler
           >
-            {(label ==='Done') ? 
+            {(label !=='Check In') ? 
              <Tooltip title={moment(params.row.updatedAt).format('Do MMMM YYYY, h:mm A')}>
              {label}
              </Tooltip> : label}
@@ -561,7 +571,7 @@ const AdminDashboard = () => {
         );
       },
       minWidth: 150,
-      editable: true,
+      editable: false,
     },
     
     
@@ -582,25 +592,25 @@ const AdminDashboard = () => {
             </select>
         ),
         minWidth: 150,
-        editable: true,
+        editable: false,
     },
-    { field: "member_id", headerName: "Member ID", minWidth: 120, editable: true,  },
-    { field: "order_no", headerName: "Order Number", minWidth: 120, editable: true },
-    { field: "name", headerName: "Customer Name",minWidth: 150, editable: true },
-    { field: "mobileno", headerName: "Mobile",minWidth: 150, editable: true },
-    { field: "service_address", headerName: "Service Address",minWidth: 150, editable: true },
-    { field: "alterno", headerName: "Alternate No",minWidth: 150, editable: true },
-    { field: "user_type", headerName: "Type", minWidth: 80, editable: true },
-    { field: "service_name", headerName: "Service Type",minWidth: 150, editable: true },
-    { field: "booktime", headerName: "Booking Time", minWidth: 120, editable: true },
-    { field: "bookdate", headerName: "Booking Date", minWidth: 120, editable: true },
-    { field: "problem_des", headerName: "Service Description ", minWidth: 150, editable: true, renderCell: (params) => (
+    { field: "member_id", headerName: "Member ID", minWidth: 120,  editable: false,  },
+    { field: "order_no", headerName: "Order Number", minWidth: 120,  editable: false },
+    { field: "name", headerName: "Customer Name",minWidth: 150,  editable: false },
+    { field: "mobileno", headerName: "Mobile",minWidth: 150,  editable: false },
+    { field: "service_address", headerName: "Service Address",minWidth: 150,  editable: false },
+    { field: "alterno", headerName: "Alternate No",minWidth: 150,  editable: false },
+    { field: "user_type", headerName: "Type", minWidth: 80,  editable: false },
+    { field: "service_name", headerName: "Service Type",minWidth: 150,  editable: false },
+    { field: "booktime", headerName: "Booking Time", minWidth: 120,  editable: false },
+    { field: "bookdate", headerName: "Booking Date", minWidth: 120,  editable: false },
+    { field: "problem_des", headerName: "Service Description ", minWidth: 150,  editable: false, renderCell: (params) => (
         <Tooltip title={params.value}>
             <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {params.value}</div>
         </Tooltip>
     ) },   
-    { field: "allot_time_range", headerName: "Alloted Time Slot ", minWidth: 150, editable: true },
+    { field: "allot_time_range", headerName: "Alloted Time Slot ", minWidth: 150,  editable: false },
 
     { field: "suprvisor_id", headerName: "Supervisor",
     renderCell: (params) => ( 
@@ -620,7 +630,7 @@ const AdminDashboard = () => {
             params.row.suprvisor_id
           )
         ) :  params.row.suprvisor_id
-      } </> ), minWidth: 200, editable: true },
+      } </> ), minWidth: 200,  editable: false },
 
     { field: "servicep_id", headerName: "Service Provider",
     renderCell: (params) => ( 
@@ -637,13 +647,13 @@ const AdminDashboard = () => {
           params.row.servicep_id
         )
       ) : params.row.servicep_id } </> ),
-    minWidth: 200, editable: true },
+    minWidth: 200,  editable: false },
 
     // { field: "vehicle_inventory", headerName: "Vehicle Used",
     // renderCell: (params) => ( 
     //     <>
     //     {(!params.row.vehicle_inventory) ? (<><Button variant='contained' color='primary'> Choose Vehicle</Button></> ) : <>{params.row.vehicle_inventory} </> } </> ),
-    //  minWidth: 200, editable: true },
+    //  minWidth: 200,  editable: false },
     { field: "netpayamt", headerName: "Billing Amount",
     renderCell: (params) => ( 
         <>
@@ -681,7 +691,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
         )}
         </>
     ),
-    minWidth: 180, editable: true},
+    minWidth: 180,  editable: false},
 
     { field: "suerv_remark", headerName: "Supervisor Remark",
     renderCell: (params) => ( 
@@ -707,7 +717,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
         )}
         </>
     ),
-    minWidth: 150, editable: true },
+    minWidth: 150,  editable: false },
 
     { field: "servp_remark",
         headerName: "Service Provider Remark",
@@ -735,15 +745,15 @@ onClick={()=>AssignAmount(params.row.order_no)}
             </> 
         ),
         minWidth: 180,
-        editable: true,
+         editable: false,
     },
-    { field: "pending", headerName: "Order Status", minWidth: 150, editable: true },
-    { field: "cancle_reson", headerName: "Cancel Reason", minWidth: 150, editable: true },
+    { field: "pending", headerName: "Order Status", minWidth: 150,  editable: false },
+    { field: "cancle_reson", headerName: "Cancel Reason", minWidth: 150,  editable: false },
     { 
       field: "sueadmin_remark", 
       headerName: "Super Admin Remark",
       minWidth: 180, 
-      editable: true,
+       editable: false,
       renderCell: (params) => ( 
         <Tooltip title={params.row.sueadmin_remark}>
           <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -756,7 +766,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
       field: "admin_approve", 
       headerName: "Final Status", 
       minWidth: 150, 
-      editable: true,
+       editable: false,
       type: 'boolean',
       renderCell: (params) => {
         if (params.row?.userRole?.role === "super") {
@@ -775,7 +785,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
         }
       },
       },
-      { field: "memo", headerName: "Memo", minWidth: 150, editable: true,
+      { field: "memo", headerName: "Memo", minWidth: 150,  editable: false,
         renderCell: (params) => {
           return (
             <>
@@ -786,7 +796,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
             )
        },
       },
-      { field: "invoice", headerName: "Invoice", minWidth: 150, editable: true,
+      { field: "invoice", headerName: "Invoice", minWidth: 150,  editable: false,
         renderCell: (params) => {
         if(params.row.admin_approve){
           return (
@@ -1246,7 +1256,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
                                       OrderHold(params.row.order_no)
                                     }
                                     else if(selectedValue === 'Complete'){
-                                      OrderComplete(params.row.order_no,params.row.cust_id)
+                                      OrderComplete(params.row.order_no, params.row.piadamt, params.row.totalamt);
                                     }
                                     else if(selectedValue === 'Transfer'){
                                       OrderTransfers(params.row.order_no)

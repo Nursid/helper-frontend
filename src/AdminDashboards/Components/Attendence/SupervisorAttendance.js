@@ -53,7 +53,7 @@ const SupervisorAttendance = () => {
     const columns = [
         {
             field: "",
-            headerName: "Action",
+            headerName: "",
             renderCell: (params) => {
 
                 const { status } = params.row;

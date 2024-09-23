@@ -130,7 +130,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         // Form is invalid, display validation errors
         console.log("Validation Errors:", errors);
         setErrors(errors);
-        setIsLoading(true)
+        setIsLoading(false)
         return false;
         }
 

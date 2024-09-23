@@ -21,8 +21,6 @@ const ServiceProviderAttendance = () => {
     const { currentUser, setCurrentUser } = useAuth();
 
 
-    console.log("data--------------",data)
-
     useEffect(() => {
         UserRoleCalled();
         dispatch(ServiceProviderAttendancaAction());
@@ -59,7 +57,7 @@ const ServiceProviderAttendance = () => {
     const columns = [
         {
             field: "",
-            headerName: "Action",
+            headerName: "",
             renderCell: (params) => {
 
                 const { status } = params.row;
