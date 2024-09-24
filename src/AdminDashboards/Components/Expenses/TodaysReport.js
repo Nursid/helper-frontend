@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useMemo } from 'react'
 import { DataGrid, GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { Button } from 'reactstrap';
 import { Box } from '@mui/material';
@@ -13,13 +13,16 @@ import StackBox from '../../Elements/StackBox';
 import GetAllOrders from '../../../Store/Actions/Dashboard/Orders/OrderAction';
 import { useUserRoleContext } from '../../../Context/RolesContext';
 import { useAuth } from '../../../Context/userAuthContext';
+import { AccountListing } from '../../../Store/Actions/Dashboard/AccountAction';
 
 const TodaysReport = () => {
 
     const [selctedAttendence, setSelectedAttendence] = useState("All")
     const {  data: orders, isLoading: isOrderLoading} = useSelector(state => state.GetAllOrderReducer);
+    const { data } = useSelector(state => state.AccountReducers)
+
     const [openingbalance, setOpeningBalance] = useState(0)
-    const { data, isLoading } = useSelector(state => state.GetAllExpenseReducers);
+    // const { data, isLoading } = useSelector(state => state.GetAllExpenseReducers);
 
     const CustomToolbar = () => {
         return (
@@ -38,90 +41,99 @@ const TodaysReport = () => {
     const { currentUser, setCurrentUser } = useAuth();
     const [role, setRole] = useState(userRole.role || '');
 
+    // useEffect(() => {
+    //     dispatch(GetALLExpenses())
+    // }, [GetALLExpenses, data]);
+
     useEffect(() => {
-        dispatch(GetALLExpenses())
-    }, [GetALLExpenses, data]);
+        dispatch(AccountListing())
+    }, [data]);
+
+   
 
     // useEffect(() => {
-    //     dispatch(GetAllCollection())
-    // }, []);
-
-    useEffect(() => {
-        dispatch(GetAllOrders(3, currentUser.id, role))
-    }, [orders, GetAllOrders]);
+    //     dispatch(GetAllOrders(3, currentUser.id, role))
+    // }, [orders, GetAllOrders]);
 
  
 
 
     const all_columns = [
         { field: "date", headerName: "Date", flex: 1, minWidth: 50, editable: true },
-        { field: "personName",flex: 1, headerName: "Customer Name", minWidth: 120, editable: true },
-        { field: "service_name",flex: 1, headerName: "Particular (Service Desc.)", minWidth: 250, editable: true },
-        { field: "paymentMethod",flex: 1, headerName: "Payment Mode", minWidth: 120, editable: true },
-        { field: "expense_amount",flex: 1, headerName: "Amount Debit", minWidth: 120, editable: true },
-        { field: "amount", flex: 1, headerName: "Amount Credit", minWidth: 120, editable: true },
-        { field: "remark",flex: 1, headerName: "Remark", minWidth: 120, editable: true },
+        { field: "person_name",flex: 1, headerName: "Customer Name", minWidth: 120, editable: true },
+        { field: "about_service",flex: 1, headerName: "Particular (Service Desc.)", minWidth: 250, editable: true },
+        { field: "payment_mode",flex: 1, headerName: "Payment Mode", minWidth: 120, editable: true },
+        { field: "debit",flex: 1, headerName: "Amount Debit", minWidth: 120, editable: true },
+        { field: "credit", flex: 1, headerName: "Amount Credit", minWidth: 120, editable: true },
+        { field: "balance", flex: 1, headerName: "Balance", minWidth: 120, editable: true },
         { field: "approve",flex: 1, headerName: "Approve", minWidth: 120, editable: true },
+        { field: "remark",flex: 1, headerName: "Remark", minWidth: 120, editable: true },
     ]
-
-    // const expense_columns = [
-    //     { field: "id", headerName: "Sr No", flex: 1, minWidth: 50, editable: true },
-    //     { field: "date", flex: 1, headerName: "Date", minWidth: 120, editable: true },
-    //     { field: "name", flex: 1, headerName: "Head", minWidth: 120, editable: true },
-    //     { field: "personName", flex: 1, headerName: "Customer Name", minWidth: 120, editable: true },
-    //     { field: "remark", flex: 1, headerName: "Remark", minWidth: 120, editable: true },
-    //     { field: "amount", flex: 1, headerName: "Amount", minWidth: 120, editable: true },
-    // ]
-    // const collectable_columns = [
-    //     { field: "id", headerName: "Sr No", flex: 1, minWidth: 50, editable: true },
-    //     { field: "date", flex: 1, headerName: "Date", minWidth: 120, editable: true },
-    //     { field: "orderNo", flex: 1, headerName: "Order No.", minWidth: 120, editable: true },
-    //     { field: "personName", flex: 1, headerName: "Customer Name", minWidth: 120, editable: true },
-    //     { field: "remark", flex: 1, headerName: "Remark", minWidth: 120, editable: true },
-    //     { field: "expenseType", flex: 1, headerName: "Expenses", minWidth: 120, editable: true },
-    //     { field: "amount", flex: 1, headerName: "Collection", minWidth: 120, editable: true },
-    // ]
-
-
-        
+    
     const DataWithID = (data) => {
-        const NewData = []
-        if (data !== undefined) {
-            for (let item of data) {
-
-             if(item?.paymethod){
-                NewData.push({ ...item, id: data.indexOf(item), date: moment(item.createdAt).format("DD-MM-YYYY"),
-                    personName: item?.NewCustomer?.name, paymentMethod: item?.paymethod,  amount: item?.piadamt
-                  })
-
-             }
-               
-
+        return useMemo(() => {
+            const NewData = [];
+            if (data !== undefined) {
+                let cumulativeBalance = 0; // Initialize cumulative balance
+                
+                for (let item of data) {
+                    let credit = 0;  
+                    let debit = 0;   
+    
+                    // Determine credit and debit based on payment mode and type
+                    if (item.type_payment) {
+                        if (item.payment_mode === "Cash") {
+                            debit = item.cash || 0; 
+                        } else if (item.payment_mode === "Online") {
+                            debit = item.upi || 0;  
+                        }
+                    } else {
+                        if (item.payment_mode === "Cash") {
+                            credit = item.cash || 0; 
+                        } else if (item.payment_mode === "Online") {
+                            credit = item.upi || 0;  
+                        }
+                    }
+    
+                    // Update cumulative balance
+                    cumulativeBalance += parseInt(credit); // Add credit
+                    cumulativeBalance -= parseInt(debit); // Subtract debit
+    
+                    // Push the new item with updated balance
+                    NewData.push({ 
+                        ...item, 
+                        id: data.indexOf(item), 
+                        date: moment(item.createdAt).format("DD-MM-YYYY"), 
+                        credit: credit, 
+                        debit: debit,
+                        balance: cumulativeBalance // Set the cumulative balance
+                    });
+                }
+            } else {
+                NewData.push({ id: 0 });
             }
-        } else {
-            NewData.push({ id: 0 })
-        }
-        return NewData
+            
+            return NewData.reverse();
+        }, [data]);
     }
-
+    
     
 
 
-    useEffect(() => {
-
-        const totalPaidAmt = orders?.data?.reduce((acc, item) => {
-            return acc + (Number(item?.piadamt) || 0); // Ensure piadamt is a number
-        }, 0);
+    // useEffect(() => {
+    //     const totalPaidAmt = orders?.data?.reduce((acc, item) => {
+    //         return acc + (Number(item?.piadamt) || 0); // Ensure piadamt is a number
+    //     }, 0);
     
-        const TotalExpenses = data?.reduce((acc, item) => {
-            return acc + (Number(item?.amount) || 0); // Ensure amount is a number
-        }, 0);
+    //     const TotalExpenses = data?.reduce((acc, item) => {
+    //         return acc + (Number(item?.amount) || 0); // Ensure amount is a number
+    //     }, 0);
     
-        const OpeningBalance = totalPaidAmt - TotalExpenses;
+    //     const OpeningBalance = totalPaidAmt - TotalExpenses;
     
-        setOpeningBalance(OpeningBalance);
+    //     setOpeningBalance(OpeningBalance);
     
-    }, [orders, data]);
+    // }, [orders, data]);
     
 
   
@@ -155,8 +167,6 @@ const TodaysReport = () => {
     }
 
     const UpdatedData = [...(NewExpenseFormate(data)), ...(DataWithID(orders?.data))]
-
-
 
     const Cash = () => {
     const DataWithIDCash = (data) => {
@@ -239,7 +249,7 @@ const TodaysReport = () => {
 
             {selctedAttendence === "All" && (
                 <div className='p-4'>
-                    <AdminDataTable rows={DataWithIDExpense(UpdatedData)} columns={all_columns} CustomToolbar={CustomToolbar} />
+                    <AdminDataTable rows={DataWithID(data)} columns={all_columns} CustomToolbar={CustomToolbar} />
                 </div>
             )}
 
