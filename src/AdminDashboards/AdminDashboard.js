@@ -573,8 +573,6 @@ const AdminDashboard = () => {
       minWidth: 150,
       editable: false,
     },
-    
-    
     {
         field: "action",
         headerName: "Action",
@@ -943,7 +941,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
         currentUser={currentUser.id}
       />
 
-      <AddAmount
+    {AmountModalOpen &&   <AddAmount
         AmountModalOpen={AmountModalOpen}
         AmountModalOpenFunction={() => setAmountModalOpen(!AmountModalOpen)}
         OrderNo={OrderNo}
@@ -952,7 +950,8 @@ onClick={()=>AssignAmount(params.row.order_no)}
         currentUser={currentUser.id}
         GetTotalSummary={GetTotalSummary}
       />
-
+    }
+    
       <ModalComponent
         modalTitle={modalTitle}
         modal={Show}
@@ -1212,8 +1211,7 @@ onClick={()=>AssignAmount(params.row.order_no)}
                       <td>{totalSummary?.TotalExpenses}</td>
                       <td>{totalSummary?.TotalCash}</td>
                       <td>{totalSummary?.TotalBank}</td>
-                      <td>{parseFloat(totalSummary?.TotalCash) + parseFloat(totalSummary?.TotalBank)}</td>
-                     
+                      <td>{totalSummary?.Netbalance}</td>
                       <th><a
                                 href={`data:text/csv;charset=utf-8,Total Services,Monthly Service,Completed Service,Cancelled Service,Hold Service,Pending
                                     ${totalSummary?.totalOrders},${totalSummary?.totalMonthlyService},${totalSummary?.totalCompleted},${totalSummary?.totalCancel},${totalSummary?.totalHold},${totalSummary?.totalPending}

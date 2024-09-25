@@ -1538,13 +1538,34 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 		},
 	]
 	const [paymethod, setPaymethod] = useState('');
-	const [billAmount, setBillAmount] = useState(0)
+	const [billAmount, setBillAmount] = useState(0);
 	const [paidAmount, setPaidAmount] = useState(0);
 	const [balanceAmount, setBalanceAmount] = useState(0);
 	const [errors, setErrors] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
+	const [personName, setPersonName] = useState('');
+	const [serviceName, setServiceName] = useState('');
 
 	const dispatch = useDispatch();
+
+	const getOrderDetails = async (orderNo) => {
+        try {
+            const result = await axios.get(`http://localhost:8080/order/getbyorderno/${orderNo}`);
+			
+            if (result?.data?.status === 200) {
+                setPersonName(result?.data?.data?.NewCustomer?.name);
+                setServiceName(result?.data?.data?.service_name);
+            }
+        } catch (error) {
+            console.error('Error fetching order details:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (OrderNo) { // Check if OrderNo is valid
+            getOrderDetails(OrderNo);
+        }
+    }, [OrderNo]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -1560,9 +1581,11 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 
 		const AddAccountAmount = {
 			payment_mode: formData?.paymethod,
-			cash: formData?.paymethod === "Cash" ? paidAmount : 0,
-			upi: formData?.paymethod === "Online" ? paidAmount : 0
-		}
+			amount: paidAmount,
+			order_no: OrderNo,
+			person_name:personName,
+			about_payment: serviceName
+		}	
 
 		if (!formData.netpayamt) {
 			errors.netpayamt = "Total Amount is required";

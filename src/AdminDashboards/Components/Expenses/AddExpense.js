@@ -10,6 +10,10 @@ import {
 } from "../../../Store/Actions/Dashboard/expenseActions";
 import { WaitLoader } from "../../Elements/WaitLoader";
 import { BarLoader, ClipLoader, RingLoader } from "react-spinners";
+import { API_URL } from "../../../config";
+import axios from "axios";
+import { AccountListing } from '../../../Store/Actions/Dashboard/AccountAction';
+
 
 const AddExpense = ({ setActiveAttendance }) => {
  
@@ -26,7 +30,7 @@ const AddExpense = ({ setActiveAttendance }) => {
   const fetchData= async ()=>{
     const transformedData = expensesHead.data.map(item => ({
       label: item.name,
-      value: item.id 
+      value: item.name 
     }));
     SetAllExpenseHead(transformedData);
   }
@@ -45,13 +49,14 @@ const AddExpense = ({ setActiveAttendance }) => {
   const [selectedPayment, setSelectedPayment] = useState(null);
 
   const [formData, setFormData] = useState({
-    expHead: "",
-    paymentMethod:  "",
+    about_payment: "",
+    payment_mode:  "",
     amount:  "",
-    personName:"",
+    person_name:"",
     date:  "",
-    remark:  "",
+    type_payment: 1
 });
+
 
 
 
@@ -73,15 +78,31 @@ const AddExpense = ({ setActiveAttendance }) => {
     { value: "Online", label: "Online" }
   ];
 
-  const GetSubmitAddExpense = () => {
+  const GetSubmitAddExpense = async () => {
     setLoading(true);
-    formData.expHead = selectedHeadExp.value;
-    formData.paymentMethod = selectedPayment.value;
-    dispatch(GetAddExpense(formData)).then(() => {
-      setFormData({});
-      setLoading(false);
-    });
-  };
+    try {
+        // Ensure formData is updated correctly
+        const dataToSubmit = {
+            ...formData,
+            about_payment: selectedHeadExp.value,
+            payment_mode: selectedPayment.value,
+        };
+
+        const response = await axios.post(`${API_URL}/api/add-balance`, dataToSubmit);
+        if (response.status === 200) {
+          dispatch(AccountListing());
+            setFormData({});
+        } 
+        // Optionally handle the response, e.g., show a success message
+
+        setFormData({}); // Clear form data after submission
+    } catch (error) {
+        console.error('Error adding expense:', error);
+        // Optionally handle the error, e.g., show an error message
+    } finally {
+        setLoading(false); // Ensure loading is reset in both success and error cases
+    }
+};
 
   useEffect(() => {
     dispatch(GetAllHeadExp());
@@ -139,7 +160,7 @@ const AddExpense = ({ setActiveAttendance }) => {
               <SelectBox
                 options={allExpenseHead}
                 setSelcted={setSelectedHeadExp}
-                initialValue={formData.expHead}
+                initialValue={formData.about_payment}
               />
             </div>
             <div className="d-flex flex-column   justify-content-center gap-1 w-100">
@@ -147,7 +168,7 @@ const AddExpense = ({ setActiveAttendance }) => {
               <SelectBox
                 options={PaymentOptions}
                 setSelcted={setSelectedPayment}
-                initialValue={formData.paymentMethod}
+                initialValue={formData.payment_mode}
               />
             </div>
             <div className="d-flex flex-column   justify-content-center gap-1 w-100">
@@ -166,8 +187,8 @@ const AddExpense = ({ setActiveAttendance }) => {
               <Input
                 type="text"
                 placeholder="Name"
-                name="personName"
-                value={formData.personName || ""}
+                name="person_name"
+                value={formData.person_name || ""}
                 onChange={(e) => HandleChange(e, 50)}
                 onKeyPress={handleKeyPress}
               />
