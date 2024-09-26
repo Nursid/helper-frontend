@@ -7,6 +7,8 @@ import StackBox from '../../Elements/StackBox';
 import { useUserRoleContext } from '../../../Context/RolesContext';
 import { useAuth } from '../../../Context/userAuthContext';
 import { AccountListing } from '../../../Store/Actions/Dashboard/AccountAction';
+import Switch from '@mui/material/Switch';
+import { ApprovePaymentRemarkModal } from '../../../Components/Modal';
 
 const TodaysReport = () => {
     const [selectedAttendance, setSelectedAttendance] = useState("All");
@@ -15,10 +17,21 @@ const TodaysReport = () => {
     const { userRole } = useUserRoleContext();
     const { currentUser } = useAuth();
     const [openingBalance, setOpeningBalance] = useState(0);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [amountId, setAmountId] = useState(false);
+    const [adminAprove, setAdminAprove] = useState(false);
+
+    const toggleModal = () => setModalOpen(!modalOpen)
 
     useEffect(() => {
         dispatch(AccountListing());
     }, [dispatch]);
+
+    const toggleApprove = (id, approve) => {
+        setAmountId(id);
+        setAdminAprove(!approve);
+        toggleModal();
+    }
 
     useEffect(() => {
         const totalPaidAmt = data?.reduce((acc, item) => acc + (item.type_payment === false ? (Number(item.amount) || 0) : 0), 0);
@@ -28,6 +41,7 @@ const TodaysReport = () => {
     }, [data]);
 
     const all_columns = [
+        { field: "_id", headerName: "ID", flex: 1, minWidth: 50 },
         { field: "date", headerName: "Date", flex: 1, minWidth: 50 },
         // { field: "order_no", headerName: "Order No", flex: 1, minWidth: 120 },
         { field: "person_name", headerName: "Party Name", flex: 1, minWidth: 120 },
@@ -36,7 +50,22 @@ const TodaysReport = () => {
         { field: "debit", headerName: "Amount Debit", flex: 1, minWidth: 120 },
         { field: "credit", headerName: "Amount Credit", flex: 1, minWidth: 120 },
         { field: "balance", headerName: "Balance", flex: 1, minWidth: 120 },
-        { field: "approve", headerName: "Approve", flex: 1, minWidth: 120 },
+        { field: "approve", headerName: "Approve", flex: 1, minWidth: 120,
+            renderCell: (params) => {
+            
+                return (
+                  <Switch
+                    checked={params.row.approve}
+                    onChange={(event) => {
+                      toggleApprove(params.row.id, !params.row.approve)             
+                    }}
+                    color="primary"
+                    size="small"
+                  />
+                )
+        }
+    },
+
         { field: "remark", headerName: "Remark", flex: 1, minWidth: 120 },
     ];
 
@@ -57,7 +86,7 @@ const TodaysReport = () => {
     
                         newData.push({
                             ...item,
-                            id: data.indexOf(item), // Use a unique ID if available
+                            _id: data.indexOf(item), // Use a unique ID if available
                             date: moment(item.date).format("DD-MM-YYYY"),
                             credit,
                             debit,
@@ -84,9 +113,17 @@ const TodaysReport = () => {
         </GridToolbarContainer>
     );
 
-    console.log(selectedAttendance)
     return (
         <Fragment>
+
+          {modalOpen &&  <ApprovePaymentRemarkModal
+            modalOpen={modalOpen}
+            toggleModal= {toggleModal}
+            id={amountId}
+            adminAprove={adminAprove}
+            AccountListing={AccountListing}
+            />
+          }
             <h5 className='pt-4 pb-3 px-4 text-white headingBelowBorder d-flex flex-nowrap' style={{ width: "fit-content" }}>
                 Payment Summary (Bank/Cash)
             </h5>

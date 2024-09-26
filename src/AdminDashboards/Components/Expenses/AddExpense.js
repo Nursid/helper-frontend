@@ -13,19 +13,17 @@ import { BarLoader, ClipLoader, RingLoader } from "react-spinners";
 import { API_URL } from "../../../config";
 import axios from "axios";
 import { AccountListing } from '../../../Store/Actions/Dashboard/AccountAction';
-
+import Swal from "sweetalert2";
 
 const AddExpense = ({ setActiveAttendance }) => {
- 
 
   const [Loading, setLoading] = useState(false);
   // all head of the expenses
   const expensesHead = useSelector((state) => state.GetAllHeadExpReducer);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const [allExpenseHead, SetAllExpenseHead]=useState({})
-
+  const [errors, setErrors]= useState([]);
 
   const fetchData= async ()=>{
     const transformedData = expensesHead.data.map(item => ({
@@ -35,13 +33,9 @@ const AddExpense = ({ setActiveAttendance }) => {
     SetAllExpenseHead(transformedData);
   }
 
-    useEffect(()=>{
-      fetchData()
-    },[expensesHead.data])
-
-
-
-
+  useEffect(()=>{
+    fetchData()
+  },[expensesHead.data])
 
 
   // data states
@@ -54,7 +48,7 @@ const AddExpense = ({ setActiveAttendance }) => {
     amount:  "",
     person_name:"",
     date:  "",
-    type_payment: 1
+    type_payment: true
 });
 
 
@@ -78,30 +72,75 @@ const AddExpense = ({ setActiveAttendance }) => {
     { value: "Online", label: "Online" }
   ];
 
-  const GetSubmitAddExpense = async () => {
+  const GetSubmitAddExpense = async (e) => {
     setLoading(true);
-    try {
+
+    e.preventDefault();
+
+    let errors = {};
+
+
+    if (!selectedHeadExp?.value) {
+        errors.selectedHeadExp = "Expense Head is required";
+      }
+
+      if (!selectedPayment?.value) {
+        errors.selectedPayment = "Payment Method is required";
+      }
+
+      if (!formData?.amount) {
+        errors.amount = "Amount is required";
+      } 
+      if (!formData?.person_name) {
+        errors.person_name = "personName is required";
+      } 
+      if (!formData?.date) {
+        errors.date = "date is required";
+      } 
+
+      if (errors && Object.keys(errors).length === 0) {
+        console.log("Form submitted successfully!",);
+        } else {
+        // Form is invalid, display validation errors
+        console.log("Validation Errors:", errors);
+        setErrors(errors);
+        setLoading(false);
+        return false;
+        }
+
+  
         // Ensure formData is updated correctly
         const dataToSubmit = {
             ...formData,
             about_payment: selectedHeadExp.value,
             payment_mode: selectedPayment.value,
+            type_payment: true
         };
-
-        const response = await axios.post(`${API_URL}/api/add-balance`, dataToSubmit);
-        if (response.status === 200) {
-          dispatch(AccountListing());
-            setFormData({});
-        } 
-        // Optionally handle the response, e.g., show a success message
-
-        setFormData({}); // Clear form data after submission
-    } catch (error) {
-        console.error('Error adding expense:', error);
-        // Optionally handle the error, e.g., show an error message
-    } finally {
-        setLoading(false); // Ensure loading is reset in both success and error cases
-    }
+        try {
+          const response = await axios.post(`${API_URL}/api/add-balance`, dataToSubmit);
+          if (response.status === 200) {
+              dispatch(AccountListing());
+              setErrors([]);
+              setSelectedHeadExp(null)
+              setSelectedPayment(null)
+              setFormData({}); 
+              Swal.fire(
+                'Successfully!',
+                 'Expense Added Successfully!',
+                'success'
+            )
+          }
+      } catch (error) {
+          console.error('Error adding expense:', error);
+          Swal.fire(
+            'Error!',
+             'Error adding expense',
+            'error'
+        )
+          // Optionally handle the error, e.g., show an error message
+      } finally {
+          setLoading(false); // Ensure loading is reset in both success and error cases
+      }
 };
 
   useEffect(() => {
@@ -120,24 +159,6 @@ const AddExpense = ({ setActiveAttendance }) => {
   return (
     <Fragment>
       <WaitLoader loading={Loading} offset={[50, 70]} />
-      {/* <DashHeader /> */}
-      {/* <h5
-        className="pt-4 pb-3 px-4 text-white headingBelowBorder d-flex  flex-nowrap"
-        style={{ width: "fit-content" }}
-      >
-        Add Expense{" "}
-      </h5>
-      <div className="AttendenceNavBtn w-100 py-2 px-4 gap-3">
-        <div
-          className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `}
-          onClick={() => {
-            setActiveAttendance("report");
-          }}
-          style={{ minWidth: "15rem", maxWidth: "15rem" }}
-        >
-          Transaction Report
-        </div>
-      </div> */}
 
       <div className='flex'>
             <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}> Expense Head List</h4>
@@ -156,23 +177,33 @@ const AddExpense = ({ setActiveAttendance }) => {
         <div className="text-blue bg-primary card shadow-lg border-0 MainAttendenceReportForm mt-3 p-4  gap-3">
           <div className=" mt-3 d-flex flex-nowrap ReportFormWhole w-100">
             <div className="d-flex flex-column justify-content-center gap-1 w-100">
-              <h6>Expense Head</h6>
+              <h6>Expense Head <span style={{color: "red"}}>*</span></h6>
               <SelectBox
                 options={allExpenseHead}
                 setSelcted={setSelectedHeadExp}
-                initialValue={formData.about_payment}
+                initialValue={selectedHeadExp?.value}
               />
+              {errors?.selectedHeadExp && (
+                        <span className='text-danger'>
+                            {errors?.selectedHeadExp}
+                        </span>
+                    )}
             </div>
             <div className="d-flex flex-column   justify-content-center gap-1 w-100">
-              <h6>Payment Method</h6>
+              <h6>Payment Method <span style={{color: "red"}}>*</span></h6>
               <SelectBox
                 options={PaymentOptions}
                 setSelcted={setSelectedPayment}
-                initialValue={formData.payment_mode}
+                initialValue={selectedPayment?.value}
               />
+              {errors?.selectedPayment && (
+                        <span className='text-danger'>
+                            {errors?.selectedPayment}
+                        </span>
+                    )}
             </div>
             <div className="d-flex flex-column   justify-content-center gap-1 w-100">
-              <h6>Enter Amount</h6>
+              <h6>Enter Amount <span style={{color: "red"}}>*</span></h6>
               <Input
               type="number"
                 placeholder="Amount"
@@ -181,9 +212,14 @@ const AddExpense = ({ setActiveAttendance }) => {
                 value={formData.amount || ""}
                 
               />
+              {errors?.amount && (
+                        <span className='text-danger'>
+                            {errors?.amount}
+                        </span>
+                    )}
             </div>
             <div className="d-flex flex-column   justify-content-center gap-1 w-100">
-              <h6>Person Name</h6>
+              <h6>Person Name <span style={{color: "red"}}>*</span></h6>
               <Input
                 type="text"
                 placeholder="Name"
@@ -192,15 +228,25 @@ const AddExpense = ({ setActiveAttendance }) => {
                 onChange={(e) => HandleChange(e, 50)}
                 onKeyPress={handleKeyPress}
               />
+              {errors?.person_name && (
+                        <span className='text-danger'>
+                            {errors?.person_name}
+                        </span>
+                    )}
             </div>
             <div className="d-flex flex-column justify-content-center gap-1 w-100">
-              <h6>Date</h6>
+              <h6>Date <span style={{color: "red"}}>*</span></h6>
               <Input
                 type="date"
                 name="date"
                 onChange={(e) => HandleChange(e, 50)}
                 value={formData.date || ""}
               />
+                {errors?.date && (
+                        <span className='text-danger'>
+                            {errors?.date}
+                        </span>
+                    )}
             </div>
             <div className="d-flex flex-column justify-content-center gap-1 w-100">
               <h6>Remark</h6>

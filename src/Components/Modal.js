@@ -2554,3 +2554,66 @@ export const ServiceProviderRemarkModal = ({superProviderRemarkModalOpen, superP
 		</Modal>
 	);
 };
+
+
+export const ApprovePaymentRemarkModal = ({ modalOpen, toggleModal, id, adminAprove, AccountListing }) => {
+    const [remark, setRemark] = useState('');
+    const dispatch = useDispatch();
+
+    const handleSubmit = async () => {
+        const formData = {
+            remark: remark,
+            approve: !adminAprove,
+        };
+        const apiUrl = `${API_URL}/api/edit-balance/${id}`;
+
+        try {
+            const response = await axios.post(apiUrl, formData);
+            if (response.status === 200) {
+                toggleModal();
+                Swal.fire('Successfully!', 'Payment Verified Successfully', 'success');
+                dispatch(AccountListing());
+            } else {
+                Swal.fire({ title: 'Failed to add, try again', icon: "error" });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({ title: 'An error occurred', icon: "error" });
+        }
+    };
+
+    return (
+        <Modal className="modal-dialog-centered modal-lg" isOpen={modalOpen} toggle={toggleModal}>
+            <ModalHeader toggle={toggleModal}>
+                Super Admin Payment Remark
+            </ModalHeader>
+            <ModalBody>
+                <Row>
+                    <Col xs={12}>
+                        <div className="form-outline mb-2">
+                            <label className="form-label" htmlFor="serviceRemark">
+							Super Admin Payment Remark
+                            </label>
+                            <Input
+                                type="textarea"
+                                onChange={(e) => setRemark(e.target.value)}
+                                className="w-100"
+                                rows="6"
+                                placeholder="Super Admin Remark"
+                            />
+                        </div>
+
+                        <div className="d-flex justify-content-end">
+                            <Button color="success" onClick={handleSubmit} style={{ marginRight: '10px' }}>
+                                Save
+                            </Button>
+                            <Button color="danger" onClick={toggleModal}>
+                                Close
+                            </Button>
+                        </div>
+                    </Col>
+                </Row>
+            </ModalBody>
+        </Modal>
+    );
+};
