@@ -33,17 +33,19 @@ const Cashbook = () => {
     const dispatch = useDispatch();
     const [totalCash, setTotalCash]= useState('');
     const [totalUpi, setTotalUpi] = useState('');
-    const [selectedFilter, setSelectedFilter] = useState('1');
+    const [selectedFilter, setSelectedFilter] = useState(1);
     const DataWithID = (data) => {
         const NewData = []
         if (data !== undefined) {
             for (let item of data) {
-                NewData.push({ ...item, _id: data.indexOf(item), date: moment(item.createdAt).format("DD-MM-YYYY") })
+              if(!item.type_payment){
+                NewData.push({ ...item, _id: data.indexOf(item)})
+              }
             }
         } else {
             NewData.push({ id: 0 })
         }
-        return NewData
+        return NewData.reverse()
     }
 
     // const getRowsFromCurrentPage = ({ apiRef }) =>
@@ -96,19 +98,18 @@ const Cashbook = () => {
     };
 
     const column = [
-        { field: "date",headerName: "Date", minWidth: 150},
-        { field: "payment_mode",headerName: "Payment Mode", minWidth: 150},
-        { field: "transection_id",headerName: "Transaction Id", minWidth: 150},
-        { field: "upi",headerName: "UPI", minWidth: 200},
-        { field: "cash",headerName: "Cash", minWidth: 200},
-        {
-            field: "status",
-            minWidth: 150,
-            headerName: "Status",
-            renderCell: (params) => (
-                <Button className="text-white bg-green">Approved</Button>
-            ),
-        },
+        { field: "date",headerName: "Date", minWidth: 150, flex:1},
+        { field: "payment_mode",headerName: "Payment Mode", flex:1},
+        { field: "transection_id",headerName: "Transaction Id", flex:1},
+        { field: "amount",headerName: "Amount", flex: 1},
+        // {
+        //     field: "status",
+        //     minWidth: 150,
+        //     headerName: "Status",
+        //     renderCell: (params) => (
+        //         <Button className="text-white bg-green">Approved</Button>
+        //     ),
+        // },
         {
             field: "action ", flex: 1, headerName: "Action", minWidth: 50, renderCell: (params) => (
                 <div className='d-flex align-items-center gap-2 justify-content-start'>
@@ -132,15 +133,11 @@ const Cashbook = () => {
             });
             const total_balance_data = await response.json();
             setTotalCash(total_balance_data.data[0].total_cash);
-            setTotalUpi(total_balance_data.data[0].total_upi);
+            setTotalUpi(total_balance_data.data[0].total_online);
           } catch (error) {
             console.log(error)
           }
         };
-
-
-
-       
 
         const handleFilterChange = (filterValue) => {
             setSelectedFilter(filterValue);

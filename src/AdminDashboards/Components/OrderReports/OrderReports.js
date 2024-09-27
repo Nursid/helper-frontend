@@ -150,10 +150,7 @@ export default function OrderReports({reportType}) {
           const response = await axios.get(API_URL + '/service-provider/getall')
           
           if (response.status === 200) {
-            const transformedData = response.data.data
-                .filter(item => item.block_id === 0) // Filter where block_id is false
-                .map(item => ({ label: item.name, value: item.name })); 
-                
+            const transformedData = response.data.data.map(item => ({ label: item.name, value: item.name })); 
               setAllServiceProvider(transformedData);
           }
         }

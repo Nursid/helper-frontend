@@ -37,7 +37,8 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     netpayamt: orderData?.netpayamt || '',
     piadamt: orderData?.piadamt || '',
     totalamt: orderData?.totalamt || '',
-    allot_time_range: orderData?.allot_time_range || ''
+    allot_time_range: orderData?.allot_time_range || '',
+    sueadmin_remark: orderData?.sueadmin_remark || ''
   });
 
   const [allServices, setAllServices] = useState([]);
@@ -270,6 +271,14 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
             <Input name="pincode" type="text" onChange={(e) => handleInputChange(e, 6)} value={formData.pincode} placeholder="Enter Your ZipCode" />
           </FormGroup>
         </Col>
+
+     {role === 'super' &&    <Col md={6}>
+          <FormGroup>
+            <Label>Super Admin Remark</Label>
+            <Input name="sueadmin_remark" onChange={(e) => handleInputChange(e, 200)} value={formData.sueadmin_remark} placeholder="Super admin remark"  />
+          </FormGroup>
+        </Col>
+      }
         <h2>Billing Details</h2>
         <Col md={6}>
           <FormGroup>

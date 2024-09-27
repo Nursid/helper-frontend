@@ -500,9 +500,10 @@ const AdminDashboard = () => {
   }
 
   const check_in = async (order_no) => {
-       
+    
       const formData = {
-        pending: 4
+        pending: 4,
+        checkintime: moment(new Date()).format('DD/MM/YYYY, h:mm A')
       }
       const apiUrl =  `${API_URL}/order/assign/${order_no}`;;
       // Make a POST request using Axios
@@ -564,7 +565,7 @@ const AdminDashboard = () => {
             onClick={clickHandler} // Only set onClick if there's a clickHandler
           >
             {(label !=='Check In') ? 
-             <Tooltip title={moment(params.row.updatedAt).format('Do MMMM YYYY, h:mm A')}>
+             <Tooltip title={moment(params.row.updatedAt).format('DD/MM/YYYY, h:mm A')}>
              {label}
              </Tooltip> : label}
           </p>
@@ -573,6 +574,8 @@ const AdminDashboard = () => {
       minWidth: 150,
       editable: false,
     },
+    { field: "checkintime", headerName: "Check In", minWidth: 220,  editable: false,  },
+    { field: "checkouttime", headerName: "Check Out", minWidth: 220,  editable: false,  },
     {
         field: "action",
         headerName: "Action",

@@ -41,7 +41,6 @@ const TodaysReport = () => {
     }, [data]);
 
     const all_columns = [
-        { field: "_id", headerName: "ID", flex: 1, minWidth: 50 },
         { field: "date", headerName: "Date", flex: 1, minWidth: 50 },
         // { field: "order_no", headerName: "Order No", flex: 1, minWidth: 120 },
         { field: "person_name", headerName: "Party Name", flex: 1, minWidth: 120 },
