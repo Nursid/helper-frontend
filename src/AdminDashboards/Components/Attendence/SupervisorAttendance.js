@@ -9,6 +9,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { AttendanceAction } from '../../../Store/Actions/Dashboard/AttendanceAction/SupervisorAttendance';
 import { useAuth } from '../../../Context/userAuthContext';
 import Swal from 'sweetalert2';
+import { Button } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { SupervisorLeaveRemarkModal } from '../../../Components/Modal';
 
 const SupervisorAttendance = () => {
     const { UserRoleCalled } = useUserRoleContext();
@@ -16,11 +19,14 @@ const SupervisorAttendance = () => {
     const { data, isSuccess } = useSelector(state => state.AttendanceReducers);
     const dispatch = useDispatch();
     const [attendanceData, setAttendanceData] = useState([{id: 0}]);
+    const [modalOpen, setModalOpen] = useState(false)
 
     useEffect(() => {
         UserRoleCalled();
         dispatch(AttendanceAction());
     }, []);
+
+    const toggleModal = () => setModalOpen(!modalOpen)
 
     const role = currentUser && currentUser.role ? currentUser.role : currentUser && currentUser.designation.name ? currentUser.designation.name : ""
 
@@ -61,6 +67,7 @@ const SupervisorAttendance = () => {
                 // Check for the different statuses
                 const Working = status === "Working";
                 const Present = status === "Present";
+                const Leave = status === "Leave";
         
                 // Determine the action label and handler based on the status
                 let label = '';
@@ -72,7 +79,13 @@ const SupervisorAttendance = () => {
                 } else if (Working) {
                   label = 'Check Out';
                   clickHandler = () => onAttendance(params.row.status, params.row.emp_id)
-                } else {
+                } 
+                else if (Leave) {
+                  label = 'Leave';
+                  clickHandler = null;
+                } 
+                
+                else {
                   label = 'Done';
                   clickHandler = null; // Disable clicking for completed orders
                 }
@@ -93,17 +106,39 @@ const SupervisorAttendance = () => {
                 minWidth: 150,
                 editable: true,
               },
-        { field: "status", headerName: "Attendance Mark", flex: 1, minWidth: 120, editable: true },
-        { field: "name", headerName: "Supervisor Name", flex: 1, minWidth: 120, editable: true },
-        { field: "in_date", headerName: "In Date", flex: 1, minWidth: 120, editable: true },
-        { field: "check_in", headerName: "Check In", minWidth: 80, flex: 1, editable: true },
-        { field: "out_date", headerName: "Out Date", minWidth: 80, flex: 1, editable: true },
-        { field: "check_out", headerName: "Check Out", flex: 1, minWidth: 120, editable: true },
-        { field: "createdby", headerName: "Created By", flex: 1, minWidth: 120, editable: true },
+        { field: "status", headerName: "Attendance Mark", flex: 1, minWidth: 120, editable: false },
+        { field: "name", headerName: "Supervisor Name", flex: 1, minWidth: 120, editable: false },
+        { field: "in_date", headerName: "In Date", flex: 1, minWidth: 120, editable: false },
+        { field: "check_in", headerName: "Check In", minWidth: 80, flex: 1, editable: false },
+        { field: "out_date", headerName: "Out Date", minWidth: 80, flex: 1, editable: false },
+        { field: "check_out", headerName: "Check Out", flex: 1, minWidth: 120, editable: false },
+        { field: "createdby", headerName: "Created By", flex: 1, minWidth: 120, editable: false },
+        { field: "message", headerName: "Remark", flex: 1, minWidth: 120, editable: false },
+        { field: "action", headerName: "Action", flex: 1, minWidth: 120, editable: false,
+
+          renderCell: (params) => {
+                return (
+                  <div className="d-flex gap-2">
+                  <Button variant='contained' color='primary' 
+                  onClick={toggleModal}
+                      style={{minWidth: "40px", maxWidth: "40px"}}
+                      ><LogoutIcon /></Button>
+                   </div>   
+                )
+            }
+         },
     ];
 
     return (
         <Fragment>
+
+            <SupervisorLeaveRemarkModal 
+            modalOpen={modalOpen}
+            toggleModal={toggleModal} 
+            
+            
+            />
+
             <div className='p-3'>
                 <h3 className='headingBelowBorder py-3 text-white' style={{ maxWidth: "fit-content" }}>Supervisor Attendance Listing</h3>
                 <AdminDataTable rows={attendanceData} columns={columns} CustomToolbar={GridToolbar} />
