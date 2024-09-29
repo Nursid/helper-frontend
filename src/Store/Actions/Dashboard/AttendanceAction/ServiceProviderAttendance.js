@@ -33,11 +33,7 @@ export const ServiceProviderAttendancaAction = () => {
                         return { id: employee.id, name: employee.name, servp_id: employee.id };
                     }
 
-                });
-               
-
-                console.log("combinedData------",combinedData)
-                
+                }); 
 
                 dispatch({ type: constant.SERATTENDANCE_API_SUCCESS, payload: combinedData });
             }

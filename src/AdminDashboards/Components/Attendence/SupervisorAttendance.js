@@ -20,13 +20,17 @@ const SupervisorAttendance = () => {
     const dispatch = useDispatch();
     const [attendanceData, setAttendanceData] = useState([{id: 0}]);
     const [modalOpen, setModalOpen] = useState(false)
-
+    const [empId, setEmpId] = useState('')
     useEffect(() => {
         UserRoleCalled();
         dispatch(AttendanceAction());
     }, []);
 
     const toggleModal = () => setModalOpen(!modalOpen)
+    const addLeave = (empId) => {
+      setEmpId(empId)
+      toggleModal()
+    }
 
     const role = currentUser && currentUser.role ? currentUser.role : currentUser && currentUser.designation.name ? currentUser.designation.name : ""
 
@@ -83,8 +87,7 @@ const SupervisorAttendance = () => {
                 else if (Leave) {
                   label = 'Leave';
                   clickHandler = null;
-                } 
-                
+                }   
                 else {
                   label = 'Done';
                   clickHandler = null; // Disable clicking for completed orders
@@ -120,7 +123,7 @@ const SupervisorAttendance = () => {
                 return (
                   <div className="d-flex gap-2">
                   <Button variant='contained' color='primary' 
-                  onClick={toggleModal}
+                  onClick={() => addLeave(params.row.emp_id)}
                       style={{minWidth: "40px", maxWidth: "40px"}}
                       ><LogoutIcon /></Button>
                    </div>   
@@ -135,8 +138,9 @@ const SupervisorAttendance = () => {
             <SupervisorLeaveRemarkModal 
             modalOpen={modalOpen}
             toggleModal={toggleModal} 
-            
-            
+            role={role}
+            empId={empId}
+            AttendanceAction={AttendanceAction}
             />
 
             <div className='p-3'>

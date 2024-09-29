@@ -2619,64 +2619,248 @@ export const ApprovePaymentRemarkModal = ({ modalOpen, toggleModal, id, adminApr
 };
 
 
-export const SupervisorLeaveRemarkModal = ({ modalOpen, toggleModal, id, adminAprove, AccountListing }) => {
+export const SupervisorLeaveRemarkModal = ({ modalOpen, toggleModal, empId, role, AttendanceAction }) => {
     const [message, setMessage] = useState('');
     const dispatch = useDispatch();
+	const [type, setType] = useState("");
+	const [errors, setErrors]= useState([]);
+	const [isLoading, setIsLoading] = useState(false)
+	const [allType, setAllType]=useState([
+        {
+            label: 'Leave',
+            value: 'Leave',
+        },
+        {
+            label: 'Week Off',
+            value: 'Week Off',
+        },
+    ]);
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+
+		setIsLoading(true)
+
+        e.preventDefault();
+        let errors = {};
+
+		if (!type.value) {
+            errors.type = "Leave type is required";
+        }
+		if (!message) {
+            errors.message = "Remark is required";
+        }
+
+        if (errors && Object.keys(errors).length === 0) {
+			// Form is valid, handle form submission here
+			console.log("Form submitted successfully!",);
+		  } else {
+			// Form is invalid, display validation errors
+			console.log("Validation Errors:", errors);
+			setErrors(errors);
+			setIsLoading(false)
+			return false;
+		  }
+		  
         const formData = {
             message: message,
-            status: 'Leave',
+            status: type.value,
 			in_date: new Date().toISOString().split('T')[0],
-			out_date: new Date().toISOString().split('T')[0]
+			emp_id: empId,
+            createdby: role
         };
-        // const apiUrl = `${API_URL}/api/edit-balance/${id}`;
+        const apiUrl = `${API_URL}/attendance/supervisor/leave`;
 
-        // try {
-        //     const response = await axios.post(apiUrl, formData);
-        //     if (response.status === 200) {
-        //         toggleModal();
-        //         Swal.fire('Successfully!', 'Payment Verified Successfully', 'success');
-        //         dispatch(AccountListing());
-        //     } else {
-        //         Swal.fire({ title: 'Failed to add, try again', icon: "error" });
-        //     }
-        // } catch (error) {
-        //     console.error('Error:', error);
-        //     Swal.fire({ title: 'An error occurred', icon: "error" });
-        // }
+        try {
+            const response = await axios.post(apiUrl, formData);
+            if (response.status === 200) {
+                toggleModal();
+                Swal.fire('Successfully!', response.data.message, 'success');
+                dispatch(AttendanceAction());
+            } else {
+                Swal.fire({ title: 'Failed to add, try again', icon: "error" });
+            }
+			setIsLoading(false)
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({ title: 'An error occurred', icon: "error" });
+			setIsLoading(false)
+        }
     };
 
     return (
         <Modal className="modal-dialog-centered modal-lg" isOpen={modalOpen} toggle={toggleModal}>
             <ModalHeader toggle={toggleModal}>
-                Reason for Leave
+                Add Leave
             </ModalHeader>
             <ModalBody>
                 <Row>
+
+					<Col md={12}>
+						<FormGroup>
+						<Label for="first_name">Leave Type <span style={{color: "red"}}>*</span></Label>
+						<SelectBox options={allType} setSelcted={setType} initialValue={type} />
+							{errors?.type && (
+						<span className='validationError'>
+							{errors?.type}
+						</span>
+					)}
+				
+						</FormGroup>
+					</Col>
+
                     <Col xs={12}>
-                        <div className="form-outline mb-2">
-                            <label className="form-label" htmlFor="serviceRemark">
-							Reason for Leave
-                            </label>
+					<FormGroup>
+					<Label for="first_name">Reason for Leave<span style={{color: "red"}}>*</span></Label>
                             <Input
                                 type="textarea"
                                 onChange={(e) => setMessage(e.target.value)}
                                 className="w-100"
-                                rows="6"
+								rows="6"
                                 placeholder="Write your reason..."
                             />
-                        </div>
-
+							{errors?.message && (
+								<span className='validationError'>
+									{errors?.message}
+								</span>
+							)}
+							</FormGroup>
+					</Col>
+					<Col xs={12}> 
                         <div className="d-flex justify-content-end">
-                            <Button color="success" onClick={handleSubmit} style={{ marginRight: '10px' }}>
+                            <Button color="success" onClick={handleSubmit}
+							disabled={isLoading}
+							style={{ marginRight: '10px' }}>
                                 Save
                             </Button>
                             <Button color="danger" onClick={toggleModal}>
                                 Close
                             </Button>
                         </div>
-                    </Col>
+				    </Col>
+                </Row>
+            </ModalBody>
+        </Modal>
+    );
+};
+
+export const ServiceProviderLeaveRemarkModal = ({ modalOpen, toggleModal, empId, role, ServiceProviderAttendancaAction }) => {
+    const [message, setMessage] = useState('');
+    const dispatch = useDispatch();
+	const [type, setType] = useState("");
+	const [errors, setErrors]= useState([]);
+	const [isLoading, setIsLoading] = useState(false)
+	const [allType, setAllType]=useState([
+        {
+            label: 'Leave',
+            value: 'Leave',
+        },
+        {
+            label: 'Week Off',
+            value: 'Week Off',
+        },
+    ]);
+
+    const handleSubmit = async (e) => {
+
+		setIsLoading(true)
+
+        e.preventDefault();
+        let errors = {};
+
+		if (!type.value) {
+            errors.type = "Leave type is required";
+        }
+		if (!message) {
+            errors.message = "Remark is required";
+        }
+
+        if (errors && Object.keys(errors).length === 0) {
+			// Form is valid, handle form submission here
+			console.log("Form submitted successfully!",);
+		  } else {
+			// Form is invalid, display validation errors
+			console.log("Validation Errors:", errors);
+			setErrors(errors);
+			setIsLoading(false)
+			return false;
+		  }
+		  
+        const formData = {
+            message: message,
+            status: type.value,
+			in_date: new Date().toISOString().split('T')[0],
+			servp_id: empId,
+            createdby: role
+        };
+        const apiUrl = `${API_URL}/attendance/service-provider/leave`;
+
+        try {
+            const response = await axios.post(apiUrl, formData);
+            if (response.status === 200) {
+                toggleModal();
+                Swal.fire('Successfully!', response.data.message, 'success');
+                dispatch(ServiceProviderAttendancaAction());
+            } else {
+                Swal.fire({ title: 'Failed to add, try again', icon: "error" });
+            }
+			setIsLoading(false)
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({ title: 'An error occurred', icon: "error" });
+			setIsLoading(false)
+        }
+    };
+
+    return (
+        <Modal className="modal-dialog-centered modal-lg" isOpen={modalOpen} toggle={toggleModal}>
+            <ModalHeader toggle={toggleModal}>
+                Add Leave
+            </ModalHeader>
+            <ModalBody>
+                <Row>
+
+					<Col md={12}>
+						<FormGroup>
+						<Label for="first_name">Leave Type <span style={{color: "red"}}>*</span></Label>
+						<SelectBox options={allType} setSelcted={setType} initialValue={type} />
+							{errors?.type && (
+						<span className='validationError'>
+							{errors?.type}
+						</span>
+					)}
+				
+						</FormGroup>
+					</Col>
+
+                    <Col xs={12}>
+					<FormGroup>
+					<Label for="first_name">Reason for Leave<span style={{color: "red"}}>*</span></Label>
+                            <Input
+                                type="textarea"
+                                onChange={(e) => setMessage(e.target.value)}
+                                className="w-100"
+								rows="6"
+                                placeholder="Write your reason..."
+                            />
+							{errors?.message && (
+								<span className='validationError'>
+									{errors?.message}
+								</span>
+							)}
+							</FormGroup>
+					</Col>
+					<Col xs={12}> 
+                        <div className="d-flex justify-content-end">
+                            <Button color="success" onClick={handleSubmit} style={{ marginRight: '10px' }}
+							disabled={isLoading}
+							>
+                                Save
+                            </Button>
+                            <Button color="danger" onClick={toggleModal}>
+                                Close
+                            </Button>
+                        </div>
+				    </Col>
                 </Row>
             </ModalBody>
         </Modal>

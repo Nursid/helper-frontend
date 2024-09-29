@@ -12,6 +12,10 @@ import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../../Context/userAuthContext';
 import { ServiceProviderAttendancaAction } from '../../../Store/Actions/Dashboard/AttendanceAction/ServiceProviderAttendance';
+import { Button } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { ServiceProviderLeaveRemarkModal } from '../../../Components/Modal';
+
 
 const ServiceProviderAttendance = () => {
     const { UserRoleCalled } = useUserRoleContext();
@@ -19,7 +23,8 @@ const ServiceProviderAttendance = () => {
     const dispatch = useDispatch();
     const [attendanceData, setAttendanceData] = useState([{id: 0}]);
     const { currentUser, setCurrentUser } = useAuth();
-
+    const [modalOpen, setModalOpen] = useState(false)
+    const [empId, setEmpId] = useState('')
 
     useEffect(() => {
         UserRoleCalled();
@@ -31,6 +36,12 @@ const ServiceProviderAttendance = () => {
             setAttendanceData(data);
         }
     }, [data, isSuccess]);
+
+    const toggleModal = () => setModalOpen(!modalOpen)
+    const addLeave = (empId) => {
+      setEmpId(empId)
+      toggleModal()
+    }
 
      const role = currentUser && currentUser.role ? currentUser.role : currentUser && currentUser.designation.name ? currentUser.designation.name : ""
 
@@ -104,10 +115,31 @@ const ServiceProviderAttendance = () => {
         { field: "out_date", headerName: "Out Date", minWidth: 80, flex: 1, editable: true },
         { field: "check_out", headerName: "Check Out", flex: 1, minWidth: 120, editable: true },
         { field: "createdby", headerName: "Created By", flex: 1, minWidth: 120, editable: true },
+        { field: "action", headerName: "Action", flex: 1, minWidth: 120, editable: false,
+
+          renderCell: (params) => {
+                return (
+                  <div className="d-flex gap-2">
+                  <Button variant='contained' color='primary' 
+                  onClick={() => addLeave(params.row.servp_id)}
+                      style={{minWidth: "40px", maxWidth: "40px"}}
+                      ><LogoutIcon /></Button>
+                   </div>   
+                )
+            }
+         },
     ];
 
     return (
         <Fragment>
+           <ServiceProviderLeaveRemarkModal 
+            modalOpen={modalOpen}
+            toggleModal={toggleModal} 
+            role={role}
+            empId={empId}
+            ServiceProviderAttendancaAction={ServiceProviderAttendancaAction}
+            />
+
             {/* <DashHeader /> */}
             <div className='p-3'>
                 <h3 className='headingBelowBorder py-3 text-white' style={{ maxWidth: "fit-content" }} >ServiceProvider Attendence Listing</h3>
