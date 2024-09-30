@@ -2634,6 +2634,10 @@ export const SupervisorLeaveRemarkModal = ({ modalOpen, toggleModal, empId, role
             label: 'Week Off',
             value: 'Week Off',
         },
+        {
+            label: 'Absent',
+            value: 'Absent',
+        },
     ]);
 
     const handleSubmit = async (e) => {
@@ -2757,6 +2761,10 @@ export const ServiceProviderLeaveRemarkModal = ({ modalOpen, toggleModal, empId,
         {
             label: 'Week Off',
             value: 'Week Off',
+        },
+		{
+            label: 'Absent',
+            value: 'Absent',
         },
     ]);
 

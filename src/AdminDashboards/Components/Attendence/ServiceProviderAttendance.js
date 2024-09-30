@@ -115,6 +115,7 @@ const ServiceProviderAttendance = () => {
         { field: "out_date", headerName: "Out Date", minWidth: 80, flex: 1, editable: true },
         { field: "check_out", headerName: "Check Out", flex: 1, minWidth: 120, editable: true },
         { field: "createdby", headerName: "Created By", flex: 1, minWidth: 120, editable: true },
+        { field: "message", headerName: "Remark", flex: 1, minWidth: 120, editable: false },
         { field: "action", headerName: "Action", flex: 1, minWidth: 120, editable: false,
 
           renderCell: (params) => {
@@ -129,6 +130,8 @@ const ServiceProviderAttendance = () => {
             }
          },
     ];
+
+
 
     return (
         <Fragment>

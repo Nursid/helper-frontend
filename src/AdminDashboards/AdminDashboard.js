@@ -574,6 +574,79 @@ const AdminDashboard = () => {
       minWidth: 150,
       editable: false,
     },
+    // {
+    //     field: "Status",
+    //     headerName: "Status",
+    //     renderCell: (params) => {
+    //       const { pending, order_no, piadamt, totalamt, checkintime, checkouttime  } = params.row;
+      
+    //       const isPending = pending === "Pending" || pending === "Due" || pending === "Hold";
+    //       const isCompleted = pending === "Completed";
+          
+    //       const isCancelled = pending === "Cancel";
+  
+    //       // Determine the action label and handler based on the status
+    //       let checkIN = '';
+    //       let checkOut = '';
+    //       let clickHandler = null;
+      
+    //       if (isPending) {
+    //         checkIN = 'Check In';
+    //         clickHandler = () => check_in(order_no);
+    //       } else if (isCancelled) {
+    //         checkIN = 'Cancelled';
+    //         clickHandler = null; // Disable clicking for cancelled orders
+    //       } 
+    //        else if (checkintime) {
+    //         checkOut = checkintime;
+    //         clickHandler = null
+    //       }
+    //       else {
+    //         checkIN = checkintime;
+    //         clickHandler = null; // Disable clicking for completed orders
+    //       }
+
+
+    //       if (!isCompleted) {
+    //         checkOut = 'Check Out';
+    //         clickHandler = () => OrderComplete(order_no, piadamt, totalamt);
+    //       } else{
+    //         checkOut = checkouttime;
+    //         clickHandler = null; // Disable clicking for completed orders
+    //       }
+
+         
+         
+    //       return (
+    //         <div className="d-flex flex-row"> 
+    //             <p
+    //               className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"
+    //               style={{
+    //                 borderRadius: "5px",
+    //                 cursor: clickHandler ? "pointer" : "default", 
+    //                 margin: 0,
+    //               }}
+    //               onClick={clickHandler}
+    //             >
+    //             {checkIN}
+    //             </p>
+    //             <p
+    //               className="text-danger p-2 bg-light d-flex justify-content-center align-items-center me-3"
+    //               style={{
+    //                 borderRadius: "5px",
+    //                 cursor: clickHandler ? "pointer" : "default", 
+    //                 margin: 0,
+    //               }}
+    //               onClick={clickHandler}
+    //             >
+    //              {checkOut}
+    //             </p>
+    //         </div>
+    //       );
+    //     },
+    //     minWidth: 300,
+    //     editable: false,
+    // },
     { field: "checkintime", headerName: "Check In", minWidth: 220,  editable: false,  },
     { field: "checkouttime", headerName: "Check Out", minWidth: 220,  editable: false,  },
     {
@@ -595,12 +668,12 @@ const AdminDashboard = () => {
         minWidth: 150,
         editable: false,
     },
+    { field: "name", headerName: "Customer Name",minWidth: 150,  editable: false },
+    { field: "alterno", headerName: "Alternate No",minWidth: 150,  editable: false },
     { field: "member_id", headerName: "Member ID", minWidth: 120,  editable: false,  },
     { field: "order_no", headerName: "Order Number", minWidth: 120,  editable: false },
-    { field: "name", headerName: "Customer Name",minWidth: 150,  editable: false },
     { field: "mobileno", headerName: "Mobile",minWidth: 150,  editable: false },
     { field: "service_address", headerName: "Service Address",minWidth: 150,  editable: false },
-    { field: "alterno", headerName: "Alternate No",minWidth: 150,  editable: false },
     { field: "user_type", headerName: "Type", minWidth: 80,  editable: false },
     { field: "service_name", headerName: "Service Type",minWidth: 150,  editable: false },
     { field: "booktime", headerName: "Booking Time", minWidth: 120,  editable: false },

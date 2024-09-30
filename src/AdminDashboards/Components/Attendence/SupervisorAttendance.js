@@ -61,54 +61,48 @@ const SupervisorAttendance = () => {
     };
 
     const columns = [
-        {
-            field: "",
-            headerName: "",
-            renderCell: (params) => {
+      {
+        field: "",
+        headerName: "",
+        renderCell: (params) => {
 
-                const { status } = params.row;
+            const { status } = params.row;
+
+            // Check for the different statuses
+            const Working = status === "Working";
+            const Present = status === "Present";
     
-                // Check for the different statuses
-                const Working = status === "Working";
-                const Present = status === "Present";
-                const Leave = status === "Leave";
+            // Determine the action label and handler based on the status
+            let label = '';
+            let clickHandler = null;
         
-                // Determine the action label and handler based on the status
-                let label = '';
-                let clickHandler = null;
-            
-                if (!status) {
-                  label = 'Check In';
-                  clickHandler = () => onAttendance(params.row.status, params.row.emp_id)
-                } else if (Working) {
-                  label = 'Check Out';
-                  clickHandler = () => onAttendance(params.row.status, params.row.emp_id)
-                } 
-                else if (Leave) {
-                  label = 'Leave';
-                  clickHandler = null;
-                }   
-                else {
-                  label = 'Done';
-                  clickHandler = null; // Disable clicking for completed orders
-                }
-                return (
-                    <p
-                      className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"
-                      style={{
-                        borderRadius: "5px",
-                        cursor: clickHandler ? "pointer" : "default", // Set cursor to pointer only if there is a click handler
-                        margin: 0,
-                      }}
-                      onClick={clickHandler} // Only set onClick if there's a clickHandler
-                    >
-                      {label}
-                    </p>
-                  );
-                },
-                minWidth: 150,
-                editable: true,
-              },
+            if (!status) {
+              label = 'Check In';
+              clickHandler = () => onAttendance(params.row.status, params.row.emp_id)
+            } else if (Working) {
+              label = 'Check Out';
+              clickHandler = () => onAttendance(params.row.status, params.row.emp_id)
+            } else {
+              label = 'Done';
+              clickHandler = null; // Disable clicking for completed orders
+            }
+            return (
+                <p
+                  className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"
+                  style={{
+                    borderRadius: "5px",
+                    cursor: clickHandler ? "pointer" : "default", // Set cursor to pointer only if there is a click handler
+                    margin: 0,
+                  }}
+                  onClick={clickHandler} // Only set onClick if there's a clickHandler
+                >
+                  {label}
+                </p>
+              );
+            },
+            minWidth: 150,
+            editable: true,
+          },  
         { field: "status", headerName: "Attendance Mark", flex: 1, minWidth: 120, editable: false },
         { field: "name", headerName: "Supervisor Name", flex: 1, minWidth: 120, editable: false },
         { field: "in_date", headerName: "In Date", flex: 1, minWidth: 120, editable: false },

@@ -64,6 +64,12 @@ const Invoice2 = React.forwardRef((props, ref) => {
                   <b>Mobile :</b> {data?.mobileno}
                 </p>
                 <p>
+                  <b>Member ID :</b> {data?.member_id}
+                </p>
+                <p>
+                  <b>Alternate No :</b> {data?.alterno}
+                </p>
+                <p>
                   <b>Email :</b> {data?.email}
                 </p>
                 <p>
