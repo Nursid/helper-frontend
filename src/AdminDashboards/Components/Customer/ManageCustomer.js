@@ -74,9 +74,9 @@ const ManageCustomer = () => {
                     ...mergedItem,
                     id: data.indexOf(item),
                     date: moment(item.createdAt).format("DD-MM-YYYY"),
-                    member_id: item.member_id === null 
-                        ? 'NM' + paddedId 
-                        : item.member_id
+                    member_id: (!item.member_id) 
+                    ? 'NM' + paddedId 
+                    : item.member_id
                 });
 
             }
@@ -307,13 +307,13 @@ const ManageCustomer = () => {
                 Add New Customer
                 </div>
 
-                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center w-full `}  onClick={handlePrint} >
+                {/* <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center w-full `}  onClick={handlePrint} >
                 Member Sample 
                 </div>
                 
                 <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={NonMemberSample} >
                  Non Member Sample
-                </div>
+                </div> */}
 
             </div>
             </div>

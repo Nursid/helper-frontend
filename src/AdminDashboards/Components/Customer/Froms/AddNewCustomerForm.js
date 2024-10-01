@@ -36,7 +36,7 @@ const AddNewCustomerForm = ({prop, data}) => {
     const [isLoading, SetIsLoading]= useState(false)
 	const [house, setHouse] = useState('')
 	const [image, setImage] = useState(null)
-	const [gender, setGender] = useState('')
+	const [gender, setGender] = useState(null)
 	const [membership, setMembership] = useState('')
 	const [payment_method, setPaymentMethod] = useState('')
 
@@ -147,6 +147,8 @@ const AddNewCustomerForm = ({prop, data}) => {
 			membership: membership?.value,
 			payment_method: payment_method?.value
 		  }
+
+		  
 
 		  const formData = new FormData();
 

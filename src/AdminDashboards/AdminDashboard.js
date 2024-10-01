@@ -106,7 +106,7 @@ const AdminDashboard = () => {
     if (data !== undefined) {
       for (let item of data) {
         const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
-        const customer = NewCustomer.customer || {}; // Ensure customer is an object
+        const customer = NewCustomer.customer || {}; // Ensure customer is an Object
         const mergedItem = { ...item, ...NewCustomer, ...customer };
         const paddedId = String(customer.user_id).padStart(6, '0');
         NewData.push({
@@ -117,9 +117,9 @@ const AdminDashboard = () => {
           bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
           booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
           userRole: userRole,
-          member_id: customer.member_id === null 
-          ? 'NM' + paddedId 
-          : customer.member_id
+          member_id: (!customer.member_id) 
+                    ? 'NM' + paddedId 
+                    : customer.member_id
         });
       }
     } else {

@@ -42,17 +42,17 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 		email: updateData?.email || '',
 		location: updateData?.location || '',
 		mobile: updateData?.mobileno || '',
-		tel_no: updateData?.tel_no ||'',
+		tel_no: updateData?.tel_no || '',
 		office_no: updateData?.office_no || '',
 		alternate_no: updateData?.alternate_no || '',
 		aadhar_no: updateData?.aadhar_no || '',
 		occupation: updateData?.occupation || '',
-		designation:  updateData?.designation || '',
+		designation: updateData?.designation || '',
 		image: updateData?.image || '',
-		own_house: updateData?.own_house || null, 
-		dob: moment(updateData?.dob).format("YYYY-MM-DD") || '',
+		own_house: updateData?.own_house || '', 
+		dob: updateData?.dob ? moment(updateData.dob).format("YYYY-MM-DD") : '',
 		doa: updateData?.doa || '',
-		membership: updateData?.membership ||  '',
+		membership: updateData?.membership || '',
 		familyMember: updateData?.familyMember || '',  
 		reference: updateData?.reference || '',
 		payment: updateData?.payment || '',
@@ -62,23 +62,25 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 		payment_method: updateData?.payment_method || '',
 		spouse_name1: updateData?.spouse_name1 || '',
 		spouse_name2: updateData?.spouse_name2 || '',
-		spouse_dob1: moment(updateData?.spouse_dob1).format("YYYY-MM-DD") || '',
-		spouse_dob2: moment(updateData?.spouse_dob2).format("YYYY-MM-DD") || '',
-		service1: updateData?.service5 || '',
+		spouseDob1: updateData?.spouse_dob1 ? moment(updateData.spouse_dob1).format("YYYY-MM-DD") : '',
+		spouse_dob2: updateData?.spouse_dob2 ? moment(updateData.spouse_dob2).format("YYYY-MM-DD") : '',
+		service1: updateData?.service1 || '',
 		service2: updateData?.service2 || '',
 		service3: updateData?.service3 || '',
 		service4: updateData?.service4 || '',
 		service5: updateData?.service5 || '',
-	  });
+	});
+	
 
 	  const [isLoading, SetIsLoading]= useState(false)
 	  const [errors, setErrors]= useState([]);
 	  const [gender, setGender] = useState(updateData?.gender || '');
 	  const [house, setHouse] = useState(updateData.own_house || '');
-	  const [image, setImage] = useState(updateData.image || null);
+	  const [image, setImage] = useState(updateData.image || '');
 	  const [membership, setMembership] = useState(updateData.membership || '');
 	  const [paymentMethod, setPaymentMethod] = useState(updateData.payment_method || '');
-  
+	  const [isMember, setIsMember] = useState(updateData?.member_id?.startsWith("HM") ? updateData?.member_id : false);
+
 
 	const payment_options = [
 		{
@@ -141,12 +143,7 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 			errors.name = "Name is required";
 		}
 
-		
-		
-		if (!formData.address) {
-			errors.address = "Address is required";
-		}
-
+	
 		
 		if (!formData.mobile) {
 			errors.mobile = "Mobile number is required";
@@ -165,14 +162,15 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 			return false;
 		  }
 
-		  const data ={
+		  const data = {
 			...formData,
-			image: image,
-			own_house: house?.value,
-			gender: gender?.value,
-			membership: membership?.value,
-			payment_method: paymentMethod?.value
-		  }
+			image: image || '',
+			own_house: house?.value || '',
+			gender: gender?.value || '',
+			membership: membership?.value || '',
+			payment_method: paymentMethod?.value || '',
+			member_id: (isMember===false) ? '': isMember
+		  }  
 
 		  const formData2 = new FormData();
 
@@ -287,7 +285,7 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 				</Col>
 
 
-			{(updateData?.member_id) ?	<Col md={6}>
+				{(updateData?.member_id?.startsWith("HM")) ?	<Col md={6}>
 					<FormGroup>
 						<Label for="memeber">Member Id</Label>
 						<Input  placeholder='Member Id'
@@ -299,8 +297,8 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 				<FormGroup>
 					<FormControlLabel control={<Checkbox 
 					name="member_id"
-					checked={formData.member_id}
-					onChange={(e) => handleChange(e, 10)}
+					checked={isMember}
+					onChange={() => setIsMember(!isMember)}
 					/>} label="Is Member" labelPlacement='start'/>
 					</FormGroup>
 					</Col>
@@ -308,17 +306,13 @@ const UpdateCustomerForm = ({prop,updateData}) => {
 
 				<Col md={6}>
 					<FormGroup>
-						<Label for="address">Address <span style={{color: "red"}}>*</span></Label>
+						<Label for="address">Address </Label>
 						<Input type='textarea'
 							onChange={(e) => handleChange(e, 200)}
 							value={formData?.address}
 							name='address'
 							placeholder='Address'/>
-							{errors?.address && (
-                        <span className='validationError'>
-                            {errors?.address}
-                        </span>
-                    )}
+
 					</FormGroup>
 				</Col>
 				<Col md={6}>
