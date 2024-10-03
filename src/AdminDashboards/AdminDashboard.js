@@ -47,6 +47,8 @@ const AdminDashboard = () => {
   const { currentUser, setCurrentUser } = useAuth();
   const [role, setRole] = useState(userRole.role || '');
   const dispatch = useDispatch();
+  // const token = currentUser.token
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IkhlbHBlcnMgQWRtaW4iLCJlbWFpbCI6InN1cGVyYWRtaW5AaGVscGVycy5jb20iLCJyb2xlIjoiU3VwZXIgQWRtaW4iLCJtb2JpbGVObyI6IiIsInBhc3N3b3JkIjoiJDJiJDEwJGRuY01vTjNCajRnWVhSQ2J5ZW1qWXVWR0I3blpDMHlMdlhIdzlvN0ZRS2FGbEV1VUpxT2lHIiwiY3JlYXRlZEF0IjoiMjAyNC0wMi0xM1QxNjozNDozNy4wMDBaIiwidXBkYXRlZEF0IjoiMjAyNC0xMC0wM1QxODowMzo0Ni4wMDBaIiwiaWF0IjoxNzI3OTc5MDYwfQ.5Goo55sruEz-fv4zwzNrTFDJPM88ZR5NvSKZ8m3ozto"
   
   const {  data: orders, isLoading: isOrderLoading} = useSelector(state => state.GetAllOrderReducer);
   const { data: inventories, isLoading: isInventoryLoading } = useSelector(state => state.GetAllInventryReducers);
@@ -220,7 +222,11 @@ const AdminDashboard = () => {
       confirmButtonText: 'Yes, delete it!'
   }).then(async (result) => {
       if (result.isConfirmed) {
-          const response = await axios.get(API_URL + '/order/delete/' + orderNo)
+          const response =  await axios.get(`${API_URL}/order/delete/${orderNo}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
           if (response.status === 200) {
               Swal.fire(
                   'Deleted!',
@@ -265,7 +271,13 @@ const AdminDashboard = () => {
       confirmButtonText: 'Yes, Hold it!'
   }).then(async (result) => {
       if (result.isConfirmed) {
-          const response = await axios.put(API_URL + '/order/assign/' + orderNo,{pending: 1})
+          const response = await axios.put(API_URL + '/order/assign/' + orderNo,{pending: 1},
+            {
+              headers: {
+                  'Authorization': `Bearer ${token}`
+              }
+          }
+          )
           if (response.status === 200) {
               Swal.fire(
                   'Hold!',
@@ -326,7 +338,13 @@ const AdminDashboard = () => {
       confirmButtonText: 'Yes, Completed it!'
   }).then(async (result) => {
       if (result.isConfirmed) {
-          const response = await axios.get(API_URL + '/order/complete/' + orderNo)
+          const response = await axios.get(API_URL + '/order/complete/' + orderNo,
+            {
+              headers: {
+                  'Authorization': `Bearer ${token}`
+              }
+          }
+          )
           if (response.status === 200) {
               Swal.fire(
                   'Completed!',
@@ -1202,14 +1220,14 @@ onClick={()=>AssignAmount(params.row.order_no)}
               color={"black"}
             />
 
-              <ColoredBtn
+              {/* <ColoredBtn
                 onClick={() => {
                 GetInventry()
               }}
                 btnName={"Inventory"}
                 bg={"#ffa500"}
                 color={"black"}
-              />
+              /> */}
             </> : null }
           </div>
 
