@@ -338,13 +338,19 @@ const AdminDashboard = () => {
       confirmButtonText: 'Yes, Completed it!'
   }).then(async (result) => {
       if (result.isConfirmed) {
-          const response = await axios.get(API_URL + '/order/complete/' + orderNo,
-            {
-              headers: {
-                  'Authorization': `Bearer ${token}`
-              }
-          }
-          )
+          // const response = await axios.get(API_URL + '/order/complete/' + orderNo,
+          //   {
+          //     headers: {
+          //         'Authorization': `Bearer ${token}`
+          //     }
+          // }
+          // )
+
+const response = await axios.get(`${API_URL}/order/complete/${orderNo}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
           if (response.status === 200) {
               Swal.fire(
                   'Completed!',
