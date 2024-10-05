@@ -48,10 +48,6 @@ const AdminDashboard = () => {
   const [role, setRole] = useState(userRole.role || '');
   const dispatch = useDispatch();
   const token = currentUser.token
-<<<<<<< HEAD
-
-=======
->>>>>>> d57c90eadc7e308b8c0fd5ea79a761f429309a6d
   
   const {  data: orders, isLoading: isOrderLoading} = useSelector(state => state.GetAllOrderReducer);
   const { data: inventories, isLoading: isInventoryLoading } = useSelector(state => state.GetAllInventryReducers);
