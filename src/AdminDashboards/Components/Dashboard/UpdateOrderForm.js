@@ -109,18 +109,17 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
 
   const handleSubmit = async (e) => {
    
-
       e.preventDefault();
       setIsLoading(true)
         let errors = {};
 
-      if (!formData.name) {
+      if (!formData?.name) {
               errors.name = "Name is required";
           }
-      if (!formData.mobile) {
+      if (!formData?.mobile) {
               errors.mobile = "Mobile No. is required";
           }
-      if (!formData.service_name) {
+      if (!formData?.service_name) {
               errors.service_name = "Service type is required";
           }
 

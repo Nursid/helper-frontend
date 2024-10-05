@@ -4,6 +4,7 @@ import AnimatedBackground from '../../Elements/AnimatedBacground';
 import AdminNavItems from '../../Elements/AdminNavItems';
 import { TabContent, TabPane } from 'reactstrap';
 import OrderReports from './OrderReports';
+import AttendanceReports from './AttendanceReport';
 
 const Reports = () => {
   const [attendanceActive, setAttendanceActive] = useState("1");
@@ -21,40 +22,31 @@ const Reports = () => {
               className={` ${attendanceActive === "1" ? "ReportsTabs_Active" : ""}`} 
               onClick={() => setAttendanceActive("1")}
             >
-              Today Report
+              Attendance Report
             </span>
             <span 
-              className={` ${attendanceActive === "7" ? "ReportsTabs_Active" : ""}`} 
-              onClick={() => setAttendanceActive("7")}
+              className={` ${attendanceActive === "2" ? "ReportsTabs_Active" : ""}`} 
+              onClick={() => setAttendanceActive("2")}
             >
-              Weekly Report
+              Order Report
             </span>
             <span 
               className={` ${attendanceActive === "3" ? "ReportsTabs_Active" : ""}`} 
               onClick={() => setAttendanceActive("3")}
             >
-              Monthly Report
-            </span>
-            <span 
-              className={` ${attendanceActive === "6" ? "ReportsTabs_Active" : ""}`} 
-              onClick={() => setAttendanceActive("6")}
-            >
-              Custom Report
+              Account Report
             </span>
           </div>
 
           <TabContent activeTab={attendanceActive}>
             <TabPane tabId="1">
-              <OrderReports setActiveAttendance={setAttendanceActive} reportType={attendanceActive} />
+              <AttendanceReports setActiveAttendance={setAttendanceActive}  />
+            </TabPane>
+            <TabPane tabId="2">
+              <OrderReports setActiveAttendance={setAttendanceActive} />
             </TabPane>
             <TabPane tabId="3">
-              <OrderReports setActiveAttendance={setAttendanceActive} reportType={attendanceActive}/>
-            </TabPane>
-            <TabPane tabId="7">
-              <OrderReports setActiveAttendance={setAttendanceActive} reportType={attendanceActive} />
-            </TabPane>
-            <TabPane tabId="6">
-              <OrderReports setActiveAttendance={setAttendanceActive} reportType={attendanceActive} />
+              <OrderReports setActiveAttendance={setAttendanceActive}  />
             </TabPane>
           </TabContent>
         </div>

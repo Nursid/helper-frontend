@@ -9,10 +9,13 @@ import BorderColorIcon from '@mui/icons-material/BorderColor'
 import AdminAddEmployeeForm from '../ManageHr/Forms/AdminAddEmployeeForm';
 import { IMG_URL } from '../../../config';
 import AdminAddServiceProvider from '../ManageHr/Forms/AdminAddServiceProvider';
+import { useUserRoleContext } from '../../../Context/RolesContext';
+import ResetPassword from './ResetPassword';
+
 const AdminProfile = ()=>{
     const location = useLocation();
     const { currentUser } = location.state || {};
-
+    const { userRole } = useUserRoleContext();
     const [showModal, setShowModal] = useState(false);
    
     const [data, SetData] = useState(currentUser)
@@ -25,19 +28,16 @@ const AdminProfile = ()=>{
      
          <Fragment>
 
-        <ModalComponent
+    {userRole?.role ==="super" &&     <ModalComponent
             
-            data= {(!currentUser.designation) 
-            ? <AdminAddServiceProvider toggleModal={toggleEditMode} data2={data} /> 
-            : <AdminAddEmployeeForm data={data} toggleModal={toggleEditMode} />
-            }
+            data= {<ResetPassword  toggle={toggleEditMode}/>}
             modalTitle="Edit Profile"
             modal={showModal}
             toggle={toggleEditMode}
-            size="xl"
-            scrollable={true}
+            size="md"
+            scrollable={false}
         />
-
+}
             <AdminHeader />
 
             <div className='container'>

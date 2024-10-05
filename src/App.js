@@ -24,7 +24,7 @@ import Availability from './AdminDashboards/Components/Availability/Availability
 import { ServiceProvider } from './Store/context/serviceProvider';
 import AdminComplain from './AdminDashboards/Components/Complain';
 import Invoice from './Components/MemberInvoice';
-import OrderReports from './AdminDashboards/Components/OrderReports';
+import Reports from './AdminDashboards/Components/Reports';
 import PrintCustomer from './AdminDashboards/Components/Customer/View/PrintCustomer';
 import MonthService from './AdminDashboards/Components/MonthlyService';
 
@@ -60,7 +60,7 @@ function App() {
             <Route path='profile' element={<AdminProfile />} />
             <Route path='availability' element={<Availability />} />
             <Route path='support' element={<AdminComplain />} />
-            <Route path='reports' element={<OrderReports />} />
+            <Route path='reports' element={<Reports />} />
             <Route path='monthly-service' element={<MonthService />} />
           </Route>
         </Routes>

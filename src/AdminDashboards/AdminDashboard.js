@@ -47,8 +47,8 @@ const AdminDashboard = () => {
   const { currentUser, setCurrentUser } = useAuth();
   const [role, setRole] = useState(userRole.role || '');
   const dispatch = useDispatch();
-  // const token = currentUser.token
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IkhlbHBlcnMgQWRtaW4iLCJlbWFpbCI6InN1cGVyYWRtaW5AaGVscGVycy5jb20iLCJyb2xlIjoiU3VwZXIgQWRtaW4iLCJtb2JpbGVObyI6IiIsInBhc3N3b3JkIjoiJDJiJDEwJGRuY01vTjNCajRnWVhSQ2J5ZW1qWXVWR0I3blpDMHlMdlhIdzlvN0ZRS2FGbEV1VUpxT2lHIiwiY3JlYXRlZEF0IjoiMjAyNC0wMi0xM1QxNjozNDozNy4wMDBaIiwidXBkYXRlZEF0IjoiMjAyNC0xMC0wM1QxODowMzo0Ni4wMDBaIiwiaWF0IjoxNzI3OTc5MDYwfQ.5Goo55sruEz-fv4zwzNrTFDJPM88ZR5NvSKZ8m3ozto"
+  const token = currentUser.token
+
   
   const {  data: orders, isLoading: isOrderLoading} = useSelector(state => state.GetAllOrderReducer);
   const { data: inventories, isLoading: isInventoryLoading } = useSelector(state => state.GetAllInventryReducers);

@@ -1587,15 +1587,16 @@ export const AddAmount = ({AmountModalOpen, AmountModalOpenFunction, OrderNo, Ge
 			about_payment: serviceName
 		}	
 
-		if (!formData.netpayamt) {
-			errors.netpayamt = "Total Amount is required";
+		if (!formData.netpayamt || formData.netpayamt <= 0) {
+			errors.netpayamt = "Total Amount is required ";
 		}
-		if (!formData.piadamt) {
-			errors.piadamt = "Paid Amount is required";
+		if (!formData.piadamt || formData.piadamt <= 0) {
+			errors.piadamt = "Paid Amount is required ";
 		}
 		if (!formData.paymethod) {
-			errors.paymethod = "payment method is required";
-		}
+			errors.paymethod = "Payment method is required";
+		}	
+		
 
 		if (errors && Object.keys(errors).length === 0) {
 		// Form is valid, handle form submission here
