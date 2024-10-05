@@ -5,6 +5,7 @@ import AdminNavItems from '../../Elements/AdminNavItems';
 import { TabContent, TabPane } from 'reactstrap';
 import OrderReports from './OrderReports';
 import AttendanceReports from './AttendanceReport';
+import AccountReports from './AccountReports';
 
 const Reports = () => {
   const [attendanceActive, setAttendanceActive] = useState("1");
@@ -46,7 +47,7 @@ const Reports = () => {
               <OrderReports setActiveAttendance={setAttendanceActive} />
             </TabPane>
             <TabPane tabId="3">
-              <OrderReports setActiveAttendance={setAttendanceActive}  />
+              <AccountReports setActiveAttendance={setAttendanceActive}  />
             </TabPane>
           </TabContent>
         </div>

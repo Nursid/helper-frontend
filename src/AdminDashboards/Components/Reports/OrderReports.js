@@ -14,7 +14,7 @@ import axios from "axios";
 import { API_URL } from "../../../config";
 import SelectBox from "../../Elements/SelectBox";
 
-export default function OrderReports({reportType}) {
+export default function OrderReports() {
 
  
     const { userRole } = useUserRoleContext();
@@ -88,7 +88,7 @@ export default function OrderReports({reportType}) {
     }
   
     try {
-      const response = await axios.post(`${API_URL}/order/reports/${reportType}`, data);
+      const response = await axios.post(`${API_URL}/order/reports/6`, data);
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -99,7 +99,7 @@ export default function OrderReports({reportType}) {
   useEffect(() => {
     FilterData();
     getAllServices();
-  }, [reportType]);
+  }, []);
 
     const columns = [
         { field: "member_id", headerName: "Member ID", minWidth: 120, editable: true,  },
@@ -160,7 +160,7 @@ export default function OrderReports({reportType}) {
          <Fragment>
          <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "18rem", minWidth: "18rem" }}> All Order List</h4>
 
-      {reportType === '6' ? (<div className="flex flex-col justify-between w-full mb-3 ">
+      <div className="flex flex-col justify-between w-full mb-3 ">
             <div className="flex justify-between gap-6 items-center">
               <div className="ml-4">
                 <label htmlFor="startDate" className="text-light">From:</label>
@@ -185,8 +185,7 @@ export default function OrderReports({reportType}) {
               </div>
             </div>
         </div>  
-      ) : null
-      }
+
          <AdminDataTable
               rows={DataWithID(data.data)}
               CustomToolbar={CustomToolbar}

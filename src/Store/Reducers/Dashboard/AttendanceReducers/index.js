@@ -53,4 +53,30 @@ export const ServiceProviderAttendanceReducers = (state = initialState, action) 
     }
 }
 
+export const AttendanceReportReducers = (state = initialState, action) => {
+    switch (action.type) {
+        case constant.REPORT_ATTENDANCE_API_LOADING:
+            return {
+                ...state,
+                isLoading: true
+            }
+        case constant.REPORT_ATTENDANCE_API_SUCCESS:
+            return {
+                ...state,
+                isSuccess: true,
+                data: action.payload
+            }
+        case constant.REPORT_ATTENDANCE_API_ERROR:
+            return {
+                ...state,
+                isError: true
+            }
+
+        default:
+            return state
+    }
+}
+
+
+
 export default  AttendanceReducers

@@ -13,16 +13,36 @@ import ColoredBtn from "../../Elements/ColoredBtn";
 import axios from "axios";
 import { API_URL } from "../../../config";
 import SelectBox from "../../Elements/SelectBox";
+import { SupervisorAttendanceReport } from "../../../Store/Actions/Dashboard/AttendanceAction/SupervisorAttendanceReport";
 
 export default function AttendanceReports() {
  
     const { userRole } = useUserRoleContext();
-    const dispatch = useDispatch()
-    const [data, setData] = useState([])
-    const [GetAllServiceProvider, setAllServiceProvider] = useState([]);
-	  const [serviceProvider, setServiceProvider] = useState('');
+    const dispatch = useDispatch() 
+	  const [supervisor, setSupervisor] = useState('');
     const [from, setFrom] = useState(null)
     const [to, setTo] = useState(null)
+    const { data, isSuccess } = useSelector(state => state.AttendanceReportReducers);
+    const [attendanceData, setAttendanceData] = useState([{id: 0}]);
+    const [GetAllSupervisorData, setGetAllSupervisor] = useState([])
+
+    const DataWithID = (data) => {
+      const NewData = [];
+      if (data !== undefined) {
+        for (let item of data) {
+          const employee = item.employee || {}; // Ensure NewCustomer is an object
+          const mergedItem = { ...item, ...employee };
+         
+          NewData.push({
+            ...mergedItem,
+            id: data.indexOf(item),
+          });
+        }
+      } else {
+        NewData.push({ id: 0 });
+      }
+      return NewData;
+    };
 
     const CustomToolbar = () => {
         return (
@@ -36,102 +56,56 @@ export default function AttendanceReports() {
         );
       };
 
-    const status= [
-        {0: "Pending"},
-        {1: "Hold"},
-        {2: "Due"},
-        {3: "Completed"},
-        {4: "Running"},
-        {5: "Cancel"}
-        ]
-      
-    function getStatusByKey(key) {
-    for (let i = 0; i < status.length; i++) {
-      if (status[i].hasOwnProperty(key)) {
-        return status[i][key];
-      }
-      }
-      return "Status not found";
-    }
-
-
-    const DataWithID = (data) => {
-        const NewData = [];
-        if (data !== undefined) {
-          for (let item of data) {
-            const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
-            const customer = NewCustomer.customer || {}; // Ensure customer is an object
-            const mergedItem = { ...item, ...NewCustomer, ...customer };
-            NewData.push({
-              ...mergedItem,
-              pending: getStatusByKey(item.pending),
-              _id: data.indexOf(item),
-              date: moment(item.createdAt).format("D / M / Y"),
-              bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
-              booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
-              userRole: userRole
-            });
-          }
-        } else {
-          NewData.push({ id: 0 });
-        }
-        return NewData;
-      };
-
       
   const FilterData = async () => {
     const data ={
       from: from,
       to: to,
-      serviceProvider: serviceProvider?.value
+      supervisor: supervisor?.value
     }
+
+    console.log(data)
   
     try {
-      const response = await axios.post(`${API_URL}/order/reports/6`, data);
-      setData(response.data);
+      dispatch(SupervisorAttendanceReport(data));
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
 
+
+
   useEffect(() => {
-    FilterData();
-    getAllServices();
-  }, []);
+    dispatch(SupervisorAttendanceReport());
+    GetAllSupervisor();
+}, []);
+
+const GetAllSupervisor = async () => {
+  const response = await axios.get(API_URL + '/employee/getall/supervisor')
+  if (response.status === 200) {
+    const transformedData = response.data.data.map(item => ({label: item.name, value: item.emp_id}));
+    setGetAllSupervisor(transformedData);
+  }
+}
 
     const columns = [
-        { field: "order_no", headerName: "Order Number", minWidth: 120, editable: true },
-        { field: "name", headerName: "Customer Name",minWidth: 150, editable: true },
-        { field: "mobileno", headerName: "Mobile",minWidth: 150, editable: true },
-        { field: "user_type", headerName: "Type", minWidth: 80, editable: true },
-        { field: "service_name", headerName: "Service Type",minWidth: 150, editable: true },
-        { field: "booktime", headerName: "Booking Time", minWidth: 120, editable: true },
-        { field: "bookdate", headerName: "Booking Date", minWidth: 120, editable: true },
-        { field: "problem_des", headerName: "Service Description ", minWidth: 150, editable: true, renderCell: (params) => (
-            <Tooltip title={params.value}>
-                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {params.value}</div>
-            </Tooltip>
-        ) },    
-        ];
-      
-
-
-        const getAllServices = async () => {
-          const response = await axios.get(API_URL + '/service-provider/getall')
-          
-          if (response.status === 200) {
-            const transformedData = response.data.data.map(item => ({ label: item.name, value: item.name })); 
-              setAllServiceProvider(transformedData);
-          }
-        }
+      { field: "in_date", headerName: "In Date", flex: 1, minWidth: 120, editable: false },
+      { field: "name", headerName: "Supervisor Name", flex: 1, minWidth: 120, editable: false },
+      { field: "status", headerName: "Attendance Mark", flex: 1, minWidth: 120, editable: false },
+      { field: "check_in", headerName: "Check In", minWidth: 80, flex: 1, editable: false },
+      { field: "out_date", headerName: "Out Date", minWidth: 80, flex: 1, editable: false },
+      { field: "check_out", headerName: "Check Out", flex: 1, minWidth: 120, editable: false },
+      { field: "createdby", headerName: "Created By", flex: 1, minWidth: 120, editable: false },
+      { field: "message", headerName: "Remark", flex: 1, minWidth: 120, editable: false },    
+    ];
+    
 
 
 return(
     <>
         <Fragment>
-        <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "24rem", minWidth: "24rem" }}> Attendance Reports</h4>
+        <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "24rem", minWidth: "24rem" }}>Supervisor Attendance Reports</h4>
 
         <div className="flex flex-col justify-between w-full mb-3 ">
                 <div className="flex justify-between gap-6 items-center">
@@ -145,11 +119,11 @@ return(
             </div>
                 <div className="ml-4" style={{width: '12rem'}}>
                                 <label className="form-label text-light ml-2 mr-2" htmlFor="serviceRemark">
-                                    Service Provider
+                                    Supervisor
                                 </label>
-                                <SelectBox options={GetAllServiceProvider}
-                                    setSelcted={setServiceProvider}
-                                    selectOption={serviceProvider}/>
+                                <SelectBox options={GetAllSupervisorData}
+                                    setSelcted={setSupervisor}
+                                    selectOption={supervisor}/>
                     </div>
                     <div className="ml-4" style={{marginTop: '32px'}}>
                     <Button className="btn btn-primary" size="small" variant="contained" onClick={FilterData}>
@@ -158,7 +132,7 @@ return(
                 </div>
             </div>
         </div>  
-    <AdminDataTable rows={DataWithID(data.data)} CustomToolbar={CustomToolbar} columns={columns} />
+    <AdminDataTable rows={DataWithID(data)} CustomToolbar={CustomToolbar} columns={columns} />
     </Fragment>
     </>
 )}
