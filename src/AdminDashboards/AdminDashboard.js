@@ -548,130 +548,135 @@ const response = await axios.get(`${API_URL}/order/complete/${orderNo}`, {
   };
   
   const columns = [
+    // {
+    //   field: "Status",
+    //   headerName: "Status",
+    //   renderCell: (params) => {
+    //     const { pending, order_no, cust_id, piadamt, totalamt } = params.row;
+    
+    //     const isPending = pending === "Pending" || pending === "Due" || pending === "Hold";
+    //     const isCompleted = pending === "Completed";
+        
+    //     const isCancelled = pending === "Cancel";
+
+    //     // Determine the action label and handler based on the status
+    //     let label = '';
+    //     let clickHandler = null;
+    
+    //     if (isPending) {
+    //       label = 'Check In';
+    //       clickHandler = () => check_in(order_no);
+    //     } else if (isCancelled) {
+    //       label = 'Cancelled';
+    //       clickHandler = null; // Disable clicking for cancelled orders
+    //     } else if (!isCompleted) {
+    //       label = 'Check Out';
+    //       clickHandler = () => OrderComplete(order_no, piadamt, totalamt);
+    //     } else {
+    //       label = 'Done';
+    //       clickHandler = null; // Disable clicking for completed orders
+    //     }
+    
+    //     return (
+    //       <p
+    //         className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"
+    //         style={{
+    //           borderRadius: "5px",
+    //           cursor: clickHandler ? "pointer" : "default", // Set cursor to pointer only if there is a click handler
+    //           margin: 0,
+    //         }}
+    //         onClick={clickHandler} // Only set onClick if there's a clickHandler
+    //       >
+    //         {(label !=='Check In') ? 
+    //          <Tooltip title={moment(params.row.updatedAt).format('DD/MM/YYYY, h:mm A')}>
+    //          {label}
+    //          </Tooltip> : label}
+    //       </p>
+    //     );
+    //   },
+    //   minWidth: 150,
+    //   editable: false,
+    // },
     {
       field: "Status",
       headerName: "Status",
       renderCell: (params) => {
-        const { pending, order_no, cust_id, piadamt, totalamt } = params.row;
-    
-        const isPending = pending === "Pending" || pending === "Due" || pending === "Hold";
-        const isCompleted = pending === "Completed";
-        
-        const isCancelled = pending === "Cancel";
-
-        // Determine the action label and handler based on the status
-        let label = '';
-        let clickHandler = null;
-    
-        if (isPending) {
-          label = 'Check In';
-          clickHandler = () => check_in(order_no);
-        } else if (isCancelled) {
-          label = 'Cancelled';
-          clickHandler = null; // Disable clicking for cancelled orders
-        } else if (!isCompleted) {
-          label = 'Check Out';
-          clickHandler = () => OrderComplete(order_no, piadamt, totalamt);
-        } else {
-          label = 'Done';
-          clickHandler = null; // Disable clicking for completed orders
-        }
-    
-        return (
-          <p
-            className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"
-            style={{
-              borderRadius: "5px",
-              cursor: clickHandler ? "pointer" : "default", // Set cursor to pointer only if there is a click handler
-              margin: 0,
-            }}
-            onClick={clickHandler} // Only set onClick if there's a clickHandler
-          >
-            {(label !=='Check In') ? 
-             <Tooltip title={moment(params.row.updatedAt).format('DD/MM/YYYY, h:mm A')}>
-             {label}
-             </Tooltip> : label}
-          </p>
-        );
+          const { pending, order_no, piadamt, totalamt, checkintime, checkouttime } = params.row;
+  
+          let checkInLabel = '';
+          let checkInColor = '';
+          let checkInHandler = null;
+  
+          let checkOutLabel = '';
+          let checkOutColor = '';
+          let checkOutHandler = null;
+  
+          // Determine Check In button state
+          if (!checkintime) {
+              checkInLabel = 'Check In';
+              checkInColor = 'yellow';
+              checkInHandler = () => check_in(order_no);
+          } else {
+              checkInLabel = `Update Check In ${checkintime}`;
+              checkInColor = 'green';
+              checkInHandler = null; // Disable clicking for updated check-in
+          }
+  
+          // Determine Check Out button state
+          if (checkintime && !checkouttime) {
+              checkOutLabel = 'Check Out';
+              checkOutColor = 'red';
+              checkOutHandler = () => OrderComplete(order_no, piadamt, totalamt);
+          } else if (checkouttime) {
+              checkOutLabel = `Update Check Out ${checkouttime}`;
+              checkOutColor = 'green';
+              checkOutHandler = null; // Disable clicking for updated check-out
+          }
+  
+          return (
+              <div className="d-flex flex-row align-items-center">
+                  <p
+                      className="justify-content-center align-items-center mr-2"
+                      style={{
+                          width: "140px",
+                          backgroundColor: checkInColor,
+                          borderRadius: "5px",
+                          cursor: checkInHandler ? "pointer" : "default",
+                          whiteSpace: "normal",
+                          textAlign: "center", 
+                          fontSize: "10px",
+                          padding: !checkintime ? "12px" : "5px",
+                          color: !checkintime ? "black" : "white", // Corrected this line
+                      }}
+                      onClick={checkInHandler}
+                  >
+                      {checkInLabel}
+                  </p>
+                  {checkOutLabel && (
+                      <p
+                          className="d-flex justify-content-center align-items-center"
+                          style={{
+                              width: "140px",
+                              backgroundColor: checkOutColor,
+                              borderRadius: "5px",
+                              cursor: checkOutHandler ? "pointer" : "default",
+                              whiteSpace: "normal", // Allow wrapping
+                              textAlign: "center", // Center text
+                              fontSize: "10px",
+                              padding: !checkouttime ? "12px" : "5px",
+                              color: "white"
+                          }}
+                          onClick={checkOutHandler}
+                      >
+                          {checkOutLabel}
+                      </p>
+                  )}
+              </div>
+          );
       },
-      minWidth: 150,
+      minWidth: 300,
       editable: false,
     },
-    // {
-    //     field: "Status",
-    //     headerName: "Status",
-    //     renderCell: (params) => {
-    //       const { pending, order_no, piadamt, totalamt, checkintime, checkouttime  } = params.row;
-      
-    //       const isPending = pending === "Pending" || pending === "Due" || pending === "Hold";
-    //       const isCompleted = pending === "Completed";
-          
-    //       const isCancelled = pending === "Cancel";
-  
-    //       // Determine the action label and handler based on the status
-    //       let checkIN = '';
-    //       let checkOut = '';
-    //       let clickHandler = null;
-      
-    //       if (isPending) {
-    //         checkIN = 'Check In';
-    //         clickHandler = () => check_in(order_no);
-    //       } else if (isCancelled) {
-    //         checkIN = 'Cancelled';
-    //         clickHandler = null; // Disable clicking for cancelled orders
-    //       } 
-    //        else if (checkintime) {
-    //         checkOut = checkintime;
-    //         clickHandler = null
-    //       }
-    //       else {
-    //         checkIN = checkintime;
-    //         clickHandler = null; // Disable clicking for completed orders
-    //       }
-
-
-    //       if (!isCompleted) {
-    //         checkOut = 'Check Out';
-    //         clickHandler = () => OrderComplete(order_no, piadamt, totalamt);
-    //       } else{
-    //         checkOut = checkouttime;
-    //         clickHandler = null; // Disable clicking for completed orders
-    //       }
-
-         
-         
-    //       return (
-    //         <div className="d-flex flex-row"> 
-    //             <p
-    //               className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"
-    //               style={{
-    //                 borderRadius: "5px",
-    //                 cursor: clickHandler ? "pointer" : "default", 
-    //                 margin: 0,
-    //               }}
-    //               onClick={clickHandler}
-    //             >
-    //             {checkIN}
-    //             </p>
-    //             <p
-    //               className="text-danger p-2 bg-light d-flex justify-content-center align-items-center me-3"
-    //               style={{
-    //                 borderRadius: "5px",
-    //                 cursor: clickHandler ? "pointer" : "default", 
-    //                 margin: 0,
-    //               }}
-    //               onClick={clickHandler}
-    //             >
-    //              {checkOut}
-    //             </p>
-    //         </div>
-    //       );
-    //     },
-    //     minWidth: 300,
-    //     editable: false,
-    // },
-    { field: "checkintime", headerName: "Check In", minWidth: 220,  editable: false,  },
-    { field: "checkouttime", headerName: "Check Out", minWidth: 220,  editable: false,  },
     {
         field: "action",
         headerName: "Action",
@@ -764,7 +769,8 @@ onClick={()=>AssignAmount(params.row.order_no)}
     { field: "paymethod", headerName: "Payment Method", minWidth: 150},
     { field: "piadamt", headerName: "Paid Amount", minWidth: 150 },
     { field: "totalamt", headerName: "Balance Amount", minWidth: 150},
-    { field: "cust_remark", headerName: "Customer Feedback", minWidth: 150 },
+    { field: "cust_remark", headerName: "Customer Remark", minWidth: 150 },
+    { field: "admin_remark", headerName: "Admin Remark", minWidth: 150 },
     { field: "bakof_remark", headerName: "Back Office Remark",
     renderCell: (params) => ( 
         <>

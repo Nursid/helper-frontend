@@ -38,7 +38,12 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     piadamt: orderData?.piadamt || '',
     totalamt: orderData?.totalamt || '',
     allot_time_range: orderData?.allot_time_range || '',
-    sueadmin_remark: orderData?.sueadmin_remark || ''
+    sueadmin_remark: orderData?.sueadmin_remark || '',
+    cust_remark: orderData?.cust_remark || '',
+    servp_remark: orderData?.servp_remark || '',
+    suerv_remark: orderData?.suerv_remark || '',
+    admin_remark: orderData?.admin_remark || '',
+    bakof_remark: orderData?.bakof_remark || ''
   });
 
   const [allServices, setAllServices] = useState([]);
@@ -123,9 +128,20 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
               errors.service_name = "Service type is required";
           }
 
+          if (!formData.netpayamt || formData.netpayamt <= 0) {
+            errors.netpayamt = "Total Amount is required ";
+          }
+          if (!formData.piadamt || formData.piadamt <= 0) {
+            errors.piadamt = "Paid Amount is required ";
+          }
+          if (!formData.paymethod) {
+            errors.paymethod = "Payment method is required";
+          }	
+
       if (errors && Object.keys(errors).length === 0) {
         // Form is valid, handle form submission here
-        console.log("Form submitted successfully!",);
+        console.log("Form submitted successfully!");
+        setIsLoading(false)
         } else {
         // Form is invalid, display validation errors
         console.log("Validation Errors:", errors);
@@ -143,19 +159,48 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
           suprvisor_id: formData.suprvisor_id.value,
           allot_time_range: timeslot.value
         }
+
+        const AddAccountAmount = {
+          payment_mode: formData?.paymethod?.value,
+          amount: formData?.piadamt,
+          order_no: orderData.order_no,
+          person_name: orderData?.NewCustomer?.name,
+          about_payment: formData?.service_name?.value
+        }	
+
         try {
-      const response = await axios.patch(`${API_URL}/order/update/${orderData.order_no}`, data);
-      if (response.status === 200) {
-        prop();
-        Swal.fire('Updated!', 'Your Customer has been Updated.', 'success');
-        const status = role === 'service' || role === 'supervisor' ? undefined : '';
-        dispatch(GetAllOrders(status, currentUser, role));
-      } else {
-        Swal.fire('Failed to update, try again', '', 'error');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
+          // Update order
+          const response = await axios.patch(`${API_URL}/order/update/${orderData.order_no}`, data);
+          
+          // Check if the response is successful
+          if (response.status === 200) {
+            setIsLoading(false)
+            // Add balance
+            await axios.post(`${API_URL}/api/add-balance`, AddAccountAmount);
+            
+            // Call the provided function prop
+            prop();
+            
+            // Show success message
+            Swal.fire('Updated!', 'Your Order has been Updated.', 'success');
+            
+            // Determine status based on user role
+            const status = (role === 'service' || role === 'supervisor') ? undefined : '';
+            
+            // Dispatch action to get all orders
+            dispatch(GetAllOrders(status, currentUser, role));
+          } else {
+            // Handle unsuccessful update
+            Swal.fire('Failed to update, try again', '', 'error');
+          }
+        } catch (error) {
+          // Log error and show an error message
+          console.error('Error:', error);
+          Swal.fire('An error occurred', 'Please try again later.', 'error');
+          setIsLoading(false)
+        }
+        setIsLoading(false)
+        
   };
 
   return (
@@ -246,12 +291,6 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
             <SelectBox options={allServiceProviders} setSelcted={(value) => setFormData((prev) => ({ ...prev, servicep_id: value }))} initialValue={formData.servicep_id} />
           </FormGroup>
         </Col>
-        {/* <Col md={6}>
-          <FormGroup>
-            <Label>Service Date & Time</Label>
-            <Input name="serviceDateTime" type="datetime-local" onChange={handleInputChange} value={formData.serviceDateTime} />
-          </FormGroup>
-        </Col> */}
         <Col md={6}>
           <FormGroup>
             <Label>Address</Label>
@@ -271,30 +310,109 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
           </FormGroup>
         </Col>
 
-     {role === 'super' &&    <Col md={6}>
-          <FormGroup>
-            <Label>Super Admin Remark</Label>
-            <Input name="sueadmin_remark" onChange={(e) => handleInputChange(e, 200)} value={formData.sueadmin_remark} placeholder="Super admin remark"  />
-          </FormGroup>
-        </Col>
-      }
+        {role === 'super' && (
+          <>
+            <Col md={6}>
+              <FormGroup>
+                <Label>Super Admin Remark </Label>
+                <Input
+                  name="sueadmin_remark"
+                  onChange={(e) => handleInputChange(e, 200)}
+                  value={formData.sueadmin_remark}
+                  placeholder="Super admin remark "
+                />
+              </FormGroup>
+            </Col>
+            <Col md={6}>
+              <FormGroup>
+                <Label> Admin Remark </Label>
+                <Input
+                  name="admin_remark"
+                  onChange={(e) => handleInputChange(e, 200)}
+                  value={formData.admin_remark}
+                  placeholder="admin remark "
+                />
+              </FormGroup>
+            </Col>
+            <Col md={6}>
+              <FormGroup>
+                <Label>Back Office Remark</Label>
+                <Input
+                  name="bakof_remark"
+                  onChange={(e) => handleInputChange(e, 200)}
+                  value={formData.bakof_remark}
+                  placeholder="BackOffice remark "
+                />
+              </FormGroup>
+            </Col>
+            <Col md={6}>
+              <FormGroup>
+                <Label>Supervisor Remark </Label>
+                <Input
+                  name="suerv_remark"
+                  onChange={(e) => handleInputChange(e, 200)}
+                  value={formData.suerv_remark}
+                  placeholder="Supervisor remark"
+                />
+              </FormGroup>
+            </Col>
+            <Col md={6}>
+              <FormGroup>
+                <Label>Customer Remark </Label>
+                <Input
+                  name="cust_remark"
+                  onChange={(e) => handleInputChange(e, 200)}
+                  value={formData.cust_remark}
+                  placeholder="Customer remark"
+                />
+              </FormGroup>
+            </Col>
+            <Col md={6}>
+              <FormGroup>
+                <Label>Service Provider Remark</Label>
+                <Input
+                  name="servp_remark"
+                  onChange={(e) => handleInputChange(e, 200)}
+                  value={formData.servp_remark}
+                  placeholder="Service Provider remark"
+                />
+              </FormGroup>
+            </Col>
+          </>
+        )}
+  
         <h2>Billing Details</h2>
         <Col md={6}>
           <FormGroup>
             <Label>Payment Method</Label>
             <SelectBox options={payMethodOptions} setSelcted={(value) => setFormData((prev) => ({ ...prev, paymethod: value }))} initialValue={formData.paymethod} />
+            {errors?.paymethod && (
+							<span className='validationError'>
+								{errors?.paymethod}
+							</span>
+						)}
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>Bill Amount</Label>
             <Input name="netpayamt" type="number" onChange={(e) => handleInputChange(e, 7)} value={formData.netpayamt} placeholder="Bill Amount" />
+            {errors?.netpayamt && (
+							<span className='validationError'>
+								{errors?.netpayamt}
+							</span>
+						)}
           </FormGroup>
         </Col>
         <Col md={6}>
           <FormGroup>
             <Label>Paid Amount</Label>
             <Input name="piadamt" type="number" onChange={(e) => handleInputChange(e, 7)} value={formData.piadamt} placeholder="Paid Amount" />
+            {errors?.piadamt && (
+							<span className='validationError'>
+								{errors?.piadamt}
+							</span>
+						)}
           </FormGroup>
         </Col>
         <Col md={6}>
