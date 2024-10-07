@@ -337,15 +337,7 @@ const AdminDashboard = () => {
       confirmButtonText: 'Yes, Completed it!'
   }).then(async (result) => {
       if (result.isConfirmed) {
-          // const response = await axios.get(API_URL + '/order/complete/' + orderNo,
-          //   {
-          //     headers: {
-          //         'Authorization': `Bearer ${token}`
-          //     }
-          // }
-          // )
-
-const response = await axios.get(`${API_URL}/order/complete/${orderNo}`, {
+          const response = await axios.get(`${API_URL}/order/complete/${orderNo}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -546,6 +538,38 @@ const response = await axios.get(`${API_URL}/order/complete/${orderNo}`, {
         console.error('Error:', error);
       });
   };
+  const check_out = async (order_no, piadamt, totalamt) =>{
+  
+    if(piadamt==null && totalamt==null){
+      Swal.fire({
+        title: 'failed to Completed, Please Add Amount',
+        icon: "error",
+    })
+    return;
+    }
+    
+      const formData = {
+        pending: 3,
+        checkouttime: moment(new Date()).format('DD/MM/YYYY, h:mm A')
+      }
+      const apiUrl =  `${API_URL}/order/assign/${order_no}`;;
+      // Make a POST request using Axios
+      axios.put(apiUrl, formData).then(response => {
+        if (response.status === 200) {
+          Swal.fire('Successfully!', "Your Order has been Completed!", 'success')
+          if (role === "service" || role === "supervisor") {
+            const status = undefined;
+            dispatch(GetAllOrders(status, currentUser.id, role));
+          } else {
+            dispatch(GetAllOrders());
+          }
+        } else {
+          Swal.fire({title:  response.data.message, icon: "error"})
+        } 			
+      }).catch(error => {
+        console.error('Error:', error);
+      });
+  };
   
   const columns = [
     // {
@@ -626,7 +650,7 @@ const response = await axios.get(`${API_URL}/order/complete/${orderNo}`, {
           if (checkintime && !checkouttime) {
               checkOutLabel = 'Check Out';
               checkOutColor = 'red';
-              checkOutHandler = () => OrderComplete(order_no, piadamt, totalamt);
+              checkOutHandler = () => check_out(order_no, piadamt, totalamt);
           } else if (checkouttime) {
               checkOutLabel = `Update Check Out ${checkouttime}`;
               checkOutColor = 'green';
@@ -757,14 +781,14 @@ const response = await axios.get(`${API_URL}/order/complete/${orderNo}`, {
     //     {(!params.row.vehicle_inventory) ? (<><Button variant='contained' color='primary'> Choose Vehicle</Button></> ) : <>{params.row.vehicle_inventory} </> } </> ),
     //  minWidth: 200,  editable: false },
     { field: "netpayamt", headerName: "Billing Amount",
-    renderCell: (params) => ( 
-        <>
-        {params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
-        (!params.row.netpayamt) ? (<><Button variant='contained' color='primary'  
-onClick={()=>AssignAmount(params.row.order_no)}
-        >Amount</Button></> ) : <>{params.row.netpayamt} </> ) : <>{params.row.netpayamt}</>
+//     renderCell: (params) => ( 
+//         <>
+//         {params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
+//         (!params.row.netpayamt) ? (<><Button variant='contained' color='primary'  
+// onClick={()=>AssignAmount(params.row.order_no)}
+//         >Amount</Button></> ) : <>{params.row.netpayamt} </> ) : <>{params.row.netpayamt}</>
         
-        } </> ),
+//         } </> ),
     minWidth: 150 },
     { field: "paymethod", headerName: "Payment Method", minWidth: 150},
     { field: "piadamt", headerName: "Paid Amount", minWidth: 150 },

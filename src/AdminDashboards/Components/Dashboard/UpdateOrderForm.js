@@ -58,9 +58,8 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
   ];
 
   const payMethodOptions = [
-    { label: 'Cash In Hand', value: 'Cash' },
+    { label: 'Cash', value: 'Cash' },
     { label: 'Online', value: 'Online' },
-    { label: 'Cheque', value: 'Cheque' },
   ];
 
   const handleInputChange = (e, maxLength) => {
@@ -165,7 +164,8 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
           amount: formData?.piadamt,
           order_no: orderData.order_no,
           person_name: orderData?.NewCustomer?.name,
-          about_payment: formData?.service_name?.value
+          about_payment: formData?.service_name?.value,
+          balance: formData?.totalamt
         }	
 
         try {
