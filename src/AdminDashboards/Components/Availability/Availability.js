@@ -16,6 +16,9 @@ import AdminHeader from "../AdminHeader";
 import TransferAvailability from "./form/TransferAvailability";
 import axios from "axios";
 import { API_URL } from "../../../config";
+import { GridToolbarContainer } from "@mui/x-data-grid";
+import { GridToolbarExport } from "@mui/x-data-grid";
+import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector } from "@mui/x-data-grid";
 const Availability = () => {
 
     const { userRole } = useUserRoleContext();
@@ -41,6 +44,18 @@ const Availability = () => {
         setTransferData(data);
         toggleTransfer();
     }
+
+    const CustomToolbar = () => {
+      return (
+        <GridToolbarContainer>
+          <GridToolbarQuickFilter />
+          <GridToolbarColumnsButton />
+          <GridToolbarFilterButton />
+          <GridToolbarExport />
+          <GridToolbarDensitySelector />
+        </GridToolbarContainer>
+      );
+    };
 
     const DataWithID = (data) => {
         const NewData = [];  
@@ -164,9 +179,39 @@ const Availability = () => {
 
         { field: "name",  headerName: "Name", minWidth: 150, editable: true,
          },
-        { field: "provider_type",  headerName: "Provider Type", minWidth: 100, editable: true},
+        { field: "provider_type",  headerName: "Provider Type", minWidth: 150, editable: true},
         { field: "date",  headerName: "Date", minWidth: 150, editable: true
          },
+          {
+            field: "07:00-07:30",
+            headerName: "07:00-07:30 AM",
+            minWidth: 150,
+            cellClassName: getCellClassName
+        },
+        {
+          field: "07:30-08:00",
+          headerName: "07:30-08:00 AM",
+          minWidth: 150,
+          cellClassName: getCellClassName
+      },
+      {
+        field: "08:00-08:30",
+        headerName: "08:00-08:30 AM",
+        minWidth: 150,
+        cellClassName: getCellClassName
+    },
+    {
+      field: "08:30-09:00",
+      headerName: "08:30-09:00 AM",
+      minWidth: 150,
+      cellClassName: getCellClassName
+  },
+    {
+      field: "09:00-09:30",
+      headerName: "09:00-09:30 AM",
+      minWidth: 150,
+      cellClassName: getCellClassName
+  },
         {
             field: "09:00-09:30",
             headerName: "09:00-09:30 AM",
@@ -244,7 +289,7 @@ const Availability = () => {
             </div>
 
             <div className="p-4">
-                <AdminDataTable rows={DataWithID(data)} columns={colums}  />
+                <AdminDataTable rows={DataWithID(data)} columns={colums}  CustomToolbar={CustomToolbar} />
             </div>
         </div>
         </div>
