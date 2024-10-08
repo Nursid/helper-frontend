@@ -98,11 +98,15 @@ const Availability = () => {
     const [statusClasses, setStatusClasses] = useState({}); // Cache for order statuses
 
     const getCellClassName = (params) => {
-      if (!params?.value) return ''; // Ensure value exists
+      if (!params?.value) return 'class-green'; // Ensure value exists
   
 
-      if (params.value === 'leave' || params.value === 'Lunch' || params.value === 'lunch') {
+      if (params.value === 'Full day Leave' || params.value === 'Lunch' || params.value === 'lunch' || params.value === 'Half Day Leave') {
         return 'class-red';
+      }
+
+      if (params?.value === "Week Off" || params?.value === "Absent") {
+        return "Cancel-availability";
       }
 
       if (params?.value?.includes("MonthlyService")) {
@@ -135,10 +139,10 @@ const Availability = () => {
         const pendingStatus = GetStatus?.data?.data?.pending;
   
         const statusMap = {
-          0: "Pending-availability",
+          0: "Running-availability",
           1: "Hold-availability",
           2: "Due-availability",
-          3: "class-green",
+          3: "Running-availability",
           4: "Running-availability",
           5: "Cancel-availability"
         };
@@ -177,8 +181,14 @@ const Availability = () => {
             editable: true,
         },
 
-        { field: "name",  headerName: "Name", minWidth: 150, editable: true,
-         },
+        { field: "name",  headerName: "Name", minWidth: 150, editable: true},
+         {
+          field: "image", headerName: "Image", minWidth: 120, renderCell: (params) => (
+              <div className='w-80 h-80 rounded-circle'>
+                 <img src="https://i.pinimg.com/564x/d5/b0/4c/d5b04cc3dcd8c17702549ebc5f1acf1a.jpg" alt="Image" style={{ width: "40px", height: "40px" }} />
+              </div>
+          )
+      },
         { field: "provider_type",  headerName: "Provider Type", minWidth: 150, editable: true},
         { field: "date",  headerName: "Date", minWidth: 150, editable: true
          },
@@ -200,24 +210,18 @@ const Availability = () => {
         minWidth: 150,
         cellClassName: getCellClassName
     },
-    {
-      field: "08:30-09:00",
-      headerName: "08:30-09:00 AM",
-      minWidth: 150,
-      cellClassName: getCellClassName
-  },
-    {
-      field: "09:00-09:30",
-      headerName: "09:00-09:30 AM",
-      minWidth: 150,
-      cellClassName: getCellClassName
-  },
         {
-            field: "09:00-09:30",
-            headerName: "09:00-09:30 AM",
-            minWidth: 150,
-            cellClassName: getCellClassName
-        },
+          field: "08:30-09:00",
+          headerName: "08:30-09:00 AM",
+          minWidth: 150,
+          cellClassName: getCellClassName
+      },
+        {
+          field: "09:00-09:30",
+          headerName: "09:00-09:30 AM",
+          minWidth: 150,
+          cellClassName: getCellClassName
+      },
         { field: "09:30-10:00", headerName: "09:30-10:00 AM ", minWidth: 150, cellClassName: getCellClassName},
         { field: "10:00-10:30", headerName: "10:00-10:30 AM ", minWidth: 150, cellClassName: getCellClassName},
         { field: "10:30-11:00", headerName: "10:30-11:00 AM ", minWidth: 150, cellClassName: getCellClassName},

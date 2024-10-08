@@ -68,11 +68,11 @@ const AddAvailability = ({ prop}) => {
         if (!isServiceProvider.value) {
             errors.isServiceProvider = "Service Provider is required";
         }
-        if (!leaveDay.value) {
+        if (!leaveDay?.value) {
             errors.leaveDay = "LeaveDay is required";
         }
 
-		if (leaveDay && leaveDay.value === '2' && !half.value) {
+		if (leaveDay && leaveDay?.value === '2' && !half?.value) {
 			errors.half = 'Half Day is required';
 		}
 
@@ -86,9 +86,9 @@ const AddAvailability = ({ prop}) => {
 
 		  const formdata = {
 			...inputValue,
-			emp_id: isServiceProvider.value,
-			leaveDay: leaveDay.value,
-			half: half ? half.value : null,
+			emp_id: isServiceProvider?.value,
+			leaveDay: leaveDay?.value,
+			half: half ? half?.value : null,
 		  }
 
 		  const response = await axios.post(`${API_URL}/api/add-leave`, formdata)
@@ -119,9 +119,10 @@ const AddAvailability = ({ prop}) => {
 		{ label: 'Full day', value: '1' },
 		{ label: 'Half Day', value: '2'}
 	  ]
+
 	const HalfLeave = [
-	{ label: 'First Half', value: '1' },
-	{ label: 'Second Half', value: '2'}
+		{ label: 'First Half', value: '1' },
+		{ label: 'Second Half', value: '2'}
 	]
 
 	return (

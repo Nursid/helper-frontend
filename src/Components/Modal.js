@@ -2754,6 +2754,9 @@ export const ServiceProviderLeaveRemarkModal = ({ modalOpen, toggleModal, empId,
 	const [type, setType] = useState("");
 	const [errors, setErrors]= useState([]);
 	const [isLoading, setIsLoading] = useState(false)
+	const [leaveDay, setLeaveDay] = useState('');
+	const [half, sethalf] = useState('');
+	
 	const [allType, setAllType]=useState([
         {
             label: 'Leave',
@@ -2776,9 +2779,18 @@ export const ServiceProviderLeaveRemarkModal = ({ modalOpen, toggleModal, empId,
         e.preventDefault();
         let errors = {};
 
-		if (!type.value) {
-            errors.type = "Leave type is required";
+		// if (!type.value) {
+        //     errors.type = "Leave type is required";
+        // }
+
+		if (!leaveDay?.value) {
+            errors.leaveDay = "LeaveDay is required";
         }
+
+		if (leaveDay && leaveDay?.value === '2' && !half?.value) {
+			errors.half = 'Half Day is required';
+		}
+
 		if (!message) {
             errors.message = "Remark is required";
         }
@@ -2793,22 +2805,37 @@ export const ServiceProviderLeaveRemarkModal = ({ modalOpen, toggleModal, empId,
 			setIsLoading(false)
 			return false;
 		  }
+
+		  const date = new Date();
+const options = { timeZone: "Asia/Kolkata", year: 'numeric', month: '2-digit', day: '2-digit' };
+const formattedDate = new Intl.DateTimeFormat('en-CA', options).format(date);
 		  
         const formData = {
             message: message,
-            status: type.value,
-			in_date: new Date().toISOString().split('T')[0],
+            status: leaveDay?.label,
+			in_date: formattedDate,
 			servp_id: empId,
             createdby: role
         };
+
+		const formdataAvailvility = {
+			date: formattedDate,
+			emp_id: empId,
+			leaveDay: leaveDay?.value,
+			half: half ? half?.value : null,
+			label: leaveDay?.label
+		  }
         const apiUrl = `${API_URL}/attendance/service-provider/leave`;
 
         try {
             const response = await axios.post(apiUrl, formData);
             if (response.status === 200) {
+				const response2 = await axios.post(`${API_URL}/api/add-leave`, formdataAvailvility)
+				if (response2.status === 200) {
                 toggleModal();
                 Swal.fire('Successfully!', response.data.message, 'success');
                 dispatch(ServiceProviderAttendancaAction());
+			 }
             } else {
                 Swal.fire({ title: 'Failed to add, try again', icon: "error" });
             }
@@ -2820,6 +2847,24 @@ export const ServiceProviderLeaveRemarkModal = ({ modalOpen, toggleModal, empId,
         }
     };
 
+	const DayLeave = [
+		{ label: 'Full day Leave', value: '1' },
+		{ label: 'Half Day Leave', value: '2'},
+        {
+            label: 'Week Off',
+            value: '3',
+        },
+		{
+            label: 'Absent',
+            value: '4',
+        },
+	  ]
+
+	const HalfLeave = [
+		{ label: 'First Half', value: '1' },
+		{ label: 'Second Half', value: '2'}
+	]
+
     return (
         <Modal className="modal-dialog-centered modal-lg" isOpen={modalOpen} toggle={toggleModal}>
             <ModalHeader toggle={toggleModal}>
@@ -2828,7 +2873,42 @@ export const ServiceProviderLeaveRemarkModal = ({ modalOpen, toggleModal, empId,
             <ModalBody>
                 <Row>
 
-					<Col md={12}>
+
+				<Col md={12}>
+						<FormGroup>
+                    <Label>Leave Type<span style={{color: "red"}}>*</span></Label>
+							<SelectBox
+								options={DayLeave}
+								initialValue={leaveDay}
+								setSelcted={setLeaveDay}
+								/>
+							{errors?.leaveDay && (
+								<span className='validationError'>
+									{errors?.leaveDay}
+								</span>
+							)}
+						</FormGroup>
+					</Col>
+
+					{leaveDay.value === '2' && ( // Conditionally render this section
+						<Col md={12}>
+							<FormGroup>
+							<Label>
+								Half Day Type<span style={{ color: 'red' }}>*</span>
+							</Label>
+							<SelectBox
+								options={HalfLeave}
+								initialValue={half}
+								setSelcted={sethalf}
+							/>
+							{errors?.half && (
+								<span className="validationError">{errors?.half}</span>
+							)}
+							</FormGroup>
+						</Col>
+						)}
+
+					{/* <Col md={12}>
 						<FormGroup>
 						<Label for="first_name">Leave Type <span style={{color: "red"}}>*</span></Label>
 						<SelectBox options={allType} setSelcted={setType} initialValue={type} />
@@ -2839,7 +2919,7 @@ export const ServiceProviderLeaveRemarkModal = ({ modalOpen, toggleModal, empId,
 					)}
 				
 						</FormGroup>
-					</Col>
+					</Col> */}
 
                     <Col xs={12}>
 					<FormGroup>
