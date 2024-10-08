@@ -284,12 +284,14 @@ const Availability = () => {
 
                 </div>
 
-                <div className={`border py-2 px-2  shadow rounded-2 cursor-p hoverThis text-white`}
+            {/*
+              <div className={`border py-2 px-2  shadow rounded-2 cursor-p hoverThis text-white`}
                  onClick={toggleAddAvailability}
                 >
                 Add Leave
                 </div>
-
+            */} 
+            
             </div>
 
             <div className="p-4">
