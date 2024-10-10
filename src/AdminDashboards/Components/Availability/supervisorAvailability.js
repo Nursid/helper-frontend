@@ -4,13 +4,12 @@ import { useUserRoleContext } from "../../../Context/RolesContext";
 import AdminNavItems from "../../Elements/AdminNavItems";
 import AnimatedBackground from "../../Elements/AnimatedBacground";
 // import { FaRegClock } from "react-icons/fa";
-import { GetAvailability } from "../../../Store/Actions/Dashboard/AvailabilityAction";
+import { GetSupervisorAvailability } from "../../../Store/Actions/Dashboard/SupervisorAvailabilityAction";
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@mui/material';
 import  AddAvailability  from "./form/AddAvailability";
 import ModalComponent from "../../Elements/ModalComponent";
 import moment from "moment";
-import { AssignEmployeeAvailability } from "../../../Components/Modal";
 import { Input } from "reactstrap";
 import AdminHeader from "../AdminHeader";
 import TransferAvailability from "./form/TransferAvailability";
@@ -19,10 +18,11 @@ import { API_URL } from "../../../config";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector } from "@mui/x-data-grid";
-const Availability = () => {
+
+const SupervisorAvailability = () => {
 
     const { userRole } = useUserRoleContext();
-    const { data } = useSelector(state => state.AvailabilityReducers)
+    const { data } = useSelector(state => state.SupervisorAvailabilityReducers)
     const [EmployeeAvailabilityModalOpen, setEmployeeAvailabilityModalOpen] = useState(false);
     const [field, setField] = useState("");
     const [mobileNo, setMobileNo] = useState("");
@@ -32,7 +32,7 @@ const Availability = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(GetAvailability(filterDate))
+        dispatch(GetSupervisorAvailability(filterDate))
     }, []);
    
     const [Toggle, setToggle] = useState(false);
@@ -62,7 +62,7 @@ const Availability = () => {
         if (data !== undefined) {
             for (let item of data) {
                 // Extract availabilities
-                const availabilities = item.availabilities;
+                const availabilities = item.supervisor_availabilities;
                 
                 if (availabilities.length > 0) {
                     for (let availability of availabilities) {
@@ -70,13 +70,13 @@ const Availability = () => {
                         let mergedItem = { ...item, ...availability };
                         NewData.push({
                             ...mergedItem,
-                            id: item.id,
+                            id: data.indexOf(item),
                             date: moment(availability.date).format("DD-MM-YYYY"),
                              "01:00-01:30": availability["01:00-01:30"] === 'leave' ? 'leave' : 'lunch'
                         });
                     }
                 } else {
-                    NewData.push({ ...item, id: item.id });
+                    NewData.push({ ...item, id: data.indexOf(item) });
                 }
             }
         } else {
@@ -165,21 +165,22 @@ const Availability = () => {
       
     const colums = [
 
-        {
-            field: "status",
-            headerName: "Status",
-            renderCell: (params) => (
-                <Button 
-                variant='contained' 
-                color='primary' 
-                onClick={() => toggleTransferData(params.row)}
-              >
-                Transfer
-              </Button>
-            ),
-            minWidth: 100,
-            editable: true,
-        },
+        // {
+        //     field: "status",
+        //     headerName: "Status",
+        //     renderCell: (params) => (
+        //         <Button 
+        //         variant='contained' 
+        //         color='primary' 
+        //         onClick={() => toggleTransferData(params.row)}
+        //       >
+        //         Transfer
+        //       </Button>
+        //     ),
+        //     minWidth: 100,
+        //     editable: true,
+        // },
+        { field: "id",  headerName: "Sr No", minWidth: 150, editable: true},
 
         { field: "name",  headerName: "Name", minWidth: 150, editable: true},
          {
@@ -189,7 +190,6 @@ const Availability = () => {
               </div>
           )
       },
-        { field: "provider_type",  headerName: "Provider Type", minWidth: 150, editable: true},
         { field: "date",  headerName: "Date", minWidth: 150, editable: true
          },
           {
@@ -257,16 +257,16 @@ const Availability = () => {
             data={<TransferAvailability prop={toggleTransfer} transferData={transferData} />}
         />
 
-        <AssignEmployeeAvailability
+        {/* <AssignEmployeeAvailability
             EmployeeAvailabilityModalOpen={EmployeeAvailabilityModalOpen}
             EmployeeAvailabilityModalfunction={() => setEmployeeAvailabilityModalOpen(!EmployeeAvailabilityModalOpen)}
             field={field}
             mobile_no={mobileNo}
             date={date}
-        />
+        /> */}
 
 
-                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "30rem", minWidth: "30rem" }}>Service Provider Availability</h4>
+                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "25rem", minWidth: "25rem" }}>Supervisor Availability</h4>
 
                 
 
@@ -277,7 +277,7 @@ const Availability = () => {
                 onChange={(e)=>setFilterDate({...filterDate,date: e.target.value})}
                 
                 />
-                <Button variant='contained' color='primary' className="ml-4" style={{width: "200px"}}  onClick={()=>dispatch(GetAvailability(filterDate))}> Search </Button>
+                <Button variant='contained' color='primary' className="ml-4" style={{width: "200px"}}  onClick={()=>dispatch(GetSupervisorAvailability(filterDate))}> Search </Button>
 
                 </div>
 
@@ -298,4 +298,4 @@ const Availability = () => {
     )
 }
 
-export default Availability;
+export default SupervisorAvailability;

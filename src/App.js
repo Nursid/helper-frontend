@@ -20,7 +20,7 @@ import AdminRolesAndPermission from './AdminDashboards/Components/RolesAndPermis
 import AdminPannel from './AdminDashboards/AdminPannel';
 import ProfileHistory from './LandingPage/Pages/ProfileHistory';
 import AdminProfile from './AdminDashboards/Components/profile/AdminProfile';
-import Availability from './AdminDashboards/Components/Availability/Availability';
+import Availability from './AdminDashboards/Components/Availability';
 import { ServiceProvider } from './Store/context/serviceProvider';
 import AdminComplain from './AdminDashboards/Components/Complain';
 import Invoice from './Components/MemberInvoice';
