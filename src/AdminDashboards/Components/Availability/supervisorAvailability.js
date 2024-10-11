@@ -60,31 +60,23 @@ const SupervisorAvailability = () => {
     const DataWithID = (data) => {
         const NewData = [];  
         if (data !== undefined) {
-            for (let item of data) {
-                // Extract availabilities
-                const availabilities = item.supervisor_availabilities;
-                
-                if (availabilities.length > 0) {
-                    for (let availability of availabilities) {
-                        // Merge item with availability details
-                        let mergedItem = { ...item, ...availability };
-                        NewData.push({
-                            ...mergedItem,
-                            id: data.indexOf(item),
-                            date: moment(availability.date).format("DD-MM-YYYY"),
-                             "01:00-01:30": availability["01:00-01:30"] === 'leave' ? 'leave' : 'lunch'
-                        });
-                    }
-                } else {
-                    NewData.push({ ...item, id: data.indexOf(item) });
-                }
-            }
+          for (let item of data) {
+            // Extract availabilities
+            const supervisor_availability = item?.supervisor_availability;
+                  NewData.push({
+                    ...item,
+                    ...supervisor_availability, // Assuming availabilities is an object
+                      id: data.indexOf(item),
+                      date: item?.supervisor_availability?.date ? moment(item?.supervisor_availability?.date).format("DD-MM-YYYY") : null,
+                  }); 
+        }
         } else {
             NewData.push({ id: 0 });
         }
         
         return NewData;
     };
+
 
     const AssignDate = (field, data) =>{
         setField(field);
@@ -109,26 +101,26 @@ const SupervisorAvailability = () => {
         return "Cancel-availability";
       }
 
-      if (params?.value?.includes("MonthlyService")) {
-        return "class-monthly";
-      }
+      // if (params?.value?.includes("MonthlyService")) {
+      //   return "class-monthly";
+      // }
   
       
   
-      if (params?.value && !params.value.includes("MonthlyService")) {
-        const splitValue = params.value.split('-');  // Split by '-'
-        const numericPart = splitValue[1];           // Get the second part (the number)
+      // if (params?.value && !params.value.includes("MonthlyService")) {
+      //   const splitValue = params.value.split('-');  // Split by '-'
+      //   const numericPart = splitValue[1];           // Get the second part (the number)
   
-        const statusAvailability = statusClasses[numericPart]; // Check cache first
+      //   const statusAvailability = statusClasses[numericPart]; // Check cache first
   
-        if (!statusAvailability) {
-          // If not cached, fetch the status asynchronously
-          fetchStatus(numericPart);
-          return ''; // Return empty string until status is fetched
-        }
+      //   // if (!statusAvailability) {
+      //   //   // If not cached, fetch the status asynchronously
+      //   //   fetchStatus(numericPart);
+      //   //   return ''; // Return empty string until status is fetched
+      //   // }
   
-        return statusAvailability; // Return cached status
-      }
+      //   return statusAvailability; // Return cached status
+      // }
   
       return '';
     };
@@ -240,6 +232,9 @@ const SupervisorAvailability = () => {
         { field: "05:00-05:30", headerName: "05:00-05:30 PM ", minWidth: 150, cellClassName: getCellClassName},
         { field: "05:30-06:00", headerName: "05:30-06:00 PM ", minWidth: 150, cellClassName: getCellClassName},
     ]
+
+
+    console.log(DataWithID(data))
 
     return (
         <Fragment>

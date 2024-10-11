@@ -2621,25 +2621,15 @@ export const ApprovePaymentRemarkModal = ({ modalOpen, toggleModal, id, adminApr
 
 
 export const SupervisorLeaveRemarkModal = ({ modalOpen, toggleModal, empId, role, AttendanceAction }) => {
-    const [message, setMessage] = useState('');
+
+	const [message, setMessage] = useState('');
     const dispatch = useDispatch();
 	const [type, setType] = useState("");
 	const [errors, setErrors]= useState([]);
 	const [isLoading, setIsLoading] = useState(false)
-	const [allType, setAllType]=useState([
-        {
-            label: 'Leave',
-            value: 'Leave',
-        },
-        {
-            label: 'Week Off',
-            value: 'Week Off',
-        },
-        {
-            label: 'Absent',
-            value: 'Absent',
-        },
-    ]);
+	const [leaveDay, setLeaveDay] = useState('');
+	const [half, sethalf] = useState('');
+	
 
     const handleSubmit = async (e) => {
 
@@ -2648,9 +2638,18 @@ export const SupervisorLeaveRemarkModal = ({ modalOpen, toggleModal, empId, role
         e.preventDefault();
         let errors = {};
 
-		if (!type.value) {
-            errors.type = "Leave type is required";
+		// if (!type.value) {
+        //     errors.type = "Leave type is required";
+        // }
+
+		if (!leaveDay?.value) {
+            errors.leaveDay = "LeaveDay is required";
         }
+
+		if (leaveDay && leaveDay?.value === '2' && !half?.value) {
+			errors.half = 'Half Day is required';
+		}
+
 		if (!message) {
             errors.message = "Remark is required";
         }
@@ -2665,22 +2664,38 @@ export const SupervisorLeaveRemarkModal = ({ modalOpen, toggleModal, empId, role
 			setIsLoading(false)
 			return false;
 		  }
+
+		  const date = new Date();
+		const options = { timeZone: "Asia/Kolkata", year: 'numeric', month: '2-digit', day: '2-digit' };
+		const formattedDate = new Intl.DateTimeFormat('en-CA', options).format(date);
 		  
         const formData = {
             message: message,
-            status: type.value,
-			in_date: new Date().toISOString().split('T')[0],
+            status: leaveDay?.label,
+			in_date: formattedDate,
 			emp_id: empId,
             createdby: role
         };
-        const apiUrl = `${API_URL}/attendance/supervisor/leave`;
 
+		const formdataAvailvility = {
+			date: formattedDate,
+			emp_id: empId,
+			leaveDay: leaveDay?.value,
+			half: half ? half?.value : null,
+			label: leaveDay?.label
+		  }
+
+
+		const apiUrl = `${API_URL}/attendance/supervisor/leave`;
         try {
             const response = await axios.post(apiUrl, formData);
             if (response.status === 200) {
-                toggleModal();
-                Swal.fire('Successfully!', response.data.message, 'success');
-                dispatch(AttendanceAction());
+				const response2 = await axios.post(`${API_URL}/api/supervisor-add-leave`, formdataAvailvility)
+						if (response2.status === 200) {
+							toggleModal();
+							Swal.fire('Successfully!', response.data.message, 'success');
+							dispatch(AttendanceAction());
+					 }               
             } else {
                 Swal.fire({ title: 'Failed to add, try again', icon: "error" });
             }
@@ -2690,7 +2705,26 @@ export const SupervisorLeaveRemarkModal = ({ modalOpen, toggleModal, empId, role
             Swal.fire({ title: 'An error occurred', icon: "error" });
 			setIsLoading(false)
         }
+
     };
+
+	const DayLeave = [
+		{ label: 'Full day Leave', value: '1' },
+		{ label: 'Half Day Leave', value: '2'},
+        {
+            label: 'Week Off',
+            value: '3',
+        },
+		{
+            label: 'Absent',
+            value: '4',
+        },
+	  ]
+
+	const HalfLeave = [
+		{ label: 'First Half', value: '1' },
+		{ label: 'Second Half', value: '2'}
+	]
 
     return (
         <Modal className="modal-dialog-centered modal-lg" isOpen={modalOpen} toggle={toggleModal}>
@@ -2699,8 +2733,41 @@ export const SupervisorLeaveRemarkModal = ({ modalOpen, toggleModal, empId, role
             </ModalHeader>
             <ModalBody>
                 <Row>
+				<Col md={12}>
+						<FormGroup>
+                    <Label>Leave Type<span style={{color: "red"}}>*</span></Label>
+							<SelectBox
+								options={DayLeave}
+								initialValue={leaveDay}
+								setSelcted={setLeaveDay}
+								/>
+							{errors?.leaveDay && (
+								<span className='validationError'>
+									{errors?.leaveDay}
+								</span>
+							)}
+						</FormGroup>
+					</Col>
 
-					<Col md={12}>
+					{leaveDay.value === '2' && ( // Conditionally render this section
+						<Col md={12}>
+							<FormGroup>
+							<Label>
+								Half Day Type<span style={{ color: 'red' }}>*</span>
+							</Label>
+							<SelectBox
+								options={HalfLeave}
+								initialValue={half}
+								setSelcted={sethalf}
+							/>
+							{errors?.half && (
+								<span className="validationError">{errors?.half}</span>
+							)}
+							</FormGroup>
+						</Col>
+						)}
+
+					{/* <Col md={12}>
 						<FormGroup>
 						<Label for="first_name">Leave Type <span style={{color: "red"}}>*</span></Label>
 						<SelectBox options={allType} setSelcted={setType} initialValue={type} />
@@ -2711,7 +2778,7 @@ export const SupervisorLeaveRemarkModal = ({ modalOpen, toggleModal, empId, role
 					)}
 				
 						</FormGroup>
-					</Col>
+					</Col> */}
 
                     <Col xs={12}>
 					<FormGroup>
@@ -2732,9 +2799,9 @@ export const SupervisorLeaveRemarkModal = ({ modalOpen, toggleModal, empId, role
 					</Col>
 					<Col xs={12}> 
                         <div className="d-flex justify-content-end">
-                            <Button color="success" onClick={handleSubmit}
+                            <Button color="success" onClick={handleSubmit} style={{ marginRight: '10px' }}
 							disabled={isLoading}
-							style={{ marginRight: '10px' }}>
+							>
                                 Save
                             </Button>
                             <Button color="danger" onClick={toggleModal}>
@@ -2745,6 +2812,8 @@ export const SupervisorLeaveRemarkModal = ({ modalOpen, toggleModal, empId, role
                 </Row>
             </ModalBody>
         </Modal>
+
+    
     );
 };
 
@@ -2807,8 +2876,8 @@ export const ServiceProviderLeaveRemarkModal = ({ modalOpen, toggleModal, empId,
 		  }
 
 		  const date = new Date();
-const options = { timeZone: "Asia/Kolkata", year: 'numeric', month: '2-digit', day: '2-digit' };
-const formattedDate = new Intl.DateTimeFormat('en-CA', options).format(date);
+		const options = { timeZone: "Asia/Kolkata", year: 'numeric', month: '2-digit', day: '2-digit' };
+		const formattedDate = new Intl.DateTimeFormat('en-CA', options).format(date);
 		  
         const formData = {
             message: message,
