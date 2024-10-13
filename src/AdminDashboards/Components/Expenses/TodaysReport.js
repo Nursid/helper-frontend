@@ -41,7 +41,7 @@ const TodaysReport = () => {
     }, [data]);
 
     const all_columns = [
-        { field: "date", headerName: "Date", flex: 1, minWidth: 50 },
+        { field: "date", headerName: "Date", flex: 1, minWidth: 200 },
         // { field: "order_no", headerName: "Order No", flex: 1, minWidth: 120 },
         { field: "person_name", headerName: "Party Name", flex: 1, minWidth: 120 },
         { field: "about_payment", headerName: "Particular (Service Desc.)", flex: 1, minWidth: 250 },
@@ -49,7 +49,7 @@ const TodaysReport = () => {
         { field: "debit", headerName: "Amount Debit", flex: 1, minWidth: 120 },
         { field: "credit", headerName: "Amount Credit", flex: 1, minWidth: 120 },
         { field: "balance", headerName: "Balance Amount", flex: 1, minWidth: 150 },
-        { field: "balance_opening", headerName: "Opening Balance", flex: 1, minWidth: 120 },
+        { field: "balance_opening", headerName: "Outstanding Balance", flex: 1, minWidth: 120 },
         { field: "approve", headerName: "Approve", flex: 1, minWidth: 120,
             renderCell: (params) => {
             
@@ -66,6 +66,7 @@ const TodaysReport = () => {
         }
     },
 
+        { field: "expense_remark", headerName: "Expense Remark", flex: 1, minWidth: 220 },
         { field: "remark", headerName: "Remark", flex: 1, minWidth: 120 },
     ];
 

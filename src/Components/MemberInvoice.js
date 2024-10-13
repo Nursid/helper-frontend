@@ -93,6 +93,12 @@ const MemberInvoice = React.forwardRef((props, ref) => {
                             <td colSpan={2} className="p-3">{data?.problem_des ?? ""}</td>
                         </tr>
                         <tr>
+                            <th scope="row" className="p-3">Service Provider Name</th>
+                            <td colSpan={2} className="p-3">{data?.servicep_id ?? ""}</td>
+                            <th scope="row" className="p-3">Supervisor Name</th>
+                            <td colSpan={2} className="p-3">{data?.suprvisor_id ?? ""}</td>
+                        </tr>
+                        <tr>
                             <th scope="row" className="p-3">Payment method</th>
                             <td colSpan={2} className="p-3">{data?.paymethod ?? ""}</td>
                             <th scope="row" className="p-3">Total Amount</th>

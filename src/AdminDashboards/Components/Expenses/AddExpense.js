@@ -48,7 +48,8 @@ const AddExpense = ({ setActiveAttendance }) => {
     amount:  "",
     person_name:"",
     date:  "",
-    type_payment: true
+    type_payment: true,
+    expense_remark: ""
 });
 
 
@@ -253,8 +254,8 @@ const AddExpense = ({ setActiveAttendance }) => {
               <Input
                 type="textarea"
                 className="w-100"
-                name="remark"
-                value={formData.remark || ""}
+                name="expense_remark"
+                value={formData.expense_remark || ""}
                 onChange={(e) => HandleChange(e, 200)}
               />
             </div>

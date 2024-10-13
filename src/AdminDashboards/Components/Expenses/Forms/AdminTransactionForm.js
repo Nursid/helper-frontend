@@ -32,11 +32,11 @@ const AdminTransactionForm = ({toggleModal,data,AccountListing,TotalBalance}) =>
             errors.payment_mode = "Payment Mode is required";
         } 
             // Depending on the payment mode, validating further fields
-        if (inputValue.payment_mode === "Online") {
-            if (!inputValue.transection_id) {
-                errors.transection_id = "Transaction Id is required";
-            }
-        } 
+        // if (inputValue.payment_mode === "Online") {
+        //     if (!inputValue.transection_id) {
+        //         errors.transection_id = "Transaction Id is required";
+        //     }
+        // } 
             
         if (!inputValue.amount) {
             errors.amount = "amount is required";
@@ -180,23 +180,17 @@ const AdminTransactionForm = ({toggleModal,data,AccountListing,TotalBalance}) =>
     {inputValue?.payment_mode ==="Online" && ( 
             <Col md={6}>
                 <FormGroup>
-                    <Label for="name">Transaction ID <span style={{color: "red"}}>*</span></Label>
+                    <Label for="name">Transaction ID </Label>
                     <Input
                         type="text"
                         name="transection_id"
                         onChange={(e) => HandleChange(e, 50)}
                         placeholder='Transection Id'
                         defaultValue={inputValue?.transection_id}
-                    />
-                    {errors?.transection_id && (
-                        <span className='validationError'>
-                            {errors?.transection_id}
-                        </span>
-                    )}
+                    />  
                 </FormGroup>
             </Col>
             )}
-
             <Col md={6}>
                 <FormGroup>
                     <Label for="name">Amount <span style={{color: "red"}}>*</span></Label>
