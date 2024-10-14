@@ -234,8 +234,6 @@ const SupervisorAvailability = () => {
     ]
 
 
-    console.log(DataWithID(data))
-
     return (
         <Fragment>
         <ModalComponent

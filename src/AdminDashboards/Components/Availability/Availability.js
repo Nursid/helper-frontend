@@ -19,6 +19,9 @@ import { API_URL } from "../../../config";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector } from "@mui/x-data-grid";
+import { GetAllServiceProvider } from '../../../Store/Actions/Dashboard/Authentication/ServiceProviderActions';
+import SelectBox from "../../Elements/SelectBox";
+
 const Availability = () => {
 
     const { userRole } = useUserRoleContext();
@@ -30,6 +33,10 @@ const Availability = () => {
     const [transferData, setTransferData] = useState([])
     const [filterDate, setFilterDate] = useState({date: moment().format("YYYY-MM-DD")});
     const dispatch = useDispatch();
+    const [from, setFrom] = useState(null)
+    const [to, setTo] = useState(null)
+    const [getAllServiceProvider, setGetAllServiceProvider] = useState([])
+    const [serviceProvider, setServiceProvider] = useState('')
 
     useEffect(() => {
         dispatch(GetAvailability(filterDate))
@@ -70,8 +77,7 @@ const Availability = () => {
                         let mergedItem = { ...item, ...availability };
                         NewData.push({
                             ...mergedItem,
-                            id: item.id,
-                            date: moment(availability.date).format("DD-MM-YYYY"),
+                            id: availability.id,
                              "01:00-01:30": availability["01:00-01:30"] === 'leave' ? 'leave' : 'lunch'
                         });
                     }
@@ -241,6 +247,44 @@ const Availability = () => {
         { field: "05:30-06:00", headerName: "05:30-06:00 PM ", minWidth: 150, cellClassName: getCellClassName},
     ]
 
+
+    const FilterData = async () => {
+      const data ={
+        from: from,
+        to: to,
+        emp_id: serviceProvider?.value
+      }
+      if(!from || !to || !serviceProvider?.value){
+          return;
+      }
+  
+      try {
+        dispatch(GetAvailability(data))
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+   
+
+    const getAllServicesProvider = async (filterData) => {
+      try {
+        const queryParams = new URLSearchParams(filterData).toString()
+        const response = await axios.get(`${API_URL}/service-provider/getall?${queryParams}`);
+        if (response.status === 200) {
+        const transformedData = response.data.data.map(item => ({ label: item.name, value: item.id }));
+        setGetAllServiceProvider(transformedData);
+        }
+      } catch (error) {
+        console.error("Error fetching service providers:", error);
+      }
+    }
+
+ 
+  useEffect(()=> {
+    getAllServicesProvider()
+  }, [])
+
+
     return (
         <Fragment>
         <ModalComponent
@@ -275,11 +319,39 @@ const Availability = () => {
             <div className="d-flex">
                 <Input type="date" className="px-3" 
                 onChange={(e)=>setFilterDate({...filterDate,date: e.target.value})}
-                
+                value={filterDate}
                 />
                 <Button variant='contained' color='primary' className="ml-4" style={{width: "200px"}}  onClick={()=>dispatch(GetAvailability(filterDate))}> Search </Button>
 
+            </div>
+            </div>
+
+            <div className="flex flex-col justify-between w-full mb-3 ">
+                <div className="flex justify-between gap-6 items-center">
+                <div className="ml-4">
+                    <label htmlFor="startDate" className="text-light">From:</label>
+                    <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
+            </div>
+                    <div className="ml-4">
+                    <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
+                    <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
+            </div>
+                <div className="ml-4" style={{width: '12rem'}}>
+                                <label className="form-label text-light ml-2 mr-2" htmlFor="serviceRemark">
+                                    Service Provider
+                                </label>
+                                <SelectBox options={getAllServiceProvider}
+                                    setSelcted={setServiceProvider}
+                                    selectOption={serviceProvider}/>
+                    </div>
+                    <div className="ml-4" style={{marginTop: '32px'}}>
+                    <Button className="btn btn-primary" size="small" variant="contained" onClick={FilterData}
+                    >
+                    Search
+                    </Button>
                 </div>
+            </div>
+            </div>  
 
             {/*
               <div className={`border py-2 px-2  shadow rounded-2 cursor-p hoverThis text-white`}
@@ -289,8 +361,7 @@ const Availability = () => {
                 </div>
             */} 
             
-            </div>
-
+            
             <div className="p-4">
                 <AdminDataTable rows={DataWithID(data)} columns={colums}  CustomToolbar={CustomToolbar} />
             </div>
