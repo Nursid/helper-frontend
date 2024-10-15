@@ -14,11 +14,12 @@ const StackBox = ({ title, amount, rupee, className, style, handleFilterChange,s
 
     return (
         <Fragment>
-            <div className={`StackAnalyticsBox d-flex align-items-center justify-content-center gap-2 border rounded-3 p-3 ${className}`} style={{ ...style}}>
-                <div className='d-flex flex-column align-items-start jusity-content-center gap-3'>
+            <div className={`StackAnalyticsBox d-flex align-items-center justify-content-center border rounded-3 p-3 ${className}`} style={{ ...style}}>
+                {/* <div className='d-flex flex-column align-items-start jusity-content-center gap-3'>
                     <FaMonero size={25} />
-                    <h5>{title}</h5>
-                </div>
+                   
+                </div> */}
+                <h5 className='mr-2'>{title}</h5>
                 <div className={`AmountSection d-flex flex-column align-items-end justify-content-center gap-3 `}>
                     <select className={`StackSelectBox bg-transparent cursor-p ${hidden}`}
                     onChange={handleChange} defaultValue={selectedFilter}

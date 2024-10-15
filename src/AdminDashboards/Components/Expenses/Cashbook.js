@@ -33,7 +33,7 @@ const Cashbook = () => {
     const dispatch = useDispatch();
     const [totalCash, setTotalCash]= useState('');
     const [totalUpi, setTotalUpi] = useState('');
-    const [selectedFilter, setSelectedFilter] = useState(1);
+    const [selectedFilter, setSelectedFilter] = useState("1");
     const DataWithID = (data) => {
         const NewData = []
         if (data !== undefined) {

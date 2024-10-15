@@ -104,7 +104,8 @@ const Availability = () => {
     const [statusClasses, setStatusClasses] = useState({}); // Cache for order statuses
 
     const getCellClassName = (params) => {
-      if (!params?.value) return 'class-green'; // Ensure value exists
+      if (!params?.value) return 'Cancel-availability'; // Ensure value exists
+      if (params.value === 'p') return 'class-green'; // Ensure value exists
   
 
       if (params.value === 'Full day Leave' || params.value === 'Lunch' || params.value === 'lunch' || params.value === 'Half Day Leave') {
