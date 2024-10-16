@@ -54,6 +54,10 @@ const ServiceProviderAttendance = () => {
         };
 
         const response = await axios.post(`${API_URL}/attendance/service-provider/add`, formData);
+        if(formData.action==='check_in'){
+        const response = await axios.post(`${API_URL}/api/availability/attendance/${servp_id}`);
+        }
+        
         if (response.status === 200) {
             dispatch(ServiceProviderAttendancaAction());
         }else{

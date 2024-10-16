@@ -319,8 +319,7 @@ const Availability = () => {
 
             <div className="d-flex">
                 <Input type="date" className="px-3" 
-                onChange={(e)=>setFilterDate({...filterDate,date: e.target.value})}
-                value={filterDate}
+                onChange={(e)=>setFilterDate({...filterDate, date: e.target.value})}
                 />
                 <Button variant='contained' color='primary' className="ml-4" style={{width: "200px"}}  onClick={()=>dispatch(GetAvailability(filterDate))}> Search </Button>
 
