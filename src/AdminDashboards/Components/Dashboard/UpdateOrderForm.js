@@ -126,7 +126,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
       if (!formData?.service_name) {
               errors.service_name = "Service type is required";
           }
-
+      if (formData.paymethod) {
           if (!formData.netpayamt || formData.netpayamt <= 0) {
             errors.netpayamt = "Total Amount is required ";
           }
@@ -136,6 +136,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
           if (!formData.paymethod) {
             errors.paymethod = "Payment method is required";
           }	
+      }
 
       if (errors && Object.keys(errors).length === 0) {
         // Form is valid, handle form submission here
@@ -175,12 +176,14 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
           // Check if the response is successful
           if (response.status === 200) {
             setIsLoading(false)
-            // Add balance
-            await axios.post(`${API_URL}/api/add-balance`, AddAccountAmount);
+
+            if(formData.paymethod){
+                // Add balance
+                await axios.post(`${API_URL}/api/add-balance`, AddAccountAmount);
+            }
             
             // Call the provided function prop
             prop();
-            
             // Show success message
             Swal.fire('Updated!', 'Your Order has been Updated.', 'success');
             

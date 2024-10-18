@@ -1341,7 +1341,7 @@ export const AssignSupervisorForComplainModal = ({supervisorModalOpen, superviso
 	);
 };
 
-export const AssignServiceProviderModal = ({serviceProviderModalOpen, serviceProviderModalOpenFunction, OrderNo, GetAllOrders, role, currentUser}) => {
+export const AssignServiceProviderModal = ({serviceProviderModalOpen, serviceProviderModalOpenFunction, OrderNo, GetAllOrders, role, currentUser, date}) => {
 
 	const [GetAllServiceProvider, setAllServiceProvider] = useState([]);
 	const [serviceProvider, setServiceProvider] = useState('');
@@ -1364,24 +1364,39 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 		}
 	}, [isLoading, data?.data]);
 
-	
-	useEffect(() => {
-		getAllServices();
-	}, []);
 
-	const getAllServices = async () => {
-		const response = await axios.get(API_URL + '/service-provider/getall')
-		if (response.status === 200) {
-			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
+
+	useEffect(()=>{
+		if(date && timeslot?.value){
+            const filterData = {
+				date: moment(date, "DD-MM-YYYY").format("YYYY-MM-DD"),
+				time_range: timeslot.value
+			}
+			getAllServicesProvider(filterData)
+		  }
+	  }, [date, timeslot?.value])
+
+
+
+	const getAllServicesProvider = async (filterData) => {
+		try {
+		  const queryParams = new URLSearchParams(filterData).toString()
+		  const response = await axios.get(`${API_URL}/service-provider/getall?${queryParams}`);
+		  if (response.status === 200) {
+			const transformedData = response.data.data.map(item => ({ label: item.name, value: item.name }));
 			setAllServiceProvider(transformedData);
+		  }
+		} catch (error) {
+		  console.error("Error fetching service providers:", error);
 		}
-	}
+	  }
+
+
 
 	const handleSubmit = () => {
 		const formData = {
 			servicep_id: serviceProvider.value,
-			allot_time_range: timeslot.value,
-			pending: 0
+			allot_time_range: timeslot.value
 		}
 		const apiUrl = `${API_URL}/order/assign-service-provider/${OrderNo}`;
 		// Make a POST request using Axios

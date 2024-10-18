@@ -72,6 +72,7 @@ const AdminDashboard = () => {
   const [totalSummary, setTotalSummary] = useState([])
   const [from, setFrom] = useState(null)
   const [to, setTo] = useState(null)
+  const [orderDate, setOrderDate] = useState(null)
 
   const GetTotalSummary = async () =>{
     const res = await axios.get(`${API_URL}/order/filter-order?from=${from}&to=${to}`);
@@ -483,9 +484,10 @@ const AdminDashboard = () => {
     setsupervisorModalOpen(!supervisorModalOpen)
   }
 
-  const AssignServiceProvider = (order_no) => { 
+  const AssignServiceProvider = (order_no, bookdate) => { 
     SetOrderNo(order_no)
     setserviceProviderModalOpen(!serviceProviderModalOpen)
+    setOrderDate(bookdate)
   }
 
   const AssignAmount = (order_no) => { 
@@ -765,7 +767,7 @@ const AdminDashboard = () => {
       params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
         !params.row.servicep_id && params?.row?.userRole?.role !== "service"  ? (
        
-          <Button variant='contained' color='primary' onClick={() => AssignServiceProvider(params.row.order_no)} >
+          <Button variant='contained' color='primary' onClick={() => AssignServiceProvider(params.row.order_no, params.row.bookdate)} >
             Service Provider
           </Button>
 
@@ -998,6 +1000,21 @@ const AdminDashboard = () => {
       handlePrint();
     }
   }, [memoData,handlePrint ])
+
+
+
+    const UpdateDueOrder = async () => {
+      try {
+          const response = await axios.post(`${API_URL}/order/add-due-order`);
+          console.log('Response:', response.data);
+      } catch (error) {
+          console.error('Error updating due order:', error);
+      }
+  };
+
+  useEffect(() => {
+      UpdateDueOrder();
+  }, []);
   
   
   return (
@@ -1059,6 +1076,7 @@ const AdminDashboard = () => {
         GetAllOrders={GetAllOrders}
         role={role}
         currentUser={currentUser.id}
+        date={orderDate}
       />
 
       <ServiceProviderRemarkModal

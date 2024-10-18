@@ -193,12 +193,12 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 		if (!timeslot?.value) {
             errors.timeslot = "timeslot  is required";
         }
-		if (!serviceProvider?.value) {
-            errors.serviceProvider = "service Provider  is required";
-        }
-		if (!supervisor?.value) {
-            errors.supervisor = "supervisor  is required";
-        }
+		// if (!serviceProvider?.value) {
+        //     errors.serviceProvider = "service Provider  is required";
+        // }
+		// if (!supervisor?.value) {
+        //     errors.supervisor = "supervisor  is required";
+        // }
 		
 
 
