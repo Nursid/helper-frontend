@@ -1178,18 +1178,24 @@ export const AddComplainModal = ({ complainModalOpen, complainModalOpenfunction,
 };
 
 
-export const AssignSupervisorModal = ({supervisorModalOpen, supervisorModalOpenFunction, OrderNo, GetAllOrders}) => {
+export const AssignSupervisorModal = ({supervisorModalOpen, supervisorModalOpenFunction, assignSupervisorData, GetAllOrders}) => {
 
 	const [GetAllSupervisor, setAllSupervisor] = useState([])
 	const [supervisor, setSupervisor] = useState('')
 
 	const dispatch = useDispatch();
 	useEffect(() => {
-		getAllServices();
+		const filterData = {
+			date: moment(assignSupervisorData.date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+			time_range: assignSupervisorData.time_range
+		}
+		getAllSupervisor(filterData);
 	}, []);
 
-	const getAllServices = async () => {
-		const response = await axios.get(API_URL + '/employee/getall/supervisor')
+
+	const getAllSupervisor = async (filterData) => {
+		const queryParams = new URLSearchParams(filterData).toString()
+		const response = await axios.get(API_URL + `/employee/getall?${queryParams}`)
 		if (response.status === 200) {
 			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
 			setAllSupervisor(transformedData);
@@ -1198,11 +1204,20 @@ export const AssignSupervisorModal = ({supervisorModalOpen, supervisorModalOpenF
 
 	const handleSubmit = () => {
 
+
+		if(!supervisor.value) {
+			alert('Please Select Supervisor')
+			return;
+		}
+
 		const formData = {
 			suprvisor_id: supervisor.value,
-			pending: 0
+			pending: 0,
+			date: moment(assignSupervisorData.date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+			time_range: assignSupervisorData.time_range,
+			service_name: assignSupervisorData.service_name
 		}
-		const apiUrl = `${API_URL}/order/assign/${OrderNo}`;
+		const apiUrl = `${API_URL}/order/assign-supervisor/${assignSupervisorData.order_no}`;
 		// Make a POST request using Axios
 		axios.put(apiUrl, formData).then(response => {
 			if (response.status === 200) {

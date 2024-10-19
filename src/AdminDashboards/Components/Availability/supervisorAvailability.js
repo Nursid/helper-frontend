@@ -18,6 +18,7 @@ import { API_URL } from "../../../config";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector } from "@mui/x-data-grid";
+import SelectBox from "../../Elements/SelectBox";
 
 const SupervisorAvailability = () => {
 
@@ -30,6 +31,10 @@ const SupervisorAvailability = () => {
     const [transferData, setTransferData] = useState([])
     const [filterDate, setFilterDate] = useState({date: moment().format("YYYY-MM-DD")});
     const dispatch = useDispatch();
+    const [from, setFrom] = useState(null)
+    const [to, setTo] = useState(null)
+    const [getAllServiceProvider, setGetAllServiceProvider] = useState([])
+    const [serviceProvider, setServiceProvider] = useState('')
 
     useEffect(() => {
         dispatch(GetSupervisorAvailability(filterDate))
@@ -68,6 +73,7 @@ const SupervisorAvailability = () => {
                     ...supervisor_availability, // Assuming availabilities is an object
                       id: data.indexOf(item),
                       date: item?.supervisor_availability?.date ? moment(item?.supervisor_availability?.date).format("DD-MM-YYYY") : null,
+                       "01:00-01:30": 'lunch'
                   }); 
         }
         } else {
@@ -85,12 +91,11 @@ const SupervisorAvailability = () => {
         setEmployeeAvailabilityModalOpen(!EmployeeAvailabilityModalOpen);
     }
 
-   
-
     const [statusClasses, setStatusClasses] = useState({}); // Cache for order statuses
 
     const getCellClassName = (params) => {
-      if (!params?.value) return 'class-green'; // Ensure value exists
+      if (!params?.value) return 'Cancel-availability'; // Ensure value exists
+      if (params.value === 'p') return 'class-green'; // Ensure value exists
   
 
       if (params.value === 'Full day Leave' || params.value === 'Lunch' || params.value === 'lunch' || params.value === 'Half Day Leave') {
@@ -101,26 +106,24 @@ const SupervisorAvailability = () => {
         return "Cancel-availability";
       }
 
-      // if (params?.value?.includes("MonthlyService")) {
-      //   return "class-monthly";
-      // }
+      if (params?.value?.includes("MonthlyService")) {
+        return "class-monthly";
+      }
   
-      
+      if (params?.value && !params.value.includes("MonthlyService")) {
+        const splitValue = params.value.split('-');  // Split by '-'
+        const numericPart = splitValue[1];           // Get the second part (the number)
   
-      // if (params?.value && !params.value.includes("MonthlyService")) {
-      //   const splitValue = params.value.split('-');  // Split by '-'
-      //   const numericPart = splitValue[1];           // Get the second part (the number)
+        const statusAvailability = statusClasses[numericPart]; // Check cache first
   
-      //   const statusAvailability = statusClasses[numericPart]; // Check cache first
+        if (!statusAvailability) {
+          // If not cached, fetch the status asynchronously
+          fetchStatus(numericPart);
+          return ''; // Return empty string until status is fetched
+        }
   
-      //   // if (!statusAvailability) {
-      //   //   // If not cached, fetch the status asynchronously
-      //   //   fetchStatus(numericPart);
-      //   //   return ''; // Return empty string until status is fetched
-      //   // }
-  
-      //   return statusAvailability; // Return cached status
-      // }
+        return statusAvailability; // Return cached status
+      }
   
       return '';
     };
@@ -233,6 +236,42 @@ const SupervisorAvailability = () => {
         { field: "05:30-06:00", headerName: "05:30-06:00 PM ", minWidth: 150, cellClassName: getCellClassName},
     ]
 
+    const GetAllSupervisor = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/employee/getall`);
+        if (response.status === 200) {
+        const transformedData = response.data.data.map(item => ({ label: item.name, value: item.emp_id }));
+        setGetAllServiceProvider(transformedData);
+        }
+      } catch (error) {
+        console.error("Error fetching service providers:", error);
+      }
+    }
+
+ 
+  useEffect(()=> {
+    GetAllSupervisor()
+  }, [])
+
+
+    const FilterData = async () => {
+      const filterDate ={
+        from: from,
+        to: to,
+        emp_id: serviceProvider?.value
+      }
+      if(!from || !to || !serviceProvider?.value){
+          return;
+      }
+  
+      try {
+        dispatch(GetSupervisorAvailability(filterDate))
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+   
+
 
     return (
         <Fragment>
@@ -274,6 +313,33 @@ const SupervisorAvailability = () => {
 
                 </div>
 
+                </div>
+
+                <div className="flex flex-col justify-between w-full mb-3 ">
+                <div className="flex justify-between gap-6 items-center">
+                <div className="ml-4">
+                    <label htmlFor="startDate" className="text-light">From:</label>
+                    <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
+            </div>
+                    <div className="ml-4">
+                    <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
+                    <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
+            </div>
+                <div className="ml-4" style={{width: '12rem'}}>
+                                <label className="form-label text-light ml-2 mr-2" htmlFor="serviceRemark">
+                                Supervisors
+                                </label>
+                                <SelectBox options={getAllServiceProvider}
+                                    setSelcted={setServiceProvider}
+                                    selectOption={serviceProvider}/>
+                    </div>
+                    <div className="ml-4" style={{marginTop: '32px'}}>
+                    <Button className="btn btn-primary" size="small" variant="contained" onClick={FilterData}
+                    >
+                    Search
+                    </Button>
+                </div>
+            </div>
             {/*
               <div className={`border py-2 px-2  shadow rounded-2 cursor-p hoverThis text-white`}
                  onClick={toggleAddAvailability}

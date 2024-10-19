@@ -25,7 +25,6 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 	const [timeslot, setTimeslot] = useState(null)
 	const [supervisor, setSupervisor] = useState(null)
 	const [serviceProvider, setServiceProvider] = useState(null)
-
 	const dispatch = useDispatch()
 	const [errors, setErrors]= useState([]);
 	const [isLoadings, setIsLoading] = useState(false)
@@ -75,6 +74,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 				time_range: timeslot.value
 			}
 			getAllServicesProvider(filterData)
+			GetAllSupervisor(filterData)
 		  }
 	  }, [formData.serviceDateTime, timeslot?.value])
 	  
@@ -157,7 +157,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 
 	useEffect(() => {
 		getAllServices()
-		GetAllSupervisor()
+		
 	}, []);
 
 	const getAllServices = async () => {
@@ -274,10 +274,11 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 		} catch (error) {
 		  console.error("Error fetching service providers:", error);
 		}
-	  }
+	}
 
-	const GetAllSupervisor = async () => {
-		const response = await axios.get(API_URL + '/employee/getall/supervisor')
+	const GetAllSupervisor = async (filterData) => {
+		const queryParams = new URLSearchParams(filterData).toString()
+		const response = await axios.get(API_URL + `/employee/getall?${queryParams}`)
 		if (response.status === 200) {
 			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
 			setGetAllSupervisor(transformedData);

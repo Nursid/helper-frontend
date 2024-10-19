@@ -49,6 +49,11 @@ const SupervisorAttendance = () => {
             createdby: role
         };
         const response = await axios.post(`${API_URL}/attendance/supervisor/add`, formData);
+
+        if(formData.action==='check_in'){
+          const response = await axios.post(`${API_URL}/api/supervisor-availability/attendance/${emp_id}`);
+          }
+
         if (response.status === 200) {
             dispatch(AttendanceAction());
         }else{

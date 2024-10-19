@@ -128,10 +128,7 @@ const AdminDashboard = () => {
       NewData.push({ id: 0 });
     }
     return NewData;
-  };
-
- 
-  
+  }; 
 
   const [cancel, setCancel]=useState(false);
   const [update, setUpdate]=useState(false);
@@ -245,6 +242,7 @@ const AdminDashboard = () => {
   };
 
   const [OrderNo, SetOrderNo]=useState('')
+  const [assignSupervisorData, setAssignSupervisorData]=useState([])
   const [registerId, SetRegisterId]=useState('')
 
   const OrderCancel = (orderNo,registerId) =>{
@@ -479,10 +477,11 @@ const AdminDashboard = () => {
     setComplainModalOpen(true)
   }
 
-  const AssignSupervisor = (order_no) => { 
-    SetOrderNo(order_no)
-    setsupervisorModalOpen(!supervisorModalOpen)
-  }
+  const AssignSupervisor = (order_no, date, time_range, service_name) => { 
+    setAssignSupervisorData({ order_no, date, time_range, service_name});
+    setsupervisorModalOpen(!supervisorModalOpen);
+}
+
 
   const AssignServiceProvider = (order_no, bookdate) => { 
     SetOrderNo(order_no)
@@ -574,55 +573,6 @@ const AdminDashboard = () => {
   };
   
   const columns = [
-    // {
-    //   field: "Status",
-    //   headerName: "Status",
-    //   renderCell: (params) => {
-    //     const { pending, order_no, cust_id, piadamt, totalamt } = params.row;
-    
-    //     const isPending = pending === "Pending" || pending === "Due" || pending === "Hold";
-    //     const isCompleted = pending === "Completed";
-        
-    //     const isCancelled = pending === "Cancel";
-
-    //     // Determine the action label and handler based on the status
-    //     let label = '';
-    //     let clickHandler = null;
-    
-    //     if (isPending) {
-    //       label = 'Check In';
-    //       clickHandler = () => check_in(order_no);
-    //     } else if (isCancelled) {
-    //       label = 'Cancelled';
-    //       clickHandler = null; // Disable clicking for cancelled orders
-    //     } else if (!isCompleted) {
-    //       label = 'Check Out';
-    //       clickHandler = () => OrderComplete(order_no, piadamt, totalamt);
-    //     } else {
-    //       label = 'Done';
-    //       clickHandler = null; // Disable clicking for completed orders
-    //     }
-    
-    //     return (
-    //       <p
-    //         className="text-danger p-2 bg-light d-flex justify-content-center align-items-center"
-    //         style={{
-    //           borderRadius: "5px",
-    //           cursor: clickHandler ? "pointer" : "default", // Set cursor to pointer only if there is a click handler
-    //           margin: 0,
-    //         }}
-    //         onClick={clickHandler} // Only set onClick if there's a clickHandler
-    //       >
-    //         {(label !=='Check In') ? 
-    //          <Tooltip title={moment(params.row.updatedAt).format('DD/MM/YYYY, h:mm A')}>
-    //          {label}
-    //          </Tooltip> : label}
-    //       </p>
-    //     );
-    //   },
-    //   minWidth: 150,
-    //   editable: false,
-    // },
     {
       field: "Status",
       headerName: "Status",
@@ -749,7 +699,7 @@ const AdminDashboard = () => {
             <Button 
               variant='contained' 
               color='primary' 
-              onClick={() => AssignSupervisor(params.row.order_no)} 
+              onClick={() => AssignSupervisor(params.row.order_no, params.row.bookdate, params.row.allot_time_range, params.row.service_name)} 
               disabled={params?.row?.userRole?.role === "service"}
             >
               Supervisor
@@ -1010,7 +960,7 @@ const AdminDashboard = () => {
       } catch (error) {
           console.error('Error updating due order:', error);
       }
-  };
+    };
 
   useEffect(() => {
       UpdateDueOrder();
@@ -1026,12 +976,13 @@ const AdminDashboard = () => {
         <MemberInvoice ref={nonMemberRef} data={memoData} /> 
       </div>
 
-      <AssignSupervisorModal
+    {supervisorModalOpen &&   <AssignSupervisorModal
         supervisorModalOpen={supervisorModalOpen}
         supervisorModalOpenFunction={() => setsupervisorModalOpen(!supervisorModalOpen)}
-        OrderNo={OrderNo}
+        assignSupervisorData={assignSupervisorData}
         GetAllOrders={GetAllOrders}
-      />
+      /> }
+
       <AddInventryModal
         AddInventryModalOpen={AddInventryModalOpen}
         AddInventryModalOpenFunction={() => setAddInventryModalOpen(!AddInventryModalOpen)}

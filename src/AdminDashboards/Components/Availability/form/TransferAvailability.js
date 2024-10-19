@@ -36,14 +36,13 @@ const TransferAvailability = ({ transferData, prop }) => {
     const [formData, setFormData] = useState(
         {
             fromEmpId: transferData?.id,
-            fromDate: moment(transferData?.date, "DD-MM-YYYY").format("YYYY-MM-DD"),
+            fromDate: transferData?.date,
             toEmpId: "",
             toDate: "",
             timeRange: "",
             totimeRange: "",
             service_name: ""
         }
-          
     )
 
 
@@ -139,8 +138,6 @@ const TransferAvailability = ({ transferData, prop }) => {
 		  }
 
 		  const response = await axios.post(`${API_URL}/api/transfer-availability`, transferDataSubmit)
-
-		  console.log(response)
 
           if (response.data.status === true) {
             Swal.fire({

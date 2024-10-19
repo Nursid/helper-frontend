@@ -279,21 +279,20 @@ const Availability = () => {
         console.error("Error fetching service providers:", error);
       }
     }
-
  
-  useEffect(()=> {
-    getAllServicesProvider()
-  }, [])
+    useEffect(()=> {
+      getAllServicesProvider()
+    }, [])
 
 
     return (
         <Fragment>
-        <ModalComponent
+        {/* <ModalComponent
             modalTitle={"Add Leave"}
             modal={Toggle}
             toggle={toggleAddAvailability}
             data={<AddAvailability prop={toggleAddAvailability}  />}
-        />
+        /> */}
 
         <ModalComponent
             modalTitle={"Transfer"}
