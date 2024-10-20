@@ -12,7 +12,8 @@ import ModalComponent from "../../Elements/ModalComponent";
 import moment from "moment";
 import { Input } from "reactstrap";
 import AdminHeader from "../AdminHeader";
-import TransferAvailability from "./form/TransferAvailability";
+
+import TransferSupervisorAvailability from "./form/TransferSupervisorAvailability";
 import axios from "axios";
 import { API_URL } from "../../../config";
 import { GridToolbarContainer } from "@mui/x-data-grid";
@@ -46,6 +47,7 @@ const SupervisorAvailability = () => {
     const [isTransfer, setToggleTransfer] = useState(false);
     const toggleTransfer = () => setToggleTransfer(!isTransfer);
     const toggleTransferData = (data) => {
+
         setTransferData(data);
         toggleTransfer();
     }
@@ -160,21 +162,21 @@ const SupervisorAvailability = () => {
       
     const colums = [
 
-        // {
-        //     field: "status",
-        //     headerName: "Status",
-        //     renderCell: (params) => (
-        //         <Button 
-        //         variant='contained' 
-        //         color='primary' 
-        //         onClick={() => toggleTransferData(params.row)}
-        //       >
-        //         Transfer
-        //       </Button>
-        //     ),
-        //     minWidth: 100,
-        //     editable: true,
-        // },
+        {
+            field: "status",
+            headerName: "Status",
+            renderCell: (params) => (
+                <Button 
+                variant='contained' 
+                color='primary' 
+                onClick={() => toggleTransferData(params.row)}
+              >
+                Transfer
+              </Button>
+            ),
+            minWidth: 100,
+            editable: true,
+        },
         { field: "id",  headerName: "Sr No", minWidth: 150, editable: true},
 
         { field: "name",  headerName: "Name", minWidth: 150, editable: true},
@@ -249,9 +251,9 @@ const SupervisorAvailability = () => {
     }
 
  
-  useEffect(()=> {
-    GetAllSupervisor()
-  }, [])
+      useEffect(()=> {
+        GetAllSupervisor()
+      }, [])
 
 
     const FilterData = async () => {
@@ -286,7 +288,7 @@ const SupervisorAvailability = () => {
             modalTitle={"Transfer"}
             modal={isTransfer}
             toggle={toggleTransfer}
-            data={<TransferAvailability prop={toggleTransfer} transferData={transferData} />}
+            data={<TransferSupervisorAvailability prop={toggleTransfer} transferData={transferData} />}
         />
 
         {/* <AssignEmployeeAvailability

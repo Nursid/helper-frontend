@@ -50,6 +50,7 @@ const Availability = () => {
     const toggleTransferData = (data) => {
         setTransferData(data);
         toggleTransfer();
+    
     }
 
     const CustomToolbar = () => {

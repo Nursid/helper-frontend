@@ -18,8 +18,10 @@ import { GetAllServiceProvider } from '../../../../Store/Actions/Dashboard/Authe
 import { GetAllTimeSlot } from '../../../../Store/Actions/Dashboard/Orders/OrderAction';
 import axios from 'axios';
 import moment from 'moment';
+import { GetSupervisorAvailability } from "../../../../Store/Actions/Dashboard/SupervisorAvailabilityAction";
 
-const TransferAvailability = ({ transferData, prop }) => {
+
+const TransferSupervisorAvailability = ({ transferData, prop }) => {
 
 	const [getAlltimeSlot, setGetAlltimeSlot] = useState([])
     const [getAllServiceProvider, setGetAllServiceProvider] = useState([])
@@ -34,7 +36,7 @@ const TransferAvailability = ({ transferData, prop }) => {
     const [formData, setFormData] = useState(
         {
             fromEmpId: transferData?.emp_id,
-            fromDate: transferData?.date,
+            fromDate: moment(transferData?.date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
             toEmpId: "",
             toDate: "",
             timeRange: "",
@@ -72,9 +74,9 @@ const TransferAvailability = ({ transferData, prop }) => {
       const getAllServicesProvider = async () => {
 		try {
 
-		  const response = await axios.get(`${API_URL}/service-provider/getall`);
+		  const response = await axios.get(`${API_URL}/employee/getall`);
 		  if (response.status === 200) {
-			const transformedData = response.data.data.map(item => ({ label: item.name, value: item.id }));
+			const transformedData = response.data.data.map(item => ({ label: item.name, value: item.emp_id }));
 			setGetAllServiceProvider(transformedData);
 		  }
 		} catch (error) {
@@ -94,7 +96,7 @@ const TransferAvailability = ({ transferData, prop }) => {
         let errors = {};
 
 		if(!serviceProvider.value){
-			errors.serviceProvider = "Service Provider is required";
+			errors.serviceProvider = "Supervisor is required";
 		}
 		if(!timeslot.value){
 			errors.timeslot = "time range is required";
@@ -128,7 +130,7 @@ const TransferAvailability = ({ transferData, prop }) => {
             service_name: transferData[timeslot?.value]
 		  }
 
-		  const response = await axios.post(`${API_URL}/api/transfer-availability`, transferDataSubmit)
+		  const response = await axios.post(`${API_URL}/api/supervisor-transfer-availability`, transferDataSubmit)
 
           if (response.data.status === true) {
             Swal.fire({
@@ -139,7 +141,7 @@ const TransferAvailability = ({ transferData, prop }) => {
             setErrors([]);
             setTimeout(() => SetIsLoading(false), 5000);
             prop();
-            dispatch(GetAvailability({date: formData?.toDate}))
+            dispatch(GetSupervisorAvailability({date: formData?.toDate}))
 		  } 
 		else {
 			Swal.fire({
@@ -209,7 +211,7 @@ const TransferAvailability = ({ transferData, prop }) => {
 
 					<Col md={12}>
 					<FormGroup>
-						<Label>Service Provider <span style={{color: "red"}}>*</span></Label>
+						<Label>Supervisor <span style={{color: "red"}}>*</span></Label>
 						<SelectBox 
 						options={getAllServiceProvider}
 						initialValue={serviceProvider}
@@ -234,4 +236,4 @@ const TransferAvailability = ({ transferData, prop }) => {
 	)
 }
 
-export default TransferAvailability;
+export default TransferSupervisorAvailability;
