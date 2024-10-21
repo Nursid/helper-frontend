@@ -117,7 +117,6 @@ const AdminDashboard = () => {
           _id: data.indexOf(item),
           date: moment(item.createdAt).format("D / M / Y"),
           bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
-          booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
           userRole: userRole,
           member_id: (!customer.member_id) 
                     ? 'NM' + paddedId 
