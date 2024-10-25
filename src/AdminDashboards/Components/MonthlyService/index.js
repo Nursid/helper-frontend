@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState, useRef } from 'react'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 import { GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton, GridToolbarQuickFilter } from '@mui/x-data-grid'
@@ -17,6 +17,10 @@ import AdminHeader from '../AdminHeader'
 // import AnimatedBackground from '../../Elements/AnimatedBackground'
 import AnimatedBackground from '../../Elements/AnimatedBacground'
 import AdminNavItems from '../../Elements/AdminNavItems'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import { useReactToPrint } from 'react-to-print';
+import ViewMonthlyService from './view/ViewMonthly-Service'
+
 
 const MonthService = () => {
     const navigate = useNavigate()
@@ -91,8 +95,11 @@ const MonthService = () => {
         { field: "serviceType", headerName: "Service Type", minWidth: 120, editable: true },
         { field: "serviceServeType", headerName: "Service Serve Type", minWidth: 120, editable: true },
         { field: "selectedTimeSlot", headerName: "Hourly Time Slot", minWidth: 120, editable: true },
-        { field: "specialInterest", headerName: "Special Interest", minWidth: 220, editable: true },
-        { field: "serviceFees", headerName: "Service Fees", minWidth: 120, editable: true },
+        // { field: "specialInterest", headerName: "Special Interest", minWidth: 220, editable: true },
+        { field: "paymethod", headerName: "Payment Method", minWidth: 150},
+        { field: "netpayamt", headerName: "Billing Amount",minWidth: 150 },
+        { field: "piadamt", headerName: "Paid Amount", minWidth: 150 },
+        { field: "totalamt", headerName: "Balance Amount", minWidth: 150},
         { field: "date", headerName: "Fees Paid Date & Time", minWidth: 120, editable: true },      
         // {
         //     field: "status",
@@ -109,9 +116,13 @@ const MonthService = () => {
             renderCell: (params) => (
                 <div className="d-flex gap-2">
                     <Button onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary' style={{minWidth: "40px", maxWidth: "40px"}}><BorderColorIcon /></Button>
-                    {/* <Button variant="contained" color="success">
-                        <VisibilityIcon />
-                    </Button> */}
+                    <Button variant="contained" color="success" 
+                onClick={(e)=>{handleMemo(params.row)}}
+                style={{minWidth: "40px", maxWidth: "40px"}}
+                >
+                    <VisibilityIcon />
+                </Button>
+
                     <Button variant="contained" color="error"
                     onClick={(e) => {
                         GetDeleteByID(params.row.id)
@@ -151,6 +162,25 @@ const MonthService = () => {
         );
     };
 
+
+    const memberRef = useRef(null);
+    const [memoData, setMemoData] = useState([]);
+
+  const handlePrint = useReactToPrint({
+    content: () => memberRef.current,
+    onAfterPrint: () => setMemoData([])
+  });
+
+  const handleMemo = (data) => {
+    setMemoData(data);
+  };
+
+  useEffect(()=>{
+    if (memoData && Object.keys(memoData).length > 0) {
+      handlePrint();
+    }
+  }, [memoData,handlePrint ])
+
     // Add Employee form Handler 
     // const [addEmployee, setAddEmployee] = useState(false)
     // const ToggleAddMonthlyService = () => {
@@ -159,6 +189,10 @@ const MonthService = () => {
     // }
     return (
         <Fragment>
+            <div style={{ display: 'none' }}>
+        <ViewMonthlyService ref={memberRef} data={memoData} /> 
+        </div>
+
       <AdminHeader />
 
       <div className='position-relative'>

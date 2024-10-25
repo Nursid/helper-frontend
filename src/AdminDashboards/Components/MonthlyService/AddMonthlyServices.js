@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react'
+import React, {Fragment, useEffect, useState, useRef} from 'react'
 
 import {
 	Form,
@@ -17,6 +17,8 @@ import Swal from 'sweetalert2';
 import { API_URL } from '../../../config';
 import { GetAllMonthlyServiceAction } from '../../../Store/Actions/Dashboard/EmployeeActions/GetAllMonthlyServices';
 import { GetAllTimeSlot } from '../../../Store/Actions/Dashboard/Orders/OrderAction';
+import { useReactToPrint } from 'react-to-print';
+
 
 const AddMonthlyServices = ({toggleModal, data}) => {
 
@@ -25,7 +27,6 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 	const [formData, setFormData] = useState({
         cust_name: data.cust_name || "",
         mobile_no: data.mobile_no || "",
-        monthlyServices: data.monthlyServices || "",
         serviceType: data.serviceType || "",
         serviceServeType: data.serviceServeType || "",
         selectedTimeSlot: data.selectedTimeSlot || "",
@@ -200,6 +201,15 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			service_provider: serviceProvider?.value	
 		}
 
+
+		// const AddAccountAmount = {
+		// 	payment_mode: formData?.paymethod,
+		// 	amount: formData?.piadamt,
+		// 	person_name: formData?.cust_name,
+		// 	about_payment: formData?.service_name?.value,
+		// 	balance: formData?.totalamt
+		//   }	
+
 		var apiUrl =""
 		if(data.id!=null){
 			 apiUrl = `${API_URL}/monthly-service/update/${data.id}`;
@@ -246,6 +256,11 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		}
 	};
 	const today = new Date().toISOString().split('T')[0];
+
+
+
+	
+
 
 	return (
 		<Fragment>
