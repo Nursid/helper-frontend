@@ -22,6 +22,10 @@ import { useReactToPrint } from 'react-to-print';
 
 const AddMonthlyServices = ({toggleModal, data}) => {
 
+	const today2 = new Date().toISOString().slice(0, 16); // Format: 'YYYY-MM-DDTHH:mm'
+
+
+
 	const dispatch = useDispatch();
 	const [GetAlltimeSlot , setGetAlltimeSlot] = useState([])
 	const [formData, setFormData] = useState({
@@ -30,7 +34,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
         serviceType: data.serviceType || "",
         serviceServeType: data.serviceServeType || "",
         selectedTimeSlot: data.selectedTimeSlot || "",
-        feesPaidDateTime: data.feesPaidDateTime || "",
+        feesPaidDateTime: (data?.feesPaidDateTime ? data.feesPaidDateTime.slice(0, 16) : today2),	
         specialInterest: data.specialInterest || "",
 		service_provider: data?.service_provider || "",
 		kit_no: data?.kit_no || "",
@@ -44,6 +48,11 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		location: data?.location || '',
 		mohalla: data?.mohalla || '',
 		area: data?.area || '',
+		shift: data?.shift || '',
+		before_cleaning: null,
+    	after_cleaning: null,
+		reference2: data?.reference2 || '',
+		reference: data?.reference || ''
     });
 
 	
@@ -63,6 +72,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		{ label: 'Online', value: 'Online' },
 	  ];
 	const [serviceType, setServiceType] = useState(data.serviceType || '');
+	const [shift, setShift] = useState(data?.shift || '');
 	const [isLoadingSubmit, setIsLoading] = useState(false);
 	const [getAllServiceProvider, setGetAllServiceProvider] = useState([])
 	const [serviceProvider, setServiceProvider] = useState(data?.service_provider || "")
@@ -160,25 +170,25 @@ const AddMonthlyServices = ({toggleModal, data}) => {
         errors.kit_no = "Kit number is required";
     }
 
-    if (!formData?.paymethod) {
-        errors.paymethod = "Payment method is required";
-    }
+    // if (!formData?.paymethod) {
+    //     errors.paymethod = "Payment method is required";
+    // }
 
-    if (!formData?.netpayamt) {
-        errors.netpayamt = "Bill amount is required";
-    } else if (formData.netpayamt <= 0) {
-        errors.netpayamt = "Bill amount must be greater than 0";
-    }
+    // if (!formData?.netpayamt) {
+    //     errors.netpayamt = "Bill amount is required";
+    // } else if (formData.netpayamt <= 0) {
+    //     errors.netpayamt = "Bill amount must be greater than 0";
+    // }
 
-    if (!formData?.piadamt) {
-        errors.piadamt = "Paid amount is required";
-    } else if (formData.piadamt < 0) {
-        errors.piadamt = "Paid amount cannot be negative";
-    }
+    // if (!formData?.piadamt) {
+    //     errors.piadamt = "Paid amount is required";
+    // } else if (formData.piadamt < 0) {
+    //     errors.piadamt = "Paid amount cannot be negative";
+    // }
 
-    if (formData.piadamt > formData.netpayamt) {
-        errors.piadamt = "Paid amount cannot exceed bill amount";
-    }
+    // if (formData.piadamt > formData.netpayamt) {
+    //     errors.piadamt = "Paid amount cannot exceed bill amount";
+    // }
 
     // Assuming totalamt is calculated as: totalamt = netpayamt - piadamt
     formData.totalamt = formData.netpayamt - formData.piadamt;
@@ -198,9 +208,30 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			...formData,
 			selectedTimeSlot: timeslot?.value,
 			serviceType: serviceType?.value,
-			service_provider: serviceProvider?.value	
+			service_provider: serviceProvider?.value,
+			shift: shift?.value	
 		}
 
+
+		const formData1 = new FormData();
+
+		// Append existing form data
+		for (const key in OriginalData) {
+			if (OriginalData[key] !== undefined) {
+				formData1.append(key, OriginalData[key]);
+			}
+		}
+
+		// If you want to append files separately, you can check for them here
+		if (formData.before_cleaning?.file) {
+			formData1.append('before_cleaning', formData.before_cleaning.file);
+		}
+
+		if (formData.after_cleaning?.file) {
+			formData1.append('after_cleaning', formData.after_cleaning.file);
+		}
+
+		
 
 		// const AddAccountAmount = {
 		// 	payment_mode: formData?.paymethod,
@@ -217,7 +248,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			apiUrl = `${API_URL}/monthly-service/add`;
 		}
 
-		axios.post(apiUrl, OriginalData)
+		axios.post(apiUrl, formData1, {'Content-Type': 'multipart/form-data'})
 			.then(response => {
 				setIsLoading(false)
 				if (response.status === 200) {
@@ -259,6 +290,24 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 
 
 
+	const handleChangeFileUpload = (e) => {
+		const { name, files } = e.target;
+	
+		// Check if a file is selected
+		if (files.length > 0) {
+			const file = files[0];
+	
+			// Update state with the file data
+			setFormData(prevData => ({
+				...prevData,
+				[name]: {
+					file: file,
+				}
+			}));
+		}
+	};
+	
+	
 	
 
 
@@ -317,6 +366,57 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 									)}
 								</FormGroup>
 							</Col>
+							{serviceType?.value === 'Dog Walk' && (
+			<Col md={6}>
+			
+                <FormGroup>
+                    <Label>Shift Time <span style={{ color: "red" }}>*</span></Label>
+                    <SelectBox 
+                        setSelcted={setShift}
+                        initialValue={shift}
+                        options={[
+                            { label: "Morning", value: "Morning" },
+                            { label: "Evening", value: "Evening" },
+                            { label: "Both (MOR&EVN)", value: "Both" },
+                        ]}
+                    />
+                </FormGroup>
+          
+        </Col>
+		  )}
+
+		{(serviceType?.value === 'Bathroom Cleaning' || serviceType?.value === 'Monthly Cleaning') && (
+    <>
+        <Col md={6}>
+            <FormGroup>
+                <Label>
+                    Before Cleaning (Upload photo)
+                </Label>
+                <Input 
+					type='file'
+					name='before_cleaning'
+					onChange={handleChangeFileUpload}
+					id="before_cleaning"
+                />
+            </FormGroup>
+        </Col>
+
+		<Col md={6}>
+            <FormGroup>
+                <Label>
+                    After Cleaning (Upload photo)
+                </Label>
+                <Input 
+					type='file'
+					name='after_cleaning'
+					onChange={handleChangeFileUpload}
+					id="after_cleaning"
+                />
+            </FormGroup>
+        </Col>
+    </>
+)}
+
 
 
 							<Col md={6}>
@@ -339,6 +439,22 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 							</Col>
 
 							
+							<Col md={6}>
+								<FormGroup>
+									<Label for="feesPaidDateTime">  Date  <span style={{color: "red"}}>*</span></Label>
+									<Input type="datetime-local" name="feesPaidDateTime"
+										onChange={(e) => handleChange(e, 50)}
+										id="feesPaidDateTime"
+										value={formData?.feesPaidDateTime}
+										min={today}
+										/>
+										{errors?.feesPaidDateTime && (
+							<span className='validationError'>
+								{errors?.feesPaidDateTime}
+							</span>
+						)}
+								</FormGroup>
+							</Col>
 
 							<Col md={6}>
 
@@ -470,24 +586,35 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								</FormGroup>
 							</Col>
 
-							<h2>Billing Details</h2>
 
 							<Col md={6}>
 								<FormGroup>
-									<Label for="feesPaidDateTime"> Payment Date  <span style={{color: "red"}}>*</span></Label>
-									<Input type="datetime-local" name="feesPaidDateTime"
-										onChange={(e) => handleChange(e, 50)}
-										id="feesPaidDateTime"
-										value={formData?.feesPaidDateTime}
-										min={today}
+									<Label for="reference"> Reference 1  <span style={{color: "red"}}>*</span></Label>
+									<Input  name="reference"
+										onChange={(e) => handleChange(e, 10)}
+										id="reference"
+										placeholder="Enter reference"
+										value={formData.reference}
 										/>
-										{errors?.feesPaidDateTime && (
-							<span className='validationError'>
-								{errors?.feesPaidDateTime}
-							</span>
-						)}
+										
 								</FormGroup>
 							</Col>
+
+							<Col md={6}>
+								<FormGroup>
+									<Label for="reference2"> Reference 2  <span style={{color: "red"}}>*</span></Label>
+									<Input  name="reference2"
+										onChange={(e) => handleChange(e, 10)}
+										id="reference2"
+										placeholder="Enter reference2"
+										value={formData.reference2}
+										/>
+										
+								</FormGroup>
+							</Col>
+
+							<h2>Billing Details</h2>
+
 
 							<Col md={6}>
 							<FormGroup>

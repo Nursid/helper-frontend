@@ -91,10 +91,57 @@ const ViewMonthlyService = React.forwardRef((props, ref) => {
           <div className='col-3 border border-1 p-3'>{data.specialInterest}</div>
         </div>
 
-        <div className="row">
-    <div className='col-3 border border-1 p-3'>Valid To</div>
+
+        <div className='row'>
+          <div className='col-3 border border-1 p-3'>Referance 1</div>
+          <div className='col-3 border border-1 p-3'>{data.referance}</div>
+          <div className='col-3 border border-1 p-3'>Referance 1</div>
+          <div className='col-3 border border-1 p-3'>{data.referance2}</div>
+        </div>
+
+
+
+        {(data.before_cleaning || data.after_cleaning) && (
+            <div className='row'>
+                {data.before_cleaning && data.before_cleaning !== 'null' ? (
+                      <>
+                          <div className='col-3 border border-1 p-3'>Before Cleaning</div>
+                          <div className="col-3 row-span-2 border border-1 p-3 d-flex align-items-center justify-content-center">
+                              <img 
+                                  src="https://i.pinimg.com/564x/d5/b0/4c/d5b04cc3dcd8c17702549ebc5f1acf1a.jpg" 
+                                  className="img-thumbnail" 
+                                  alt="Before Cleaning" 
+                                  height={80} 
+                                  width={80}
+                              />
+                          </div>
+                      </>
+                  ) : (
+                      <div className='col-3 border border-1 p-3'>No Image Before Cleaning</div>
+                  )}
+                {data.after_cleaning && data.after_cleaning!=='null' && (
+                  <>
+                  
+                    <div className='col-3 border border-1 p-3'>After Cleaning</div>
+                    <div className="col-3 row-span-2 border border-1 p-3 d-flex align-items-center justify-content-center">
+                    <img 
+                        src="https://i.pinimg.com/564x/d5/b0/4c/d5b04cc3dcd8c17702549ebc5f1acf1a.jpg" 
+                        className="img-thumbnail" 
+                        alt="Profile" 
+                        height={80} 
+                        width={80}
+                    />
+                </div>
+                </>
+                )}
+            </div>
+        )}
+
+
+      <div className="row">
+    <div className='col-3 border border-1 p-3'>Valid  From</div>
     <div className='col-3 border border-1 p-3'>{moment(data.feesPaidDateTime).format('DD-MM-YYYY')}</div>
-    <div className='col-3 border border-1 p-3'>Valid From</div>
+    <div className='col-3 border border-1 p-3'>Valid To</div>
     <div className='col-3 border border-1 p-3'>
         {moment (new Date(new Date(data.feesPaidDateTime).getTime() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()).format('DD-MM-YYYY')}
     </div>
