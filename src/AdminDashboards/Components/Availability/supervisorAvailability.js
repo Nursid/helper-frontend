@@ -180,6 +180,7 @@ const SupervisorAvailability = () => {
         { field: "id",  headerName: "Sr No", minWidth: 150, editable: true},
 
         { field: "name",  headerName: "Name", minWidth: 150, editable: true},
+        { field: "duty_hours",  headerName: "Duty Hours", minWidth: 150, editable: true},
          {
           field: "image", headerName: "Image", minWidth: 120, renderCell: (params) => (
               <div className='w-80 h-80 rounded-circle'>

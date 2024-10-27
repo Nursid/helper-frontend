@@ -7,17 +7,29 @@ import SelectBox from '../../Elements/SelectBox';
 import Swal from 'sweetalert2'
 import { useDispatch } from 'react-redux'
 
-const TransferOrderForm = ({orderNo,prop,GetAllOrders}) => {
+const TransferOrderForm = ({orderNo,prop,GetAllOrders, role}) => {
 
-const [order_no, setOrderNo]=useState(orderNo);
-const [admin_remark,setAdminRemark]=useState('');
-const [time, setTime]= useState('');
-const [date, setDate]=useState('');
-const dispatch = useDispatch()
+	console.log(role)
+
+	let remark;
+
+if (role === 'super') {
+    remark = 'sueadmin_remark'; // Assuming sueadmin_remark is defined somewhere
+} else if (role === 'admin') {
+    remark = 'admin_remark'; // Assuming admin_remark is defined somewhere
+} else if (role === 'office') {
+    remark = 'bakof_remark'; // Assuming bakof_remark is defined somewhere
+}
+
+	const [order_no, setOrderNo]=useState(orderNo);
+	const [admin_remark, setAdminRemark]=useState('');
+	const [time, setTime]= useState('');
+	const [date, setDate]=useState('');
+	const dispatch = useDispatch()
 const onsubmitDate =() => {
 
     const data={
-        sueadmin_remark: admin_remark,
+        [remark]: admin_remark,
         booktime:time,
         bookdate:date,
         order_no:order_no

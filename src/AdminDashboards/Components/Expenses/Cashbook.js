@@ -38,9 +38,9 @@ const Cashbook = () => {
         const NewData = []
         if (data !== undefined) {
             for (let item of data) {
-              if(!item.type_payment){
+              // if(!item.type_payment){
                 NewData.push({ ...item, _id: data.indexOf(item)})
-              }
+              // }
             }
         } else {
             NewData.push({ id: 0 })
@@ -98,6 +98,7 @@ const Cashbook = () => {
     };
 
     const column = [
+      { field: "person_name", headerName: "Party Name", flex: 1, minWidth: 120 },
         { field: "date",headerName: "Date", minWidth: 150, flex:1},
         { field: "payment_mode",headerName: "Payment Mode", flex:1},
         { field: "transection_id",headerName: "Transaction Id", flex:1},

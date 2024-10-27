@@ -312,9 +312,6 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
             <Input name="pincode" type="text" onChange={(e) => handleInputChange(e, 6)} value={formData.pincode} placeholder="Enter Your ZipCode" />
           </FormGroup>
         </Col>
-
-        {role === 'super' && (
-          <>
             <Col md={6}>
               <FormGroup>
                 <Label>Super Admin Remark </Label>
@@ -381,9 +378,6 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
                 />
               </FormGroup>
             </Col>
-          </>
-        )}
-  
         <h2>Billing Details</h2>
         <Col md={6}>
           <FormGroup>

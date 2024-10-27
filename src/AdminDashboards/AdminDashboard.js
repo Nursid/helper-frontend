@@ -1070,7 +1070,7 @@ const AdminDashboard = () => {
           modalTitle={"transfer Order"}
           modal={transfer}
           toggle={toggleTransferOrder}
-          data={<TransferOrderForm  orderNo={OrderNo} prop={toggleTransferOrder } GetAllOrders={GetAllOrders} />}
+          data={<TransferOrderForm  orderNo={OrderNo} prop={toggleTransferOrder } GetAllOrders={GetAllOrders}  role={role}/>}
         />
 
         <ModalComponent
@@ -1363,7 +1363,7 @@ const AdminDashboard = () => {
                              
                               {params.row.pending === "Completed" || params.row.pending === "Cancel" ? (
                           <>
-                          <option value="Edit">Edit</option>
+                          {(params.row.pending === "Cancel") ?  null  : <option value="Edit">Edit</option> }                         
                           {(userRole?.role === "super" || userRole?.role === "office" ) ? <option value="Delete">Delete</option> : null}
 
                           </>
