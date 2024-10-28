@@ -6,6 +6,7 @@ import { TabContent, TabPane } from 'reactstrap';
 import OrderReports from './OrderReports';
 import AttendanceReports from './AttendanceReport';
 import AccountReports from './AccountReports';
+import ServiceProviderAttendanceReports from './ServiceProviderAttendanceReport';
 
 const Reports = () => {
   const [attendanceActive, setAttendanceActive] = useState("1");
@@ -23,17 +24,25 @@ const Reports = () => {
               className={` ${attendanceActive === "1" ? "ReportsTabs_Active" : ""}`} 
               onClick={() => setAttendanceActive("1")}
             >
-              Attendance Report
+            Employee  Attendance Report
             </span>
+
             <span 
               className={` ${attendanceActive === "2" ? "ReportsTabs_Active" : ""}`} 
               onClick={() => setAttendanceActive("2")}
             >
-              Order Report
+            Service Provider  Attendance Report
             </span>
+
             <span 
               className={` ${attendanceActive === "3" ? "ReportsTabs_Active" : ""}`} 
               onClick={() => setAttendanceActive("3")}
+            >
+              Order Report
+            </span>
+            <span 
+              className={` ${attendanceActive === "4" ? "ReportsTabs_Active" : ""}`} 
+              onClick={() => setAttendanceActive("4")}
             >
               Account Report
             </span>
@@ -43,10 +52,15 @@ const Reports = () => {
             <TabPane tabId="1">
               <AttendanceReports setActiveAttendance={setAttendanceActive}  />
             </TabPane>
+
             <TabPane tabId="2">
+              <ServiceProviderAttendanceReports setActiveAttendance={setAttendanceActive}  />
+            </TabPane>
+
+            <TabPane tabId="3">
               <OrderReports setActiveAttendance={setAttendanceActive} />
             </TabPane>
-            <TabPane tabId="3">
+            <TabPane tabId="4">
               <AccountReports setActiveAttendance={setAttendanceActive}  />
             </TabPane>
           </TabContent>
