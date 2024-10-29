@@ -20,6 +20,7 @@ import AdminNavItems from '../../Elements/AdminNavItems'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import { useReactToPrint } from 'react-to-print';
 import ViewMonthlyService from './view/ViewMonthly-Service'
+import InvoiceMonthlyService from './view/InvoiceMonthlyService'
 
 
 const MonthService = () => {
@@ -31,7 +32,9 @@ const MonthService = () => {
         const NewData = []
         if (data !== undefined) {
             for (let item of data) {
-                NewData.push({ ...item, _id: data.indexOf(item), date: moment(item.feesPaidDateTime).format("DD-MM-YYYY") })
+                NewData.push({ ...item, _id: data.indexOf(item), date: moment(item.feesPaidDateTime).format("DD-MM-YYYY"),
+                    pending: 'Running'
+                 })
             }
         } else {
             NewData.push({ id: 0 })
@@ -87,8 +90,109 @@ const MonthService = () => {
         setEditData(data)
     };
 
+
+    const InvoiceRef = useRef(null);
+
+  const [invoiceData, setInvoice] = useState([]);
+
+  const handlePrint2 = useReactToPrint({
+    content: () => InvoiceRef.current,
+    onAfterPrint: () => setInvoice([])
+  });
+  
+  const handleInvoice = (data) => {
+    setInvoice(data);
+  };
+
+  useEffect(()=>{
+    if (invoiceData && Object.keys(invoiceData).length > 0) {
+      handlePrint2();
+    }
+  }, [invoiceData,handlePrint2 ])
+
+
     const column = [
-        { field: "_id", headerName: "Sr No", minWidth: 50, editable: true },
+        
+        {
+            field: "Status",
+            headerName: "Status",
+            renderCell: (params) => {
+                const { pending, order_no, piadamt, totalamt, checkintime, checkouttime } = params.row;
+        
+                let checkInLabel = '';
+                let checkInColor = '';
+                let checkInHandler = null;
+        
+                let checkOutLabel = '';
+                let checkOutColor = '';
+                let checkOutHandler = null;
+        
+                // Determine Check In button state
+                if (!checkintime) {
+                    checkInLabel = 'Check In';
+                    checkInColor = 'yellow';
+                    checkInHandler = null
+                } else {
+                    checkInLabel = `Update Check In ${checkintime}`;
+                    checkInColor = 'green';
+                    checkInHandler = null; // Disable clicking for updated check-in
+                }
+        
+                // Determine Check Out button state
+                if (checkintime && !checkouttime) {
+                    checkOutLabel = 'Check Out';
+                    checkOutColor = 'red';
+                    checkOutHandler = null
+                } else if (checkouttime) {
+                    checkOutLabel = `Update Check Out ${checkouttime}`;
+                    checkOutColor = 'green';
+                    checkOutHandler = null; // Disable clicking for updated check-out
+                }
+        
+                return (
+                    <div className="d-flex flex-row align-items-center">
+                        <p
+                            className="justify-content-center align-items-center mr-2"
+                            style={{
+                                width: "140px",
+                                backgroundColor: checkInColor,
+                                borderRadius: "5px",
+                                cursor: checkInHandler ? "pointer" : "default",
+                                whiteSpace: "normal",
+                                textAlign: "center", 
+                                fontSize: "10px",
+                                padding: !checkintime ? "12px" : "5px",
+                                color: !checkintime ? "black" : "white", // Corrected this line
+                            }}
+                            onClick={checkInHandler}
+                        >
+                            {checkInLabel}
+                        </p>
+                        {checkOutLabel && (
+                            <p
+                                className="d-flex justify-content-center align-items-center"
+                                style={{
+                                    width: "140px",
+                                    backgroundColor: checkOutColor,
+                                    borderRadius: "5px",
+                                    cursor: checkOutHandler ? "pointer" : "default",
+                                    whiteSpace: "normal", // Allow wrapping
+                                    textAlign: "center", // Center text
+                                    fontSize: "10px",
+                                    padding: !checkouttime ? "12px" : "5px",
+                                    color: "white"
+                                }}
+                                onClick={checkOutHandler}
+                            >
+                                {checkOutLabel}
+                            </p>
+                        )}
+                    </div>
+                );
+            },
+            minWidth: 300,
+            editable: false,
+          },
         { field: "cust_name", headerName: "Customer Name", minWidth: 120, editable: true },
         { field: "mobile_no", headerName: "Mobile", minWidth: 120, editable: true },
         { field: "service_provider", headerName: "Service Provider", minWidth: 120, editable: true },
@@ -100,19 +204,11 @@ const MonthService = () => {
         { field: "netpayamt", headerName: "Billing Amount",minWidth: 150 },
         { field: "piadamt", headerName: "Paid Amount", minWidth: 150 },
         { field: "totalamt", headerName: "Balance Amount", minWidth: 150},
-        { field: "date", headerName: "Fees Paid Date & Time", minWidth: 120, editable: true },      
-        // {
-        //     field: "status",
-        //     minWidth: 150,
-        //     headerName: "Status",
-        //     renderCell: (params) => (
-        //         <Button className="text-white bg-green">Approved</Button>
-        //     ),
-        // },
+        { field: "date", headerName: "Fees Paid Date & Time", minWidth: 120, editable: true },       
         {
             field: "action",
             headerName: "Action",
-            minWidth: 220,
+            minWidth: 320,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
                     <Button onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary' style={{minWidth: "40px", maxWidth: "40px"}}><BorderColorIcon /></Button>
@@ -131,23 +227,17 @@ const MonthService = () => {
                     >
                         <DeleteForeverIcon />
                     </Button>
+
+                    <Button variant="contained" color="success"
+                    onClick={(e) => {
+                        handleInvoice(params.row)
+                    }}
+                    >
+                       Invoice
+                    </Button>
                 </div>
             ),
         },
-        // {
-        //     field: "block",
-        //     headerName: "Block",
-        //     minWidth: 100,
-        //     renderCell: (params) => (
-        //         <div className="d-flex gap-2">
-        //             {Block ?
-        //                 <Button className="text-white bg-warning border-warning" onClick={() => setBlock(false)}>Un-Block</Button>
-        //                 :
-        //                 <Button variant="contained" color="error" onClick={() => setBlock(true)}><BlockIcon /></Button>
-        //             }
-        //         </div>
-        //     ),
-        // },
     ];
 
     const CustomToolbar = () => {
@@ -187,10 +277,18 @@ const MonthService = () => {
     //     setAddEmployee(!addEmployee)
        
     // }
+
+    const getRowClass = (rowData) => {
+        // Add your logic here to return a class name based on rowData
+        return 'pending-cell'
+      };
+
+
     return (
         <Fragment>
             <div style={{ display: 'none' }}>
         <ViewMonthlyService ref={memberRef} data={memoData} /> 
+        <InvoiceMonthlyService ref={InvoiceRef} data={invoiceData} /> 
         </div>
 
       <AdminHeader />
@@ -217,7 +315,7 @@ const MonthService = () => {
             </div>
             </div>
             <div className='p-4'>
-                <AdminDataTable rows={DataWithID(data)} columns={column} CustomToolbar={CustomToolbar} />
+                <AdminDataTable rows={DataWithID(data)} columns={column} CustomToolbar={CustomToolbar}  />
             </div>
         
             </div>

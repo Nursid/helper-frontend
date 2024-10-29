@@ -493,7 +493,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								<FormGroup>
 									<Label for="bike_no">Bike No <span style={{color: "red"}}>*</span></Label>
 									<Input  name="bike_no"
-										onChange={(e) => handleChange(e, 10)}
+										onChange={(e) => handleChange(e, 50)}
 										id="bike_no"
 										placeholder="Enter Bike No."
 										value={formData.bike_no}
@@ -510,7 +510,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								<FormGroup>
 									<Label for="kit_no"> KIT No <span style={{color: "red"}}>*</span></Label>
 									<Input  name="kit_no"
-										onChange={(e) => handleChange(e, 10)}
+										onChange={(e) => handleChange(e, 50)}
 										id="kit_no"
 										placeholder="Enter Kit No."
 										value={formData.kit_no}
@@ -528,7 +528,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								<FormGroup>
 									<Label for="mohalla"> Mohalla  <span style={{color: "red"}}>*</span></Label>
 									<Input  name="mohalla"
-										onChange={(e) => handleChange(e, 10)}
+										onChange={(e) => handleChange(e, 100)}
 										id="mohalla"
 										placeholder="Enter Mohalla"
 										value={formData.mohalla}
@@ -541,7 +541,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								<FormGroup>
 									<Label for="area"> Area  </Label>
 									<Input  name="area"
-										onChange={(e) => handleChange(e, 10)}
+										onChange={(e) => handleChange(e, 100)}
 										id="area"
 										placeholder="Enter Area"
 										value={formData.area}
@@ -553,7 +553,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								<FormGroup>
 									<Label for="land_mark"> Land Mark  </Label>
 									<Input  name="land_mark"
-										onChange={(e) => handleChange(e, 10)}
+										onChange={(e) => handleChange(e, 100)}
 										id="land_mark"
 										placeholder="Enter land mark"
 										value={formData.land_mark}
@@ -565,7 +565,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								<FormGroup>
 									<Label for="location"> Location  </Label>
 									<Input  name="location"
-										onChange={(e) => handleChange(e, 10)}
+										onChange={(e) => handleChange(e, 100)}
 										id="location"
 										placeholder="Enter location"
 										value={formData.location}
@@ -578,7 +578,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								<FormGroup>
 									<Label for="near_by"> Near By  </Label>
 									<Input  name="near_by"
-										onChange={(e) => handleChange(e, 10)}
+										onChange={(e) => handleChange(e, 100)}
 										id="near_by"
 										placeholder="Enter Near by"
 										value={formData.near_by}
@@ -591,7 +591,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								<FormGroup>
 									<Label for="reference"> Reference 1  <span style={{color: "red"}}>*</span></Label>
 									<Input  name="reference"
-										onChange={(e) => handleChange(e, 10)}
+										onChange={(e) => handleChange(e, 100)}
 										id="reference"
 										placeholder="Enter reference"
 										value={formData.reference}
@@ -604,7 +604,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								<FormGroup>
 									<Label for="reference2"> Reference 2  <span style={{color: "red"}}>*</span></Label>
 									<Input  name="reference2"
-										onChange={(e) => handleChange(e, 10)}
+										onChange={(e) => handleChange(e, 100)}
 										id="reference2"
 										placeholder="Enter reference2"
 										value={formData.reference2}
@@ -683,7 +683,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								<FormGroup>
 									<Label for="specialInterest">Special Interest</Label>
 									<Input type="textarea" name="specialInterest"
-										onChange={(e) => handleChange(e, 100)}
+										onChange={(e) => handleChange(e, 200)}
 										id="specialInterest"
 										placeholder="Enter special interest description"
 										value={formData.specialInterest}
