@@ -28,12 +28,31 @@ const MonthService = () => {
     const dispatch = useDispatch()
     const { data } = useSelector(state => state.GetAllMonthlyServiceDataReducer)
 
+    const status= [
+        {0: "Pending"},
+        {1: "Hold"},
+        {2: "Due"},
+        {3: "Completed"},
+        {4: "Running"},
+        {5: "Cancel"}
+        ]
+      
+        function getStatusByKey(key) {
+        for (let i = 0; i < status.length; i++) {
+          if (status[i].hasOwnProperty(key)) {
+            return status[i][key];
+          }
+          }
+          return "Status not found";
+        }
+
+
     const DataWithID = (data) => {
         const NewData = []
         if (data !== undefined) {
             for (let item of data) {
                 NewData.push({ ...item, _id: data.indexOf(item), date: moment(item.feesPaidDateTime).format("DD-MM-YYYY"),
-                    pending: 'Running'
+                    pending: getStatusByKey(item.pending)
                  })
             }
         } else {
@@ -111,13 +130,54 @@ const MonthService = () => {
   }, [invoiceData,handlePrint2 ])
 
 
-    const column = [
+    const check_in = async (orderNo, feesPaidDateTime) => {
         
+        const formData = {
+        pending: 4,
+        checkintime: moment(new Date()).format('DD/MM/YYYY, h:mm A'),
+        feesPaidDateTime: feesPaidDateTime
+        }
+        const apiUrl =  `${API_URL}/monthly-service/assign/${orderNo}`;;
+        // Make a POST request using Axios
+        axios.put(apiUrl, formData).then(response => {
+        if (response.status === 200) {
+            Swal.fire('Successfully!', "Order Is on Running", 'success')
+            dispatch(GetAllMonthlyServiceAction())
+        } else {
+            Swal.fire({title:  response.data.message, icon: "error"})
+        } 			
+        }).catch(error => {
+        console.error('Error:', error);
+        });
+    };
+
+    const check_out = async (orderNo, feesPaidDateTime) =>{    
+        const formData = {
+        pending: 3,
+        checkouttime: moment(new Date()).format('DD/MM/YYYY, h:mm A'),
+        feesPaidDateTime: feesPaidDateTime
+        }
+        const apiUrl =  `${API_URL}/monthly-service/assign/${orderNo}`;;
+        // Make a POST request using Axios
+        axios.put(apiUrl, formData).then(response => {
+        if (response.status === 200) {
+            Swal.fire('Successfully!', "Your Order has been Completed!", 'success')
+            dispatch(GetAllMonthlyServiceAction())
+        } else {
+            Swal.fire({title:  response.data.message, icon: "error"})
+        } 			
+        }).catch(error => {
+        console.error('Error:', error);
+        });
+    };
+
+
+    const column = [
         {
             field: "Status",
             headerName: "Status",
             renderCell: (params) => {
-                const { pending, order_no, piadamt, totalamt, checkintime, checkouttime } = params.row;
+                const { orderNo, checkintime, checkouttime, feesPaidDateTime } = params.row;
         
                 let checkInLabel = '';
                 let checkInColor = '';
@@ -131,7 +191,7 @@ const MonthService = () => {
                 if (!checkintime) {
                     checkInLabel = 'Check In';
                     checkInColor = 'yellow';
-                    checkInHandler = null
+                    checkInHandler = () => check_in(orderNo, feesPaidDateTime);
                 } else {
                     checkInLabel = `Update Check In ${checkintime}`;
                     checkInColor = 'green';
@@ -142,7 +202,7 @@ const MonthService = () => {
                 if (checkintime && !checkouttime) {
                     checkOutLabel = 'Check Out';
                     checkOutColor = 'red';
-                    checkOutHandler = null
+                    checkOutHandler = () => check_out(orderNo, feesPaidDateTime);
                 } else if (checkouttime) {
                     checkOutLabel = `Update Check Out ${checkouttime}`;
                     checkOutColor = 'green';
@@ -193,18 +253,19 @@ const MonthService = () => {
             minWidth: 300,
             editable: false,
           },
-        { field: "cust_name", headerName: "Customer Name", minWidth: 120, editable: true },
-        { field: "mobile_no", headerName: "Mobile", minWidth: 120, editable: true },
-        { field: "service_provider", headerName: "Service Provider", minWidth: 120, editable: true },
-        { field: "serviceType", headerName: "Service Type", minWidth: 120, editable: true },
-        { field: "serviceServeType", headerName: "Service Serve Type", minWidth: 120, editable: true },
-        { field: "selectedTimeSlot", headerName: "Hourly Time Slot", minWidth: 120, editable: true },
-        // { field: "specialInterest", headerName: "Special Interest", minWidth: 220, editable: true },
+        { field: "cust_name", headerName: "Customer Name", minWidth: 120 },
+        { field: "mobile_no", headerName: "Mobile", minWidth: 120 },
+        { field: "date", headerName: "Date", minWidth: 120 },
+        { field: "orderNo", headerName: "OrderNo ", minWidth: 120 },
+        { field: "serviceType", headerName: "Service ", minWidth: 120 },
+        { field: "serviceServeType", headerName: "Monthly Service Type", minWidth: 120 },
+        { field: "selectedTimeSlot", headerName: "Time Slot", minWidth: 120  },
+        { field: "service_provider", headerName: "Service Provider", minWidth: 120 },
+        { field: "supervisor", headerName: "Supervisor", minWidth: 120 },
         { field: "paymethod", headerName: "Payment Method", minWidth: 150},
         { field: "netpayamt", headerName: "Billing Amount",minWidth: 150 },
         { field: "piadamt", headerName: "Paid Amount", minWidth: 150 },
-        { field: "totalamt", headerName: "Balance Amount", minWidth: 150},
-        { field: "date", headerName: "Fees Paid Date & Time", minWidth: 120, editable: true },       
+        { field: "totalamt", headerName: "Balance Amount", minWidth: 150},       
         {
             field: "action",
             headerName: "Action",

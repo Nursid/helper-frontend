@@ -25,7 +25,8 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 	const today2 = new Date().toISOString().slice(0, 16); // Format: 'YYYY-MM-DDTHH:mm'
 
 
-
+	const [getAllSupervisor, setGetAllSupervisor] = useState([])
+	const [supervisor, setSupervisor] = useState(null)
 	const dispatch = useDispatch();
 	const [GetAlltimeSlot , setGetAlltimeSlot] = useState([])
 	const [formData, setFormData] = useState({
@@ -86,6 +87,8 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 
 	useEffect(() => {
 		dispatch(GetAllTimeSlot())
+		getAllServicesProvider()
+		GetAllSupervisor()
 	}, []);
 
 	useEffect(() => {
@@ -108,9 +111,6 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		}
     };
 
-	useEffect(()=>{
-		getAllServicesProvider()
-	  }, [])
 
 	  const getAllServicesProvider = async () => {
 		try {
@@ -124,7 +124,16 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		}
 	  }
 
-	const onsubmit=(e) => {
+
+	  const GetAllSupervisor = async () => {
+		const response = await axios.get(API_URL + `/employee/getall`)
+		if (response.status === 200) {
+			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
+			setGetAllSupervisor(transformedData);
+		}
+	}
+
+	const onsubmit= async (e) => {
 
 
 		e.preventDefault();
@@ -161,36 +170,10 @@ const AddMonthlyServices = ({toggleModal, data}) => {
         errors.service_provider = "Service provider is required";
     }
 
-    // New validations
-    if (!formData?.bike_no) {
-        errors.bike_no = "Bike number is required";
+	if (!supervisor?.value) {
+        errors.supervisor = "supervisor is required";
     }
 
-    if (!formData?.kit_no) {
-        errors.kit_no = "Kit number is required";
-    }
-
-    // if (!formData?.paymethod) {
-    //     errors.paymethod = "Payment method is required";
-    // }
-
-    // if (!formData?.netpayamt) {
-    //     errors.netpayamt = "Bill amount is required";
-    // } else if (formData.netpayamt <= 0) {
-    //     errors.netpayamt = "Bill amount must be greater than 0";
-    // }
-
-    // if (!formData?.piadamt) {
-    //     errors.piadamt = "Paid amount is required";
-    // } else if (formData.piadamt < 0) {
-    //     errors.piadamt = "Paid amount cannot be negative";
-    // }
-
-    // if (formData.piadamt > formData.netpayamt) {
-    //     errors.piadamt = "Paid amount cannot exceed bill amount";
-    // }
-
-    // Assuming totalamt is calculated as: totalamt = netpayamt - piadamt
     formData.totalamt = formData.netpayamt - formData.piadamt;
 
     if (errors && Object.keys(errors).length === 0) {
@@ -209,7 +192,8 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			selectedTimeSlot: timeslot?.value,
 			serviceType: serviceType?.value,
 			service_provider: serviceProvider?.value,
-			shift: shift?.value	
+			shift: shift?.value	,
+			supervisor: supervisor?.value
 		}
 
 
@@ -231,33 +215,53 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			formData1.append('after_cleaning', formData.after_cleaning.file);
 		}
 
-		
-
-		// const AddAccountAmount = {
-		// 	payment_mode: formData?.paymethod,
-		// 	amount: formData?.piadamt,
-		// 	person_name: formData?.cust_name,
-		// 	about_payment: formData?.service_name?.value,
-		// 	balance: formData?.totalamt
-		//   }	
+		const AddAccountAmount1 = {
+			payment_mode: formData?.paymethod,
+			amount: formData?.piadamt,
+			person_name: formData?.cust_name,
+			about_payment: data.serviceType,
+			balance: formData?.totalamt,
+			order_no: data.orderNo
+		}
 
 		var apiUrl =""
 		if(data.id!=null){
-			 apiUrl = `${API_URL}/monthly-service/update/${data.id}`;
+			 apiUrl = `${API_URL}/monthly-service/update/${data.orderNo}`;
 		}else{
 			apiUrl = `${API_URL}/monthly-service/add`;
 		}
 
 		axios.post(apiUrl, formData1, {'Content-Type': 'multipart/form-data'})
-			.then(response => {
+			.then( async (response) => {
 				setIsLoading(false)
 				if (response.status === 200) {
-					toggleModal();
+
+					if (data.id == null && formData?.piadamt) {
+						const AddAccountAmount = {
+							payment_mode: formData?.paymethod,
+							amount: formData?.piadamt,
+							person_name: formData?.cust_name,
+							about_payment: serviceType?.value,
+							balance: formData?.totalamt,
+							order_no: response.data.orderNo
+						};
+						const res = await axios.post(`${API_URL}/api/add-balance`, AddAccountAmount);
+					}
+					
+					 else{
+						if(formData.piadamt){
+							const res = await axios.post(`${API_URL}/api/add-balance`, AddAccountAmount1)
+						
+						}
+					}
+
 					Swal.fire(
 						'Successfully!',
 						response.data.message,
 						'success'
 					)
+					
+					toggleModal();
 					dispatch(GetAllMonthlyServiceAction())
 					
 				} else {
@@ -442,7 +446,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 							<Col md={6}>
 								<FormGroup>
 									<Label for="feesPaidDateTime">  Date  <span style={{color: "red"}}>*</span></Label>
-									<Input type="datetime-local" name="feesPaidDateTime"
+									<Input type="date" name="feesPaidDateTime"
 										onChange={(e) => handleChange(e, 50)}
 										id="feesPaidDateTime"
 										value={formData?.feesPaidDateTime}
@@ -490,43 +494,51 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 				</Col>
 
 				<Col md={6}>
+					<FormGroup>
+						<Label>Supervisor Name <span style={{color: "red"}}>*</span></Label>
+						<SelectBox 
+						options={getAllSupervisor}
+						initialValue={supervisor}
+						setSelcted={setSupervisor}
+						/>
+						{errors?.supervisor && (
+							<span className='validationError'>
+								{errors?.supervisor}
+							</span>
+						)}
+					</FormGroup>
+				</Col>
+
+				            <Col md={6}>
 								<FormGroup>
-									<Label for="bike_no">Bike No <span style={{color: "red"}}>*</span></Label>
+									<Label for="bike_no">Bike No </Label>
 									<Input  name="bike_no"
 										onChange={(e) => handleChange(e, 50)}
 										id="bike_no"
 										placeholder="Enter Bike No."
 										value={formData.bike_no}
 										/>
-										{errors?.bike_no && (
-							<span className='validationError'>
-								{errors?.bike_no}
-							</span>
-						)}
+										
 								</FormGroup>
 							</Col>
 
 							<Col md={6}>
 								<FormGroup>
-									<Label for="kit_no"> KIT No <span style={{color: "red"}}>*</span></Label>
+									<Label for="kit_no"> KIT No </Label>
 									<Input  name="kit_no"
 										onChange={(e) => handleChange(e, 50)}
 										id="kit_no"
 										placeholder="Enter Kit No."
 										value={formData.kit_no}
 										/>
-										{errors?.kit_no && (
-							<span className='validationError'>
-								{errors?.kit_no}
-							</span>
-						)}
+										
 								</FormGroup>
 							</Col>
 
 
 							<Col md={6}>
 								<FormGroup>
-									<Label for="mohalla"> Mohalla  <span style={{color: "red"}}>*</span></Label>
+									<Label for="mohalla"> Mohalla  </Label>
 									<Input  name="mohalla"
 										onChange={(e) => handleChange(e, 100)}
 										id="mohalla"
@@ -573,7 +585,6 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								</FormGroup>
 							</Col>
 
-
 							<Col md={6}>
 								<FormGroup>
 									<Label for="near_by"> Near By  </Label>
@@ -589,7 +600,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 
 							<Col md={6}>
 								<FormGroup>
-									<Label for="reference"> Reference 1  <span style={{color: "red"}}>*</span></Label>
+									<Label for="reference"> Reference 1</Label>
 									<Input  name="reference"
 										onChange={(e) => handleChange(e, 100)}
 										id="reference"
@@ -602,7 +613,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 
 							<Col md={6}>
 								<FormGroup>
-									<Label for="reference2"> Reference 2  <span style={{color: "red"}}>*</span></Label>
+									<Label for="reference2"> Reference 2  </Label>
 									<Input  name="reference2"
 										onChange={(e) => handleChange(e, 100)}
 										id="reference2"
@@ -620,33 +631,20 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 							<FormGroup>
 								<Label>Payment Method</Label>
 								<SelectBox options={payMethodOptions} setSelcted={(value) => setFormData((prev) => ({ ...prev, paymethod: value?.value }))} initialValue={formData.paymethod} />
-								{errors?.paymethod && (
-												<span className='validationError'>
-													{errors?.paymethod}
-												</span>
-											)}
 							</FormGroup>
 							</Col>
 							<Col md={6}>
 							<FormGroup>
 								<Label>Bill Amount</Label>
 								<Input name="netpayamt" type="number" onChange={(e) => handleChange(e, 7)} value={formData.netpayamt} placeholder="Bill Amount" />
-								{errors?.netpayamt && (
-												<span className='validationError'>
-													{errors?.netpayamt}
-												</span>
-											)}
+								
 							</FormGroup>
 							</Col>
 							<Col md={6}>
 							<FormGroup>
 								<Label>Paid Amount</Label>
 								<Input name="piadamt" type="number" onChange={(e) => handleChange(e, 7)} value={formData.piadamt} placeholder="Paid Amount" />
-								{errors?.piadamt && (
-												<span className='validationError'>
-													{errors?.piadamt}
-												</span>
-											)}
+								
 							</FormGroup>
 							</Col>
 							<Col md={6}>
@@ -656,41 +654,17 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 							</FormGroup>
 							</Col>
 
-
-                            {/* <Col md={6}>
-								<FormGroup>
-									<Label for="serviceFees">Service Fees <span style={{color: "red"}}>*</span></Label>
-									<Input type="number" name="serviceFees"
-										onChange={(e) => handleChange(e, 10)}
-										id="serviceFees"
-										placeholder="Enter service fees"
-										value={formData.serviceFees}
-										/>
-										{errors?.serviceFees && (
-							<span className='validationError'>
-								{errors?.serviceFees}
-							</span>
-						)}
-								</FormGroup>
-							</Col> */}
-
-
-
-
-							
-
 							<Col md={12}>
 								<FormGroup>
-									<Label for="specialInterest">Special Interest</Label>
+									<Label for="specialInterest">Special Instructions</Label>
 									<Input type="textarea" name="specialInterest"
 										onChange={(e) => handleChange(e, 200)}
 										id="specialInterest"
-										placeholder="Enter special interest description"
+										placeholder="Enter special Instructions"
 										value={formData.specialInterest}
 										/>
 								</FormGroup>
 							</Col>
-
 							
                             <Button onClick={onsubmit} className='bg-primary text-white' disabled={isLoadingSubmit}>  {data ? "Update" : "Submit"} </Button>
                         </Row>
