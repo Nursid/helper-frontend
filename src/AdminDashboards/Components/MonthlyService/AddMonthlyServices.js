@@ -26,7 +26,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 
 
 	const [getAllSupervisor, setGetAllSupervisor] = useState([])
-	const [supervisor, setSupervisor] = useState(null)
+	const [supervisor, setSupervisor] = useState(data?.supervisor || '')
 	const dispatch = useDispatch();
 	const [GetAlltimeSlot , setGetAlltimeSlot] = useState([])
 	const [formData, setFormData] = useState({
@@ -131,12 +131,10 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
 			setGetAllSupervisor(transformedData);
 		}
-	}
+	  }
 
 	const onsubmit= async (e) => {
-
-
-		e.preventDefault();
+	e.preventDefault();
     let errors = {};
     setIsLoading(true);
 
@@ -672,4 +670,14 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		</Fragment>
 	)
 }
+
+
+
+
+
+
+
+
+
+
 export default AddMonthlyServices;

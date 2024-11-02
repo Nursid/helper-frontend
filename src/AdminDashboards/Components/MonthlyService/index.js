@@ -21,7 +21,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import { useReactToPrint } from 'react-to-print';
 import ViewMonthlyService from './view/ViewMonthly-Service'
 import InvoiceMonthlyService from './view/InvoiceMonthlyService'
-
+import CollapseDatatable from '../../Elements/CollapseDatatable'
 
 const MonthService = () => {
     const navigate = useNavigate()
@@ -47,19 +47,49 @@ const MonthService = () => {
         }
 
 
-    const DataWithID = (data) => {
-        const NewData = []
-        if (data !== undefined) {
-            for (let item of data) {
-                NewData.push({ ...item, _id: data.indexOf(item), date: moment(item.feesPaidDateTime).format("DD-MM-YYYY"),
-                    pending: getStatusByKey(item.pending)
-                 })
+        const DataWithID = (data) => {
+            const NewData = [];
+            const groupedData = {};
+        
+            if (data !== undefined) {
+                // Grouping items by orderNo
+                for (let item of data) {
+                    const orderNo = item.orderNo;
+        
+                    if (!groupedData[orderNo]) {
+                        groupedData[orderNo] = [];
+                    }
+        
+                    groupedData[orderNo].push({
+                        ...item,
+                        _id: data.indexOf(item),
+                        date: moment(item.feesPaidDateTime).format("DD-MM-YYYY"),
+                        pending: getStatusByKey(item.pending),
+                    });
+                }
+        
+                // Transforming grouped data into the desired format
+                for (const orderNo in groupedData) {
+                    const items = groupedData[orderNo];
+                    const parent = items[0]; // Pick the first item as the parent
+                    const history = items.slice(1); // The rest are history
+        
+                    NewData.push({
+                        ...parent,
+                        history: history.map((item, index) => ({
+                            ...item,
+                            id: parent.id + index + 1, // Generating unique id for history items
+                        })),
+                    });
+                }
+            } else {
+                NewData.push({ id: 0 });
             }
-        } else {
-            NewData.push({ id: 0 })
-        }
-        return NewData
-    }
+        
+            return NewData;
+        };
+        
+        
 
     useEffect(() => {
         dispatch(GetAllMonthlyServiceAction())
@@ -179,6 +209,9 @@ const MonthService = () => {
             renderCell: (params) => {
                 const { orderNo, checkintime, checkouttime, feesPaidDateTime } = params.row;
         
+                const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+                const feesPaidDate = new Date(feesPaidDateTime).toISOString().split('T')[0]; // Get fees paid date
+        
                 let checkInLabel = '';
                 let checkInColor = '';
                 let checkInHandler = null;
@@ -191,7 +224,7 @@ const MonthService = () => {
                 if (!checkintime) {
                     checkInLabel = 'Check In';
                     checkInColor = 'yellow';
-                    checkInHandler = () => check_in(orderNo, feesPaidDateTime);
+                    checkInHandler = today === feesPaidDate ? () => check_in(orderNo, feesPaidDateTime) : null;
                 } else {
                     checkInLabel = `Update Check In ${checkintime}`;
                     checkInColor = 'green';
@@ -202,7 +235,7 @@ const MonthService = () => {
                 if (checkintime && !checkouttime) {
                     checkOutLabel = 'Check Out';
                     checkOutColor = 'red';
-                    checkOutHandler = () => check_out(orderNo, feesPaidDateTime);
+                    checkOutHandler = today === feesPaidDate ? () => check_out(orderNo, feesPaidDateTime) : null;
                 } else if (checkouttime) {
                     checkOutLabel = `Update Check Out ${checkouttime}`;
                     checkOutColor = 'green';
@@ -222,7 +255,7 @@ const MonthService = () => {
                                 textAlign: "center", 
                                 fontSize: "10px",
                                 padding: !checkintime ? "12px" : "5px",
-                                color: !checkintime ? "black" : "white", // Corrected this line
+                                color: !checkintime ? "black" : "white",
                             }}
                             onClick={checkInHandler}
                         >
@@ -236,8 +269,8 @@ const MonthService = () => {
                                     backgroundColor: checkOutColor,
                                     borderRadius: "5px",
                                     cursor: checkOutHandler ? "pointer" : "default",
-                                    whiteSpace: "normal", // Allow wrapping
-                                    textAlign: "center", // Center text
+                                    whiteSpace: "normal",
+                                    textAlign: "center",
                                     fontSize: "10px",
                                     padding: !checkouttime ? "12px" : "5px",
                                     color: "white"
@@ -252,7 +285,7 @@ const MonthService = () => {
             },
             minWidth: 300,
             editable: false,
-          },
+        },        
         { field: "cust_name", headerName: "Customer Name", minWidth: 120 },
         { field: "mobile_no", headerName: "Mobile", minWidth: 120 },
         { field: "date", headerName: "Date", minWidth: 120 },
@@ -339,12 +372,6 @@ const MonthService = () => {
        
     // }
 
-    const getRowClass = (rowData) => {
-        // Add your logic here to return a class name based on rowData
-        return 'pending-cell'
-      };
-
-
     return (
         <Fragment>
             <div style={{ display: 'none' }}>
@@ -376,7 +403,10 @@ const MonthService = () => {
             </div>
             </div>
             <div className='p-4'>
-                <AdminDataTable rows={DataWithID(data)} columns={column} CustomToolbar={CustomToolbar}  />
+                {/* <AdminDataTable rows={DataWithID(data)} columns={column} CustomToolbar={CustomToolbar}  /> */}
+
+                <CollapseDatatable rows={DataWithID(data)} columns={column} CustomToolbar={CustomToolbar} />
+               
             </div>
         
             </div>
@@ -386,3 +416,4 @@ const MonthService = () => {
 }
 
 export default MonthService
+
