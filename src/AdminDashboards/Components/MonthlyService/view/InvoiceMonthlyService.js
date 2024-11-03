@@ -109,9 +109,10 @@ const InvoiceMonthlyService = React.forwardRef((props, ref) => {
                 </td>
                 <td>
                   <p><strong>{data?.paymethod}</strong></p>
-                  <p><strong>{data?.totalamt}</strong></p>
+                 <p><strong>{data?.netpayamt}</strong></p>
                   <p><strong>{data?.piadamt}</strong></p>
-                  <p><strong>{data?.netpayamt}</strong></p>
+                 
+                        <p><strong>{data?.totalamt}</strong></p>
                 </td>
               </tr>
             </tbody>
