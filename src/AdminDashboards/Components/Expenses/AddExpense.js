@@ -118,7 +118,7 @@ const AddExpense = ({ setActiveAttendance }) => {
             type_payment: true
         };
         try {
-          const response = await axios.post(`${API_URL}/api/add-balance`, dataToSubmit);
+          const response = await axios.post(`${API_URL}/api/add-expense`, dataToSubmit);
           if (response.status === 200) {
               dispatch(AccountListing());
               setErrors([]);
