@@ -4,11 +4,15 @@ import { API_URL } from '../../../config';
 import Swal from 'sweetalert2';
 
 
-export const AccountListing = () => {
+export const AccountListing = (from, to) => {
     return async (dispatch) => {
         dispatch({ type: constant.ACCOUNT_API_LOADING })
         try {
-            const response = await axios.get(API_URL + '/api/account-listing')
+            let url = "/api/account-listing"
+            if(from && to){
+                url = `/api/account-listing?from=${from}&to=${to}`
+            }
+            const response = await axios.get(API_URL + url)
             if (response.status === 200) {
                 dispatch({ type: constant.ACCOUNT_API_SUCCESS, payload: response.data.data })
             }

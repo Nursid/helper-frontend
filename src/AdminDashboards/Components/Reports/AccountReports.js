@@ -9,9 +9,10 @@ import { useAuth } from '../../../Context/userAuthContext';
 import { AccountListing } from '../../../Store/Actions/Dashboard/AccountAction';
 import Switch from '@mui/material/Switch';
 import { ApprovePaymentRemarkModal } from '../../../Components/Modal';
+import { Input, Button } from 'reactstrap';
 
 const AccountReports = () => {
-    const [selectedAttendance, setSelectedAttendance] = useState("Credit");
+    const [selectedAttendance, setSelectedAttendance] = useState("All");
     const dispatch = useDispatch();
     const { data } = useSelector(state => state.AccountReducers);
     const { userRole } = useUserRoleContext();
@@ -20,6 +21,8 @@ const AccountReports = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [amountId, setAmountId] = useState(false);
     const [adminAprove, setAdminAprove] = useState(false);
+    const [from, setFrom] = useState(null)
+    const [to, setTo] = useState(null)
 
     const toggleModal = () => setModalOpen(!modalOpen)
 
@@ -54,30 +57,25 @@ const AccountReports = () => {
     const DataWithID = (data, payment_mode) => {
         return useMemo(() => {
             const newData = [];
+            let cumulativeBalance = 0;
     
             if (data) {
                 for (let item of data) {
-                    let debit = 0;
-                    let credit = 0;
+                    // Filter based on payment_mode if it's not 'All'
+                    if (payment_mode === 'All' || item.payment_mode === payment_mode) {
+                        const credit = item.type_payment ? 0 : (item.amount || 0);
+                        const debit = item.type_payment ? (item.amount || 0) : 0;
     
-                    // Check for debit
-                    if (payment_mode === 1 && item.type_payment && (item.amount || 0) > 0) {
-                        debit = item.amount; // Get debit amount only if it's greater than 0
-                        newData.push({
-                            ...item,
-                            _id: data.indexOf(item), // Use a unique ID if available
-                            date: moment(item.date).format("DD-MM-YYYY"),
-                            debit,
-                        });
-                    }
-                    // Check for credit
-                    else if (payment_mode !== 1 && !item.type_payment && (item.amount || 0) > 0) {
-                        credit = item.amount; // Get credit amount only if it's greater than 0
+                        cumulativeBalance += parseInt(credit, 10);
+                        cumulativeBalance -= parseInt(debit, 10);
+    
                         newData.push({
                             ...item,
                             _id: data.indexOf(item), // Use a unique ID if available
                             date: moment(item.date).format("DD-MM-YYYY"),
                             credit,
+                            debit,
+                            balance_opening: cumulativeBalance,
                         });
                     }
                 }
@@ -88,7 +86,6 @@ const AccountReports = () => {
             return newData.reverse();
         }, [data, payment_mode]); // Add payment_mode to the dependency array
     };
-
     const CustomToolbar = () => (
         <GridToolbarContainer>
             <GridToolbarQuickFilter />
@@ -99,6 +96,18 @@ const AccountReports = () => {
         </GridToolbarContainer>
     );
 
+
+    const FilterData = async () => {
+        if(!from || !to){
+            return;
+        }
+        try {
+            dispatch(AccountListing(from,to));
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+
     return (
         <Fragment>
 
@@ -106,8 +115,8 @@ const AccountReports = () => {
                 Payment Report (Credit/Debit)
             </h5>
           
-            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3'>
-                {["Credit", "Debit"].map(item => (
+            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3  justify-content-left'>
+                {["All", "Bank", "Cash"].map(item => (
                     <div
                         key={item}
                         className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center ${selectedAttendance === item ? "hoverThis_active" : ""}`}
@@ -118,16 +127,41 @@ const AccountReports = () => {
                     </div>
                 ))}
             </div>
-            {selectedAttendance === "Credit" && (
+
+            <div className="flex flex-col justify-between w-full mb-3 ">
+                <div className="flex justify-between gap-6 items-center">
+                <div className="ml-4">
+                    <label htmlFor="startDate" className="text-light">From:</label>
+                    <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
+            </div>
+                    <div className="ml-4">
+                    <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
+                    <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
+            </div>
+                    <div className="ml-4" style={{marginTop: '32px'}}>
+                    <Button className="btn btn-primary" size="small" variant="contained" onClick={FilterData}>
+                    Search
+                    </Button>
+                </div>
+            </div>
+        </div>  
+
+            {selectedAttendance === "All" && (
                 <div className='p-4'>
-                    <AdminDataTable rows={DataWithID(data, 0)} columns={all_columns} CustomToolbar={CustomToolbar} />
+                    <AdminDataTable rows={DataWithID(data, "All")} columns={all_columns} CustomToolbar={CustomToolbar} />
                 </div>
             )}
-            {selectedAttendance === "Debit" && (
+            {selectedAttendance === "Cash" && (
                 <div className='p-4'>
-                    <AdminDataTable rows={DataWithID(data, 1)} columns={all_columns} CustomToolbar={CustomToolbar} />
+                    <AdminDataTable rows={DataWithID(data, "Cash")} columns={all_columns} CustomToolbar={CustomToolbar} />
                 </div>
             )}
+            {selectedAttendance === "Bank" && (
+                <div className='p-4'>
+                    <AdminDataTable rows={DataWithID(data, "Online")} columns={all_columns} CustomToolbar={CustomToolbar} />
+                </div>
+            )}
+
         </Fragment>
     );
 };
