@@ -15,7 +15,7 @@ import AdminHeader from "../AdminHeader";
 
 import TransferSupervisorAvailability from "./form/TransferSupervisorAvailability";
 import axios from "axios";
-import { API_URL } from "../../../config";
+import { API_URL, IMG_URL } from "../../../config";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector } from "@mui/x-data-grid";
@@ -84,7 +84,6 @@ const SupervisorAvailability = () => {
         
         return NewData;
     };
-
 
     const AssignDate = (field, data) =>{
         setField(field);
@@ -181,13 +180,19 @@ const SupervisorAvailability = () => {
 
         { field: "name",  headerName: "Name", minWidth: 150, editable: true},
         { field: "duty_hours",  headerName: "Duty Hours", minWidth: 150, editable: true},
-         {
-          field: "image", headerName: "Image", minWidth: 120, renderCell: (params) => (
-              <div className='w-80 h-80 rounded-circle'>
-                 <img src="https://i.pinimg.com/564x/d5/b0/4c/d5b04cc3dcd8c17702549ebc5f1acf1a.jpg" alt="Image" style={{ width: "40px", height: "40px" }} />
+        {
+          field: "image",
+          headerName: "Image",
+          minWidth: 120,
+          renderCell: (params) => {
+            const url = params.row.image ? IMG_URL + params.row.image : "https://i.pinimg.com/564x/d5/b0/4c/d5b04cc3dcd8c17702549ebc5f1acf1a.jpg";
+            return (
+              <div style={{ width: "50px", height: "50px", overflow: "hidden" }}>
+                <img src={url} alt="Image" style={{ width: "100%", height: "100%" }} />
               </div>
-          )
-      },
+            );
+          }
+        },
         { field: "date",  headerName: "Date", minWidth: 150, editable: true
          },
           {
