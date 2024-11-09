@@ -40,28 +40,28 @@ const TodaysReport = () => {
     
         const cashtotalPaidAmt = data?.reduce((acc, item) => {
             if (item.type_payment === false && item.payment_mode === 'Cash') {
-                return acc + (Number(item.amount) || 0);
+                return acc + (parseInt(item.amount) || 0);
             }
             return acc;
         }, 0);
         
         const OnlinetotalPaidAmt = data?.reduce((acc, item) => {
             if (item.type_payment === false && item.payment_mode === 'Online') {
-                return acc + (Number(item.amount) || 0);
+                return acc + (parseInt(item.amount) || 0);
             }
             return acc;
         }, 0);
         
         const cashtotalExpenses = data?.reduce((acc, item) => {
             if (item.type_payment === true && item.payment_mode === 'Cash') {
-                return acc + (Number(item.amount) || 0);
+                return acc + (parseInt(item.amount) || 0);
             }
             return acc;
         }, 0);
         
         const OnlinetotalExpenses = data?.reduce((acc, item) => {
             if (item.type_payment === true && item.payment_mode === 'Online') {
-                return acc + (Number(item.amount) || 0);
+                return acc + (parseInt(item.amount) || 0);
             }
             return acc;
         }, 0);

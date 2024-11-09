@@ -219,7 +219,8 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			person_name: formData?.cust_name,
 			about_payment: data.serviceType,
 			balance: formData?.totalamt,
-			order_no: data.orderNo
+			order_no: data.orderNo,
+			type_payment: 0
 		}
 
 		var apiUrl =""
@@ -241,7 +242,8 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 							person_name: formData?.cust_name,
 							about_payment: serviceType?.value,
 							balance: formData?.totalamt,
-							order_no: response.data.orderNo
+							order_no: response.data.orderNo,
+							type_payment: 0
 						};
 						const res = await axios.post(`${API_URL}/api/add-balance`, AddAccountAmount);
 					}
