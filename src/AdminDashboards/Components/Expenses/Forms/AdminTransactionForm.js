@@ -61,7 +61,7 @@ const AdminTransactionForm = ({toggleModal,data,AccountListing,TotalBalance}) =>
     
         let api_url=""
         if(!data.id){
-            api_url="/api/add-balance"
+            api_url="/api/add-fund"
         }else{
             api_url="/api/edit-balance/"+data.id
         }

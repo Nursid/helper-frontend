@@ -37,9 +37,7 @@ const TodaysReport = () => {
     }
 
     useEffect(() => {
-        // const totalPaidAmt = data?.reduce((acc, item) => acc + (item.type_payment === false ? (Number(item.amount) || 0) : 0), 0);
-        // const totalExpenses = data?.reduce((acc, item) => acc + (item.type_payment === true ? (Number(item.amount) || 0) : 0), 0);
-
+    
         const cashtotalPaidAmt = data?.reduce((acc, item) => {
             if (item.type_payment === false && item.payment_mode === 'Cash') {
                 return acc + (Number(item.amount) || 0);
@@ -76,7 +74,6 @@ const TodaysReport = () => {
         setBank(totalBank)
         setOpeningBalance(openingBalance);
         setExpence(totalExpenses)
-        
     }, [data]);
 
     const all_columns = [

@@ -952,14 +952,14 @@ const AdminDashboard = () => {
 
 
 
-    const UpdateDueOrder = async () => {
-      try {
-          const response = await axios.post(`${API_URL}/order/add-due-order`);
-          console.log('Response:', response.data);
-      } catch (error) {
-          console.error('Error updating due order:', error);
-      }
-    };
+  const UpdateDueOrder = async () => {
+    try {
+        const response = await axios.post(`${API_URL}/order/add-due-order`);
+        console.log('Response:', response.data);
+    } catch (error) {
+        console.error('Error updating due order:', error);
+    }
+  };
 
   useEffect(() => {
       UpdateDueOrder();
