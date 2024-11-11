@@ -18,6 +18,7 @@ import { API_URL } from '../../../config';
 import { GetAllMonthlyServiceAction } from '../../../Store/Actions/Dashboard/EmployeeActions/GetAllMonthlyServices';
 import { GetAllTimeSlot } from '../../../Store/Actions/Dashboard/Orders/OrderAction';
 import { useReactToPrint } from 'react-to-print';
+import Select from 'react-select';
 
 
 const AddMonthlyServices = ({toggleModal, data}) => {
@@ -164,9 +165,18 @@ const AddMonthlyServices = ({toggleModal, data}) => {
         errors.serviceServeType = "Service Serve Type is required";
     }
 
-    if (!serviceProvider?.value) {
-        errors.service_provider = "Service provider is required";
-    }
+
+	if(serviceType?.value === "Car Washing"){
+		if (Object.keys(serviceProvider).length === 0) {
+			errors.service_provider = "Service provider is required";
+		}
+	}else{
+		if (!serviceProvider?.value) {
+			errors.service_provider = "Service provider is required";
+		}
+	}
+
+   
 
 	if (!supervisor?.value) {
         errors.supervisor = "supervisor is required";
@@ -185,15 +195,15 @@ const AddMonthlyServices = ({toggleModal, data}) => {
         return false;
     }
 
+	
 		const  OriginalData = {
 			...formData,
 			selectedTimeSlot: timeslot?.value,
 			serviceType: serviceType?.value,
-			service_provider: serviceProvider?.value,
-			shift: shift?.value	,
+			service_provider: (serviceType?.value === "Car Washing") ? serviceProvider.map(option => option.value).join(', ') : serviceProvider?.value,
+			shift: shift?.value,
 			supervisor: supervisor?.value
 		}
-
 
 		const formData1 = new FormData();
 
@@ -310,10 +320,13 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			}));
 		}
 	};
-	
-	
-	
 
+	const handleChangeservices = (selectedOptions) => {
+		if (selectedOptions.length <= 2) {
+		  setServiceProvider(selectedOptions); 
+		}
+	  };
+	
 
 	return (
 		<Fragment>
@@ -477,21 +490,42 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 					</FormGroup>
 				</Col>
 
-				<Col md={6}>
-					<FormGroup>
-						<Label>Service Provider <span style={{color: "red"}}>*</span></Label>
-						<SelectBox 
-						options={getAllServiceProvider}
-						initialValue={serviceProvider}
-						setSelcted={setServiceProvider}
-						/>
-						{errors?.service_provider && (
-							<span className='validationError'>
-								{errors?.service_provider}
-							</span>
-						)}
-					</FormGroup>
-				</Col>
+				{serviceType?.value === "Car Washing" ? (
+        <Col md={6}>
+          <FormGroup>
+            <Label>Service Provider <span style={{ color: "red" }}>*</span></Label>
+            <Select
+              isMulti
+              value={serviceProvider?.value}
+              onChange={handleChangeservices}
+              options={getAllServiceProvider}
+              className="basic-multi-select"
+              classNamePrefix="select"
+            />
+			 {errors?.service_provider && (
+              <span className='validationError'>
+                {errors?.service_provider}
+              </span>
+            )}
+          </FormGroup>
+        </Col>
+      ) : (
+        <Col md={6}>
+          <FormGroup>
+            <Label>Service Provider <span style={{ color: "red" }}>*</span></Label>
+            <SelectBox 
+              options={getAllServiceProvider}
+              initialValue={serviceProvider}
+              setSelcted={setServiceProvider}
+            />
+            {errors?.service_provider && (
+              <span className='validationError'>
+                {errors?.service_provider}
+              </span>
+            )}
+          </FormGroup>
+        </Col>
+      )}
 
 				<Col md={6}>
 					<FormGroup>

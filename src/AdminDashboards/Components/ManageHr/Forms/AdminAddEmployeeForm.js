@@ -37,8 +37,6 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
         gender: data.gender || "",
     });
 
-    console.log('data.doj-----',data.doj)
-
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [allDepartments,setAllDepartments]=useState({});
     const [allServices, setAllServices]= useState({})
