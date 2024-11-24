@@ -7,7 +7,7 @@ import OrderReports from './OrderReports';
 import AttendanceReports from './AttendanceReport';
 import AccountReports from './AccountReports';
 import ServiceProviderAttendanceReports from './ServiceProviderAttendanceReport';
-
+import Attendance from './Attendance';
 const Reports = () => {
   const [attendanceActive, setAttendanceActive] = useState("1");
 
@@ -20,7 +20,7 @@ const Reports = () => {
           <AdminNavItems />
 
           <div className="AttendenceTabs px-3">
-            <span 
+            {/* <span 
               className={` ${attendanceActive === "1" ? "ReportsTabs_Active" : ""}`} 
               onClick={() => setAttendanceActive("1")}
             >
@@ -32,37 +32,51 @@ const Reports = () => {
               onClick={() => setAttendanceActive("2")}
             >
             Service Provider  Attendance Report
-            </span>
-
+            </span> */}
             <span 
-              className={` ${attendanceActive === "3" ? "ReportsTabs_Active" : ""}`} 
-              onClick={() => setAttendanceActive("3")}
+              className={` ${attendanceActive === "1" ? "ReportsTabs_Active" : ""}`} 
+              onClick={() => setAttendanceActive("1")}
+            >
+              Attendance Report
+            </span>
+            <span 
+              className={` ${attendanceActive === "2" ? "ReportsTabs_Active" : ""}`} 
+              onClick={() => setAttendanceActive("2")}
             >
               Order Report
             </span>
             <span 
-              className={` ${attendanceActive === "4" ? "ReportsTabs_Active" : ""}`} 
-              onClick={() => setAttendanceActive("4")}
+              className={` ${attendanceActive === "3" ? "ReportsTabs_Active" : ""}`} 
+              onClick={() => setAttendanceActive("3")}
             >
               Account Report
             </span>
+
+           
           </div>
 
           <TabContent activeTab={attendanceActive}>
             <TabPane tabId="1">
-              <AttendanceReports setActiveAttendance={setAttendanceActive}  />
+              {/* <AttendanceReports setActiveAttendance={setAttendanceActive}  /> */}
+              <Attendance setActiveAttendance={setAttendanceActive}  />
             </TabPane>
 
             <TabPane tabId="2">
-              <ServiceProviderAttendanceReports setActiveAttendance={setAttendanceActive}  />
+              {/* <ServiceProviderAttendanceReports setActiveAttendance={setAttendanceActive}  /> */}
+              <OrderReports setActiveAttendance={setAttendanceActive} />
             </TabPane>
 
             <TabPane tabId="3">
-              <OrderReports setActiveAttendance={setAttendanceActive} />
-            </TabPane>
-            <TabPane tabId="4">
+              {/* <OrderReports setActiveAttendance={setAttendanceActive} /> */}
               <AccountReports setActiveAttendance={setAttendanceActive}  />
             </TabPane>
+            {/* <TabPane tabId="4">
+              <AccountReports setActiveAttendance={setAttendanceActive}  />
+            </TabPane>
+
+            <TabPane tabId="5">
+              <Attendance setActiveAttendance={setAttendanceActive}  />
+            </TabPane> */}
           </TabContent>
         </div>
       </div>

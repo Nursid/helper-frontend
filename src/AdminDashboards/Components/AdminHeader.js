@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminProfile from './profile/AdminProfile'
 import { IMG_URL } from '../../config'
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+
 const AdminHeader = () => {
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
