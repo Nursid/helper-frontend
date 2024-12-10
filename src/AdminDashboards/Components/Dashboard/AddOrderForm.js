@@ -218,7 +218,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 			...formData,
 			service_name: service.value,
 			user_type: userType.value,
-			servicep_providers: serviceProvider.map(option => option.value),
+			servicep_providers: serviceProvider?.map(option => option.value),
 			suprvisor_id: supervisor?.value,
 			allot_time_range: timeslot.value
 		}
@@ -267,7 +267,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 	const getAllServicesProvider = async (filterData) => {
 		try {
 		  const queryParams = new URLSearchParams(filterData).toString()
-		  const response = await axios.get(`${API_URL}/service-provider/getall`);
+		  const response = await axios.get(`${API_URL}/service-provider/getall?${queryParams}`);
 		  if (response.status === 200) {
 			const transformedData = response.data.data.map(item => ({ label: item.name, value: item.id }));
 			setGetAllServiceProvider(transformedData);
@@ -279,7 +279,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 
 	const GetAllSupervisor = async (filterData) => {
 		const queryParams = new URLSearchParams(filterData).toString()
-		const response = await axios.get(API_URL + `/employee/getall`)
+		const response = await axios.get(API_URL + `/employee/getall?${queryParams}`);
 		if (response.status === 200) {
 			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
 			setGetAllSupervisor(transformedData);
