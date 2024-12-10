@@ -15,6 +15,7 @@ import {API_URL} from '../../../config'
 import SelectBox from '../../Elements/SelectBox';
 import Swal from 'sweetalert2'
 import {useDispatch} from 'react-redux'
+import Select from 'react-select';
 import { GetAllTimeSlot } from '../../../Store/Actions/Dashboard/Orders/OrderAction'
 const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModalTitle}) => {
 	const {rows, setRows, Show, setShow} = UseStateManager()
@@ -217,7 +218,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 			...formData,
 			service_name: service.value,
 			user_type: userType.value,
-			servicep_id: serviceProvider?.value,
+			servicep_providers: serviceProvider.map(option => option.value),
 			suprvisor_id: supervisor?.value,
 			allot_time_range: timeslot.value
 		}
@@ -266,9 +267,9 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 	const getAllServicesProvider = async (filterData) => {
 		try {
 		  const queryParams = new URLSearchParams(filterData).toString()
-		  const response = await axios.get(`${API_URL}/service-provider/getall?${queryParams}`);
+		  const response = await axios.get(`${API_URL}/service-provider/getall`);
 		  if (response.status === 200) {
-			const transformedData = response.data.data.map(item => ({ label: item.name, value: item.name }));
+			const transformedData = response.data.data.map(item => ({ label: item.name, value: item.id }));
 			setGetAllServiceProvider(transformedData);
 		  }
 		} catch (error) {
@@ -278,7 +279,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 
 	const GetAllSupervisor = async (filterData) => {
 		const queryParams = new URLSearchParams(filterData).toString()
-		const response = await axios.get(API_URL + `/employee/getall?${queryParams}`)
+		const response = await axios.get(API_URL + `/employee/getall`)
 		if (response.status === 200) {
 			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
 			setGetAllSupervisor(transformedData);
@@ -286,6 +287,13 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 	}
 
 	const currentDate = new Date().toISOString().slice(0, 16);
+
+
+	const handleChangeservices = (selectedOptions) => {
+		if (selectedOptions.length <= 2) {
+		  setServiceProvider(selectedOptions); 
+		}
+	  };
 
 	return (
 		<Fragment>
@@ -456,11 +464,15 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 				<Col md={6}>
 					<FormGroup>
 						<Label>Service Provider <span style={{color: "red"}}>*</span></Label>
-						<SelectBox 
+						<Select
+						isMulti
+						value={serviceProvider?.value}
+						onChange={handleChangeservices}
 						options={getAllServiceProvider}
-						initialValue={serviceProvider}
-						setSelcted={setServiceProvider}
+						className="basic-multi-select"
+						classNamePrefix="select"
 						/>
+						
 						{errors?.serviceProvider && (
 							<span className='validationError'>
 								{errors?.serviceProvider}

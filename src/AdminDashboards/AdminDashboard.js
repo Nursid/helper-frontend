@@ -110,6 +110,10 @@ const AdminDashboard = () => {
         const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
         const customer = NewCustomer.customer || {}; // Ensure customer is an Object
         const mergedItem = { ...item, ...NewCustomer, ...customer };
+        const serviceProviderNames = item.orderserviceprovider
+        ? item.orderserviceprovider.map((osp) => osp.service_provider.name).join(", ")
+        : "";
+
         const paddedId = String(customer.user_id).padStart(6, '0');
         NewData.push({
           ...mergedItem,
@@ -120,7 +124,8 @@ const AdminDashboard = () => {
           userRole: userRole,
           member_id: (!customer.member_id) 
                     ? 'NM' + paddedId 
-                    : customer.member_id
+                    : customer.member_id,
+          servicep_id: serviceProviderNames
         });
       }
     } else {
