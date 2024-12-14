@@ -290,9 +290,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 
 
 	const handleChangeservices = (selectedOptions) => {
-		if (selectedOptions.length <= 2) {
-		  setServiceProvider(selectedOptions); 
-		}
+		  setServiceProvider(selectedOptions);
 	  };
 
 	return (
