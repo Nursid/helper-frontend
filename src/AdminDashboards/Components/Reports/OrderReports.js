@@ -13,6 +13,8 @@ import ColoredBtn from "../../Elements/ColoredBtn";
 import axios from "axios";
 import { API_URL } from "../../../config";
 import SelectBox from "../../Elements/SelectBox";
+import exportToExcel from "../../exportToExcel";
+import { BiExport } from "react-icons/bi";
 
 export default function OrderReports() {
 
@@ -32,7 +34,16 @@ export default function OrderReports() {
             <GridToolbarColumnsButton />
             <GridToolbarFilterButton />
             <GridToolbarExport />
+           
             <GridToolbarDensitySelector />
+            <Button
+              onClick={() => exportToExcel(columns, DataWithID(data.data))}
+              className="btn btn-primary"
+              size="sm"
+            >
+              <BiExport className="mr-2" />
+              Export
+            </Button>
           </GridToolbarContainer>
         );
       };
@@ -63,6 +74,10 @@ export default function OrderReports() {
             const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
             const customer = NewCustomer.customer || {}; // Ensure customer is an object
             const mergedItem = { ...item, ...NewCustomer, ...customer };
+            const serviceProviderNames = item?.orderserviceprovider
+        ? item?.orderserviceprovider?.map((osp) => osp.service_provider.name).join(", ")
+        : "";
+
             NewData.push({
               ...mergedItem,
               pending: getStatusByKey(item.pending),
@@ -70,7 +85,8 @@ export default function OrderReports() {
               date: moment(item.createdAt).format("D / M / Y"),
               bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
               booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
-              userRole: userRole
+              userRole: userRole,
+              servicep_id: serviceProviderNames
             });
           }
         } else {
@@ -81,7 +97,7 @@ export default function OrderReports() {
 
       
   const FilterData = async () => {
-    const data ={
+    const data = {
       from: from,
       to: to,
       serviceProvider: serviceProvider?.value
@@ -102,20 +118,21 @@ export default function OrderReports() {
   }, []);
 
     const columns = [
-        { field: "member_id", headerName: "Member ID", minWidth: 120, editable: true,  },
+        { field: "_id", headerName: "Sr No.", minWidth: 120, editable: true,  },
+        // { field: "member_id", headerName: "Member ID", minWidth: 120, editable: true,  },
         { field: "order_no", headerName: "Order Number", minWidth: 120, editable: true },
         { field: "name", headerName: "Customer Name",minWidth: 150, editable: true },
-        { field: "mobileno", headerName: "Mobile",minWidth: 150, editable: true },
-        { field: "user_type", headerName: "Type", minWidth: 80, editable: true },
+        // { field: "mobileno", headerName: "Mobile",minWidth: 150, editable: true },
+        // { field: "user_type", headerName: "Type", minWidth: 80, editable: true },
         { field: "service_name", headerName: "Service Type",minWidth: 150, editable: true },
-        { field: "booktime", headerName: "Booking Time", minWidth: 120, editable: true },
-        { field: "bookdate", headerName: "Booking Date", minWidth: 120, editable: true },
-        { field: "problem_des", headerName: "Service Description ", minWidth: 150, editable: true, renderCell: (params) => (
-            <Tooltip title={params.value}>
-                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {params.value}</div>
-            </Tooltip>
-        ) },    { field: "allot_time_range", headerName: "Alloted Time Slot ", minWidth: 150, editable: true },
+        // { field: "booktime", headerName: "Booking Time", minWidth: 120, editable: true },
+        // { field: "bookdate", headerName: "Booking Date", minWidth: 120, editable: true },
+        // { field: "problem_des", headerName: "Service Description ", minWidth: 150, editable: true, renderCell: (params) => (
+        //     <Tooltip title={params.value}>
+        //         <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        //           {params.value}</div>
+        //     </Tooltip>
+        // ) },    { field: "allot_time_range", headerName: "Alloted Time Slot ", minWidth: 150, editable: true },
         { field: "suprvisor_id", headerName: "Supervisor", minWidth: 200, editable: true },
     
         { field: "servicep_id", headerName: "Service Provider",minWidth: 200, editable: true },
@@ -126,19 +143,19 @@ export default function OrderReports() {
         { field: "piadamt", headerName: "Paid Amount", minWidth: 150 },
         { field: "totalamt", headerName: "Balance Amount", minWidth: 150},
         { field: "cust_remark", headerName: "Customer Feedback", minWidth: 150 },
-        { field: "bakof_remark", headerName: "Back Office Remark",
-        minWidth: 180, editable: true},
+        // { field: "bakof_remark", headerName: "Back Office Remark",
+        // minWidth: 180, editable: true},
     
-        { field: "suerv_remark", headerName: "Supervisor Remark",
-        minWidth: 150, editable: true },
+        // { field: "suerv_remark", headerName: "Supervisor Remark",
+        // minWidth: 150, editable: true },
     
-        { field: "servp_remark",
-            headerName: "Service Provider Remark",
-            minWidth: 180,
-            editable: true,
-        },
+        // { field: "servp_remark",
+        //     headerName: "Service Provider Remark",
+        //     minWidth: 180,
+        //     editable: true,
+        // },
         { field: "pending", headerName: "Order Status", minWidth: 150, editable: true },
-        { field: "cancle_reson", headerName: "Cancel Reason", minWidth: 150, editable: true },
+        // { field: "cancle_reson", headerName: "Cancel Reason", minWidth: 150, editable: true },
          
     
         ];
