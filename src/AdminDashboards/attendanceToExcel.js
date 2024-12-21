@@ -1,7 +1,7 @@
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-const exportToExcel = (columns, rows, OrderDate) => {
+const exportToExcel = (columns, rows) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('DataGrid Export');
 
@@ -15,15 +15,9 @@ const exportToExcel = (columns, rows, OrderDate) => {
   // Add Subtitle
   worksheet.mergeCells('A2:' + String.fromCharCode(64 + columns.length) + '2');
   const subtitleCell = worksheet.getCell('A2');
-  subtitleCell.value = 'Daily Order Report'; // Default subtitle
+  subtitleCell.value = 'Daily Attendance Report'; // Default subtitle
   subtitleCell.font = { italic: true, size: 12 };
   subtitleCell.alignment = { vertical: 'middle', horizontal: 'center' };
-
-  worksheet.mergeCells('A3:' + String.fromCharCode(64 + columns.length) + '3');
-  const subtitleCell2 = worksheet.getCell('A3');
-  subtitleCell2.value = 'Date:-' + '    '+ OrderDate; // Default subtitle
-  subtitleCell2.font = { italic: true, size: 12 };
-  subtitleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
   // Define the starting row for headers
   const startRow = 4;
@@ -82,12 +76,10 @@ const exportToExcel = (columns, rows, OrderDate) => {
   });
 
   const date = new Date();
-  const formattedDate = date.toISOString().replace(/:/g, '-').replace('T', '_').split('.')[0];
-    // Download Excel file
-
+const formattedDate = date.toISOString().replace(/:/g, '-').replace('T', '_').split('.')[0];
   // Download Excel file
   workbook.xlsx.writeBuffer().then((buffer) => {
-    saveAs(new Blob([buffer]), `Order_Report-${formattedDate}.xlsx`);
+    saveAs(new Blob([buffer]), `Attendance_Report${formattedDate}.xlsx`);
   });
 };
 

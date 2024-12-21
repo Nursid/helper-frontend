@@ -22,7 +22,9 @@ export default function OrderReports() {
     const { userRole } = useUserRoleContext();
     const dispatch = useDispatch()
     const [data, setData] = useState([])
-    const [GetAllServiceProvider, setAllServiceProvider] = useState([]);
+    const [GetAllServiceProvider, setAllServiceProvider] = useState([
+      {label: 'ALL', value: 'ALL'}
+    ]);
 	  const [serviceProvider, setServiceProvider] = useState('');
     const [from, setFrom] = useState(null)
     const [to, setTo] = useState(null)
@@ -37,7 +39,7 @@ export default function OrderReports() {
            
             <GridToolbarDensitySelector />
             <Button
-              onClick={() => exportToExcel(columns, DataWithID(data.data))}
+              onClick={() => exportToExcel(columns, DataWithID(data.data), from)}
               className="btn btn-primary"
               size="sm"
             >
@@ -75,7 +77,7 @@ export default function OrderReports() {
             const customer = NewCustomer.customer || {}; // Ensure customer is an object
             const mergedItem = { ...item, ...NewCustomer, ...customer };
             const serviceProviderNames = item?.orderserviceprovider
-        ? item?.orderserviceprovider?.map((osp) => osp.service_provider.name).join(", ")
+        ? item?.orderserviceprovider?.map((osp) => osp?.service_provider.name).join(", ")
         : "";
 
             NewData.push({
@@ -98,13 +100,12 @@ export default function OrderReports() {
       
   const FilterData = async () => {
     const data = {
-      from: from,
-      to: to,
-      serviceProvider: serviceProvider?.value
+      date: from,
+      serviceProvider: serviceProvider?.value === 'ALL' ? '' : serviceProvider?.value,
     }
   
     try {
-      const response = await axios.post(`${API_URL}/order/reports/6`, data);
+      const response = await axios.post(`${API_URL}/order/order-reports`, data);
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -167,7 +168,7 @@ export default function OrderReports() {
           
           if (response.status === 200) {
             const transformedData = response.data.data.map(item => ({ label: item.name, value: item.name })); 
-              setAllServiceProvider(transformedData);
+            setAllServiceProvider(prevData => [...prevData, ...transformedData]);
           }
         }
 
@@ -180,13 +181,13 @@ export default function OrderReports() {
       <div className="flex flex-col justify-between w-full mb-3 ">
             <div className="flex justify-between gap-6 items-center">
               <div className="ml-4">
-                <label htmlFor="startDate" className="text-light">From:</label>
+                <label htmlFor="startDate" className="text-light">Date</label>
                 <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
           </div>
-                <div className="ml-4">
+               {/*  <div className="ml-4">
                 <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
                 <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
-          </div>
+          </div> */}
               <div className="ml-4" style={{width: '12rem'}}>
 							<label className="form-label text-light ml-2 mr-2" htmlFor="serviceRemark">
 								 Service Provider
