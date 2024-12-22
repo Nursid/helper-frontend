@@ -142,8 +142,10 @@ export default function OrderReports() {
         minWidth: 150 },
         { field: "paymethod", headerName: "Payment Method", minWidth: 150},
         { field: "piadamt", headerName: "Paid Amount", minWidth: 150 },
-        { field: "totalamt", headerName: "Balance Amount", minWidth: 150},
+        { field: "totalamt", headerName: "Due Amount", minWidth: 150},
+
         { field: "cust_remark", headerName: "Customer Feedback", minWidth: 150 },
+
         // { field: "bakof_remark", headerName: "Back Office Remark",
         // minWidth: 180, editable: true},
     

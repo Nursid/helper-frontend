@@ -10,6 +10,8 @@ import { AccountListing } from '../../../Store/Actions/Dashboard/AccountAction';
 import Switch from '@mui/material/Switch';
 import { ApprovePaymentRemarkModal } from '../../../Components/Modal';
 import { Input, Button } from 'reactstrap';
+import { attendanceToExcel } from '../../attendanceToExcel';
+import { BiExport } from "react-icons/bi";
 
 const AccountReports = () => {
     const [selectedAttendance, setSelectedAttendance] = useState("All");
@@ -23,6 +25,7 @@ const AccountReports = () => {
     const [adminAprove, setAdminAprove] = useState(false);
     const [from, setFrom] = useState(null)
     const [to, setTo] = useState(null)
+    const [exportedData, setExportedData] = useState([]);
 
     const toggleModal = () => setModalOpen(!modalOpen)
 
@@ -44,14 +47,15 @@ const AccountReports = () => {
     }, [data]);
 
     const all_columns = [
+        { field: "_id", headerName: "Sr No.", flex: 1, minWidth: 50 },
         { field: "date", headerName: "Date", flex: 1, minWidth: 50 },
         { field: "person_name", headerName: "Party Name", flex: 1, minWidth: 120 },
-        { field: "about_payment", headerName: "Particular (Service Desc.)", flex: 1, minWidth: 250 },
-        { field: "payment_mode", headerName: "Payment Mode", flex: 1, minWidth: 120 },
+        { field: "about_payment", headerName: "Details", flex: 1, minWidth: 250 },
+        // { field: "payment_mode", headerName: "Payment Mode", flex: 1, minWidth: 120 },
         { field: "debit", headerName: "Amount Debit", flex: 1, minWidth: 120 },
         { field: "credit", headerName: "Amount Credit", flex: 1, minWidth: 120 },
-        { field: "balance", headerName: "Balance", flex: 1, minWidth: 120 },
-        { field: "remark", headerName: "Remark", flex: 1, minWidth: 120 },
+        { field: "balance", headerName: "Due Amount", flex: 1, minWidth: 120 },
+        // { field: "remark", headerName: "Remark", flex: 1, minWidth: 120 },
     ];
 
     const DataWithID = (data, payment_mode) => {
@@ -86,6 +90,24 @@ const AccountReports = () => {
             return newData.reverse();
         }, [data, payment_mode]); // Add payment_mode to the dependency array
     };
+
+   
+    // const exportData = useMemo(() => {
+    //     // Defaulting to "All" if selectedAttendance doesn't match any case
+    //     const type = ["All", "Cash", "Online"].includes(selectedAttendance) 
+    //       ? selectedAttendance 
+    //       : "All";
+    //     return DataWithID(data, type);
+    //   }, [data, selectedAttendance]);
+    const type = ["All", "Cash", "Online"].includes(selectedAttendance)
+            ? selectedAttendance
+            : "All";
+    const exportData = DataWithID(data, type);
+  
+    
+      
+
+    
     const CustomToolbar = () => (
         <GridToolbarContainer>
             <GridToolbarQuickFilter />
@@ -93,6 +115,14 @@ const AccountReports = () => {
             <GridToolbarFilterButton />
             <GridToolbarExport />
             <GridToolbarDensitySelector />
+            <Button
+            onClick={()=> attendanceToExcel(all_columns, exportData)}
+            className="btn btn-primary"
+            size="sm"
+            >
+            <BiExport className="mr-2" />
+            Export
+            </Button>
         </GridToolbarContainer>
     );
 
