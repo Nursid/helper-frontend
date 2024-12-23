@@ -110,15 +110,15 @@ const AdminDashboard = () => {
         const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
         const customer = NewCustomer.customer || {}; // Ensure customer is an Object
         const mergedItem = { ...item, ...NewCustomer, ...customer };
-        const serviceProviderNames = item.orderserviceprovider
-        ? item.orderserviceprovider.map((osp) => osp?.service_provider.name).join(", ")
+        const serviceProviderNames = item?.orderserviceprovider
+        ? item?.orderserviceprovider.map((osp) => osp?.service_provider?.name).join(", ")
         : "";
 
         const paddedId = String(customer.user_id).padStart(6, '0');
         NewData.push({
           ...mergedItem,
           pending: getStatusByKey(item.pending),
-          _id: data.indexOf(item),
+          _id: data.indexOf(item) + 1,
           date: moment(item.createdAt).format("D / M / Y"),
           bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
           userRole: userRole,

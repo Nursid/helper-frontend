@@ -83,7 +83,7 @@ export default function OrderReports() {
             NewData.push({
               ...mergedItem,
               pending: getStatusByKey(item.pending),
-              _id: data.indexOf(item),
+              _id: data.indexOf(item) + 1,
               date: moment(item.createdAt).format("D / M / Y"),
               bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
               booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),

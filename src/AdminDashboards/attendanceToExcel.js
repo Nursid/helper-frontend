@@ -1,34 +1,36 @@
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-export const attendanceToExcel = (columns, rows) => {
+const attendanceToExcel = (columns, rows, OrderDate) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('DataGrid Export');
 
+  // Title and Subtitle
   worksheet.mergeCells('A1:' + String.fromCharCode(64 + columns.length) + '1');
   const titleCell = worksheet.getCell('A1');
-  titleCell.value = 'SsQuick Helper'; // Default title
+  titleCell.value = 'SsQuick Helper';
   titleCell.font = { bold: true, size: 16 };
   titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-  // Add Subtitle
   worksheet.mergeCells('A2:' + String.fromCharCode(64 + columns.length) + '2');
   const subtitleCell = worksheet.getCell('A2');
-  subtitleCell.value = 'Daily Attendance Report'; // Default subtitle
+  subtitleCell.value = 'Daily Order Report';
   subtitleCell.font = { italic: true, size: 12 };
   subtitleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-  // Define the starting row for headers
-  const startRow = 4;
+  worksheet.mergeCells('A3:' + String.fromCharCode(64 + columns.length) + '3');
+  const subtitleCell2 = worksheet.getCell('A3');
+  subtitleCell2.value = 'Date:-' + '    ' + OrderDate;
+  subtitleCell2.font = { italic: true, size: 12 };
+  subtitleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
-  // Add headers starting at A4
+  // Headers
+  const startRow = 4;
   worksheet.getRow(startRow).values = columns.map((col) => col.headerName);
 
-  // Apply header styling
   const headerRow = worksheet.getRow(startRow);
   headerRow.eachCell((cell) => {
     cell.font = { bold: true };
-    cell.alignment = { vertical: 'middle', horizontal: 'center' };
     cell.fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -36,50 +38,49 @@ export const attendanceToExcel = (columns, rows) => {
     };
   });
 
-  // Set column widths
+  // Column widths
   worksheet.columns = columns.map((col) => ({
     key: col.field,
-    width: col.width / 10 || 15, // Adjust width from DataGrid width
+    width: col.width / 10 || 15,
   }));
 
-  // Add rows starting below the header (row 5 onwards)
-  rows.forEach((row, rowIndex) => {
+  // Add rows with centered alignment
+  rows.forEach((row) => {
     const rowData = {};
     columns.forEach((col) => {
       rowData[col.field] = row[col.field];
     });
-
     const newRow = worksheet.addRow(rowData);
 
-    // Conditional styling for the entire row
-    const creditValue = row.credit;
-    const debitValue = row.debit;
-    console.log(creditValue, debitValue);
+    // Center align all cells in the row
+    newRow.eachCell((cell) => {
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    });
 
-    if (creditValue) {
-      newRow.eachCell((cell) => {
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FF27AE60' }, // Green
-        };
-      });
-    }
-    if(debitValue){
-      newRow.eachCell((cell) => {
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFE74C3C' }, // Green
-        };
-      });
-    }
+    if (row.status === 'Full day Leave' || row.status === 'Half day Leave' || row.status === 'Absent') {
+        newRow.eachCell((cell) => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFE74C3C' }, // Green
+          };
+        });
+      }
+
   });
 
-  // Download Excel file
+
+  
+
+
+
+
   const date = new Date();
   const formattedDate = date.toISOString().replace(/:/g, '-').replace('T', '_').split('.')[0];
+
   workbook.xlsx.writeBuffer().then((buffer) => {
-    saveAs(new Blob([buffer]), `Attendance_Report_${formattedDate}.xlsx`);
+    saveAs(new Blob([buffer]), `Attendance_Report-${formattedDate}.xlsx`);
   });
 };
+
+export default attendanceToExcel;

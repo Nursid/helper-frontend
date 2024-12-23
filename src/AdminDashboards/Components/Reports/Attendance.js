@@ -14,6 +14,8 @@ import axios from "axios";
 import { API_URL } from "../../../config";
 import SelectBox from "../../Elements/SelectBox";
 import { SupervisorAttendanceReport } from "../../../Store/Actions/Dashboard/AttendanceAction/SupervisorAttendanceReport";
+import { BiExport } from "react-icons/bi";
+import attendanceToExcel from "../../attendanceToExcel";
 
 export default function Attendance() {
  
@@ -30,7 +32,7 @@ export default function Attendance() {
        for (let item of data) {
           NewData.push({
             ...item,
-            id: data.indexOf(item),
+            id: data.indexOf(item) + 1,
           });
         }
       } else {
@@ -48,6 +50,14 @@ export default function Attendance() {
             <GridToolbarFilterButton />
             <GridToolbarExport />
             <GridToolbarDensitySelector />
+            <Button
+              onClick={() => attendanceToExcel(columns, DataWithID(attendanceData), date)}
+              className="btn btn-primary"
+              size="sm"
+            >
+              <BiExport className="mr-2" />
+              Export
+            </Button>
           </GridToolbarContainer>
         );
       };
@@ -81,10 +91,11 @@ const GetAllSupervisor = async (date) => {
       { field: "name", headerName: "Name", flex: 1, minWidth: 120, editable: false },
       { field: "role", headerName: "Work Profile", flex: 1, minWidth: 120, editable: false },
       { field: "mobile_no", headerName: "Mobile", flex: 1, minWidth: 120, editable: false },
-      { field: "in_date", headerName: "Date", flex: 1, minWidth: 120, editable: false },
+      { field: "status", headerName: "Present/Absent", flex: 1, minWidth: 120, editable: false },
+      // { field: "in_date", headerName: "Date", flex: 1, minWidth: 120, editable: false },
       { field: "check_in", headerName: "Check In", minWidth: 80, flex: 1, editable: false },
-      { field: "check_out", headerName: "Check Out", flex: 1, minWidth: 120, editable: false },
-      { field: "status", headerName: "Attendace Status", flex: 1, minWidth: 120, editable: false },
+      // { field: "check_out", headerName: "Check Out", flex: 1, minWidth: 120, editable: false },
+     
     ];
     
 

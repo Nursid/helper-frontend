@@ -5,37 +5,32 @@ const exportToExcel = (columns, rows, OrderDate) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('DataGrid Export');
 
-
+  // Title and Subtitle
   worksheet.mergeCells('A1:' + String.fromCharCode(64 + columns.length) + '1');
   const titleCell = worksheet.getCell('A1');
-  titleCell.value = 'SsQuick Helper'; // Default title
+  titleCell.value = 'SsQuick Helper';
   titleCell.font = { bold: true, size: 16 };
   titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-  // Add Subtitle
   worksheet.mergeCells('A2:' + String.fromCharCode(64 + columns.length) + '2');
   const subtitleCell = worksheet.getCell('A2');
-  subtitleCell.value = 'Daily Order Report'; // Default subtitle
+  subtitleCell.value = 'Daily Order Report';
   subtitleCell.font = { italic: true, size: 12 };
   subtitleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
   worksheet.mergeCells('A3:' + String.fromCharCode(64 + columns.length) + '3');
   const subtitleCell2 = worksheet.getCell('A3');
-  subtitleCell2.value = 'Date:-' + '    '+ OrderDate; // Default subtitle
+  subtitleCell2.value = 'Date:-' + '    ' + OrderDate;
   subtitleCell2.font = { italic: true, size: 12 };
   subtitleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
-  // Define the starting row for headers
+  // Headers
   const startRow = 4;
-
-  // Add headers starting at A4
   worksheet.getRow(startRow).values = columns.map((col) => col.headerName);
 
-  // Apply header styling
   const headerRow = worksheet.getRow(startRow);
   headerRow.eachCell((cell) => {
     cell.font = { bold: true };
-    cell.alignment = { vertical: 'middle', horizontal: 'center' };
     cell.fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -43,34 +38,39 @@ const exportToExcel = (columns, rows, OrderDate) => {
     };
   });
 
-  // Set column widths
+  // Column widths
   worksheet.columns = columns.map((col) => ({
     key: col.field,
-    width: col.width / 10 || 15, // Adjust width from DataGrid width
+    width: col.width / 10 || 15,
   }));
 
-  // Add rows starting below the header (row 5 onwards)
+  // Add rows with centered alignment
   rows.forEach((row) => {
     const rowData = {};
     columns.forEach((col) => {
       rowData[col.field] = row[col.field];
     });
-    worksheet.addRow(rowData);
+    const newRow = worksheet.addRow(rowData);
+
+    // Center align all cells in the row
+    newRow.eachCell((cell) => {
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    });
   });
 
-  // Apply conditional styling for "Order Status" column
+  // Conditional styling for "Order Status" column
   const statusColors = {
-    Pending: 'FFE67E22', // Orange
-    Hold: 'FFE74C3C', // Red
-    Due: 'FFA29BFE', // Light Purple
-    Completed: 'FF27AE60', // Green
-    Running: 'FFF1C40F', // Yellow
-    Cancel: 'FF95A5A6', // Gray
+    Pending: 'FFE67E22',
+    Hold: 'FFE74C3C',
+    Due: 'FFA29BFE',
+    Completed: 'FF27AE60',
+    Running: 'FFF1C40F',
+    Cancel: 'FF95A5A6',
   };
 
-  const statusColumnIndex = columns.findIndex((col) => col.field === 'pending') + 1; // Get index of "Order Status" column
+  const statusColumnIndex = columns.findIndex((col) => col.field === 'pending') + 1;
   worksheet.eachRow((row, rowIndex) => {
-    if (rowIndex <= startRow) return; // Skip header and above rows
+    if (rowIndex <= startRow) return;
     const cell = row.getCell(statusColumnIndex);
     if (statusColors[cell.value]) {
       cell.fill = {
@@ -81,11 +81,44 @@ const exportToExcel = (columns, rows, OrderDate) => {
     }
   });
 
+  // Add summary row
+  const summary = {
+    Pending: 0,
+    Hold: 0,
+    Due: 0,
+    Completed: 0,
+    Running: 0,
+    Cancel: 0,
+  };
+
+  rows.forEach((row) => {
+    if (row.pending && summary[row.pending] !== undefined) {
+      summary[row.pending]++;
+    }
+  });
+
+  const summaryRow = worksheet.addRow([
+    'Summary',
+    `Total Pending: ${summary.Pending}`,
+    `Total Hold: ${summary.Hold}`,
+    `Total Due: ${summary.Due}`,
+    `Total Completed: ${summary.Completed}`,
+    `Total Running: ${summary.Running}`,
+    `Total Cancel: ${summary.Cancel}`,
+  ]);
+
+  summaryRow.eachCell((cell) => {
+    cell.font = { bold: true };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFD5F5E3' }, // Light green
+    };
+  });
+
   const date = new Date();
   const formattedDate = date.toISOString().replace(/:/g, '-').replace('T', '_').split('.')[0];
-    // Download Excel file
 
-  // Download Excel file
   workbook.xlsx.writeBuffer().then((buffer) => {
     saveAs(new Blob([buffer]), `Order_Report-${formattedDate}.xlsx`);
   });

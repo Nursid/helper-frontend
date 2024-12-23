@@ -10,7 +10,7 @@ import { AccountListing } from '../../../Store/Actions/Dashboard/AccountAction';
 import Switch from '@mui/material/Switch';
 import { ApprovePaymentRemarkModal } from '../../../Components/Modal';
 import { Input, Button } from 'reactstrap';
-import { attendanceToExcel } from '../../attendanceToExcel';
+import { accountToExcel } from '../../accountToExcel';
 import { BiExport } from "react-icons/bi";
 
 const AccountReports = () => {
@@ -116,7 +116,7 @@ const AccountReports = () => {
             <GridToolbarExport />
             <GridToolbarDensitySelector />
             <Button
-            onClick={()=> attendanceToExcel(all_columns, exportData)}
+            onClick={()=> accountToExcel(all_columns, exportData)}
             className="btn btn-primary"
             size="sm"
             >
