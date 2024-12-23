@@ -77,7 +77,7 @@ export default function OrderReports() {
             const customer = NewCustomer.customer || {}; // Ensure customer is an object
             const mergedItem = { ...item, ...NewCustomer, ...customer };
             const serviceProviderNames = item?.orderserviceprovider
-        ? item?.orderserviceprovider?.map((osp) => osp?.service_provider.name).join(", ")
+        ? item?.orderserviceprovider?.map((osp) => osp?.service_provider?.name).join(", ")
         : "";
 
             NewData.push({
