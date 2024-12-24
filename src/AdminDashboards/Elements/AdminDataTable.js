@@ -7,19 +7,27 @@ const AdminDataTable = ({ rows, columns, CustomToolbar, ...args }) => {
 
 
     const getRowClassName = (params) => {
-        const status = params.row.pending;
+        const status = params.row.pending || params.row.status; // Check for 'pending' or 'status'
+        
         if (status === "Completed") {
-        return "complete-cell";
+            return "complete-cell";
         } else if (status === "Running") {
-        return "running-cell";
+            return "running-cell";
         } else if (status === "Cancel") {
-        return "cancel-cell";
+            return "cancel-cell";
         } else if (status === "Hold") {
-        return "hold-cell";
+            return "hold-cell";
         } else if (status === "Due") {
-        return "due-cell";
+            return "due-cell";
         } else if (status === "Pending") {
-        return "pending-cell";
+            return "pending-cell";
+        } else if (status === "Present") {
+            return "complete-cell"; // New case for 'Present'
+        } else if (status === 'Full day Leave' || status === 'Half day Leave' || status === 'Absent' ) {
+            return "hold-cell"; // Example for 'Absent'
+        }
+        else if (status === "Week Off"){
+            return "cancel-cell";
         }
         return "";
     };

@@ -68,55 +68,69 @@ export default function OrderReports() {
       return "Status not found";
     }
 
-
     const DataWithID = (data) => {
-        const NewData = [];
-        if (data !== undefined) {
-          for (let item of data) {
-            const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
-            const customer = NewCustomer.customer || {}; // Ensure customer is an object
-            const mergedItem = { ...item, ...NewCustomer, ...customer };
-            const serviceProviderNames = item?.orderserviceprovider
-        ? item?.orderserviceprovider?.map((osp) => osp?.service_provider.name).join(", ")
-        : "";
-
-            NewData.push({
-              ...mergedItem,
-              pending: getStatusByKey(item.pending),
-              _id: data.indexOf(item) + 1,
-              date: moment(item.createdAt).format("D / M / Y"),
-              bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
-              booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
-              userRole: userRole,
-              servicep_id: serviceProviderNames
-            });
-          }
-        } else {
-          NewData.push({ id: 0 });
+      const NewData = [];
+      const statusOrder = ["Completed", "Running", "Pending", "Due", "Hold", "Cancel"]; 
+      
+    
+      if (data !== undefined) {
+        for (let item of data) {
+          const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
+          const customer = NewCustomer.customer || {}; // Ensure customer is an object
+          const mergedItem = { ...item, ...NewCustomer, ...customer };
+          const serviceProviderNames = item?.orderserviceprovider
+            ? item?.orderserviceprovider?.map((osp) => osp?.service_provider.name).join(", ")
+            : "";
+    
+          NewData.push({
+            ...mergedItem,
+            pending: getStatusByKey(item.pending),
+            date: moment(item.createdAt).format("D / M / Y"),
+            bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
+            booktime: moment(item.booktime, ["hh:mm:ss A", "hh:mm"]).format("HH:mm"),
+            userRole: userRole,
+            servicep_id: serviceProviderNames,
+          });
         }
-        return NewData;
-      };
+    
+        // Sort by the desired order of statuses
+        NewData.sort((a, b) => {
+          const aIndex = statusOrder.indexOf(a.pending);
+          const bIndex = statusOrder.indexOf(b.pending);
+          return aIndex - bIndex;
+        });
+
+        NewData.forEach((item, index) => {
+          item._id = index + 1; // Assign serial number starting from 1
+        });
+
+      } else {
+        NewData.push({ id: 0 });
+      }
+      return NewData;
+    };
+    
 
       
-  const FilterData = async () => {
-    const data = {
-      date: from,
-      serviceProvider: serviceProvider?.value === 'ALL' ? '' : serviceProvider?.value,
-    }
-  
-    try {
-      const response = await axios.post(`${API_URL}/order/order-reports`, data);
-      setData(response.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
+    const FilterData = async () => {
+      const data = {
+        date: from,
+        serviceProvider: serviceProvider?.value === 'ALL' ? '' : serviceProvider?.value,
+      }
+    
+      try {
+        const response = await axios.post(`${API_URL}/order/order-reports`, data);
+        setData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
 
-  useEffect(() => {
-    FilterData();
-    getAllServices();
-  }, []);
+    useEffect(() => {
+      FilterData();
+      getAllServices();
+    }, []);
 
     const columns = [
         { field: "_id", headerName: "Sr No.", minWidth: 120, editable: true,  },
@@ -161,18 +175,18 @@ export default function OrderReports() {
         // { field: "cancle_reson", headerName: "Cancel Reason", minWidth: 150, editable: true },
          
     
-        ];
+    ];
       
 
 
-        const getAllServices = async () => {
-          const response = await axios.get(API_URL + '/service-provider/getall')
-          
-          if (response.status === 200) {
-            const transformedData = response.data.data.map(item => ({ label: item.name, value: item.name })); 
-            setAllServiceProvider(prevData => [...prevData, ...transformedData]);
-          }
-        }
+    const getAllServices = async () => {
+      const response = await axios.get(API_URL + '/service-provider/getall')
+      
+      if (response.status === 200) {
+        const transformedData = response.data.data.map(item => ({ label: item.name, value: item.name })); 
+        setAllServiceProvider(prevData => [...prevData, ...transformedData]);
+      }
+    }
 
 
     return(

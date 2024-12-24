@@ -28,19 +28,39 @@ export default function Attendance() {
 
     const DataWithID = (data) => {
       const NewData = [];
+    
+      // Define the status order
+      const statusOrder = ["Present", "Absent", "Full day Leave", "Half day Leave", "Week Off"];
+    
       if (data !== undefined) {
-       for (let item of data) {
+        for (let item of data) {
+          // Replace 'Working' with 'Present'
+          const updatedStatus = item.status === "Working" ? "Present" : item.status;
+    
           NewData.push({
             ...item,
-            id: data.indexOf(item) + 1,
+            status: updatedStatus, // Update the status field
           });
         }
+    
+        // Sort by the desired order of statuses
+        NewData.sort((a, b) => {
+          const aIndex = statusOrder.indexOf(a.status);
+          const bIndex = statusOrder.indexOf(b.status);
+          return aIndex - bIndex;
+        });
+    
+        // Reassign `id` as serial numbers after sorting
+        NewData.forEach((item, index) => {
+          item.id = index + 1; // Assign serial number starting from 1
+        });
+
       } else {
         NewData.push({ id: 0 });
       }
+    
       return NewData;
     };
-
 
     const CustomToolbar = () => {
         return (
@@ -86,8 +106,15 @@ const GetAllSupervisor = async (date) => {
   }
 }
 
+
+  const getCellClassName = (params) => {
+    if (params?.value === 'Present') return 'class-green';
+    return 'class-red';
+  };
+
+
     const columns = [
-      { field: "id", headerName: "Sr No.", flex: 1, minWidth: 120, editable: false },
+      { field: "id", headerName: "Sr No.", flex: 1, minWidth: 120, },
       { field: "name", headerName: "Name", flex: 1, minWidth: 120, editable: false },
       { field: "role", headerName: "Work Profile", flex: 1, minWidth: 120, editable: false },
       { field: "mobile_no", headerName: "Mobile", flex: 1, minWidth: 120, editable: false },
@@ -95,9 +122,7 @@ const GetAllSupervisor = async (date) => {
       // { field: "in_date", headerName: "Date", flex: 1, minWidth: 120, editable: false },
       { field: "check_in", headerName: "Check In", minWidth: 80, flex: 1, editable: false },
       // { field: "check_out", headerName: "Check Out", flex: 1, minWidth: 120, editable: false },
-     
     ];
-    
 
 
 return(

@@ -14,7 +14,7 @@ const attendanceToExcel = (columns, rows, OrderDate) => {
 
   worksheet.mergeCells('A2:' + String.fromCharCode(64 + columns.length) + '2');
   const subtitleCell = worksheet.getCell('A2');
-  subtitleCell.value = 'Daily Order Report';
+  subtitleCell.value = 'Daily Attendance Report';
   subtitleCell.font = { italic: true, size: 12 };
   subtitleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
@@ -44,6 +44,12 @@ const attendanceToExcel = (columns, rows, OrderDate) => {
     width: col.width / 10 || 15,
   }));
 
+  // Counters for summary
+  let totalPresent = 0;
+  let totalAbsent = 0;
+  let totalWeekOff = 0;
+  let totalLeave = 0;
+
   // Add rows with centered alignment
   rows.forEach((row) => {
     const rowData = {};
@@ -57,23 +63,65 @@ const attendanceToExcel = (columns, rows, OrderDate) => {
       cell.alignment = { vertical: 'middle', horizontal: 'center' };
     });
 
-    if (row.status === 'Full day Leave' || row.status === 'Half day Leave' || row.status === 'Absent') {
-        newRow.eachCell((cell) => {
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FFE74C3C' }, // Green
-          };
-        });
-      }
-
+    // Status-based coloring and counting
+    if (row.status === 'Present') {
+      totalPresent++;
+      newRow.eachCell((cell) => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FF27AE60' }, // Green
+        };
+      });
+    } else if (
+      row.status === 'Full day Leave' ||
+      row.status === 'Half day Leave'
+    ) {
+      totalLeave++;
+      newRow.eachCell((cell) => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFE74C3C' }, // Red
+        };
+      });
+    } else if (row.status === 'Absent') {
+      totalAbsent++;
+      newRow.eachCell((cell) => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFE74C3C' }, // Red
+        };
+      });
+    } else if (row.status === 'Week Off') {
+      totalWeekOff++;
+      newRow.eachCell((cell) => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFB4B4B4' }, // Gray
+        };
+      });
+    }
   });
 
+  const summaryRow = worksheet.addRow([
+    'Summary',
+    `Total Present: ${totalPresent}`,
+    `Total Absent: ${totalAbsent}`,
+    `Total WeekOff: ${totalWeekOff}`,
+    `Total Leave: ${totalLeave}`,
+  ]);
 
-  
-
-
-
+  summaryRow.eachCell((cell) => {
+    cell.font = { bold: true };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFD5F5E3' }, // Light green
+    };
+  });
 
   const date = new Date();
   const formattedDate = date.toISOString().replace(/:/g, '-').replace('T', '_').split('.')[0];
