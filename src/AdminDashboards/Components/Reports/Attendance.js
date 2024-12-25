@@ -83,34 +83,29 @@ export default function Attendance() {
       };
 
       
-  const FilterData = async () => {
-    try {
+    const FilterData = async () => {
+      try {
+        GetAllSupervisor(date);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+
+    useEffect(() => {
+      const date = moment().format('YYYY-MM-DD');
       GetAllSupervisor(date);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+    }, []);
+
+    const GetAllSupervisor = async (date) => {
+      const response = await axios.post(API_URL + '/attendance/getall', {
+        date: date
+      })
+      if (response.status === 200) {
+        setAttendanceData(response.data.data);
+      }
     }
-  };
 
-
-  useEffect(() => {
-    const date = moment().format('YYYY-MM-DD');
-    GetAllSupervisor(date);
-  }, []);
-
-const GetAllSupervisor = async (date) => {
-  const response = await axios.post(API_URL + '/attendance/getall', {
-    date: date
-  })
-  if (response.status === 200) {
-    setAttendanceData(response.data.data);
-  }
-}
-
-
-  const getCellClassName = (params) => {
-    if (params?.value === 'Present') return 'class-green';
-    return 'class-red';
-  };
 
 
     const columns = [
@@ -121,8 +116,8 @@ const GetAllSupervisor = async (date) => {
       { field: "status", headerName: "Present/Absent", flex: 1, minWidth: 120, editable: false },
       // { field: "in_date", headerName: "Date", flex: 1, minWidth: 120, editable: false },
       { field: "check_in", headerName: "Check In", minWidth: 80, flex: 1, editable: false },
-      // { field: "check_out", headerName: "Check Out", flex: 1, minWidth: 120, editable: false },
-    ];
+      { field: "lateontime", headerName: "LateOnTime", flex: 1, minWidth: 120, editable: false },
+      ];
 
 
 return(

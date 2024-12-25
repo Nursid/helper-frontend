@@ -52,8 +52,8 @@ const AccountReports = () => {
         { field: "person_name", headerName: "Party Name", flex: 1, minWidth: 120 },
         { field: "about_payment", headerName: "Details", flex: 1, minWidth: 250 },
         // { field: "payment_mode", headerName: "Payment Mode", flex: 1, minWidth: 120 },
-        { field: "debit", headerName: "Amount Debit", flex: 1, minWidth: 120 },
-        { field: "credit", headerName: "Amount Credit", flex: 1, minWidth: 120 },
+        { field: "debit_amount", headerName: "Amount Debit", flex: 1, minWidth: 120 },
+        { field: "credit_amount", headerName: "Amount Credit", flex: 1, minWidth: 120 },
         { field: "balance", headerName: "Due Amount", flex: 1, minWidth: 120 },
         // { field: "remark", headerName: "Remark", flex: 1, minWidth: 120 },
     ];
@@ -67,18 +67,18 @@ const AccountReports = () => {
                 for (let item of data) {
                     // Filter based on payment_mode if it's not 'All'
                     if (payment_mode === 'All' || item.payment_mode === payment_mode) {
-                        const credit = item.type_payment ? 0 : (item.amount || 0);
-                        const debit = item.type_payment ? (item.amount || 0) : 0;
+                        const credit_amount = item.type_payment ? 0 : (item.amount || 0);
+                        const debit_amount = item.type_payment ? (item.amount || 0) : 0;
     
-                        cumulativeBalance += parseInt(credit, 10);
-                        cumulativeBalance -= parseInt(debit, 10);
+                        cumulativeBalance += parseInt(credit_amount, 10);
+                        cumulativeBalance -= parseInt(debit_amount, 10);
     
                         newData.push({
                             ...item,
                             _id: data.indexOf(item), // Use a unique ID if available
                             date: moment(item.date).format("DD-MM-YYYY"),
-                            credit,
-                            debit,
+                            credit_amount,
+                            debit_amount,
                             balance_opening: cumulativeBalance,
                         });
                     }

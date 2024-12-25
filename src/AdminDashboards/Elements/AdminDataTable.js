@@ -8,6 +8,9 @@ const AdminDataTable = ({ rows, columns, CustomToolbar, ...args }) => {
 
     const getRowClassName = (params) => {
         const status = params.row.pending || params.row.status; // Check for 'pending' or 'status'
+
+        const debit_amount = params.row.debit_amount;
+        const credit_amount = params.row.credit_amount;
         
         if (status === "Completed") {
             return "complete-cell";
@@ -23,12 +26,21 @@ const AdminDataTable = ({ rows, columns, CustomToolbar, ...args }) => {
             return "pending-cell";
         } else if (status === "Present") {
             return "complete-cell"; // New case for 'Present'
-        } else if (status === 'Full day Leave' || status === 'Half day Leave' || status === 'Absent' ) {
+        } 
+        else if (status === 'Full day Leave' || status === 'Half day Leave' || status === 'Absent' ) {
             return "hold-cell"; // Example for 'Absent'
         }
         else if (status === "Week Off"){
             return "cancel-cell";
         }
+
+        else if (debit_amount) {
+            return "hold-cell"; // New case for 'Present'
+        } 
+        else if (credit_amount) {
+            return "complete-cell"; // New case for 'Present'
+        }
+
         return "";
     };
 
