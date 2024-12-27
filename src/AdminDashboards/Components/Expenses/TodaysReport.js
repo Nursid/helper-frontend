@@ -123,7 +123,7 @@ const TodaysReport = () => {
                         newData.push({
                             ...item,
                             _id: data.indexOf(item), // Use a unique ID if available
-                            date: moment(item.date).format("DD-MM-YYYY"),
+                            date: moment(item.createdAt).format("DD-MM-YYYY"),
                             credit,
                             debit,
                             balance_opening: cumulativeBalance,

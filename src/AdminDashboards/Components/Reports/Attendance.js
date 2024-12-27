@@ -39,7 +39,8 @@ export default function Attendance() {
     
           NewData.push({
             ...item,
-            status: updatedStatus, // Update the status field
+            status: updatedStatus, 
+            lateontime: item.check_in ? calculateLateOnTime(item.check_in) : "N/A",
           });
         }
     
@@ -62,6 +63,33 @@ export default function Attendance() {
       return NewData;
     };
 
+    const calculateLateOnTime = (checkInTime) => {
+      const startTime = new Date();
+      startTime.setHours(9, 0, 0, 0); // 9:00 AM
+    
+      const endTime = new Date();
+      endTime.setHours(18, 0, 0, 0); // 6:00 PM
+    
+      const checkIn = new Date();
+      const [hours, minutes] = checkInTime.split(":").map(Number);
+      checkIn.setHours(hours, minutes, 0, 0);
+    
+      // Check if the time is outside the valid range
+      // if (checkIn < startTime || checkIn > endTime) {
+      //   return "Out of range";
+      // }
+    
+      // Calculate late time if within range
+      // if (checkIn <= startTime) {
+      //   return "On Time";
+      // }
+    
+      const diff = Math.floor((checkIn - startTime) / (1000 * 60)); // Difference in minutes
+      const lateHours = Math.floor(diff / 60);
+      const lateMinutes = diff % 60;
+    
+      return `${lateHours > 0 ? lateHours + " hr " : ""}${lateMinutes} min`;
+    };
     const CustomToolbar = () => {
         return (
           <GridToolbarContainer>
