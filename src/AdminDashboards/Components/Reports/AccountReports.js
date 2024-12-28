@@ -54,11 +54,55 @@ const AccountReports = () => {
         // { field: "payment_mode", headerName: "Payment Mode", flex: 1, minWidth: 120 },
         { field: "debit_amount", headerName: "Amount Debit", flex: 1, minWidth: 120 },
         { field: "credit_amount", headerName: "Amount Credit", flex: 1, minWidth: 120 },
-        { field: "balance", headerName: "Due Amount", flex: 1, minWidth: 120 },
-        // { field: "remark", headerName: "Remark", flex: 1, minWidth: 120 },
+        {
+            field: "balance",
+            headerName: "Due Amount",
+            flex: 1,
+            minWidth: 120,
+            valueGetter: (params) => params.row.balance ?? 0,
+          },
+        { field: "balance_opening", headerName: "Outstanding Balance", flex: 1, minWidth: 120 },
     ];
 
-    const DataWithID = (data, payment_mode) => {
+    // const DataWithID = (data, payment_mode) => {
+    //     return useMemo(() => {
+    //         const newData = [];
+    //         let cumulativeBalance = 0;
+    
+    //         if (data) {
+    //             // Reverse data for processing
+    //             const reversedData = [...data].reverse();
+    
+    //             for (let index = 0; index < reversedData.length; index++) {
+    //                 const item = reversedData[index];
+    
+    //                 // Filter based on payment_mode if it's not 'All'
+    //                 if (payment_mode === 'All' || item.payment_mode === payment_mode) {
+    //                     const credit_amount = item.type_payment ? 0 : (item.amount || 0);
+    //                     const debit_amount = item.type_payment ? (item.amount || 0) : 0;
+    
+    //                     cumulativeBalance += parseInt(credit_amount, 10);
+    //                     cumulativeBalance -= parseInt(debit_amount, 10);
+    
+    //                     newData.push({
+    //                         ...item,
+    //                         _id: index + 1, // Use the index from reversed order + 1
+    //                         date: moment(item.date).format("DD-MM-YYYY"),
+    //                         credit_amount,
+    //                         debit_amount,
+    //                         balance_opening: cumulativeBalance,
+    //                     });
+    //                 }
+    //             }
+    //         } else {
+    //             newData.push({ id: 0 });
+    //         }
+    
+    //         return newData;
+    //     }, [data, payment_mode]); // Add payment_mode to the dependency array
+    // };
+    
+ const DataWithID = (data, payment_mode) => {
         return useMemo(() => {
             const newData = [];
             let cumulativeBalance = 0;
@@ -75,8 +119,8 @@ const AccountReports = () => {
     
                         newData.push({
                             ...item,
-                            _id: data.indexOf(item), // Use a unique ID if available
-                            date: moment(item.date).format("DD-MM-YYYY"),
+                            _id: data.indexOf(item) + 1, // Use a unique ID if available
+                            date: moment(item.createdAt).format("DD-MM-YYYY"),
                             credit_amount,
                             debit_amount,
                             balance_opening: cumulativeBalance,
@@ -91,21 +135,11 @@ const AccountReports = () => {
         }, [data, payment_mode]); // Add payment_mode to the dependency array
     };
 
-   
-    // const exportData = useMemo(() => {
-    //     // Defaulting to "All" if selectedAttendance doesn't match any case
-    //     const type = ["All", "Cash", "Online"].includes(selectedAttendance) 
-    //       ? selectedAttendance 
-    //       : "All";
-    //     return DataWithID(data, type);
-    //   }, [data, selectedAttendance]);
     const type = ["All", "Cash", "Online"].includes(selectedAttendance)
             ? selectedAttendance
             : "All";
     const exportData = DataWithID(data, type);
-  
-    
-      
+
 
     
     const CustomToolbar = () => (

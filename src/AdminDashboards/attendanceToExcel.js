@@ -75,7 +75,7 @@ const attendanceToExcel = (columns, rows, OrderDate) => {
       });
     } else if (
       row.status === 'Full day Leave' ||
-      row.status === 'Half day Leave'
+      row.status === 'Half Day Leave'
     ) {
       totalLeave++;
       newRow.eachCell((cell) => {
@@ -91,7 +91,7 @@ const attendanceToExcel = (columns, rows, OrderDate) => {
         cell.fill = {
           type: 'pattern',
           pattern: 'solid',
-          fgColor: { argb: 'FFE74C3C' }, // Red
+          fgColor: { argb: 'FFE67E22' }, // Red
         };
       });
     } else if (row.status === 'Week Off') {

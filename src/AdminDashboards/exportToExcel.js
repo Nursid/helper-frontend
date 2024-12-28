@@ -44,19 +44,19 @@ const exportToExcel = (columns, rows, OrderDate) => {
     width: col.width / 10 || 15,
   }));
 
-  // Add rows with centered alignment
-  rows.forEach((row) => {
-    const rowData = {};
-    columns.forEach((col) => {
-      rowData[col.field] = row[col.field];
-    });
-    const newRow = worksheet.addRow(rowData);
+  // // Add rows with centered alignment
+  // rows.forEach((row) => {
+  //   const rowData = {};
+  //   columns.forEach((col) => {
+  //     rowData[col.field] = row[col.field];
+  //   });
+  //   const newRow = worksheet.addRow(rowData);
 
-    // Center align all cells in the row
-    newRow.eachCell((cell) => {
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
-    });
-  });
+  //   // Center align all cells in the row
+  //   newRow.eachCell((cell) => {
+  //     cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  //   });
+  // });
 
   // Conditional styling for "Order Status" column
   const statusColors = {
@@ -68,16 +68,35 @@ const exportToExcel = (columns, rows, OrderDate) => {
     Cancel: 'FF95A5A6',
   };
 
-  const statusColumnIndex = columns.findIndex((col) => col.field === 'pending') + 1;
-  worksheet.eachRow((row, rowIndex) => {
-    if (rowIndex <= startRow) return;
-    const cell = row.getCell(statusColumnIndex);
-    if (statusColors[cell.value]) {
+
+  rows.forEach((row) => {
+    const rowData = {};
+    columns.forEach((col) => {
+      rowData[col.field] = row[col.field];
+    });
+
+    const newRow = worksheet.addRow(rowData);
+
+    // Center-align row values
+    newRow.eachCell((cell) => {
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    });
+
+    // Get the total number of columns
+    const totalColumns = worksheet.columnCount;
+
+    // Loop through all columns, including null values
+    for (let colNumber = 1; colNumber <= totalColumns; colNumber++) {
+        const cell = newRow.getCell(colNumber);
+
+    // Conditional styling
+    if (row.pending) {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: statusColors[cell.value] },
-      };
+        fgColor: { argb: statusColors[row.pending] },
+    };
+    }
     }
   });
 

@@ -56,9 +56,9 @@ export const accountToExcel = (columns, rows) => {
 
 
     // Calculate totals for summary
-    totalCredit += parseFloat(row.credit || 0);
-    totalDebit += parseFloat(row.debit || 0);
-    totalDue += parseFloat(row.balance || 0);
+    totalCredit += parseFloat(row.credit_amount || 0);
+    totalDebit += parseFloat(row.debit_amount || 0);
+    totalDue += parseFloat(row.balance_opening || 0);
 
     // Center-align row values
     newRow.eachCell((cell) => {
@@ -66,7 +66,7 @@ export const accountToExcel = (columns, rows) => {
     });
 
     // Conditional styling
-    if (row.credit) {
+    if (row.credit_amount) {
       newRow.eachCell((cell) => {
         cell.fill = {
           type: 'pattern',
@@ -75,7 +75,7 @@ export const accountToExcel = (columns, rows) => {
         };
       });
     }
-    if (row.debit) {
+    if (row.debit_amount) {
       newRow.eachCell((cell) => {
         cell.fill = {
           type: 'pattern',
@@ -89,9 +89,9 @@ export const accountToExcel = (columns, rows) => {
   // Add summary row
   const summaryRow = worksheet.addRow({
     [columns[0].field]: 'Summary',
-    credit: `Total Credit: ${totalCredit.toFixed(2)}`,
-    debit: `Total Debit: ${totalDebit.toFixed(2)}`,
-    balance: `Total Due: ${totalDue.toFixed(2)}`,
+    credit_amount: `Total Credit: ${totalCredit.toFixed(2)}`,
+    debit_amount: `Total Debit: ${totalDebit.toFixed(2)}`,
+    balance_opening: `Total Due: ${totalDue.toFixed(2)}`,
   });
 
   // Style the summary row
