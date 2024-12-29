@@ -30,7 +30,7 @@ export default function Attendance() {
       const NewData = [];
     
       // Define the status order
-      const statusOrder = ["Present", "Absent", "Full day Leave", "Half day Leave", "Week Off"];
+      const statusOrder = ["Present", "Absent", "Full day Leave", "Half Day Leave", "Week Off"];
     
       if (data !== undefined) {
         for (let item of data) {
@@ -40,7 +40,7 @@ export default function Attendance() {
           NewData.push({
             ...item,
             status: updatedStatus, 
-            lateontime: item.check_in ? calculateLateOnTime(item.check_in) : "N/A",
+            lateontime: item.check_in ? calculateLateOnTime(item.check_in) : "",
           });
         }
     

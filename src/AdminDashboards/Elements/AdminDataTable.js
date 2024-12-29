@@ -27,20 +27,21 @@ const AdminDataTable = ({ rows, columns, CustomToolbar, ...args }) => {
         } else if (status === "Present") {
             return "complete-cell"; // New case for 'Present'
         } 
-        else if (status === 'Full day Leave' || status === 'Half day Leave' || status === 'Absent' ) {
+        else if (status === 'Full day Leave' || status === 'Half Day Leave') {
             return "hold-cell"; // Example for 'Absent'
         }
-        else if (status === "Week Off"){
-            return "cancel-cell";
+        else if (status === 'Absent') {
+            return "cancel-cell"; // Example for 'Absent'
         }
-
+        else if (status === "Week Off"){
+            return "pending-cell";
+        }
         else if (debit_amount) {
             return "hold-cell"; // New case for 'Present'
         } 
         else if (credit_amount) {
             return "complete-cell"; // New case for 'Present'
         }
-
         return "";
     };
 

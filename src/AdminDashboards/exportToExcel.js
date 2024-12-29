@@ -18,9 +18,13 @@ const exportToExcel = (columns, rows, OrderDate) => {
   subtitleCell.font = { italic: true, size: 12 };
   subtitleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
+  const currentDateTime = new Date();
+  const currentDay = currentDateTime.toLocaleDateString('en-US', { weekday: 'long' }); // Get the current day name
+  const currentTime = currentDateTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); // Get the current time
+
   worksheet.mergeCells('A3:' + String.fromCharCode(64 + columns.length) + '3');
   const subtitleCell2 = worksheet.getCell('A3');
-  subtitleCell2.value = 'Date:-' + '    ' + OrderDate;
+  subtitleCell2.value = `Date: ${OrderDate}    Day: ${currentDay}    Time: ${currentTime}`;
   subtitleCell2.font = { italic: true, size: 12 };
   subtitleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 

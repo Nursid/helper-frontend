@@ -18,11 +18,16 @@ const attendanceToExcel = (columns, rows, OrderDate) => {
   subtitleCell.font = { italic: true, size: 12 };
   subtitleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
+  const currentDateTime = new Date();
+  const currentDay = currentDateTime.toLocaleDateString('en-US', { weekday: 'long' }); // Get the current day name
+  const currentTime = currentDateTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); // Get the current time
+
   worksheet.mergeCells('A3:' + String.fromCharCode(64 + columns.length) + '3');
   const subtitleCell2 = worksheet.getCell('A3');
-  subtitleCell2.value = 'Date:-' + '    ' + OrderDate;
+  subtitleCell2.value = `Date: ${OrderDate}    Day: ${currentDay}    Time: ${currentTime}`;
   subtitleCell2.font = { italic: true, size: 12 };
   subtitleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
+
 
   // Headers
   const startRow = 4;
@@ -50,61 +55,50 @@ const attendanceToExcel = (columns, rows, OrderDate) => {
   let totalWeekOff = 0;
   let totalLeave = 0;
 
-  // Add rows with centered alignment
-  rows.forEach((row) => {
-    const rowData = {};
-    columns.forEach((col) => {
-      rowData[col.field] = row[col.field];
-    });
-    const newRow = worksheet.addRow(rowData);
-
-    // Center align all cells in the row
-    newRow.eachCell((cell) => {
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
-    });
-
-    // Status-based coloring and counting
-    if (row.status === 'Present') {
-      totalPresent++;
-      newRow.eachCell((cell) => {
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FF27AE60' }, // Green
-        };
-      });
-    } else if (
-      row.status === 'Full day Leave' ||
-      row.status === 'Half Day Leave'
-    ) {
-      totalLeave++;
-      newRow.eachCell((cell) => {
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFE74C3C' }, // Red
-        };
-      });
-    } else if (row.status === 'Absent') {
-      totalAbsent++;
-      newRow.eachCell((cell) => {
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFE67E22' }, // Red
-        };
-      });
-    } else if (row.status === 'Week Off') {
-      totalWeekOff++;
-      newRow.eachCell((cell) => {
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFB4B4B4' }, // Gray
-        };
-      });
-    }
+// Add rows with centered alignment
+rows.forEach((row) => {
+  const rowData = {};
+  columns.forEach((col) => {
+    rowData[col.field] = row[col.field];
   });
+  const newRow = worksheet.addRow(rowData);
+
+  // Center align all cells in the row
+  newRow.eachCell((cell) => {
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  });
+
+  // Determine the row color based on the status
+  let rowColor;
+  if (row.status === 'Present') {
+    totalPresent++;
+    rowColor = 'FF27AE60'; // Green
+  } else if (row.status === 'Full day Leave' || row.status === 'Half Day Leave') {
+    totalLeave++;
+    rowColor = 'FFE74C3C'; // Red
+  } else if (row.status === 'Absent') {
+    totalAbsent++;
+    rowColor = 'FF95A5A6'; // Gray
+  } else if (row.status === 'Week Off') {
+    totalWeekOff++;
+    rowColor = 'FFE67E22'; // Orange
+  }
+
+    const totalColumns = worksheet.columnCount;
+
+    // Loop through all columns, including null values
+    for (let colNumber = 1; colNumber <= totalColumns; colNumber++) {
+        const cell = newRow.getCell(colNumber);
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: rowColor },
+        };
+    }
+
+});
+
+
 
   const summaryRow = worksheet.addRow([
     'Summary',

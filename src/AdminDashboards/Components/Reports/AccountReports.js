@@ -48,12 +48,13 @@ const AccountReports = () => {
 
     const all_columns = [
         { field: "_id", headerName: "Sr No.", flex: 1, minWidth: 50 },
-        { field: "date", headerName: "Date", flex: 1, minWidth: 50 },
+        // { field: "date", headerName: "Date", flex: 1, minWidth: 50 },
         { field: "person_name", headerName: "Party Name", flex: 1, minWidth: 120 },
         { field: "about_payment", headerName: "Details", flex: 1, minWidth: 250 },
         // { field: "payment_mode", headerName: "Payment Mode", flex: 1, minWidth: 120 },
         { field: "debit_amount", headerName: "Amount Debit", flex: 1, minWidth: 120 },
         { field: "credit_amount", headerName: "Amount Credit", flex: 1, minWidth: 120 },
+        { field: "balance_opening", headerName: "Outstanding Balance", flex: 1, minWidth: 120 },
         {
             field: "balance",
             headerName: "Due Amount",
@@ -61,7 +62,7 @@ const AccountReports = () => {
             minWidth: 120,
             valueGetter: (params) => params.row.balance ?? 0,
           },
-        { field: "balance_opening", headerName: "Outstanding Balance", flex: 1, minWidth: 120 },
+       
     ];
 
     // const DataWithID = (data, payment_mode) => {
@@ -150,7 +151,7 @@ const AccountReports = () => {
             <GridToolbarExport />
             <GridToolbarDensitySelector />
             <Button
-            onClick={()=> accountToExcel(all_columns, exportData)}
+            onClick={()=> accountToExcel(all_columns, exportData, from)}
             className="btn btn-primary"
             size="sm"
             >
@@ -162,11 +163,11 @@ const AccountReports = () => {
 
 
     const FilterData = async () => {
-        if(!from || !to){
+        if(!from){
             return;
         }
         try {
-            dispatch(AccountListing(from,to));
+            dispatch(AccountListing(from));
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -195,13 +196,13 @@ const AccountReports = () => {
             <div className="flex flex-col justify-between w-full mb-3 ">
                 <div className="flex justify-between gap-6 items-center">
                 <div className="ml-4">
-                    <label htmlFor="startDate" className="text-light">From:</label>
+                    <label htmlFor="startDate" className="text-light">Date:</label>
                     <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
             </div>
-                    <div className="ml-4">
+                    {/* <div className="ml-4">
                     <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
                     <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
-            </div>
+            </div> */}
                     <div className="ml-4" style={{marginTop: '32px'}}>
                     <Button className="btn btn-primary" size="small" variant="contained" onClick={FilterData}>
                     Search

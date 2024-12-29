@@ -1,7 +1,7 @@
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-export const accountToExcel = (columns, rows) => {
+export const accountToExcel = (columns, rows, OrderDate) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Account Report');
 
@@ -18,6 +18,17 @@ export const accountToExcel = (columns, rows) => {
   subtitleCell.value = 'Account Report';
   subtitleCell.font = { italic: true, size: 12 };
   subtitleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+
+  const currentDateTime = new Date();
+  const currentDay = currentDateTime.toLocaleDateString('en-US', { weekday: 'long' }); // Get the current day name
+  const currentTime = currentDateTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); // Get the current time
+
+  worksheet.mergeCells('A3:' + String.fromCharCode(64 + columns.length) + '3');
+  const subtitleCell2 = worksheet.getCell('A3');
+  subtitleCell2.value = `Date: ${OrderDate}    Day: ${currentDay}    Time: ${currentTime}`;
+  subtitleCell2.font = { italic: true, size: 12 };
+  subtitleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
   // Headers
   const startRow = 4;
@@ -58,32 +69,41 @@ export const accountToExcel = (columns, rows) => {
     // Calculate totals for summary
     totalCredit += parseFloat(row.credit_amount || 0);
     totalDebit += parseFloat(row.debit_amount || 0);
-    totalDue += parseFloat(row.balance_opening || 0);
+    totalDue += parseFloat(row.balance || 0);
 
     // Center-align row values
     newRow.eachCell((cell) => {
       cell.alignment = { vertical: 'middle', horizontal: 'center' };
     });
 
+
+    const totalColumns = worksheet.columnCount;
+
+    // Loop through all columns, including null values
+    for (let colNumber = 1; colNumber <= totalColumns; colNumber++) {
+        const cell = newRow.getCell(colNumber);
+      
+        if (row.credit_amount) {
+  
+            cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'FF27AE60' }, // Green
+            };
+          
+        }
+        if (row.debit_amount) {
+            cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'FFE74C3C' }, // Red
+            };
+        }
+    }
+
+
     // Conditional styling
-    if (row.credit_amount) {
-      newRow.eachCell((cell) => {
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FF27AE60' }, // Green
-        };
-      });
-    }
-    if (row.debit_amount) {
-      newRow.eachCell((cell) => {
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFE74C3C' }, // Red
-        };
-      });
-    }
+    
   });
 
   // Add summary row
@@ -91,7 +111,7 @@ export const accountToExcel = (columns, rows) => {
     [columns[0].field]: 'Summary',
     credit_amount: `Total Credit: ${totalCredit.toFixed(2)}`,
     debit_amount: `Total Debit: ${totalDebit.toFixed(2)}`,
-    balance_opening: `Total Due: ${totalDue.toFixed(2)}`,
+    balance: `Total Due: ${totalDue.toFixed(2)}`,
   });
 
   // Style the summary row
