@@ -106,11 +106,13 @@ export const accountToExcel = (columns, rows, OrderDate) => {
     
   });
 
+  const totalBalance = totalCredit - totalDebit;
   // Add summary row
   const summaryRow = worksheet.addRow({
     [columns[0].field]: 'Summary',
     credit_amount: `Total Credit: ${totalCredit.toFixed(2)}`,
     debit_amount: `Total Debit: ${totalDebit.toFixed(2)}`,
+    balance_opening: `Total Outstating Balance: ${totalBalance.toFixed(2)}`,
     balance: `Total Due: ${totalDue.toFixed(2)}`,
   });
 

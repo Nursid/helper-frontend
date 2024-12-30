@@ -298,7 +298,7 @@ const MonthService = () => {
         { field: "paymethod", headerName: "Payment Method", minWidth: 150},
         { field: "netpayamt", headerName: "Billing Amount",minWidth: 150 },
         { field: "piadamt", headerName: "Paid Amount", minWidth: 150 },
-        { field: "totalamt", headerName: "Balance Amount", minWidth: 150},       
+        { field: "boke_no", headerName: "Bike No", minWidth: 150},       
         {
             field: "action",
             headerName: "Action",

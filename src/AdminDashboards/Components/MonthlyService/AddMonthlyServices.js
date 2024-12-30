@@ -60,6 +60,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 	
 
 	const [timeslot, setTimeslot] = useState(data.selectedTimeSlot || '')
+	const [bike_no, setBikeNo] = useState(data.bike_no || '')
 	const [errors, setErrors] = useState([]);
 	const [allservices, setAllservices] = useState([
 		{label: "Car Washing", value: "Car Washing"},
@@ -182,7 +183,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
         errors.supervisor = "supervisor is required";
     }
 
-    formData.totalamt = formData.netpayamt - formData.piadamt;
+    // formData.totalamt = formData.netpayamt - formData.piadamt;
 
     if (errors && Object.keys(errors).length === 0) {
         // Form is valid, handle form submission here
@@ -202,7 +203,8 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			serviceType: serviceType?.value,
 			service_provider: (serviceType?.value === "Car Washing") ? serviceProvider.map(option => option.value).join(', ') : serviceProvider?.value,
 			shift: shift?.value,
-			supervisor: supervisor?.value
+			supervisor: supervisor?.value,
+			bike_no:  bike_no?.value
 		}
 
 		const formData1 = new FormData();
@@ -228,7 +230,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			amount: formData?.piadamt,
 			person_name: formData?.cust_name,
 			about_payment: data.serviceType,
-			balance: formData?.totalamt,
+			// balance: formData?.totalamt,
 			order_no: data.orderNo,
 			type_payment: 0
 		}
@@ -251,7 +253,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 							amount: formData?.piadamt,
 							person_name: formData?.cust_name,
 							about_payment: serviceType?.value,
-							balance: formData?.totalamt,
+							// balance: formData?.totalamt,
 							order_no: response.data.orderNo,
 							type_payment: 0
 						};
@@ -261,7 +263,6 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 					 else{
 						if(formData.piadamt){
 							const res = await axios.post(`${API_URL}/api/add-balance`, AddAccountAmount1)
-						
 						}
 					}
 
@@ -326,6 +327,25 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		  setServiceProvider(selectedOptions); 
 		}
 	  };
+
+	const Vechile_Options = [
+		{ label: "UP32PZ-6537", value: "UP32PZ-6537" },
+		{ label: "UP32DB-2631", value: "UP32DB-2631" },
+		{ label: "UP32GP-4741", value: "UP32GP-4741" },
+		{ label: "UP32ER-5591", value: "UP32ER-5591" },
+		{ label: "UP32GT-4615", value: "UP32GT-4615" },
+		{ label: "UP32DD-0090", value: "UP32DD-0090" },
+		{ label: "UP32DE-0308", value: "UP32DE-0308" },
+		{ label: "UP32DF-2728", value: "UP32DF-2728" },
+		{ label: "UP32LL-6018", value: "UP32LL-6018" },
+		{ label: "UP32EX-0120", value: "UP32EX-0120" },
+		{ label: "UP32EU-3218", value: "UP32EU-3218" },
+		{ label: "UP32KB-1116", value: "UP32KB-1116" },
+		{ label: "UP32EX-7216", value: "UP32EX-7216" },
+		{ label: "UP32PQ-8825", value: "UP32PQ-8825" },
+		{ label: "SELF", value: "SELF" }
+	  ]
+	  
 	
 
 	return (
@@ -546,12 +566,22 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 				            <Col md={6}>
 								<FormGroup>
 									<Label for="bike_no">Bike No </Label>
-									<Input  name="bike_no"
+									{/* <Input  name="bike_no"
 										onChange={(e) => handleChange(e, 50)}
 										id="bike_no"
 										placeholder="Enter Bike No."
 										value={formData.bike_no}
-										/>
+										/> */}
+
+									<SelectBox 
+										setSelcted={setBikeNo}
+										initialValue={bike_no}
+										options={Vechile_Options}
+									/>
+
+
+
+
 										
 								</FormGroup>
 							</Col>
@@ -667,21 +697,20 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								<SelectBox options={payMethodOptions} setSelcted={(value) => setFormData((prev) => ({ ...prev, paymethod: value?.value }))} initialValue={formData.paymethod} />
 							</FormGroup>
 							</Col>
-							<Col md={6}>
+							{/* <Col md={6}>
 							<FormGroup>
 								<Label>Bill Amount</Label>
 								<Input name="netpayamt" type="number" onChange={(e) => handleChange(e, 7)} value={formData.netpayamt} placeholder="Bill Amount" />
 								
 							</FormGroup>
-							</Col>
+							</Col> */}
 							<Col md={6}>
 							<FormGroup>
-								<Label>Paid Amount</Label>
-								<Input name="piadamt" type="number" onChange={(e) => handleChange(e, 7)} value={formData.piadamt} placeholder="Paid Amount" />
-								
+								<Label>Security Deposit </Label>
+								<Input name="piadamt" type="number" onChange={(e) => handleChange(e, 7)} value={formData.piadamt} placeholder="Security Deposit " />
 							</FormGroup>
 							</Col>
-							<Col md={6}>
+							{/* <Col md={6}>
 							<FormGroup>
 								<Label>Balance Amount</Label>
 								<Input name="totalamt" type="number" value={formData.totalamt} placeholder="Balance Amount" readOnly />
@@ -698,7 +727,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 										value={formData.specialInterest}
 										/>
 								</FormGroup>
-							</Col>
+							</Col> */}
 							
                             <Button onClick={onsubmit} className='bg-primary text-white' disabled={isLoadingSubmit}>  {data ? "Update" : "Submit"} </Button>
                         </Row>
