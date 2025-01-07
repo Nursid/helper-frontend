@@ -15,6 +15,7 @@ import {
 	Label,
 	FormGroup
 } from "reactstrap";
+import Select from 'react-select';
 import { UseStateManager } from "../Context/StateManageContext";
 import Logo from "../assets/svg/we_logo.png";
 import {Formik} from "formik";
@@ -22,7 +23,7 @@ import {GetCustomerLogIn, GetLogIn} from "../Store/Actions/LandingPage/AuthActio
 import GetLogInReducers from "../Store/Reducers/LandingPage/AuthReducer";
 import {useDispatch, useSelector} from "react-redux";
 import Swal from "sweetalert2";
-import {MenuItem, Select} from "@mui/material";
+import {MenuItem} from "@mui/material";
 import {GetAllServices} from "../Store/Actions/Dashboard/servicesAction";
 import {ClockLoader} from "react-spinners";
 import {useAuth} from "../Context/userAuthContext";
@@ -1356,7 +1357,7 @@ export const AssignSupervisorForComplainModal = ({supervisorModalOpen, superviso
 	);
 };
 
-export const AssignServiceProviderModal = ({serviceProviderModalOpen, serviceProviderModalOpenFunction, OrderNo, GetAllOrders, role, currentUser, date}) => {
+export const AssignServiceProviderModal = ({serviceProviderModalOpen, serviceProviderModalOpenFunction, OrderNo, GetAllOrders, role, currentUser, date, service_name}) => {
 
 	const [GetAllServiceProvider, setAllServiceProvider] = useState([]);
 	const [serviceProvider, setServiceProvider] = useState('');
@@ -1410,12 +1411,15 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 
 	const handleSubmit = () => {
 		const formData = {
-			servicep_id: serviceProvider.value,
-			allot_time_range: timeslot.value
+			serviceProvider: serviceProvider?.map(option => option.value),
+			allot_time_range: timeslot.value,
+			order_no: OrderNo,
+			bookdate: moment(date, "DD-MM-YYYY").format("YYYY-MM-DD"),
+			service_name: service_name
 		}
-		const apiUrl = `${API_URL}/order/assign-service-provider/${OrderNo}`;
+		const apiUrl = `${API_URL}/order/assign-service-provider`;
 		// Make a POST request using Axios
-		axios.post(apiUrl, formData).then(response => {
+		axios.put(apiUrl, formData).then(response => {
 			if (response.status === 200) {
 				serviceProviderModalOpenFunction();
 				Swal.fire('Successfully!', response.data.message, 'success')
@@ -1431,6 +1435,10 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 		}).catch(error => {
 			console.error('Error:', error);
 		});
+	};
+
+	const handleChangeservices = (selectedOptions) => {
+		setServiceProvider(selectedOptions);
 	};
 
 	return (
@@ -1457,9 +1465,19 @@ export const AssignServiceProviderModal = ({serviceProviderModalOpen, servicePro
 							<label className="form-label" htmlFor="serviceRemark">
 								Choose Service Provider
 							</label>
-							<SelectBox options={GetAllServiceProvider}
+
+							<Select
+						isMulti
+						value={serviceProvider?.value}
+						onChange={handleChangeservices}
+						options={GetAllServiceProvider}
+						className="basic-multi-select"
+						classNamePrefix="select"
+						/>
+
+							{/* <SelectBox options={GetAllServiceProvider}
 								setSelcted={setServiceProvider}
-								selectOption={serviceProvider}/>
+								selectOption={serviceProvider}/> */}
 						</FormGroup>
 					</Col>
 

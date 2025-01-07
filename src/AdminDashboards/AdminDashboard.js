@@ -458,6 +458,7 @@ const AdminDashboard = () => {
   const [errors, setErrors] = useState([])
   const customerTypeOpenFunction = () =>setCustomerTypeOpenFunction(!customerTypeOpen)
   const [adminAprove, setAdminAprove] = useState(false)
+  const [service_name, setService_name] = useState('')
 
   const GetSubmmary = ()=>{
     setSummary(true)
@@ -487,10 +488,12 @@ const AdminDashboard = () => {
 }
 
 
-  const AssignServiceProvider = (order_no, bookdate) => { 
+  const AssignServiceProvider = (order_no, bookdate, service_name) => { 
     SetOrderNo(order_no)
     setserviceProviderModalOpen(!serviceProviderModalOpen)
     setOrderDate(bookdate)
+    console.log(order_no, bookdate, service_name)
+    setService_name(service_name)
   }
 
   const AssignAmount = (order_no) => { 
@@ -519,13 +522,16 @@ const AdminDashboard = () => {
     setbackOfficeRemarkModalfunction(!backOfficeRemarkModalOpen)
   }
 
-  const check_in = async (order_no) => {
+  const check_in = async (order_no, servicep_id, service_name) => {
     
       const formData = {
         pending: 4,
-        checkintime: moment(new Date()).format('DD/MM/YYYY, h:mm A')
+        checkintime: moment(new Date()).format('DD/MM/YYYY, h:mm A'),
+        order_no: order_no,
+        serviceProvider: servicep_id,
+        service_name: service_name
       }
-      const apiUrl =  `${API_URL}/order/assign/${order_no}`;;
+      const apiUrl =  `${API_URL}/order/check-in`;
       // Make a POST request using Axios
       axios.put(apiUrl, formData).then(response => {
         if (response.status === 200) {
@@ -543,7 +549,7 @@ const AdminDashboard = () => {
         console.error('Error:', error);
       });
   };
-  const check_out = async (order_no, piadamt, totalamt) =>{
+  const check_out = async (order_no, piadamt, totalamt, servicep_id) =>{
   
     if(piadamt==null && totalamt==null){
       Swal.fire({
@@ -555,9 +561,11 @@ const AdminDashboard = () => {
     
       const formData = {
         pending: 3,
-        checkouttime: moment(new Date()).format('DD/MM/YYYY, h:mm A')
+        checkouttime: moment(new Date()).format('DD/MM/YYYY, h:mm A'),
+        order_no: order_no,
+        serviceProvider: servicep_id,
       }
-      const apiUrl =  `${API_URL}/order/assign/${order_no}`;;
+      const apiUrl =  `${API_URL}/order/check-out`;;
       // Make a POST request using Axios
       axios.put(apiUrl, formData).then(response => {
         if (response.status === 200) {
@@ -581,7 +589,7 @@ const AdminDashboard = () => {
       field: "Status",
       headerName: "Status",
       renderCell: (params) => {
-          const { pending, order_no, piadamt, totalamt, checkintime, checkouttime } = params.row;
+          const { pending, order_no, piadamt, totalamt, checkintime, checkouttime, servicep_id, service_name } = params.row;
   
           let checkInLabel = '';
           let checkInColor = '';
@@ -595,7 +603,7 @@ const AdminDashboard = () => {
           if (!checkintime) {
               checkInLabel = 'Check In';
               checkInColor = 'yellow';
-              checkInHandler = () => check_in(order_no);
+              checkInHandler = () => check_in(order_no, servicep_id, service_name);
           } else {
               checkInLabel = `Update Check In ${checkintime}`;
               checkInColor = 'green';
@@ -606,7 +614,7 @@ const AdminDashboard = () => {
           if (checkintime && !checkouttime) {
               checkOutLabel = 'Check Out';
               checkOutColor = 'red';
-              checkOutHandler = () => check_out(order_no, piadamt, totalamt);
+              checkOutHandler = () => check_out(order_no, piadamt, totalamt, servicep_id);
           } else if (checkouttime) {
               checkOutLabel = `Update Check Out ${checkouttime}`;
               checkOutColor = 'green';
@@ -720,8 +728,7 @@ const AdminDashboard = () => {
         {
       params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
         !params.row.servicep_id && params?.row?.userRole?.role !== "service"  ? (
-       
-          <Button variant='contained' color='primary' onClick={() => AssignServiceProvider(params.row.order_no, params.row.bookdate)} >
+          <Button variant='contained' color='primary' onClick={() => AssignServiceProvider(params.row.order_no, params.row.bookdate, params.row.service_name )} >
             Service Provider
           </Button>
 
@@ -1032,6 +1039,7 @@ const AdminDashboard = () => {
         role={role}
         currentUser={currentUser.id}
         date={orderDate}
+        service_name={service_name}
       />
 
       <ServiceProviderRemarkModal

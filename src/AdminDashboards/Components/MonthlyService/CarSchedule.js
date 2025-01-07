@@ -14,6 +14,7 @@ import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector } from "@mui/x-data-grid";
 import { BiExport } from "react-icons/bi";
+import MonthlySchedule from "../../MonthlySchedule";
 
 const CarSchedule = () => {
 
@@ -34,7 +35,9 @@ const CarSchedule = () => {
           <GridToolbarExport />
           <GridToolbarDensitySelector />
           <Button
-            onClick={''}
+            onClick= {() => {
+              MonthlySchedule(colums, DataWithID(data),);
+            }}
             className="btn btn-primary"
             size="sm"
             >
@@ -60,7 +63,7 @@ const CarSchedule = () => {
             return status[i][key];
           }
           }
-          return "Status not found";
+          return "";
         }
 
         const DataWithID = (data) => {
@@ -70,9 +73,8 @@ const CarSchedule = () => {
                 for (let item of data) {
                     NewData.push({
                         ...item,
-                        monthlyStatus: getStatusByKey(item.pending),
                         id: data.indexOf(item) + 1, // Generate a unique ID based on index
-                        [item.selectedTimeSlot]: `${item.cust_name} - ${item.orderNo}`,
+                        [item.selectedTimeSlot]: `${item.cust_name} - ${item.orderNo} - ${getStatusByKey(item.pending)}`,
                     });
                 }
             } else {
@@ -85,10 +87,27 @@ const CarSchedule = () => {
         
 
     const getCellClassName = (params) => {
-      return '';
+      if(!params.value) {
+        return '';
+      }
+      const parts = params.value.split(" - ");
+      const lastData = parts[parts.length - 1];
+      if (lastData === "Pending") {
+        return 'pending-cell';
+      } else if (lastData === "Hold") {
+        return 'hold-cell';
+      } else if (lastData === "Due") {
+        return 'due-cell';
+      } else if (lastData === "Completed") {
+        return 'completed-cell';
+      } else if (lastData === "Running") {
+        return 'running-cell';
+      } else if (lastData === "Cancel") {
+        return 'cancel-cell';
+      }
+      return lastData;
     };
 
-  console.log(data);
   
     const fetchData = async () => {
       try {
@@ -100,10 +119,11 @@ const CarSchedule = () => {
       }
     };
     
-      
+
+   
     const colums = [
 
-        { field: "name",  headerName: "Name", minWidth: 150, editable: true},
+        { field: "name",  headerName: "Name", minWidth: 150, cellClassName: 'cancel-cell'},
         
         { field: "optional",  headerName: "Optional", minWidth: 150, editable: true},
        

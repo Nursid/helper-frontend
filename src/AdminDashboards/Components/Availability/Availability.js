@@ -31,19 +31,14 @@ const Availability = () => {
     const [mobileNo, setMobileNo] = useState("");
     const [date, setDate] = useState("");
     const [transferData, setTransferData] = useState([])
-    const [filterDate, setFilterDate] = useState({date: moment().format("YYYY-MM-DD")});
+    const [filterDate, setFilterDate] = useState("");
     const dispatch = useDispatch();
     const [from, setFrom] = useState(null)
     const [to, setTo] = useState(null)
     const [getAllServiceProvider, setGetAllServiceProvider] = useState([])
     const [serviceProvider, setServiceProvider] = useState('')
 
-
-    
-
-    useEffect(() => {
-        dispatch(GetAvailability(filterDate))
-    }, []);
+  
    
     const [Toggle, setToggle] = useState(false);
     const toggleAddAvailability = () => setToggle(!Toggle);
@@ -290,9 +285,14 @@ const Availability = () => {
       }
     }
  
-    useEffect(()=> {
-      getAllServicesProvider()
-    }, [])
+    useEffect(() => {
+      // Call API to get all service providers
+      getAllServicesProvider();
+      console.log('Effect called');  // Debug log to check when the effect runs
+      // Dispatch action to get availability for the current date
+      dispatch(GetAvailability());
+    }, []);  // Make sure dispatch is a stable reference
+    
 
 
     return (
