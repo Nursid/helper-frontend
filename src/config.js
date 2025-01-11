@@ -3,6 +3,7 @@
 // export const IMG_URL = "http://localhost:5000/uploads/";
 
 export const API_URL = "https://backend.ssquickhelper.com";
+
 export const IMG_URL = "https://backend.ssquickhelper.com/uploads/";
 
 
