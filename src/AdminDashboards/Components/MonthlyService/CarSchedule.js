@@ -88,7 +88,7 @@ const CarSchedule = () => {
 
     const getCellClassName = (params) => {
       if(!params.value) {
-        return '';
+        return 'completed-cell';
       }
       const parts = params.value.split(" - ");
       const lastData = parts[parts.length - 1];

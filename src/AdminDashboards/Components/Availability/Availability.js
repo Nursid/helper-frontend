@@ -253,7 +253,6 @@ const Availability = () => {
         { field: "05:30-06:00", headerName: "05:30-06:00 PM ", minWidth: 150, cellClassName: getCellClassName},
     ]
 
-
     const FilterData = async () => {
       const data ={
         from: from,
@@ -270,7 +269,6 @@ const Availability = () => {
         console.error('Error fetching data:', error);
       }
     };
-   
 
     const getAllServicesProvider = async (filterData) => {
       try {
