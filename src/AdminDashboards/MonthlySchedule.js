@@ -23,7 +23,7 @@ const MonthlySchedule = (columns, rows) => {
 
 	worksheet.mergeCells(`A2:${lastColumnLetter}2`);
 	const subtitleCell = worksheet.getCell('A2');
-	subtitleCell.value = 'Car Schedule';
+	subtitleCell.value = 'Daily Schedule';
 	subtitleCell.font = {
 		italic: true,
 		size: 18,
@@ -113,17 +113,11 @@ const MonthlySchedule = (columns, rows) => {
 			};
 		});
 
-		// Split the string to extract the status
-
-
-		// Check if the row contains the '-' character before splitting
 		let status;
-		
 		if (row[row.selectedTimeSlot].includes(' - ')) {
 			console.log(row[row.selectedTimeSlot]);
 			const statusParts = row[row.selectedTimeSlot].split(' - ');
 			status = statusParts[statusParts.length - 1].trim();
-			// Get the color for the status
 			const color = statusColors[status];
 			if (color) {
 				newRow.eachCell((cell) => {
@@ -137,22 +131,7 @@ const MonthlySchedule = (columns, rows) => {
 				});
 			}
 		}
-		
-		// if (row.name) {
-		// 	newRow.eachCell((cell) => {
-		// 		cell.fill = {
-		// 			type: 'pattern',
-		// 			pattern: 'solid',
-		// 			fgColor: {
-		// 				argb: 'FF95A5A6'
-		// 			}
-		// 		};
-		// 	});
-		// }
-
-
 	});
-
 
 	const date = new Date();
 	const formattedDate = date.toISOString().replace(/:/g, '-').replace('T', '_').split('.')[0];

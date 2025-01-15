@@ -192,35 +192,7 @@ const CarSchedule = () => {
     return (
         <Fragment>
 
-                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "30rem", minWidth: "30rem" }}>Car Schedule</h4>
-
-
-            {/* <div className="flex flex-col justify-between w-full mb-3 "> */}
-                {/* <div className="flex justify-between gap-6 items-center">
-                <div className="ml-4">
-                    <label htmlFor="startDate" className="text-light">Date</label>
-                    <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
-            </div> */}
-                    {/* <div className="ml-4">
-                    <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
-                    <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
-            </div> */}
-                    {/* <div className="ml-4" style={{marginTop: '32px'}}>
-                    <Button className="btn btn-primary" size="small" variant="contained" onClick={FilterData}
-                    >
-                    Search
-                    </Button>
-                </div> */}
-            {/* </div>
-            </div>   */}
-
-            {/*
-              <div className={`border py-2 px-2  shadow rounded-2 cursor-p hoverThis text-white`}
-                 onClick={toggleAddAvailability}
-                >
-                Add Leave
-                </div>
-            */} 
+                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "30rem", minWidth: "30rem" }}>Daily Schedule</h4>
             
             
             <div className="p-4">

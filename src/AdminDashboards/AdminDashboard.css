@@ -377,6 +377,9 @@ button.dropdownMenu-btn-header.btn.btn-secondary {
   color: black !important;
 }
 
+.completed-cell {
+  background-color: green;
+}
 
 span.validationError {
   position: absolute;

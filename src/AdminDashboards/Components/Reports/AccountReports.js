@@ -20,6 +20,9 @@ const AccountReports = () => {
     const { userRole } = useUserRoleContext();
     const { currentUser } = useAuth();
     const [openingBalance, setOpeningBalance] = useState(0);
+    const [cash, setCash] = useState(0);
+    const [bank, setBank] = useState(0);
+    const [expence, setExpence] = useState(0);
     const [modalOpen, setModalOpen] = useState(false);
     const [amountId, setAmountId] = useState(false);
     const [adminAprove, setAdminAprove] = useState(false);
@@ -39,12 +42,45 @@ const AccountReports = () => {
         toggleModal();
     }
 
-    useEffect(() => {
-        const totalPaidAmt = data?.reduce((acc, item) => acc + (item.type_payment === false ? (Number(item.amount) || 0) : 0), 0);
-        const totalExpenses = data?.reduce((acc, item) => acc + (item.type_payment === true ? (Number(item.amount) || 0) : 0), 0);
-        const openingBalance = totalPaidAmt - totalExpenses;
-        setOpeningBalance(openingBalance);
-    }, [data]);
+     useEffect(() => {
+        
+            const cashtotalPaidAmt = data?.reduce((acc, item) => {
+                if (item.type_payment === false && item.payment_mode === 'Cash') {
+                    return acc + (parseInt(item.amount) || 0);
+                }
+                return acc;
+            }, 0);
+            
+            const OnlinetotalPaidAmt = data?.reduce((acc, item) => {
+                if (item.type_payment === false && item.payment_mode === 'Online') {
+                    return acc + (parseInt(item.amount) || 0);
+                }
+                return acc;
+            }, 0);
+            
+            const cashtotalExpenses = data?.reduce((acc, item) => {
+                if (item.type_payment === true && item.payment_mode === 'Cash') {
+                    return acc + (parseInt(item.amount) || 0);
+                }
+                return acc;
+            }, 0);
+            
+            const OnlinetotalExpenses = data?.reduce((acc, item) => {
+                if (item.type_payment === true && item.payment_mode === 'Online') {
+                    return acc + (parseInt(item.amount) || 0);
+                }
+                return acc;
+            }, 0);
+    
+            const openingBalance = cashtotalPaidAmt + OnlinetotalPaidAmt - OnlinetotalExpenses - cashtotalExpenses;
+            const totalCash = cashtotalPaidAmt-cashtotalExpenses;
+            const totalBank = OnlinetotalPaidAmt-OnlinetotalExpenses;
+            const totalExpenses = OnlinetotalExpenses + cashtotalExpenses;
+            setCash(totalCash)
+            setBank(totalBank)
+            setOpeningBalance(openingBalance);
+            setExpence(totalExpenses)
+        }, [data]);
 
     const all_columns = [
         { field: "_id", headerName: "Sr No.", flex: 1, minWidth: 50 },
@@ -179,6 +215,50 @@ const AccountReports = () => {
             <h5 className='pt-4 pb-3 px-4 text-white headingBelowBorder d-flex flex-nowrap' style={{ width: "fit-content" }}>
                 Payment Report (Credit/Debit)
             </h5>
+
+            <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-left'>
+                <StackBox
+                    title="Opening Balance"
+                    amount={openingBalance}
+                    rupee={true}
+                    style={{
+                        background: "linear-gradient(to right bottom, var(--yellow), var(--yellow))",
+                        gridArea: "one",
+                    }}
+                    hidden='d-none'
+                />
+                <StackBox
+                    title="Cash"
+                    amount={cash}
+                    rupee={true}
+                    style={{
+                        background: "linear-gradient(to right bottom, var(--yellow), var(--yellow))",
+                        gridArea: "one",
+                    }}
+                    hidden='d-none'
+                />
+                <StackBox
+                    title="Bank"
+                    amount={bank}
+                    rupee={true}
+                    style={{
+                        background: "linear-gradient(to right bottom, var(--yellow), var(--yellow))",
+                        gridArea: "one",
+                    }}
+                    hidden='d-none'
+                />
+
+                <StackBox
+                    title="Expense"
+                    amount={expence}
+                    rupee={true}
+                    style={{
+                        background: "linear-gradient(to right bottom, var(--yellow), var(--yellow))",
+                        gridArea: "one",
+                    }}
+                    hidden='d-none'
+                />
+            </div>
           
             <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3  justify-content-left'>
                 {["All", "Bank", "Cash"].map(item => (
