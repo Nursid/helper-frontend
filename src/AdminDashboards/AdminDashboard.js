@@ -302,6 +302,49 @@ const AdminDashboard = () => {
   })
   };
 
+  const OrderUnHold = (orderNo) =>{
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to Hold this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Hold it!'
+  }).then(async (result) => {
+      if (result.isConfirmed) {
+          const response = await axios.put(API_URL + '/order/assign/' + orderNo,{pending: 0,
+            checkintime: null,
+            checkouttime: null,
+          },
+            {
+              headers: {
+                  'Authorization': `Bearer ${token}`
+              }
+          }
+          )
+          if (response.status === 200) {
+              Swal.fire(
+                  'Un-Hold!',
+                  'Your Order has been UnHold.',
+                  'success'
+              )
+              if (role === "service" || role === "supervisor") {
+                const status = undefined;
+                dispatch(GetAllOrders(status, currentUser.id, role));
+              } else {
+                dispatch(GetAllOrders());
+              }
+          } else {
+              Swal.fire({
+                  title: 'failed to hold try again',
+                  icon: "error",
+              })
+          }
+      }
+  })
+  };
+
   const OrderTransfers = (order_no)=>{
     toggleTransferOrder();
     SetOrderNo(order_no)
@@ -320,7 +363,6 @@ const AdminDashboard = () => {
   }
 
   const OrderComplete= (orderNo, piadamt, totalamt) =>{
-
 
     if(piadamt==null && totalamt==null){
       Swal.fire({
@@ -676,6 +718,7 @@ const AdminDashboard = () => {
                 <option value="Cancel">Cancel</option>
                 <option value="Transfer">Transfer</option>
                 <option value="Hold">Hold</option>
+                <option value="Un-Hold">Un-Hold</option>
                 <option value="Complete">Complete</option>
                 <option value="Edit">Edit</option>
                 
@@ -1363,6 +1406,9 @@ const AdminDashboard = () => {
                                     else if(selectedValue === 'Hold'){
                                       OrderHold(params.row.order_no)
                                     }
+                                    else if(selectedValue === 'Un-Hold'){
+                                      OrderUnHold(params.row.order_no)
+                                    }
                                     else if(selectedValue === 'Complete'){
                                       OrderComplete(params.row.order_no, params.row.piadamt, params.row.totalamt);
                                     }
@@ -1387,11 +1433,12 @@ const AdminDashboard = () => {
                                   <option value="Cancel">Cancel</option>
                                   {/* <option value="Delete">Delete</option> */}
                                   {(userRole?.role === "office" || userRole?.role === "super" || userRole?.role === "admin") ?  (
-                                    <>
-                                      <option value="Delete">Delete</option>
-                                      <option value="Transfer">Transfer</option>
-                                      <option value="Hold">Hold</option>
-                                    </>
+                                   <>
+                                   <option value="Delete">Delete</option>
+                                   <option value="Transfer">Transfer</option>
+                                   <option value="Hold">Hold</option>
+                                     <option value="Un-Hold">Un-Hold</option>
+                                 </>
                                   ) : null 
                                 }
                                 </>

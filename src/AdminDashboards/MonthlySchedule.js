@@ -7,7 +7,7 @@ const MonthlySchedule = (columns, rows) => {
 
 	// Title and Subtitle
 	const lastColumnLetter = String.fromCharCode(64 + 22); 
-	
+
 
 	worksheet.mergeCells(`A1:${lastColumnLetter}1`);
 	const titleCell = worksheet.getCell('A1');
@@ -88,50 +88,60 @@ const MonthlySchedule = (columns, rows) => {
 	}));
 
 	// Conditional styling for "Order Status" column
-	const statusColors = {
-		Pending: 'FFE67E22',
-		Hold: 'FFE74C3C',
-		Due: 'FFA29BFE',
-		Completed: 'FF27AE60',
-		Running: 'FFF1C40F',
-		Cancel: 'FF95A5A6'
-	};
+ // Conditional styling for "Order Status" column
+ const statusColors = {
+     Pending: 'FFE67E22',
+     Hold: 'FFE74C3C',
+     Due: 'FFA29BFE',
+     Completed: 'FF27AE60',
+     Running: 'FFF1C40F',
+     Cancel: 'FF95A5A6'
+ };
 
-	rows.forEach((row) => {
-		const rowData = {};
-		columns.forEach((col) => {
-			rowData[col.field] = row[col.field];
-		});
+ rows.forEach((row) => {
+     const rowData = {};
+     columns.forEach((col) => {
+         if (col.field === row.selectedTimeSlot && row[col.field]) {
+             // Remove the status part from the cell value
+             const parts = row[col.field].split(' - ');
+             rowData[col.field] = parts.slice(0, -1).join(' - ');
+         } else {
+             rowData[col.field] = row[col.field];
+         }
+     });
 
-		const newRow = worksheet.addRow(rowData);
+     const newRow = worksheet.addRow(rowData);
 
-		// Center-align row values
-		newRow.eachCell((cell) => {
-			cell.alignment = {
-				vertical: 'middle',
-				horizontal: 'center'
-			};
-		});
+     // Center-align row values
+     newRow.eachCell((cell) => {
+         cell.alignment = {
+             vertical: 'middle',
+             horizontal: 'center'
+         };
+     });
 
-		let status;
-		if (row[row.selectedTimeSlot].includes(' - ')) {
-			console.log(row[row.selectedTimeSlot]);
-			const statusParts = row[row.selectedTimeSlot].split(' - ');
-			status = statusParts[statusParts.length - 1].trim();
-			const color = statusColors[status];
-			if (color) {
-				newRow.eachCell((cell) => {
-					cell.fill = {
-						type: 'pattern',
-						pattern: 'solid',
-						fgColor: {
-							argb: color
-						}
-					};
-				});
-			}
-		}
-	});
+     if (row[row.selectedTimeSlot] && row[row.selectedTimeSlot].includes(' - ')) {
+         const statusParts = row[row.selectedTimeSlot].split(' - ');
+         const status = statusParts[statusParts.length - 1].trim();
+         const color = statusColors[status];
+         if (color) {
+             // Find the index of the selectedTimeSlot column
+             const selectedTimeSlotIndex = columns.findIndex(col => col.field === row.selectedTimeSlot);
+             if (selectedTimeSlotIndex !== -1) {
+                 // Apply color only to the selectedTimeSlot cell
+                 const cell = newRow.getCell(selectedTimeSlotIndex + 1); // +1 because Excel columns are 1-indexed
+                 cell.fill = {
+                     type: 'pattern',
+                     pattern: 'solid',
+                     fgColor: {
+                         argb: color
+                     }
+                 };
+             }
+         }
+     }
+ });
+
 
 	const date = new Date();
 	const formattedDate = date.toISOString().replace(/:/g, '-').replace('T', '_').split('.')[0];

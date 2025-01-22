@@ -57,34 +57,48 @@ const CarSchedule = () => {
         {5: "Cancel"}
         ]
       
-        function getStatusByKey(key) {
-        for (let i = 0; i < status.length; i++) {
-          if (status[i].hasOwnProperty(key)) {
-            return status[i][key];
-          }
-          }
-          return "";
-        }
+    function getStatusByKey(key) {
+    for (let i = 0; i < status.length; i++) {
+      if (status[i].hasOwnProperty(key)) {
+        return status[i][key];
+      }
+      }
+      return "";
+    }
 
-        const DataWithID = (data) => {
-            const NewData = [];
-        
-            if (data !== undefined) {
-                for (let item of data) {
-                    NewData.push({
-                        ...item,
-                        id: data.indexOf(item) + 1, // Generate a unique ID based on index
-                        [item.selectedTimeSlot]: `${item.cust_name} - ${item.orderNo} - ${getStatusByKey(item.pending)}`,
-                    });
-                }
-            } else {
-                // If data is not an array or undefined
-                NewData.push({ id: 0 });
-            }
-        
-            return NewData;
-        };
-        
+    const DataWithID = (data) => {
+      const NewData = [];
+  
+      if (data !== undefined) {
+          for (let item of data) {
+              // Create a new object for each provider
+              const transformedItem = {
+                  id: data.indexOf(item) + 1, // Generate a unique ID based on index
+                  name: item.name,
+          
+              };
+  
+              // Add each time slot with the formatted string of customer and service details
+              for (const [timeSlot, orders] of Object.entries(item)) {
+                console.log("--orders--",orders)
+                  if (timeSlot !== 'name') {
+                      transformedItem[timeSlot] = orders.map(order => 
+                          `${order.cust_name} - ${order.serviceType} - ${getStatusByKey(order.pending)}`
+                      ).join(", ");
+                  }
+              }
+  
+              NewData.push(transformedItem);
+          }
+      } else {
+          // If data is not an array or undefined
+          NewData.push({ id: 0 });
+      }
+  
+      return NewData;
+  };
+  
+ 
 
     const getCellClassName = (params) => {
       if(!params.value) {
@@ -188,12 +202,45 @@ const CarSchedule = () => {
       fetchData()
     }, [])
 
+    
+    const FilterData = async () => {
+        if(!from){
+            return;
+        }
+        try {
+            const GetStatus = await axios.get(`${API_URL}/monthly-service/get-daily-schedule?date=${from}`);
+            setData(GetStatus?.data?.result);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          return [];
+        }
+      };
+    
+
 
     return (
         <Fragment>
 
                 <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "30rem", minWidth: "30rem" }}>Daily Schedule</h4>
             
+
+                <div className="flex flex-col justify-between w-full mb-3 ">
+                <div className="flex justify-between gap-6 items-center">
+                <div className="ml-4">
+                    <label htmlFor="startDate" className="text-light">Date:</label>
+                    <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
+            </div>
+                    {/* <div className="ml-4">
+                    <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
+                    <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
+            </div> */}
+                    <div className="ml-4" style={{marginTop: '32px'}}>
+                    <Button className="btn btn-primary" size="small" variant="contained" onClick={FilterData}>
+                    Search
+                    </Button>
+                </div>
+            </div>
+        </div> 
             
             <div className="p-4">
                 <AdminDataTable rows={DataWithID(data)} columns={colums}  CustomToolbar={CustomToolbar} />

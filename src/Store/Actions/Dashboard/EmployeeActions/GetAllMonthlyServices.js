@@ -3,11 +3,11 @@ import * as constant from "../../../Constants/Dashboard/EmployeConstant/MonthlyS
 import { API_URL } from "../../../../config"
 
 
-export const GetAllMonthlyServiceAction = () => {
+export const GetAllMonthlyServiceAction = (date) => {
     return async (dispatch) => {
         dispatch({ type: constant.ALL_MONTHLY_SERVICE_API_LOADING })
         try {
-            const response = await axios.get(API_URL + "/monthly-service/getall");
+            const response = await axios.get(API_URL + `/monthly-service/getall?date=${date}`);
             if (response.status === 200) {
                 dispatch({ type: constant.ALL_MONTHLY_SERVICE_API_SUCCESS, payload: response.data.data })
             }else{

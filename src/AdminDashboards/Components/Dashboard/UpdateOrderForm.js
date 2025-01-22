@@ -8,6 +8,8 @@ import SelectBox from '../../Elements/SelectBox';
 import { API_URL } from '../../../config';
 import { GetAllTimeSlot } from '../../../Store/Actions/Dashboard/Orders/OrderAction';
 import { useSelector } from 'react-redux';
+import Select from 'react-select';
+
 const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) => {
 
   const dispatch = useDispatch();
@@ -45,9 +47,24 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     bakof_remark: orderData?.bakof_remark || ''
   });
 
+
   const [allServices, setAllServices] = useState([]);
   const [allSupervisors, setAllSupervisors] = useState([]);
   const [allServiceProviders, setAllServiceProviders] = useState([]);
+
+  const [serviceProvider, setServiceProvider] = useState(() => {
+    // Check if orderData and orderserviceprovider exist and are not empty
+    if (orderData?.orderserviceprovider?.length > 0) {
+      return orderData.orderserviceprovider
+        .filter(provider => provider?.service_provider) // Ensure service_provider exists
+        .map((provider) => ({
+          label: provider.service_provider?.name || 'Unknown', // Default label if service_provider is missing
+          value: provider.service_provider_id,
+        }));
+    }
+    return []; // Return an empty array if the condition is not met
+  });
+  
 
   const userTypeOptions = [
     { label: 'Regular', value: 'Regular' },
@@ -95,7 +112,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
       const [servicesRes, supervisorsRes, serviceProvidersRes] = await Promise.all([
         axios.get(`${API_URL}/service/getall`),
         axios.get(`${API_URL}/employee/getall/supervisor`),
-        axios.get(`${API_URL}/service-provider/getall`),
+        // axios.get(`${API_URL}/service-provider/getall`),
       ]);
       if (servicesRes.status === 200) {
         setAllServices(servicesRes.data.data.map((item) => ({ label: item.serviceName, value: item.serviceName })));
@@ -103,9 +120,9 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
       if (supervisorsRes.status === 200) {
         setAllSupervisors(supervisorsRes.data.data.map((item) => ({ label: item.name, value: item.name })));
       }
-      if (serviceProvidersRes.status === 200) {
-        setAllServiceProviders(serviceProvidersRes.data.data.map((item) => ({ label: item.name, value: item.name })));
-      }
+      // if (serviceProvidersRes.status === 200) {
+      //   setAllServiceProviders(serviceProvidersRes.data.data.map((item) => ({ label: item.name, value: item.id })));
+      // }
     };
     fetchData();
   }, []);
@@ -154,7 +171,9 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
           service_name: formData.service_name.value,
           user_type: formData.user_type.value,
           paymethod: formData.paymethod.value,
-          servicep_id: formData.servicep_id.value,
+          servicep_providers: Array.isArray(serviceProvider) && serviceProvider !== null && serviceProvider.every(sp => sp.value !== undefined) 
+          ? serviceProvider.map(option => option.value) 
+          : null,
           suprvisor_id: formData.suprvisor_id.value,
           allot_time_range: timeslot.value
         }
@@ -194,7 +213,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
             dispatch(GetAllOrders(status, currentUser, role));
           } else {
             // Handle unsuccessful update
-            Swal.fire('Failed to update, try again', '', 'error');
+            Swal.fire(response.data.message, '', 'error');
           }
         } catch (error) {
           // Log error and show an error message
@@ -205,6 +224,46 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         setIsLoading(false)
         
   };
+
+  const handleChangeservices = (selectedOptions) => {
+    setServiceProvider(selectedOptions);
+  };
+
+  console.log("serviceProvider----", serviceProvider)
+
+  const getAllServicesProvider = async (filterData) => {
+    try {
+      // Convert filterData to query string format
+      const queryParams = new URLSearchParams(filterData).toString();
+      // Perform the GET request
+      const response = await axios.get(`${API_URL}/service-provider/getall?${queryParams}`);
+      
+      // Check if response status is OK (200)
+      if (response.status === 200) {
+        // Transform response data into label-value pairs
+        const transformedData = response.data.data.map(item => ({ label: item.name, value: item.id }));
+        // Set the transformed data in the state
+        setAllServiceProviders(transformedData);
+      }
+    } catch (error) {
+      console.error("Error fetching service providers:", error);
+      // Optional: set an error state or fallback
+    }
+  };
+
+  useEffect(() => {
+    if (orderData.bookdate) {
+      const date = new Date();
+      const assignData = date.toISOString().split('T')[0]; // Corrected to call toISOString()
+      
+      const filterData = {
+        date: assignData,
+        time_range: orderData.allot_time_range, // Assuming this is a valid property in orderData
+      };
+  
+      getAllServicesProvider(filterData);
+    }
+  }, [orderData.bookdate]);
 
   return (
     <Fragment>
@@ -291,7 +350,16 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         <Col md={6}>
           <FormGroup>
             <Label>Service Provider</Label>
-            <SelectBox options={allServiceProviders} setSelcted={(value) => setFormData((prev) => ({ ...prev, servicep_id: value }))} initialValue={formData.servicep_id} />
+            {/* <SelectBox options={allServiceProviders} setSelcted={(value) => setFormData((prev) => ({ ...prev, servicep_id: value }))} initialValue={formData.servicep_id} /> */}
+
+            <Select
+						isMulti
+						value={serviceProvider}
+						onChange={handleChangeservices}
+						options={allServiceProviders}
+						className="basic-multi-select"
+						classNamePrefix="select"
+						/>
           </FormGroup>
         </Col>
         <Col md={6}>

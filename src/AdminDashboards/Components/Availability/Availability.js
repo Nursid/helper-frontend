@@ -119,8 +119,7 @@ const Availability = () => {
         return "class-monthly";
       }
   
-      
-  
+    
       if (params?.value && !params.value.includes("MonthlyService")) {
         const splitValue = params.value.split('-');  // Split by '-'
         const numericPart = splitValue[1];           // Get the second part (the number)
@@ -145,10 +144,10 @@ const Availability = () => {
         const pendingStatus = GetStatus?.data?.data?.pending;
   
         const statusMap = {
-          0: "Running-availability",
+          0: "Pending-availability",
           1: "Hold-availability",
           2: "Due-availability",
-          3: "Running-availability",
+          3: "completed-cell",
           4: "Running-availability",
           5: "Cancel-availability"
         };

@@ -22,12 +22,13 @@ import { useReactToPrint } from 'react-to-print';
 import ViewMonthlyService from './view/ViewMonthly-Service'
 import InvoiceMonthlyService from './view/InvoiceMonthlyService'
 import CollapseDatatable from '../../Elements/CollapseDatatable'
+import { Input } from "reactstrap";
 
 const MonthService = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const { data } = useSelector(state => state.GetAllMonthlyServiceDataReducer)
-
+    const [from, setFrom] = useState(null)
     const status= [
         {0: "Pending"},
         {1: "Hold"},
@@ -372,6 +373,18 @@ const MonthService = () => {
        
     // }
 
+    const FilterData = async () => {
+        if(!from){
+            return;
+        }
+        try{
+            dispatch(GetAllMonthlyServiceAction(from))
+        }catch(err){
+            console.log("Error fetching data: ", err);
+        }
+       
+      };
+
     return (
         <Fragment>
             <div style={{ display: 'none' }}>
@@ -393,12 +406,33 @@ const MonthService = () => {
             <div className='flex'>
             <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "15rem", minWidth: "15rem" }}>Monthly Service</h4>
 
+           
+
             <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
                 <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={toggleModal} >
                 Add Monthly Service 
                 </div>
             </div>
             </div>
+
+            <div className="flex flex-col justify-between w-full mb-3 ">
+                <div className="flex justify-between gap-6 items-center">
+                <div className="ml-4">
+                    <label htmlFor="startDate" className="text-light">Date:</label>
+                    <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
+            </div>
+                    {/* <div className="ml-4">
+                    <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
+                    <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
+            </div> */}
+                    <div className="ml-4" style={{marginTop: '32px'}}>
+                    <Button className="btn btn-primary" size="small" variant="contained" onClick={FilterData}>
+                    Search
+                    </Button>
+                </div>
+            </div>
+        </div> 
+
             <div className='p-4'>
                 {/* <AdminDataTable rows={DataWithID(data)} columns={column} CustomToolbar={CustomToolbar}  /> */}
 
