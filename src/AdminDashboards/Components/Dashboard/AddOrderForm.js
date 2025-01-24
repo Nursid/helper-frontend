@@ -36,6 +36,8 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 		setGetAlltimeSlot(transformedData);
 	}
 
+	console.log("getAlltimeSlot--",getAlltimeSlot)
+
 	useEffect(() => {
 		dispatch(GetAllTimeSlot())
 	}, []);

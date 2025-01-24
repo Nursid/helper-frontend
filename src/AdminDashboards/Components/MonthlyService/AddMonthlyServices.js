@@ -59,7 +59,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 
 	
 
-	const [timeslot, setTimeslot] = useState(data.selectedTimeSlot || '')
+	const [timeslot, setTimeslot] = useState(data.selectedTimeSlot || [])
 	const [bike_no, setBikeNo] = useState(data.bike_no || '')
 	const [errors, setErrors] = useState([]);
 	const [allservices, setAllservices] = useState([
@@ -154,7 +154,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
         errors.serviceType = "Service Name is required";
     }
 
-    if (!timeslot?.value) {
+    if (!timeslot?.length > 0) {
         errors.timeslot = "Timeslot is required";
     }
 
@@ -199,14 +199,14 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 	
 		const  OriginalData = {
 			...formData,
-			selectedTimeSlot: timeslot?.value,
+			selectedTimeSlot: timeslot?.map(option => option.value),
 			serviceType: serviceType?.value,
 			service_provider: (serviceType?.value === "Car Washing") ? serviceProvider.map(option => option.value).join(', ') : serviceProvider?.value,
 			shift: shift?.value,
 			supervisor: supervisor?.value,
-			bike_no:  bike_no?.value
-		}
+			bike_no:  bike_no?.value,
 
+		}
 		const formData1 = new FormData();
 
 		// Append existing form data
@@ -328,6 +328,10 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		}
 	  };
 
+	  const handleTimeSlots = (selectedOptions) => {
+			setTimeslot(selectedOptions); 
+	  };
+
 	const Vechile_Options = [
 		{ label: "UP32PZ-6537", value: "UP32PZ-6537" },
 		{ label: "UP32DB-2631", value: "UP32DB-2631" },
@@ -363,7 +367,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 										onChange={(e) => handleChange(e, 50)}
 										id="cust_name"
 										value={formData?.cust_name}
-										placeholder="Enter Customer Name "/>
+										placeholder="Enter Customer Name " readOnly/>
 										{errors?.cust_name && (
 										<span className='validationError'>
 											{errors?.cust_name}
@@ -379,7 +383,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 										onChange={(e) => handleChange(e, 10)}
 										value={formData?.mobile_no}
 										id="mobile_no"
-										placeholder="Enter Mobile No"/>
+										placeholder="Enter Mobile No" readOnly/>
 										{errors?.mobile_no && (
 										<span className='validationError'>
 											{errors?.mobile_no}
@@ -497,11 +501,21 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 
 					<FormGroup>
 						<Label>Time Slot <span style={{color: "red"}}>*</span></Label>
-						<SelectBox 
+						{/* <SelectBox 
 							setSelcted={setTimeslot}
 							initialValue={timeslot}
 							options={GetAlltimeSlot}
-							/>
+							/> */}
+
+								<Select
+									isMulti
+									value={timeslot}
+									onChange={handleTimeSlots}
+									options={GetAlltimeSlot}
+									className="basic-multi-select"
+									classNamePrefix="select"
+									/>
+							
 							{errors?.timeslot && (
 							<span className='validationError'>
 								{errors?.timeslot}

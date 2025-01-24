@@ -3,7 +3,6 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 import { GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton, GridToolbarQuickFilter } from '@mui/x-data-grid'
 import { useNavigate } from 'react-router-dom/dist'
-import AdminDataTable from '../../Elements/AdminDataTable'
 import ModalComponent from '../../Elements/ModalComponent'
 import { useDispatch, useSelector } from 'react-redux'
 import { GetAllMonthlyServiceAction } from '../../../Store/Actions/Dashboard/EmployeeActions/GetAllMonthlyServices'
@@ -13,22 +12,26 @@ import Swal from 'sweetalert2'
 import { API_URL } from '../../../config'
 import axios from 'axios'
 import AddMonthlyServices from './AddMonthlyServices'
-import AdminHeader from '../AdminHeader'
 // import AnimatedBackground from '../../Elements/AnimatedBackground'
 import AnimatedBackground from '../../Elements/AnimatedBacground'
-import AdminNavItems from '../../Elements/AdminNavItems'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import { useReactToPrint } from 'react-to-print';
 import ViewMonthlyService from './view/ViewMonthly-Service'
 import InvoiceMonthlyService from './view/InvoiceMonthlyService'
 import CollapseDatatable from '../../Elements/CollapseDatatable'
-import { Input } from "reactstrap";
+import { Form, Row, Col, Card, FormGroup, Label, Input,Table, Modal,
+    ModalHeader, ModalBody } from 'reactstrap';
 
 const MonthService = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const { data } = useSelector(state => state.GetAllMonthlyServiceDataReducer)
     const [from, setFrom] = useState(null)
+    const [customerTypeOpen, setCustomerTypeOpenFunction] =useState(false)
+    const [mobileNo, setMobileNo] = useState('');
+    const [errors, setErrors] = useState([])
+    const customerTypeOpenFunction = () =>setCustomerTypeOpenFunction(!customerTypeOpen)
+        
     const status= [
         {0: "Pending"},
         {1: "Hold"},
@@ -202,13 +205,79 @@ const MonthService = () => {
         });
     };
 
+    const CancelHandler = async (orderNo, feesPaidDateTime) =>{ 
+        Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to Cancel this!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, Cancel it!'
+          }).then(async (result) => {
+              if (result.isConfirmed) {
+        
+        const formData = {
+            pending: 5,
+            feesPaidDateTime: feesPaidDateTime
+        }
+        const apiUrl =  `${API_URL}/monthly-service/assign/${orderNo}`;;
+        // Make a POST request using Axios
+        axios.put(apiUrl, formData).then(response => {
+        if (response.status === 200) {
+            Swal.fire('Successfully!', "Your Order has been Canceled!", 'warning')
+            dispatch(GetAllMonthlyServiceAction())
+        } else {
+            Swal.fire({title:  response.data.message, icon: "error"})
+        } 			
+        }).catch(error => {
+        console.error('Error:', error);
+        });
+    }
+    })
+    };
+
+    const Holdtoggle = async (orderNo, feesPaidDateTime, currentPending) => {
+        const action = currentPending === "Hold" ? "Unhold" : "Hold";
+        const newPendingValue = currentPending === "Hold" ? 0 : 1;
+    
+        Swal.fire({
+            title: `Are you sure you want to ${action} this order?`,
+            text: `You are about to ${action} the order.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: `Yes, ${action} it!`,
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const formData = {
+                    pending: newPendingValue,
+                    feesPaidDateTime: feesPaidDateTime,
+                };
+                const apiUrl = `${API_URL}/monthly-service/assign/${orderNo}`;
+                try {
+                    const response = await axios.put(apiUrl, formData);
+                    if (response.status === 200) {
+                        Swal.fire('Success!', `Your Order has been ${action}ed!`, 'success');
+                        dispatch(GetAllMonthlyServiceAction()); // Refresh the data
+                    } else {
+                        Swal.fire({ title: response.data.message, icon: "error" });
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({ title: "Error", text: "An error occurred while updating the order.", icon: "error" });
+                }
+            }
+        });
+    };
 
     const column = [
         {
             field: "Status",
             headerName: "Status",
             renderCell: (params) => {
-                const { orderNo, checkintime, checkouttime, feesPaidDateTime } = params.row;
+                const { orderNo, checkintime, checkouttime, feesPaidDateTime, pending } = params.row;
         
                 const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
                 const feesPaidDate = new Date(feesPaidDateTime).toISOString().split('T')[0]; // Get fees paid date
@@ -225,7 +294,10 @@ const MonthService = () => {
                 if (!checkintime) {
                     checkInLabel = 'Check In';
                     checkInColor = 'yellow';
-                    checkInHandler = today === feesPaidDate ? () => check_in(orderNo, feesPaidDateTime) : null;
+                    checkInHandler =
+                        today === feesPaidDate && pending !== "Cancel" && pending !== "Completed"
+                            ? () => check_in(orderNo, feesPaidDateTime)
+                            : null;
                 } else {
                     checkInLabel = `Update Check In ${checkintime}`;
                     checkInColor = 'green';
@@ -236,7 +308,10 @@ const MonthService = () => {
                 if (checkintime && !checkouttime) {
                     checkOutLabel = 'Check Out';
                     checkOutColor = 'red';
-                    checkOutHandler = today === feesPaidDate ? () => check_out(orderNo, feesPaidDateTime) : null;
+                    checkOutHandler =
+                        today === feesPaidDate && pending !== "Cancel" && pending !== "Completed"
+                            ? () => check_out(orderNo, feesPaidDateTime)
+                            : null;
                 } else if (checkouttime) {
                     checkOutLabel = `Update Check Out ${checkouttime}`;
                     checkOutColor = 'green';
@@ -253,7 +328,7 @@ const MonthService = () => {
                                 borderRadius: "5px",
                                 cursor: checkInHandler ? "pointer" : "default",
                                 whiteSpace: "normal",
-                                textAlign: "center", 
+                                textAlign: "center",
                                 fontSize: "10px",
                                 padding: !checkintime ? "12px" : "5px",
                                 color: !checkintime ? "black" : "white",
@@ -274,7 +349,7 @@ const MonthService = () => {
                                     textAlign: "center",
                                     fontSize: "10px",
                                     padding: !checkouttime ? "12px" : "5px",
-                                    color: "white"
+                                    color: "white",
                                 }}
                                 onClick={checkOutHandler}
                             >
@@ -286,7 +361,8 @@ const MonthService = () => {
             },
             minWidth: 300,
             editable: false,
-        },        
+        },
+              
         { field: "cust_name", headerName: "Customer Name", minWidth: 120 },
         { field: "mobile_no", headerName: "Mobile", minWidth: 120 },
         { field: "date", headerName: "Date", minWidth: 120 },
@@ -303,7 +379,7 @@ const MonthService = () => {
         {
             field: "action",
             headerName: "Action",
-            minWidth: 320,
+            minWidth: 450,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
                     <Button onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary' style={{minWidth: "40px", maxWidth: "40px"}}><BorderColorIcon /></Button>
@@ -314,22 +390,51 @@ const MonthService = () => {
                     <VisibilityIcon />
                 </Button>
 
-                    <Button variant="contained" color="error"
-                    onClick={(e) => {
-                        GetDeleteByID(params.row.id)
-                    }}
-                    style={{minWidth: "40px", maxWidth: "40px"}}
-                    >
-                        <DeleteForeverIcon />
-                    </Button>
-
-                    <Button variant="contained" color="success"
+                    <Button variant="contained" color="info"
                     onClick={(e) => {
                         handleInvoice(params.row)
                     }}
                     >
                        Invoice
                     </Button>
+
+                    {params.row.pending !== 'Cancel' && params.row.pending !== 'Completed' && (
+                        <>
+
+                            <Button
+                                variant="contained"
+                                color={params.row.pending === "Hold" ? "error" : "warning"} // Different colors for Hold and Unhold
+                                onClick={() => {
+                                    Holdtoggle(params.row.orderNo, params.row.feesPaidDateTime, params.row.pending);
+                                }}
+                            >
+                                {params.row.pending === "Hold" ? "Unhold" : "Hold"} {/* Toggle the button text */}
+                            </Button>
+
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={(e) => {
+                                    GetDeleteByID(params.row.id);
+                                }}
+                                style={{ minWidth: "40px", maxWidth: "40px" }}
+                            >
+                                <DeleteForeverIcon />
+                            </Button>
+
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={(e) => {
+                                    CancelHandler(params.row.orderNo, params.row.feesPaidDateTime);
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                        </>
+                    )}
+
+                                        
                 </div>
             ),
         },
@@ -366,13 +471,6 @@ const MonthService = () => {
     }
   }, [memoData,handlePrint ])
 
-    // Add Employee form Handler 
-    // const [addEmployee, setAddEmployee] = useState(false)
-    // const ToggleAddMonthlyService = () => {
-    //     setAddEmployee(!addEmployee)
-       
-    // }
-
     const FilterData = async () => {
         if(!from){
             return;
@@ -385,9 +483,117 @@ const MonthService = () => {
        
       };
 
+      
+      const handleComplain = async () => {
+          let errors = {};
+
+          // Basic validation for the mobile number
+          if (!mobileNo) {
+              errors.mobileNo = "Mobile number is required";
+          } else if (!/^\d{10}$/.test(mobileNo)) {
+              errors.mobileNo = "Mobile number should be 10 digits";
+          } else if (mobileNo.startsWith("1") || mobileNo.startsWith("2") || mobileNo.startsWith("3") || mobileNo.startsWith("4") || mobileNo.startsWith("5")) {
+              errors.mobileNo = "This mobile number does not exist in India";
+          }
+
+          // If basic validation fails, display errors
+          if (Object.keys(errors).length > 0) {
+              console.log("Validation Errors:", errors);
+              setErrors(errors);
+              return false;
+          }
+
+          try {
+              // Call API to check customer by mobile number
+              const response = await axios.get(`${API_URL}/get/customerByMobile/${mobileNo}`);
+              console.log("Response from server:", response);
+
+              if (response.status === 200 && response.data.status === true) {
+                  console.log("Mobile number exists in customer database");
+
+                  const item = response.data.data;
+                  console.log("Item:", item?.customerData?.NewCustomer);
+
+                  // Update `editData` state
+                  setEditData(prevFormData => {
+                      const newFormData = {
+                          ...prevFormData,
+                          cust_name: item?.customerData?.NewCustomer?.name || '',
+                          mobile_no: mobileNo || '',
+                          location: item?.customerData?.address || '',
+                          area: item?.customerData?.location || ''
+                      };
+
+                      // Call functions since we have a valid response and data is set
+                      if (Object.keys(newFormData).length > 0) {
+                          toggleModal();
+                          customerTypeOpenFunction();
+                      }
+
+                      return newFormData;
+                  });
+
+              } else {
+                  console.log("Mobile number does not exist in customer database");
+                  setErrors({ mobileNo: "This mobile number is not associated with any customer" });
+              }
+          } catch (error) {
+              console.error("Error checking mobile number:", error);
+              setErrors({ mobileNo: "An error occurred while verifying the mobile number. Please try again." });
+          }
+      };
+
+      // Remove the separate toggleAddMonthly function as it's no longer needed
+    
+
+    const toggleAddMonthly = () =>{
+        if(editData.length > 0){
+            toggleModal()
+            customerTypeOpenFunction();
+        }
+    }
+
+    console.log("Edit Data:", editData);
+
     return (
         <Fragment>
             <div style={{ display: 'none' }}>
+            {customerTypeOpen &&   <Modal className="modal-dialog-centered"
+          isOpen={customerTypeOpen}
+          toggle={customerTypeOpenFunction}>
+          <ModalHeader toggle={customerTypeOpenFunction}>
+            Customer Type
+          </ModalHeader>
+              <ModalBody>
+                <Row>
+                    <Col md={12}>
+                      <FormGroup>
+                        <Label for="mobile">Mobile No <span style={{color: "red"}}>*</span></Label>
+                        <Input
+                          id="mobile"
+                          name="mobile"
+                          type="number"
+                          value={mobileNo}
+                          placeholder="Mobile No"
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^\d{0,10}$/.test(value)) {  
+                                setMobileNo(value);  
+                            }
+                        }}
+                        />
+                        {errors?.mobileNo && (
+                      <span className='validationError'>
+                          {errors?.mobileNo}
+                      </span>
+                      )}
+                </FormGroup>
+                </Col>                        
+              <Button variant='contained' color='primary' onClick={handleComplain}>Proceed Now</Button>
+              </Row>
+                </ModalBody>
+              </Modal>
+        }       
         <ViewMonthlyService ref={memberRef} data={memoData} /> 
         <InvoiceMonthlyService ref={InvoiceRef} data={invoiceData} /> 
         </div>
@@ -396,7 +602,7 @@ const MonthService = () => {
         <AnimatedBackground />
         <div className='BackgroundTopContents'>
             <ModalComponent
-                data={<AddMonthlyServices toggleModal={toggleModal} data={editData} />}
+                data={<AddMonthlyServices toggleModal={toggleModal} data={editData}  />}
                 modalTitle={editMode ? "Edit Monthly Service" : "Add Monthly Service"}
                 modal={showModal}
                 toggle={toggleModal}
@@ -409,7 +615,7 @@ const MonthService = () => {
            
 
             <div className='AttendenceNavBtn w-100 py-2 px-4 gap-3 justify-content-end'>
-                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={toggleModal} >
+                <div className={`py-2 px-4 border shadow rounded-2 cursor-p hoverThis text-white Fw_500 d-flex align-items-center justify-content-center `} style={{ minWidth: "15rem", maxWidth: "15rem" }} onClick={customerTypeOpenFunction} >
                 Add Monthly Service 
                 </div>
             </div>
