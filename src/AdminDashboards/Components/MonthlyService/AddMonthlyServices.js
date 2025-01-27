@@ -167,15 +167,15 @@ const AddMonthlyServices = ({toggleModal, data}) => {
     }
 
 
-	if(serviceType?.value === "Car Washing"){
+	// if(serviceType?.value === "Car Washing"){
 		if (Object.keys(serviceProvider).length === 0) {
 			errors.service_provider = "Service provider is required";
 		}
-	}else{
-		if (!serviceProvider?.value) {
-			errors.service_provider = "Service provider is required";
-		}
-	}
+	// }else{
+	// 	if (!serviceProvider?.value) {
+	// 		errors.service_provider = "Service provider is required";
+	// 	}
+	// }
 
    
 
@@ -201,7 +201,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			...formData,
 			selectedTimeSlot: timeslot?.map(option => option.value),
 			serviceType: serviceType?.value,
-			service_provider: (serviceType?.value === "Car Washing") ? serviceProvider.map(option => option.value).join(', ') : serviceProvider?.value,
+			service_provider:  serviceProvider.map(option => option.value).join(', '),
 			shift: shift?.value,
 			supervisor: supervisor?.value,
 			bike_no:  bike_no?.value,
@@ -323,9 +323,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 	};
 
 	const handleChangeservices = (selectedOptions) => {
-		if (selectedOptions.length <= 2) {
 		  setServiceProvider(selectedOptions); 
-		}
 	  };
 
 	  const handleTimeSlots = (selectedOptions) => {
@@ -523,8 +521,6 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 						)}
 					</FormGroup>
 				</Col>
-
-				{serviceType?.value === "Car Washing" ? (
         <Col md={6}>
           <FormGroup>
             <Label>Service Provider <span style={{ color: "red" }}>*</span></Label>
@@ -543,23 +539,25 @@ const AddMonthlyServices = ({toggleModal, data}) => {
             )}
           </FormGroup>
         </Col>
-      ) : (
-        <Col md={6}>
-          <FormGroup>
-            <Label>Service Provider <span style={{ color: "red" }}>*</span></Label>
-            <SelectBox 
-              options={getAllServiceProvider}
-              initialValue={serviceProvider}
-              setSelcted={setServiceProvider}
-            />
-            {errors?.service_provider && (
-              <span className='validationError'>
-                {errors?.service_provider}
-              </span>
-            )}
-          </FormGroup>
-        </Col>
-      )}
+    {/*
+	  ) : (
+    //     <Col md={6}>
+    //       <FormGroup>
+    //         <Label>Service Provider <span style={{ color: "red" }}>*</span></Label>
+    //         <SelectBox 
+    //           options={getAllServiceProvider}
+    //           initialValue={serviceProvider}
+    //           setSelcted={setServiceProvider}
+    //         />
+    //         {errors?.service_provider && (
+    //           <span className='validationError'>
+    //             {errors?.service_provider}
+    //           </span>
+    //         )}
+    //       </FormGroup>
+    //     </Col>
+    //   )}
+	 */} 
 
 				<Col md={6}>
 					<FormGroup>

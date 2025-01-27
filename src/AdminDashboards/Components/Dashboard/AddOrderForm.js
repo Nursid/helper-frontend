@@ -36,8 +36,6 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 		setGetAlltimeSlot(transformedData);
 	}
 
-	console.log("getAlltimeSlot--",getAlltimeSlot)
-
 	useEffect(() => {
 		dispatch(GetAllTimeSlot())
 	}, []);
@@ -196,15 +194,13 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 		if (!timeslot?.value) {
             errors.timeslot = "timeslot  is required";
         }
-		// if (!serviceProvider?.value) {
-        //     errors.serviceProvider = "service Provider  is required";
-        // }
+		if (!formData?.approx_duration) {
+            errors.approx_duration = "Approx duration is required";
+        }
 		// if (!supervisor?.value) {
         //     errors.supervisor = "supervisor  is required";
         // }
 		
-
-
         if (errors && Object.keys(errors).length === 0) {
 			// Form is valid, handle form submission here
 			console.log("Form submitted successfully!",);
@@ -224,6 +220,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 			suprvisor_id: supervisor?.value,
 			allot_time_range: timeslot.value
 		}
+
 		const apiUrl = `${API_URL}/order/add`;
 		// Make a POST request using Axios
 		axios.post(apiUrl, data).then(response => {
@@ -351,7 +348,7 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 				<SelectBox options={UserTypes}
 							setSelcted={setUsertype}
 							selectOption={userType}/>
-									</Col>
+				</Col>
 
 				<Col md={6}>
 					<FormGroup>
@@ -437,12 +434,36 @@ const AddOrderForm = ({prop, GetAllOrders, role, currentUser, mobileNo, setModal
 
 				<Col md={6}>
 					<FormGroup>
-						<Label>Approx Duration</Label>
-						<Input 
-						onChange={(e) => handleChange(e, 10)}
-							value={formData?.approx_duration}
-							name='approx_duration'
-							placeholder='Enter Your Approx Duration'/>
+						<Label>Approx Duration <span style={{color: "red"}}>*</span> </Label>
+							<SelectBox
+							 setSelcted={(selectedOption) =>
+								handleChange({ target: { name: 'approx_duration', value: selectedOption.value } }, 10)
+							  }
+							initialValue={formData?.approx_duration}
+							options={[
+								{ value: '0.5', label: '30 min' },
+								{ value: '1', label: '1 hour' },
+								{ value: '1.5', label: '1.5 hours' },
+								{ value: '2', label: '2 hours' },
+								{ value: '2.5', label: '2.5 hours' },
+								{ value: '3', label: '3 hours' },
+								{ value: '3.5', label: '3.5 hours' },
+								{ value: '4', label: '4 hours' },
+								{ value: '4.5', label: '4.5 hours' },
+								{ value: '5', label: '5 hours' },
+								{ value: '5.5', label: '5.5 hours' },
+								{ value: '6', label: '6 hours' },
+								{ value: '6.5', label: '6.5 hours' },
+								{ value: '7', label: '7 hours' },
+								{ value: '7.5', label: '7.5 hours' },
+								{ value: '8', label: '8 hours' },
+							]}
+							/>
+							{errors?.approx_duration && (
+							<span className='validationError'>
+								{errors?.approx_duration}
+							</span>
+						)}
 					</FormGroup>
 				</Col>
 
