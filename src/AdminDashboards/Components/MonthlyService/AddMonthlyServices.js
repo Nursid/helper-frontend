@@ -63,8 +63,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 	const [bike_no, setBikeNo] = useState(data.bike_no || '')
 	const [errors, setErrors] = useState([]);
 	const [allservices, setAllservices] = useState([
-		{label: "Car Washing", value: "Car Washing"},
-		{label: "Car Dustinng", value: "Car Dusting"},
+		{ label: "Car Washing/Dusting", value: "Car Washing/Dusting" },
 		{label: "Dog Walk", value: "Dog Walk"},
 		{label: "Bathroom Cleaning", value: "Bathroom Cleaning"},
 		{label: "Monthly Cleaning", value: "Monthly Cleaning"},
@@ -265,6 +264,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 							const res = await axios.post(`${API_URL}/api/add-balance`, AddAccountAmount1)
 						}
 					}
+					dispatch(GetAllMonthlyServiceAction())
 
 					Swal.fire(
 						'Successfully!',
@@ -273,7 +273,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 					)
 					
 					toggleModal();
-					dispatch(GetAllMonthlyServiceAction())
+					
 					
 				} else {
 					Swal.fire({
@@ -741,20 +741,10 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 								</FormGroup>
 							</Col> */}
 							
-                            <Button onClick={onsubmit} className='bg-primary text-white' disabled={isLoadingSubmit}>  {data ? "Update" : "Submit"} </Button>
+                            <Button onClick={onsubmit} className='bg-primary text-white' disabled={isLoadingSubmit}>  {data.length > 0 ? "Update" : "Submit"} </Button>
                         </Row>
 				</Form>
 		</Fragment>
 	)
 }
-
-
-
-
-
-
-
-
-
-
 export default AddMonthlyServices;

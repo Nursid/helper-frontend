@@ -27,6 +27,7 @@ const MonthService = () => {
     const dispatch = useDispatch()
     const { data } = useSelector(state => state.GetAllMonthlyServiceDataReducer)
     const [from, setFrom] = useState(null)
+    const [customer, setTo] = useState(null)
     const [customerTypeOpen, setCustomerTypeOpenFunction] =useState(false)
     const [mobileNo, setMobileNo] = useState('');
     const [errors, setErrors] = useState([])
@@ -39,7 +40,7 @@ const MonthService = () => {
         {3: "Completed"},
         {4: "Running"},
         {5: "Cancel"}
-        ]
+    ]
       
         function getStatusByKey(key) {
         for (let i = 0; i < status.length; i++) {
@@ -382,7 +383,7 @@ const MonthService = () => {
             minWidth: 450,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
-                    <Button onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary' style={{minWidth: "40px", maxWidth: "40px"}}><BorderColorIcon /></Button>
+                    {/* <Button onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary' style={{minWidth: "40px", maxWidth: "40px"}}><BorderColorIcon /></Button> */}
                     <Button variant="contained" color="success" 
                 onClick={(e)=>{handleMemo(params.row)}}
                 style={{minWidth: "40px", maxWidth: "40px"}}
@@ -472,11 +473,11 @@ const MonthService = () => {
   }, [memoData,handlePrint ])
 
     const FilterData = async () => {
-        if(!from){
+        if(!from && !customer){
             return;
         }
         try{
-            dispatch(GetAllMonthlyServiceAction(from))
+            dispatch(GetAllMonthlyServiceAction(from, customer))
         }catch(err){
             console.log("Error fetching data: ", err);
         }
@@ -627,10 +628,12 @@ const MonthService = () => {
                     <label htmlFor="startDate" className="text-light">Date:</label>
                     <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
             </div>
-                    {/* <div className="ml-4">
-                    <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
-                    <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
-            </div> */}
+                    <div className="ml-4">
+                    <label htmlFor="customer"  className="text-light mr-2" >Customer Name:</label>
+                    <Input id="customer" type="text" onChange={(e)=>setTo(e.target.value)}
+                    placeholder='Enter Customer Name'
+                    />
+            </div>
                     <div className="ml-4" style={{marginTop: '32px'}}>
                     <Button className="btn btn-primary" size="small" variant="contained" onClick={FilterData}>
                     Search
