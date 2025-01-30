@@ -26,6 +26,8 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 	const today2 = new Date().toISOString().slice(0, 16); // Format: 'YYYY-MM-DDTHH:mm'
 
 
+	console.log("--",data)
+
 	const [getAllSupervisor, setGetAllSupervisor] = useState([])
 	const [supervisor, setSupervisor] = useState(data?.supervisor || '')
 	const dispatch = useDispatch();
@@ -59,7 +61,18 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 
 	
 
-	const [timeslot, setTimeslot] = useState(data.selectedTimeSlot || [])
+	// const [timeslot, setTimeslot] = useState(data.selectedTimeSlot || [])
+
+	const [timeslot, setTimeslot] = useState(() => {
+		if (data?.selectedTimeSlot) {
+			return data.selectedTimeSlot.split(',').map((slot) => ({
+				label: slot, // Customize label if needed
+				value: slot, // Trim to remove extra spaces
+			}));
+		}
+		return []; // Return empty array if no service providers are available
+	});
+
 	const [bike_no, setBikeNo] = useState(data.bike_no || '')
 	const [errors, setErrors] = useState([]);
 	const [allservices, setAllservices] = useState([
@@ -77,7 +90,17 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 	const [shift, setShift] = useState(data?.shift || '');
 	const [isLoadingSubmit, setIsLoading] = useState(false);
 	const [getAllServiceProvider, setGetAllServiceProvider] = useState([])
-	const [serviceProvider, setServiceProvider] = useState(data?.service_provider || "")
+	// const [serviceProvider, setServiceProvider] = useState(data?.service_provider || "")
+	
+	const [serviceProvider, setServiceProvider] = useState(() => {
+		if (data?.service_provider) {
+			return data.service_provider.split(',').map((providerId) => ({
+				label: providerId, // Customize label if needed
+				value: providerId, // Trim to remove extra spaces
+			}));
+		}
+		return []; // Return empty array if no service providers are available
+	});
 
 	const { data: timeSLotData, isLoading } = useSelector(state => state.GetAllTimeSlotReducer);
 
@@ -526,7 +549,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
             <Label>Service Provider <span style={{ color: "red" }}>*</span></Label>
             <Select
               isMulti
-              value={serviceProvider?.value}
+              value={serviceProvider}
               onChange={handleChangeservices}
               options={getAllServiceProvider}
               className="basic-multi-select"

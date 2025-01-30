@@ -383,7 +383,7 @@ const MonthService = () => {
             minWidth: 450,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
-                    {/* <Button onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary' style={{minWidth: "40px", maxWidth: "40px"}}><BorderColorIcon /></Button> */}
+                    <Button onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary' style={{minWidth: "40px", maxWidth: "40px"}}><BorderColorIcon /></Button>
                     <Button variant="contained" color="success" 
                 onClick={(e)=>{handleMemo(params.row)}}
                 style={{minWidth: "40px", maxWidth: "40px"}}

@@ -44,7 +44,8 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     servp_remark: orderData?.servp_remark || '',
     suerv_remark: orderData?.suerv_remark || '',
     admin_remark: orderData?.admin_remark || '',
-    bakof_remark: orderData?.bakof_remark || ''
+    bakof_remark: orderData?.bakof_remark || '',
+    approx_duration: orderData?.approx_duration || '',
   });
 
 
@@ -229,7 +230,6 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     setServiceProvider(selectedOptions);
   };
 
-  console.log("serviceProvider----", serviceProvider)
 
   const getAllServicesProvider = async (filterData) => {
     try {
@@ -331,6 +331,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
             <Input name="problem_des" onChange={(e) => handleInputChange(e, 100)} value={formData.problem_des} placeholder="Problem Description" />
           </FormGroup>
         </Col>
+
         <Col md={6}>
           <FormGroup>
             <Label>Supervisor Name</Label>
@@ -347,6 +348,42 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
 							/>
 					</FormGroup>
 				</Col>
+
+<Col md={6}>
+          <FormGroup>
+            <Label>Approx Duration <span style={{color: "red"}}>*</span> </Label>
+              <SelectBox
+               setSelcted={(selectedOption) =>
+                handleInputChange({ target: { name: 'approx_duration', value: selectedOption.value } }, 10)
+                }
+              initialValue={formData?.approx_duration}
+              options={[
+                { value: '0.5', label: '30 min' },
+                { value: '1', label: '1 hour' },
+                { value: '1.5', label: '1.5 hours' },
+                { value: '2', label: '2 hours' },
+                { value: '2.5', label: '2.5 hours' },
+                { value: '3', label: '3 hours' },
+                { value: '3.5', label: '3.5 hours' },
+                { value: '4', label: '4 hours' },
+                { value: '4.5', label: '4.5 hours' },
+                { value: '5', label: '5 hours' },
+                { value: '5.5', label: '5.5 hours' },
+                { value: '6', label: '6 hours' },
+                { value: '6.5', label: '6.5 hours' },
+                { value: '7', label: '7 hours' },
+                { value: '7.5', label: '7.5 hours' },
+                { value: '8', label: '8 hours' },
+              ]}
+              />
+              {errors?.approx_duration && (
+              <span className='validationError'>
+                {errors?.approx_duration}
+              </span>
+            )}
+          </FormGroup>
+        </Col>
+
         <Col md={6}>
           <FormGroup>
             <Label>Service Provider</Label>
