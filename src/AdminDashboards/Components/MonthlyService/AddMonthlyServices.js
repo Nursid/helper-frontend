@@ -77,6 +77,8 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 	const [errors, setErrors] = useState([]);
 	const [allservices, setAllservices] = useState([
 		{ label: "Car Washing/Dusting", value: "Car Washing/Dusting" },
+		{ label: "Car Washing", value: "Car Washing" },
+		{ label: "Car Dusting", value: "Car Dusting" },
 		{label: "Dog Walk", value: "Dog Walk"},
 		{label: "Bathroom Cleaning", value: "Bathroom Cleaning"},
 		{label: "Monthly Cleaning", value: "Monthly Cleaning"},
@@ -227,7 +229,6 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 			shift: shift?.value,
 			supervisor: supervisor?.value,
 			bike_no:  bike_no?.value,
-
 		}
 		const formData1 = new FormData();
 
@@ -259,7 +260,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 
 		var apiUrl =""
 		if(data.id!=null){
-			 apiUrl = `${API_URL}/monthly-service/update/${data.orderNo}`;
+			 apiUrl = `${API_URL}/monthly-service/update/${data.orderNo}?date=${data.feesPaidDateTime.slice(0, 16)}`;
 		}else{
 			apiUrl = `${API_URL}/monthly-service/add`;
 		}

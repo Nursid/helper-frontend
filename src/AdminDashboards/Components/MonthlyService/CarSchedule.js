@@ -15,6 +15,8 @@ import { GridToolbarExport } from "@mui/x-data-grid";
 import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector } from "@mui/x-data-grid";
 import { BiExport } from "react-icons/bi";
 import MonthlySchedule from "../../MonthlySchedule";
+import {exportToExcel} from './view/exporttoexcel'
+import {secondhalfExport} from "./view/secondhalfExport"
 
 const CarSchedule = () => {
 
@@ -32,18 +34,31 @@ const CarSchedule = () => {
           <GridToolbarQuickFilter />
           <GridToolbarColumnsButton />
           <GridToolbarFilterButton />
-          <GridToolbarExport />
+          {/* <GridToolbarExport /> */}
           <GridToolbarDensitySelector />
           <Button
+                    onClick={() => {
+                        exportToExcel(colums, DataWithID(data));
+                    }}
+                    className="btn btn-primary"
+                    size="sm"
+                >
+                    <BiExport className="mr-2" />
+                    First Half Export
+                </Button>
+
+          <Button
             onClick= {() => {
-              MonthlySchedule(colums, DataWithID(data),);
+              secondhalfExport(colums, DataWithID(data));
             }}
             className="btn btn-primary"
             size="sm"
             >
             <BiExport className="mr-2" />
-            Export
+           Second Half Export
             </Button>
+
+            
         </GridToolbarContainer>
       );
     };
@@ -80,7 +95,6 @@ const CarSchedule = () => {
   
               // Add each time slot with the formatted string of customer and service details
               for (const [timeSlot, orders] of Object.entries(item)) {
-                console.log("--orders--",orders)
                   if (timeSlot !== 'name') {
                       transformedItem[timeSlot] = orders.map(order => 
                           `${order.cust_name} - ${order.serviceType} - ${getStatusByKey(order.pending)}`
