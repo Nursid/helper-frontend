@@ -22,7 +22,7 @@ import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButt
 import { GetAllServiceProvider } from '../../../Store/Actions/Dashboard/Authentication/ServiceProviderActions';
 import SelectBox from "../../Elements/SelectBox";
 
-const Availability = () => {
+const OutsouceAvailabilities = () => {
 
     const { userRole } = useUserRoleContext();
     const { data } = useSelector(state => state.AvailabilityReducers)
@@ -257,7 +257,7 @@ const Availability = () => {
         from: from,
         to: to,
         emp_id: serviceProvider?.value,
-        type: 'staff'
+        type: 'outsource'
       }
       if(!from || !to || !serviceProvider?.value){
           return;
@@ -284,12 +284,11 @@ const Availability = () => {
     }
  
     const propsData = {
-      type: 'staff'
+      type: 'outsource'
     }
-
     useEffect(() => {
+      
       // Call API to get all service providers
-
       getAllServicesProvider();
       console.log('Effect called');  // Debug log to check when the effect runs
       // Dispatch action to get availability for the current date
@@ -323,7 +322,7 @@ const Availability = () => {
         />
 
 
-                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "30rem", minWidth: "30rem" }}>Service Provider Availability</h4>
+                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "30rem", minWidth: "30rem" }}>Outsouce Availability</h4>
 
                 
 
@@ -381,4 +380,4 @@ const Availability = () => {
     )
 }
 
-export default Availability;
+export default OutsouceAvailabilities;

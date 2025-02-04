@@ -22,10 +22,10 @@ import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButt
 import { GetAllServiceProvider } from '../../../Store/Actions/Dashboard/Authentication/ServiceProviderActions';
 import SelectBox from "../../Elements/SelectBox";
 
-const Availability = () => {
+const BaseAvailability = ({ availabilityType, title }) => {
 
     const { userRole } = useUserRoleContext();
-    const { data } = useSelector(state => state.AvailabilityReducers)
+    const { data } = useSelector(state => state.AvailabilityReducers[availabilityType]);
     const [EmployeeAvailabilityModalOpen, setEmployeeAvailabilityModalOpen] = useState(false);
     const [field, setField] = useState("");
     const [mobileNo, setMobileNo] = useState("");
@@ -257,7 +257,7 @@ const Availability = () => {
         from: from,
         to: to,
         emp_id: serviceProvider?.value,
-        type: 'staff'
+        type: availabilityType
       }
       if(!from || !to || !serviceProvider?.value){
           return;
@@ -283,18 +283,12 @@ const Availability = () => {
       }
     }
  
-    const propsData = {
-      type: 'staff'
-    }
+   
 
     useEffect(() => {
-      // Call API to get all service providers
-
-      getAllServicesProvider();
-      console.log('Effect called');  // Debug log to check when the effect runs
-      // Dispatch action to get availability for the current date
-      dispatch(GetAvailability(propsData));
-    }, []);  // Make sure dispatch is a stable reference
+        getAllServicesProvider();
+        dispatch(GetAvailability({ type: availabilityType }));
+      }, []);  // Make sure dispatch is a stable reference
     
 
 
@@ -323,7 +317,7 @@ const Availability = () => {
         />
 
 
-                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "30rem", minWidth: "30rem" }}>Service Provider Availability</h4>
+                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "30rem", minWidth: "30rem" }}> {title} </h4>
 
                 
 
@@ -381,4 +375,4 @@ const Availability = () => {
     )
 }
 
-export default Availability;
+export default BaseAvailability;

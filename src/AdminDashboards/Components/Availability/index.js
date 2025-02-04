@@ -7,6 +7,8 @@ import AnimatedBackground from '../../Elements/AnimatedBacground';
 import { useUserRoleContext } from '../../../Context/RolesContext';
 import { WaitLoader } from '../../Elements/WaitLoader';
 import SupervisorAvailability from './supervisorAvailability';
+import OutsouceAvailabilities from './outsouceAvailabilities';
+import BaseAvailability from './BaseAvailability';
 
 const AvailabilityIndex = () => {
     const [activeTab, setActiveTab] = useState("serviceProvider");
@@ -32,12 +34,11 @@ const AvailabilityIndex = () => {
 
                     <div className="AttendenceTabs px-3">
                             {/* set role wise display  */}
-
-
                             {userRole && userRole.AttendenceServiceProvider ? <span className={` ${activeTab === "serviceProvider" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveTab("serviceProvider") }}>Service-Provider Availability</span> : null}
 
-                            {userRole && userRole.Availability ? <span className={` ${activeTab === "supervisor" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveTab("supervisor") }}>Supervisor Availability</span> : null}
+                            {userRole && userRole.AttendenceServiceProvider ? <span className={` ${activeTab === "Outsouce" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveTab("Outsouce") }}>Outsouce Availability</span> : null}
 
+                            {userRole && userRole.Availability ? <span className={` ${activeTab === "supervisor" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveTab("supervisor") }}>Supervisor Availability</span> : null}
                         </div>
 
                         <TabContent activeTab={activeTab}>
@@ -45,7 +46,11 @@ const AvailabilityIndex = () => {
                                      <SupervisorAvailability />
                                     </TabPane>
                                     <TabPane tabId="serviceProvider">
-                                        <Availability />
+                                        <BaseAvailability title={'Service Provider Availability'} availabilityType={'staff'} />
+                                    </TabPane>
+                                    <TabPane tabId="Outsouce">
+                                    <BaseAvailability title={'Outsource Availability'} availabilityType={'outsource'} />
+                                        {/* <OutsouceAvailabilities /> */}
                                     </TabPane>
                         </TabContent>
                     </div>
