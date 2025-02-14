@@ -116,6 +116,7 @@ const BaseAvailability = ({ availabilityType, title }) => {
       }
 
       if (params?.value?.includes("MonthlyService")) {
+        
         return "class-monthly";
       }
   
@@ -201,6 +202,7 @@ const BaseAvailability = ({ availabilityType, title }) => {
           }
         },
         { field: "provider_type",  headerName: "Provider Type", minWidth: 150, editable: true},
+        { field: "duty_hours",  headerName: "Duty Hours", minWidth: 150, editable: true},
         { field: "date",  headerName: "Date", minWidth: 150, editable: true
          },
           {

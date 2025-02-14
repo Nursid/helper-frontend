@@ -47,6 +47,7 @@ export default function ViewServiceProvider({ data2, toggleModal }) {
   ];
   const items9 = [
     { label: 'Service Provider Type', value: data2.supervisor_type || "", },
+    { label: 'Duty Hours', value: data2.duty_hours || "" },
     { label: 'About', value: data2.about || "", },
   ];
 

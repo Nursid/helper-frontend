@@ -25,9 +25,6 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 
 	const today2 = new Date().toISOString().slice(0, 16); // Format: 'YYYY-MM-DDTHH:mm'
 
-
-	console.log("--",data)
-
 	const [getAllSupervisor, setGetAllSupervisor] = useState([])
 	const [supervisor, setSupervisor] = useState(data?.supervisor || '')
 	const dispatch = useDispatch();

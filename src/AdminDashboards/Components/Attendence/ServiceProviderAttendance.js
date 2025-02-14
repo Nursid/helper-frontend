@@ -58,8 +58,6 @@ const ServiceProviderAttendance = () => {
         if(formData.action==='check_in'){
           
         const response = await axios.post(`${API_URL}/api/availability/attendance/${servp_id}`);
-
-        console.log("----",response);
         }
         
         if (response.status === 200) {
@@ -72,6 +70,37 @@ const ServiceProviderAttendance = () => {
             })
         }
     };
+
+    const ResetAttendance = (empId, date) => {
+      console.log(empId, date)
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to Reset Attendance!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Reset it!'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const response =  await axios.post(`${API_URL}/attendance/service-provider/reset`, {emp_id: empId, in_date: date});
+            if (response.status === 200) {
+                Swal.fire(
+                    'Reset Successfully!',
+                    'Your Attendance has been reset.',
+                    'success'
+                )
+                dispatch(ServiceProviderAttendancaAction())
+            } else {
+                Swal.fire({
+                    title: 'failed to reset try again',
+                    icon: "error",
+                })
+            }
+        }
+    })
+     }
 
     const columns = [
         {
@@ -137,6 +166,19 @@ const ServiceProviderAttendance = () => {
                 )
             }
          },
+
+          { field: "reset", headerName: "Reset", flex: 1, minWidth: 180, editable: false,
+         
+                   renderCell: (params) => {
+                         return (
+                           <div className="d-flex gap-2">
+                           <Button variant='contained' color='warning' 
+                           onClick={() => ResetAttendance(params.row.servp_id, params.row.in_date)}
+                               >Reset</Button>
+                            </div>   
+                         )
+                     }
+                  },
     ];
 
 

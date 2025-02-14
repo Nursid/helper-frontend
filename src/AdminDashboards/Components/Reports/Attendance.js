@@ -65,7 +65,7 @@ export default function Attendance() {
 
     const calculateLateOnTime = (checkInTime) => {
       const startTime = new Date();
-      startTime.setHours(9, 0, 0, 0); // 9:00 AM
+      startTime.setHours(7, 0, 0, 0); // 9:00 AM
     
       const endTime = new Date();
       endTime.setHours(18, 0, 0, 0); // 6:00 PM
@@ -90,6 +90,7 @@ export default function Attendance() {
     
       return `${lateHours > 0 ? lateHours + " hr " : ""}${lateMinutes} min`;
     };
+
     const CustomToolbar = () => {
         return (
           <GridToolbarContainer>

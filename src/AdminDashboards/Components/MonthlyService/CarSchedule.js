@@ -90,7 +90,6 @@ const CarSchedule = () => {
               const transformedItem = {
                   id: data.indexOf(item) + 1, // Generate a unique ID based on index
                   name: item.name,
-          
               };
   
               // Add each time slot with the formatted string of customer and service details

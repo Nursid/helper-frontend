@@ -31,6 +31,36 @@ const SupervisorAttendance = () => {
       setEmpId(empId)
       toggleModal()
     }
+    const ResetAttendance = (empId, date) => {
+      console.log(empId, date)
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to Reset Attendance!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Reset it!'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const response =  await axios.post(`${API_URL}/attendance/supervisor/reset`, {emp_id: empId, in_date: date});
+            if (response.status === 200) {
+                Swal.fire(
+                    'Reset Successfully!',
+                    'Your Attendance has been reset.',
+                    'success'
+                )
+                dispatch(AttendanceAction())
+            } else {
+                Swal.fire({
+                    title: 'failed to reset try again',
+                    icon: "error",
+                })
+            }
+        }
+    })
+     }
 
     const role = currentUser && currentUser.role ? currentUser.role : currentUser && currentUser.designation.name ? currentUser.designation.name : ""
 
@@ -125,6 +155,19 @@ const SupervisorAttendance = () => {
                   onClick={() => addLeave(params.row.emp_id)}
                       style={{minWidth: "40px", maxWidth: "40px"}}
                       ><LogoutIcon /></Button>
+                  
+                   </div>   
+                )
+            }
+         },
+        { field: "reset", headerName: "Reset", flex: 1, minWidth: 180, editable: false,
+
+          renderCell: (params) => {
+                return (
+                  <div className="d-flex gap-2">
+                  <Button variant='contained' color='warning' 
+                  onClick={() => ResetAttendance(params.row.emp_id, params.row.in_date)}
+                      >Reset</Button>
                    </div>   
                 )
             }

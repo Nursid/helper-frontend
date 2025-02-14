@@ -123,7 +123,8 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
         document3_name: data2.document3_name || "",
         document3: data2.document3 || "",
         provider_type: data2.provider_type || "",
-        supervisor_type: data2.supervisor_type || ""
+        supervisor_type: data2.supervisor_type || "",
+        duty_hours: data.duty_hours || "",
     });
    const [checkbox , setCheckbox]=useState(false);
 
@@ -427,6 +428,20 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                 />
                                             </FormGroup>
                                         </Col> */}
+
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="about">Duty Hours</Label>
+                                                <Input
+                                                    type="text"
+                                                    name="duty_hours"
+                                                    onChange={(e) => handleChange(e, 10)}
+                                                    placeholder='Duty Hours'
+                                                    value={formData.duty_hours}
+                                                />
+                                            </FormGroup>
+                                        </Col>
+
                                         <Col md={12}>
                                             <FormGroup>
                                                 <Label for="paddress">Parmanent Address</Label>

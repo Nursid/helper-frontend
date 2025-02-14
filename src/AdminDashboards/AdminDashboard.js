@@ -363,13 +363,13 @@ const AdminDashboard = () => {
   }
 
   const OrderComplete= (orderNo, piadamt, totalamt) =>{
-
-    if(piadamt==null && totalamt==null){
+   
+    if (!piadamt) {
       Swal.fire({
-        title: 'failed to Completed, Please Add Amount',
-        icon: "error",
-    })
-    return;
+          title: 'Failed to complete, please add amount',
+          icon: "error",
+      });
+      return;
     }
 
     Swal.fire({
@@ -407,7 +407,6 @@ const AdminDashboard = () => {
           }
       }
   })
-
   }
 
   const handleDeleteInventry = (itemID)=>{
@@ -525,6 +524,7 @@ const AdminDashboard = () => {
   }
 
   const AssignSupervisor = (order_no, date, time_range, service_name) => { 
+    return;
     setAssignSupervisorData({ order_no, date, time_range, service_name});
     setsupervisorModalOpen(!supervisorModalOpen);
 }
@@ -754,8 +754,11 @@ const AdminDashboard = () => {
             <Button 
               variant='contained' 
               color='primary' 
-              onClick={() => AssignSupervisor(params.row.order_no, params.row.bookdate, params.row.allot_time_range, params.row.service_name)} 
-              disabled={params?.row?.userRole?.role === "service"}
+              // onClick={() => AssignSupervisor(params.row.order_no, params.row.bookdate, params.row.allot_time_range, params.row.service_name)} 
+              onClick={''}
+              
+              // disabled={params?.row?.userRole?.role === "service"}
+              disabled
             >
               Supervisor
             </Button>
@@ -771,7 +774,11 @@ const AdminDashboard = () => {
         {
       params.row.pending !== "Completed" && params.row.pending !== "Cancel" ? (
         !params.row.servicep_id && params?.row?.userRole?.role !== "service"  ? (
-          <Button variant='contained' color='primary' onClick={() => AssignServiceProvider(params.row.order_no, params.row.bookdate, params.row.service_name )} >
+          <Button variant='contained' color='primary' 
+          // onClick={() => AssignServiceProvider(params.row.order_no, params.row.bookdate, params.row.service_name )} 
+          // onClick={''}
+          disabled
+          >
             Service Provider
           </Button>
 
