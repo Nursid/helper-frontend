@@ -19,8 +19,8 @@ const onsubmitDate =() => {
         pending:5
     }
 
-    const apiUrl = `${API_URL}/order/assign/${order_no}`;
-		axios.put(apiUrl, data)
+    const apiUrl = `${API_URL}/order/cancel/${order_no}`;
+		axios.post(apiUrl, data)
 			.then(response => {
 			
 				if (response.status === 200) {

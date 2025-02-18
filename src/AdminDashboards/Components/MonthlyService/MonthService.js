@@ -147,22 +147,22 @@ const MonthService = () => {
 
     const InvoiceRef = useRef(null);
 
-  const [invoiceData, setInvoice] = useState([]);
+    const [invoiceData, setInvoice] = useState([]);
 
-  const handlePrint2 = useReactToPrint({
-    content: () => InvoiceRef.current,
-    onAfterPrint: () => setInvoice([])
-  });
+    const handlePrint2 = useReactToPrint({
+        content: () => InvoiceRef.current,
+        onAfterPrint: () => setInvoice([])
+    });
   
-  const handleInvoice = (data) => {
-    setInvoice(data);
-  };
+    const handleInvoice = (data) => {
+        setInvoice(data);
+    };
 
-  useEffect(()=>{
-    if (invoiceData && Object.keys(invoiceData).length > 0) {
-      handlePrint2();
-    }
-  }, [invoiceData,handlePrint2 ])
+    useEffect(()=>{
+        if (invoiceData && Object.keys(invoiceData).length > 0) {
+        handlePrint2();
+        }
+    }, [invoiceData,handlePrint2 ])
 
 
     const check_in = async (orderNo, feesPaidDateTime) => {

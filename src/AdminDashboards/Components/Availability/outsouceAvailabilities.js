@@ -37,8 +37,6 @@ const OutsouceAvailabilities = () => {
     const [to, setTo] = useState(null)
     const [getAllServiceProvider, setGetAllServiceProvider] = useState([])
     const [serviceProvider, setServiceProvider] = useState('')
-
-  
    
     const [Toggle, setToggle] = useState(false);
     const toggleAddAvailability = () => setToggle(!Toggle);
@@ -97,8 +95,6 @@ const OutsouceAvailabilities = () => {
         setDate(moment(data.date, "DD-MM-YYYY").format("YYYY-MM-DD")) 
         setEmployeeAvailabilityModalOpen(!EmployeeAvailabilityModalOpen);
     }
-
-   
 
     const [statusClasses, setStatusClasses] = useState({}); // Cache for order statuses
 
