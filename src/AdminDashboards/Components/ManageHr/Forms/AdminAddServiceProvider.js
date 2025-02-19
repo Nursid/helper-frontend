@@ -125,6 +125,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
         provider_type: data2.provider_type || "",
         supervisor_type: data2.supervisor_type || "",
         duty_hours: data.duty_hours || "",
+        start_time: data.start_time || "",
     });
    const [checkbox , setCheckbox]=useState(false);
 
@@ -244,7 +245,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
             }
         };
 
-    const formattedDate = formData.doj ? new Date(formData.doj).toISOString().slice(0, 10) : "";
+    // const formattedDate = formData.doj ? new Date(formData.doj).toISOString().slice(0, 10) : "";
 
     return (
         <Fragment>
@@ -409,7 +410,7 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     type="date"
                                                     name="doj"
                                                     onChange={(e) => handleChange(e, 50)}
-                                                    value={formattedDate}
+                                                    value={formData.doj}
                                                     id="doj"
                                                     placeholder='Enter Date Of Joining'
                                                 />
@@ -438,6 +439,18 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
                                                     onChange={(e) => handleChange(e, 10)}
                                                     placeholder='Duty Hours'
                                                     value={formData.duty_hours}
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="about">start time</Label>
+                                                <Input
+                                                    type="number"
+                                                    name="start_time"
+                                                    onChange={(e) => handleChange(e, 10)}
+                                                    placeholder='start time'
+                                                    value={formData.start_time}
                                                 />
                                             </FormGroup>
                                         </Col>

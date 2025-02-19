@@ -98,8 +98,6 @@ const Availability = () => {
         setEmployeeAvailabilityModalOpen(!EmployeeAvailabilityModalOpen);
     }
 
-   
-
     const [statusClasses, setStatusClasses] = useState({}); // Cache for order statuses
 
     const getCellClassName = (params) => {

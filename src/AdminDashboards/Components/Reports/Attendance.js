@@ -40,7 +40,7 @@ export default function Attendance() {
           NewData.push({
             ...item,
             status: updatedStatus, 
-            lateontime: item.check_in ? calculateLateOnTime(item.check_in) : "",
+            lateontime: item.check_in ? calculateLateOnTime(item.start_time, item.check_in) : "",
           });
         }
     
@@ -63,26 +63,18 @@ export default function Attendance() {
       return NewData;
     };
 
-    const calculateLateOnTime = (checkInTime) => {
+    const calculateLateOnTime = (start_time, checkInTime) => {
+      console.log("---",start_time)
+      const startCheckIn = parseInt(start_time)
       const startTime = new Date();
-      startTime.setHours(7, 0, 0, 0); // 9:00 AM
+      startTime.setHours(startCheckIn, 0, 0, 0); 
     
       const endTime = new Date();
-      endTime.setHours(18, 0, 0, 0); // 6:00 PM
+      endTime.setHours(18, 0, 0, 0); 
     
       const checkIn = new Date();
       const [hours, minutes] = checkInTime.split(":").map(Number);
       checkIn.setHours(hours, minutes, 0, 0);
-    
-      // Check if the time is outside the valid range
-      // if (checkIn < startTime || checkIn > endTime) {
-      //   return "Out of range";
-      // }
-    
-      // Calculate late time if within range
-      // if (checkIn <= startTime) {
-      //   return "On Time";
-      // }
     
       const diff = Math.floor((checkIn - startTime) / (1000 * 60)); // Difference in minutes
       const lateHours = Math.floor(diff / 60);

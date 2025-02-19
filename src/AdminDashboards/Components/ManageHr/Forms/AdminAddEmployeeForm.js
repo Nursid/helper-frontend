@@ -35,6 +35,7 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
         v_name: data.v_name || "",
         v_date: data.v_date || "",
         gender: data.gender || "",
+        start_time: data.start_time || "",
     });
 
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -550,6 +551,18 @@ const AdminAddEmployeeForm = ({ toggleModal,data }) => {
                                                     onChange={(e) => handleChange(e, 10)}
                                                     placeholder='Duty Hours'
                                                     value={formData.duty_hours}
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="about">Start Time</Label>
+                                                <Input
+                                                    type="number"
+                                                    name="start_time"
+                                                    onChange={(e) => handleChange(e, 10)}
+                                                    placeholder='start time'
+                                                    value={formData.start_time}
                                                 />
                                             </FormGroup>
                                         </Col>

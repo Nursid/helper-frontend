@@ -273,7 +273,7 @@ const AdminDashboard = () => {
       confirmButtonText: 'Yes, Hold it!'
   }).then(async (result) => {
       if (result.isConfirmed) {
-          const response = await axios.put(API_URL + '/order/assign/' + orderNo,{pending: 1},
+          const response = await axios.get(API_URL + '/order/hold/' + orderNo,{pending: 1},
             {
               headers: {
                   'Authorization': `Bearer ${token}`
