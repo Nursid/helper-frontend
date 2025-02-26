@@ -124,8 +124,8 @@ const AdminAddServiceProvider = ({ toggleModal,data2 }) => {
         document3: data2.document3 || "",
         provider_type: data2.provider_type || "",
         supervisor_type: data2.supervisor_type || "",
-        duty_hours: data.duty_hours || "",
-        start_time: data.start_time || "",
+        duty_hours: data2.duty_hours || "",
+        start_time: data2.start_time || "",
     });
    const [checkbox , setCheckbox]=useState(false);
 

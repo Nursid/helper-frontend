@@ -17,6 +17,7 @@ import { BiExport } from "react-icons/bi";
 import MonthlySchedule from "../../MonthlySchedule";
 import {exportToExcel} from './view/exporttoexcel'
 import {secondhalfExport} from "./view/secondhalfExport"
+import { test } from "./view/test";
 
 const CarSchedule = () => {
 
@@ -36,7 +37,7 @@ const CarSchedule = () => {
           <GridToolbarFilterButton />
           {/* <GridToolbarExport /> */}
           <GridToolbarDensitySelector />
-          <Button
+          {/* <Button
                     onClick={() => {
                         exportToExcel(colums, DataWithID(data));
                     }}
@@ -45,9 +46,19 @@ const CarSchedule = () => {
                 >
                     <BiExport className="mr-2" />
                     First Half Export
+                </Button> */}
+          <Button
+                    onClick={() => {
+                      test(colums, DataWithID(data));
+                    }}
+                    className="btn btn-primary"
+                    size="sm"
+                >
+                    <BiExport className="mr-2" />
+                    Export
                 </Button>
 
-          <Button
+          {/* <Button
             onClick= {() => {
               secondhalfExport(colums, DataWithID(data));
             }}
@@ -56,7 +67,7 @@ const CarSchedule = () => {
             >
             <BiExport className="mr-2" />
            Second Half Export
-            </Button>
+            </Button> */}
 
             
         </GridToolbarContainer>
@@ -96,7 +107,7 @@ const CarSchedule = () => {
               for (const [timeSlot, orders] of Object.entries(item)) {
                   if (timeSlot !== 'name') {
                       transformedItem[timeSlot] = orders.map(order => 
-                          `${order.cust_name} - ${order.serviceType} - ${getStatusByKey(order.pending)}`
+                          `${order.cust_name} (${order.serviceType}) - ${getStatusByKey(order.pending)}`
                       ).join(", ");
                   }
               }

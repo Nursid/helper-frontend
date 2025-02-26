@@ -58,7 +58,7 @@ export const GetAllServiceProvider = () => {
     return async (dispatch) => {
         dispatch({ type: contant.SERVICE_PROVIDER_ALL_API_LOADING })
         try {
-            const response = await axios.get(API_URL + '/service-provider/getall')
+            const response = await axios.get(API_URL + '/service-provider/getall-provider')
             if (response.status === 200) {
                 dispatch({ type: contant.SERVICE_PROVIDER_ALL_API_SUCCESS, payload: response.data.data })
             }

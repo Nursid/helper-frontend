@@ -79,6 +79,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		{label: "Dog Walk", value: "Dog Walk"},
 		{label: "Bathroom Cleaning", value: "Bathroom Cleaning"},
 		{label: "Monthly Cleaning", value: "Monthly Cleaning"},
+		{label: "Gardening service", value: "Gardening service"},
 		{label: "Miscellaneous", value: "Miscellaneous"},
 	]);
 	const payMethodOptions = [

@@ -132,7 +132,7 @@ export default function Attendance() {
     const columns = [
       { field: "id", headerName: "Sr No.", flex: 1, minWidth: 120, },
       { field: "name", headerName: "Name", flex: 1, minWidth: 120, editable: false },
-      { field: "role", headerName: "Work Profile", flex: 1, minWidth: 120, editable: false },
+      { field: "role", headerName: "Designation", flex: 1, minWidth: 120, editable: false },
       { field: "mobile_no", headerName: "Mobile", flex: 1, minWidth: 120, editable: false },
       { field: "status", headerName: "Present/Absent", flex: 1, minWidth: 120, editable: false },
       // { field: "in_date", headerName: "Date", flex: 1, minWidth: 120, editable: false },

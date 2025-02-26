@@ -1,7 +1,19 @@
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-export const exportToExcel = (columns, rows) => {
+
+function getColumnLetter(colNumber) {
+    let columnLetter = '';
+    while (colNumber > 0) {
+        let remainder = (colNumber - 1) % 26;
+        columnLetter = String.fromCharCode(65 + remainder) + columnLetter;
+        colNumber = Math.floor((colNumber - 1) / 26);
+    }
+    return columnLetter;
+}
+
+
+export const test = (columns, rows) => {
   // Validate inputs
   if (!Array.isArray(rows)) {
     console.error('Invalid rows data - expected array, received:', rows);
@@ -42,11 +54,14 @@ export const exportToExcel = (columns, rows) => {
     { field: "05:30-06:00", headerName: "05:30-06:00 PM" }
   ];
 
-  // Calculate last column letter
+  // Calculate last column letter correctly
   const lastColNumber = columnsToExport.length;
-  const lastColumnLetter = String.fromCharCode(64 + lastColNumber);
+  console.log("lastColNumber=----",lastColNumber)
+  const lastColumnLetter = getColumnLetter(lastColNumber);
+//   const lastColumnLetter = String.fromCharCode(64 + lastColNumber);
 
-  // Merge and style A1 to the last column in the first row
+  console.log("lastColumnLetter=----",lastColumnLetter)
+  // Add main header
   worksheet.mergeCells(`A1:${lastColumnLetter}1`);
   const titleCell = worksheet.getCell('A1');
   titleCell.value = 'SsQuick Helper';
@@ -64,15 +79,9 @@ export const exportToExcel = (columns, rows) => {
     vertical: 'middle', 
     horizontal: 'center' 
   };
-  titleCell.border = {
-    top: {style:'thin'},
-    left: {style:'thin'},
-    bottom: {style:'thin'},
-    right: {style:'thin'}
-  };
   worksheet.getRow(1).height = 40;
 
-  // Merge and style A2 to the last column in the second row
+  // Add sub-header
   worksheet.mergeCells(`A2:${lastColumnLetter}2`);
   const subHeader = worksheet.getCell('A2');
   subHeader.value = `Daily Schedule - ${new Date().toLocaleString()}`;
@@ -90,13 +99,10 @@ export const exportToExcel = (columns, rows) => {
     vertical: 'middle',
     horizontal: 'center'
   };
-  subHeader.border = {
-    top: {style:'thin'},
-    left: {style:'thin'},
-    bottom: {style:'thin'},
-    right: {style:'thin'}
-  };
-  worksheet.getRow(2).height = 40;
+  worksheet.getRow(1).height = 40;
+
+  // // Add empty row between headers and column titles
+  // worksheet.addRow([]);
 
   // Add column headers
   const headerRow = worksheet.addRow(columnsToExport.map(col => col.headerName));
@@ -117,79 +123,52 @@ export const exportToExcel = (columns, rows) => {
       horizontal: 'center'
     };
     cell.border = {
-      top: {style:'thin'},
-      left: {style:'thin'},
-      bottom: {style:'thin'},
-      right: {style:'thin'}
-    };
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+      };
   });
 
   // Add data rows
-  const statusColors = {
-    Pending: 'FFE67E22',
-    Hold: 'FFE74C3C',
-    Due: 'FFA29BFE',
-    Completed: 'FF27AE60',
-    Running: 'FFF1C40F',
-    Cancel: 'FF95A5A6'
-  };
-
-  if (Array.isArray(rows)) {
-    rows.forEach(row => {
-      const rowData = columnsToExport.map(col => {
-        const value = row[col.field];
-        if (typeof value === 'string') {
-          // Split comma-separated entries, clean each, then rejoin
-          return value.split(/,\s*/)
-            .map(entry => {
-              // Remove status from each individual entry
-              return entry.replace(/\s*-\s*(Pending|Hold|Due|Completed|Running|Cancel)$/, '')
-                          .trim();
-            })
-            .join(', ');
-        }
-        return value;
-      });
-
-      const newRow = worksheet.addRow(rowData);
-      newRow.height = 40;
-
-      // Apply conditional styling
-      columnsToExport.forEach((col, index) => {
-        const cell = newRow.getCell(index + 1);
-        const originalValue = row[col.field];
-        
-        if (typeof originalValue === 'string') {
-          // Find first status in any of the comma-separated entries
-          const detectedStatus = originalValue.split(/,\s*/).reduce((acc, entry) => {
-            if (acc) return acc; // Keep first found status
-            const match = entry.match(/(Pending|Hold|Due|Completed|Running|Cancel)$/);
-            return match ? match[1] : null;
-          }, null);
-
-          if (detectedStatus && statusColors[detectedStatus]) {
-            cell.fill = {
-              type: 'pattern',
-              pattern: 'solid',
-              fgColor: { argb: statusColors[detectedStatus] }
-            };
-          }
-        }
-        
-        cell.alignment = {
-          vertical: 'middle',
-          horizontal: 'center'
-        };
-        cell.border = {
-          top: {style:'thin'},
-          left: {style:'thin'},
-          bottom: {style:'thin'},
-          right: {style:'thin'}
-        };
-      });
+// Add data rows
+if (Array.isArray(rows)) {
+  rows.forEach(row => {
+    const rowData = columnsToExport.map(col => {
+      const value = row[col.field];
+      if (typeof value === 'string') {
+        // Split comma-separated entries, clean each, then rejoin
+        return value.split(/,\s*/)
+          .map(entry => {
+            // Remove status from each individual entry
+            return entry.replace(/\s*-\s*(Pending|Hold|Due|Completed|Running|Cancel)$/, '')
+                        .trim();
+          })
+          .join(', ');
+      }
+      return value;
     });
-  }
 
+    const newRow = worksheet.addRow(rowData);
+    newRow.height = 40;
+
+    // Apply conditional styling
+    columnsToExport.forEach((col, index) => {
+      const cell = newRow.getCell(index + 1);
+      
+      cell.alignment = {
+        vertical: 'middle',
+        horizontal: 'center'
+      };
+      cell.border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+      };
+    });
+  });
+}
   // Set column widths
   worksheet.columns = columnsToExport.map(() => ({
     width: 20
