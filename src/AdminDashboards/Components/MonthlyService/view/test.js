@@ -56,11 +56,9 @@ export const test = (columns, rows) => {
 
   // Calculate last column letter correctly
   const lastColNumber = columnsToExport.length;
-  console.log("lastColNumber=----",lastColNumber)
   const lastColumnLetter = getColumnLetter(lastColNumber);
 //   const lastColumnLetter = String.fromCharCode(64 + lastColNumber);
 
-  console.log("lastColumnLetter=----",lastColumnLetter)
   // Add main header
   worksheet.mergeCells(`A1:${lastColumnLetter}1`);
   const titleCell = worksheet.getCell('A1');

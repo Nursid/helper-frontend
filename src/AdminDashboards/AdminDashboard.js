@@ -1022,9 +1022,18 @@ const AdminDashboard = () => {
         console.error('Error updating due order:', error);
     }
   };
+  const addcheckincheckoutlatetime = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/order/addcheckincheckoutlatetime`);
+        console.log('Response:', response.data);
+    } catch (error) {
+        console.error('Error updating due order:', error);
+    }
+  };
 
   useEffect(() => {
       UpdateDueOrder();
+      addcheckincheckoutlatetime()
   }, []);
   
   

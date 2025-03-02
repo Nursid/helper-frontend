@@ -116,9 +116,15 @@ const BaseAvailability = ({ availabilityType, title }) => {
       }
 
       if (params?.value?.includes("MonthlyService")) {
-        
-        return "class-monthly";
-      }
+        const splitValue = params.value.split('-'); // Split the value by '-'
+        const lastPart = splitValue[splitValue.length - 1]; // Get the last part of the split value
+    
+        if (lastPart === "completed") {
+            return "completed-cell"; // Apply green class if the value ends with "completed"
+        }else{
+          return "class-monthly"; // Apply monthly class for other cases
+        }
+    }
   
     
       if (params?.value && !params.value.includes("MonthlyService")) {
@@ -184,10 +190,10 @@ const BaseAvailability = ({ availabilityType, title }) => {
               </Button>
             ),
             minWidth: 100,
-            editable: true,
+            editable: true
         },
 
-        { field: "name",  headerName: "Name", minWidth: 150, editable: true},
+        { field: "name",  headerName: "Name", minWidth: 150, editable: true,  pinned: 'left' },
         {
           field: "image",
           headerName: "Image",
@@ -371,7 +377,11 @@ const BaseAvailability = ({ availabilityType, title }) => {
             
             
             <div className="p-4">
-                <AdminDataTable rows={DataWithID(data)} columns={colums}  CustomToolbar={CustomToolbar} />
+                <AdminDataTable rows={DataWithID(data)} columns={colums}  CustomToolbar={CustomToolbar} initialState={{
+    pinnedColumns: {
+      left: ['date'],  // Freezing the "date" column to the left
+    },
+  }} />
             </div>
             </Fragment>
     )

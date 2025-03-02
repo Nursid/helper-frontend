@@ -48,7 +48,6 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     approx_duration: orderData?.approx_duration || '',
   });
 
-
   const [allServices, setAllServices] = useState([]);
   const [allSupervisors, setAllSupervisors] = useState([]);
   const [allServiceProviders, setAllServiceProviders] = useState([]);
@@ -302,18 +301,34 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
             <Input name="email" type="email" onChange={(e) => handleInputChange(e, 50)} value={formData.email} placeholder="Enter Your Email" readOnly />
           </FormGroup>
         </Col>
-        <Col md={6}>
-          <FormGroup>
-            <Label>Time</Label>
-            <Input name="booktime" type="time" onChange={(e) => handleInputChange(e, 50)} value={formData.booktime} />
-          </FormGroup>
-        </Col>
-        <Col md={6}>
-          <FormGroup>
-            <Label>Date</Label>
-            <Input name="bookdate" type="date" onChange={(e) => handleInputChange(e, 50)} value={formData.bookdate} />
-          </FormGroup>
-        </Col>
+        {orderData.pending !== 'Running' && (
+            <>
+              <Col md={6}>
+                <FormGroup>
+                  <Label>Time</Label>
+                  <Input 
+                    name="booktime" 
+                    type="time" 
+                    onChange={(e) => handleInputChange(e, 50)} 
+                    value={formData.booktime} 
+                  />
+                </FormGroup>
+              </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label>Date</Label>
+                  <Input 
+                  name="bookdate" 
+                  type="date" 
+                  onChange={(e) => handleInputChange(e, 50)} 
+                  value={formData.bookdate} 
+                  min={new Date().toISOString().split('T')[0]} 
+                />
+
+                </FormGroup>
+              </Col>
+            </>
+          )}
         <Col md={6}>
           <FormGroup>
             <Label>Service Type <span style={{color: "red"}}>*</span></Label>
@@ -331,7 +346,8 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
             <Input name="problem_des" onChange={(e) => handleInputChange(e, 100)} value={formData.problem_des} placeholder="Problem Description" />
           </FormGroup>
         </Col>
-
+        {orderData.pending !== 'Running' && (
+            <>
         <Col md={6}>
           <FormGroup>
             <Label>Supervisor Name</Label>
@@ -399,6 +415,8 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
 						/>
           </FormGroup>
         </Col>
+        </>
+        )}
         <Col md={6}>
           <FormGroup>
             <Label>Address</Label>

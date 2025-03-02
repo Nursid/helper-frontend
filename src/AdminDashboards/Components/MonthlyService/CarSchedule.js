@@ -107,7 +107,7 @@ const CarSchedule = () => {
               for (const [timeSlot, orders] of Object.entries(item)) {
                   if (timeSlot !== 'name') {
                       transformedItem[timeSlot] = orders.map(order => 
-                          `${order.cust_name} (${order.serviceType}) - ${getStatusByKey(order.pending)}`
+                          `${order.cust_name} - ${getStatusByKey(order.pending)}`
                       ).join(", ");
                   }
               }

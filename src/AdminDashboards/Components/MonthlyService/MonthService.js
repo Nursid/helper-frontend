@@ -192,7 +192,7 @@ const MonthService = () => {
         checkouttime: moment(new Date()).format('DD/MM/YYYY, h:mm A'),
         feesPaidDateTime: feesPaidDateTime
         }
-        const apiUrl =  `${API_URL}/monthly-service/assign/${orderNo}`;;
+        const apiUrl =  `${API_URL}/monthly-service/checkout/${orderNo}`;
         // Make a POST request using Axios
         axios.put(apiUrl, formData).then(response => {
         if (response.status === 200) {
