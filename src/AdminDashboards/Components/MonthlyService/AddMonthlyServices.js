@@ -136,26 +136,26 @@ const AddMonthlyServices = ({toggleModal, data}) => {
     };
 
 
-	  const getAllServicesProvider = async () => {
-		try {
-		  const response = await axios.get(`${API_URL}/service-provider/getall`);
-		  if (response.status === 200) {
-			const transformedData = response.data.data.map(item => ({ label: item.name, value: item.name }));
-			setGetAllServiceProvider(transformedData);
-		  }
-		} catch (error) {
-		  console.error("Error fetching service providers:", error);
+	const getAllServicesProvider = async () => {
+	try {
+		const response = await axios.get(`${API_URL}/service-provider/getall`);
+		if (response.status === 200) {
+		const transformedData = response.data.data.map(item => ({ label: item.name, value: item.name }));
+		setGetAllServiceProvider(transformedData);
 		}
-	  }
+	} catch (error) {
+		console.error("Error fetching service providers:", error);
+	}
+	}
 
 
-	  const GetAllSupervisor = async () => {
+	const GetAllSupervisor = async () => {
 		const response = await axios.get(API_URL + `/employee/getall`)
 		if (response.status === 200) {
 			const transformedData = response.data.data.map(item => ({label: item.name, value: item.name}));
 			setGetAllSupervisor(transformedData);
 		}
-	  }
+	}
 
 	const onsubmit= async (e) => {
 	e.preventDefault();

@@ -37,7 +37,7 @@ const CarSchedule = () => {
           <GridToolbarFilterButton />
           {/* <GridToolbarExport /> */}
           <GridToolbarDensitySelector />
-          {/* <Button
+          <Button
                     onClick={() => {
                         exportToExcel(colums, DataWithID(data));
                     }}
@@ -46,8 +46,8 @@ const CarSchedule = () => {
                 >
                     <BiExport className="mr-2" />
                     First Half Export
-                </Button> */}
-          <Button
+                </Button>
+          {/* <Button
                     onClick={() => {
                       test(colums, DataWithID(data));
                     }}
@@ -56,9 +56,9 @@ const CarSchedule = () => {
                 >
                     <BiExport className="mr-2" />
                     Export
-                </Button>
+                </Button> */}
 
-          {/* <Button
+           <Button
             onClick= {() => {
               secondhalfExport(colums, DataWithID(data));
             }}
@@ -67,7 +67,7 @@ const CarSchedule = () => {
             >
             <BiExport className="mr-2" />
            Second Half Export
-            </Button> */}
+            </Button> 
 
             
         </GridToolbarContainer>

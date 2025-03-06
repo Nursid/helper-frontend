@@ -172,7 +172,7 @@ const MonthService = () => {
         checkintime: moment(new Date()).format('DD/MM/YYYY, h:mm A'),
         feesPaidDateTime: feesPaidDateTime
         }
-        const apiUrl =  `${API_URL}/monthly-service/assign/${orderNo}`;;
+        const apiUrl =  `${API_URL}/monthly-service/checkin/${orderNo}`;;
         // Make a POST request using Axios
         axios.put(apiUrl, formData).then(response => {
         if (response.status === 200) {
@@ -220,13 +220,49 @@ const MonthService = () => {
         
         const formData = {
             pending: 5,
+            feesPaidDateTime: feesPaidDateTime,
+            checkintime: null,
+            checkouttime: null
+        }
+        const apiUrl =  `${API_URL}/monthly-service/hold/${orderNo}`;;
+        // Make a POST request using Axios
+        axios.put(apiUrl, formData).then(response => {
+        if (response.status === 200) {
+            Swal.fire('Successfully!', "Your Order has been Canceled!", 'warning')
+            dispatch(GetAllMonthlyServiceAction())
+        } else {
+            Swal.fire({title:  response.data.message, icon: "error"})
+        } 			
+        }).catch(error => {
+        console.error('Error:', error);
+        });
+    }
+    })
+    };
+
+    const ResetCheckIn = async (orderNo, feesPaidDateTime) =>{ 
+        Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to Reset this!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, Reset it!'
+          }).then(async (result) => {
+              if (result.isConfirmed) {
+        
+        const formData = {
+            pending: 0,
+            checkintime: null,
+            checkouttime: null,
             feesPaidDateTime: feesPaidDateTime
         }
         const apiUrl =  `${API_URL}/monthly-service/assign/${orderNo}`;;
         // Make a POST request using Axios
         axios.put(apiUrl, formData).then(response => {
         if (response.status === 200) {
-            Swal.fire('Successfully!', "Your Order has been Canceled!", 'warning')
+            Swal.fire('Successfully!', "Your Order has been Reset!", 'warning')
             dispatch(GetAllMonthlyServiceAction())
         } else {
             Swal.fire({title:  response.data.message, icon: "error"})
@@ -255,8 +291,16 @@ const MonthService = () => {
                 const formData = {
                     pending: newPendingValue,
                     feesPaidDateTime: feesPaidDateTime,
+                    checkintime: null,
+                    checkouttime: null,
                 };
-                const apiUrl = `${API_URL}/monthly-service/assign/${orderNo}`;
+                let apiUrl = '';
+                console.log(currentPending)
+                if(currentPending === "Hold"){
+                    apiUrl = `${API_URL}/monthly-service/un-hold/${orderNo}`;
+                }else{
+                    apiUrl = `${API_URL}/monthly-service/hold/${orderNo}`;
+                }
                 try {
                     const response = await axios.put(apiUrl, formData);
                     if (response.status === 200) {
@@ -380,7 +424,7 @@ const MonthService = () => {
         {
             field: "action",
             headerName: "Action",
-            minWidth: 450,
+            minWidth: 550,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
                     <Button onClick={(e)=>{toggleEditMode(params.row)}} variant='contained' color='primary' style={{minWidth: "40px", maxWidth: "40px"}}><BorderColorIcon /></Button>
@@ -432,10 +476,18 @@ const MonthService = () => {
                             >
                                 Cancel
                             </Button>
-                        </>
-                    )}
 
-                                        
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={(e) => {
+                                    ResetCheckIn(params.row.orderNo, params.row.feesPaidDateTime);
+                                }}
+                            >
+                                Reset
+                            </Button>
+                        </>
+                    )}                  
                 </div>
             ),
         },

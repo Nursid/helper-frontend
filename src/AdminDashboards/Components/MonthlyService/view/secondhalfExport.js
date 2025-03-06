@@ -1,6 +1,18 @@
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
+
+function getColumnLetter(colNumber) {
+    let columnLetter = '';
+    while (colNumber > 0) {
+        let remainder = (colNumber - 1) % 26;
+        columnLetter = String.fromCharCode(65 + remainder) + columnLetter;
+        colNumber = Math.floor((colNumber - 1) / 26);
+    }
+    return columnLetter;
+}
+
+
 export const secondhalfExport = (columns, rows) => {
   // Validate inputs
   if (!Array.isArray(rows)) {
@@ -9,7 +21,7 @@ export const secondhalfExport = (columns, rows) => {
   }
 
   const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('Daily Schedule Second Half');
+  const worksheet = workbook.addWorksheet('Daily Schedule First Half');
 
   // Define columns to export
   const columnsToExport = [
@@ -18,6 +30,8 @@ export const secondhalfExport = (columns, rows) => {
     { field: "bike_no", headerName: "Scooty No." },
     { field: "check_in", headerName: "Check In" },
     { field: "check_out", headerName: "Check Out" },
+    { field: "12:00-12:30", headerName: "12:00-12:30 PM" },
+    { field: "12:30-01:00", headerName: "12:30-01:00 PM" },
     { field: "01:00-01:30", headerName: "01:00-01:30 PM" },
     { field: "01:30-02:00", headerName: "01:30-02:00 PM" },
     { field: "02:00-02:30", headerName: "02:00-02:30 PM" },
@@ -28,12 +42,12 @@ export const secondhalfExport = (columns, rows) => {
     { field: "04:30-05:00", headerName: "04:30-05:00 PM" },
     { field: "05:00-05:30", headerName: "05:00-05:30 PM" },
     { field: "05:30-06:00", headerName: "05:30-06:00 PM" }
-];
-
+  ];
 
   // Calculate last column letter correctly
   const lastColNumber = columnsToExport.length;
-  const lastColumnLetter = String.fromCharCode(64 + lastColNumber);
+  const lastColumnLetter = getColumnLetter(lastColNumber);
+//   const lastColumnLetter = String.fromCharCode(64 + lastColNumber);
 
   // Add main header
   worksheet.mergeCells(`A1:${lastColumnLetter}1`);
@@ -53,6 +67,7 @@ export const secondhalfExport = (columns, rows) => {
     vertical: 'middle', 
     horizontal: 'center' 
   };
+  worksheet.getRow(1).height = 40;
 
   // Add sub-header
   worksheet.mergeCells(`A2:${lastColumnLetter}2`);
@@ -72,12 +87,14 @@ export const secondhalfExport = (columns, rows) => {
     vertical: 'middle',
     horizontal: 'center'
   };
+  worksheet.getRow(1).height = 40;
 
   // // Add empty row between headers and column titles
   // worksheet.addRow([]);
 
   // Add column headers
   const headerRow = worksheet.addRow(columnsToExport.map(col => col.headerName));
+  headerRow.height = 40;
   headerRow.eachCell(cell => {
     cell.font = {
       bold: true,
@@ -93,19 +110,16 @@ export const secondhalfExport = (columns, rows) => {
       vertical: 'middle',
       horizontal: 'center'
     };
+    cell.border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+      };
   });
 
   // Add data rows
 // Add data rows
-const statusColors = {
-  Pending: 'FFE67E22',
-  Hold: 'FFE74C3C',
-  Due: 'FFA29BFE',
-  Completed: 'FF27AE60',
-  Running: 'FFF1C40F',
-  Cancel: 'FF95A5A6'
-};
-
 if (Array.isArray(rows)) {
   rows.forEach(row => {
     const rowData = columnsToExport.map(col => {
@@ -124,32 +138,21 @@ if (Array.isArray(rows)) {
     });
 
     const newRow = worksheet.addRow(rowData);
+    newRow.height = 40;
 
     // Apply conditional styling
     columnsToExport.forEach((col, index) => {
       const cell = newRow.getCell(index + 1);
-      const originalValue = row[col.field];
-      
-      if (typeof originalValue === 'string') {
-        // Find first status in any of the comma-separated entries
-        const detectedStatus = originalValue.split(/,\s*/).reduce((acc, entry) => {
-          if (acc) return acc; // Keep first found status
-          const match = entry.match(/(Pending|Hold|Due|Completed|Running|Cancel)$/);
-          return match ? match[1] : null;
-        }, null);
-
-        if (detectedStatus && statusColors[detectedStatus]) {
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: statusColors[detectedStatus] }
-          };
-        }
-      }
       
       cell.alignment = {
         vertical: 'middle',
         horizontal: 'center'
+      };
+      cell.border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
       };
     });
   });

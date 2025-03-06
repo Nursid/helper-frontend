@@ -117,15 +117,17 @@ const BaseAvailability = ({ availabilityType, title }) => {
 
       if (params?.value?.includes("MonthlyService")) {
         const splitValue = params.value.split('-'); // Split the value by '-'
-        const lastPart = splitValue[splitValue.length - 1]; // Get the last part of the split value
-    
+        const lastPart = splitValue[splitValue.length - 1];
         if (lastPart === "completed") {
             return "completed-cell"; // Apply green class if the value ends with "completed"
-        }else{
+          }
+        else if (lastPart === "pending") {
+            return "Running-availability"; 
+          } 
+        else {
           return "class-monthly"; // Apply monthly class for other cases
         }
-    }
-  
+      }
     
       if (params?.value && !params.value.includes("MonthlyService")) {
         const splitValue = params.value.split('-');  // Split by '-'
@@ -277,6 +279,26 @@ const BaseAvailability = ({ availabilityType, title }) => {
         console.error('Error fetching data:', error);
       }
     };
+    const FilterData2 = async () => {
+     
+      const data = {
+        ...filterDate,
+        type: availabilityType
+
+      }
+
+      if(!data){
+
+          return;
+      }
+      console.log(data)
+  
+      try {
+        dispatch(GetAvailability(data))
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
     const getAllServicesProvider = async (filterData) => {
       try {
@@ -335,7 +357,7 @@ const BaseAvailability = ({ availabilityType, title }) => {
                 <Input type="date" className="px-3" 
                 onChange={(e)=>setFilterDate({...filterDate, date: e.target.value})}
                 />
-                <Button variant='contained' color='primary' className="ml-4" style={{width: "200px"}}  onClick={()=>dispatch(GetAvailability(filterDate))}> Search </Button>
+                <Button variant='contained' color='primary' className="ml-4" style={{width: "200px"}}  onClick={FilterData2}> Search </Button>
 
             </div>
             </div>
