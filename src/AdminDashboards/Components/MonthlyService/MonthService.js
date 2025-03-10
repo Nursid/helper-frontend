@@ -258,7 +258,7 @@ const MonthService = () => {
             checkouttime: null,
             feesPaidDateTime: feesPaidDateTime
         }
-        const apiUrl =  `${API_URL}/monthly-service/assign/${orderNo}`;;
+        const apiUrl =  `${API_URL}/monthly-service/un-hold/${orderNo}`;;
         // Make a POST request using Axios
         axios.put(apiUrl, formData).then(response => {
         if (response.status === 200) {
@@ -443,7 +443,7 @@ const MonthService = () => {
                        Invoice
                     </Button>
 
-                    {params.row.pending !== 'Cancel' && params.row.pending !== 'Completed' && (
+                    {params.row.pending !== 'Cancel' && params.row.pending !== 'Completed' && params.row.pending !== 'Running' && (
                         <>
 
                             <Button
@@ -559,13 +559,11 @@ const MonthService = () => {
           try {
               // Call API to check customer by mobile number
               const response = await axios.get(`${API_URL}/get/customerByMobile/${mobileNo}`);
-              console.log("Response from server:", response);
-
+              
               if (response.status === 200 && response.data.status === true) {
-                  console.log("Mobile number exists in customer database");
-
+                
                   const item = response.data.data;
-                  console.log("Item:", item?.customerData?.NewCustomer);
+                
 
                   // Update `editData` state
                   setEditData(prevFormData => {
@@ -606,7 +604,19 @@ const MonthService = () => {
         }
     }
 
-    console.log("Edit Data:", editData);
+     const addcheckincheckoutlatetime = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/monthly-service/addCheckInCheckOutLateTime`);
+            console.log('Response:', response.data);
+        } catch (error) {
+            console.error('Error updating due order:', error);
+        }
+      };
+    
+      useEffect(() => { 
+          addcheckincheckoutlatetime()
+      }, []);
+
 
     return (
         <Fragment>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 
-export default function SelectBox({ options, setSelcted, initialValue }) {
+export default function SelectBox({ options, setSelcted, initialValue, isDisabled }) {
   const [selectedOption, setSelectedOption] = useState(null);
 
  
@@ -26,6 +26,7 @@ export default function SelectBox({ options, setSelcted, initialValue }) {
       value={selectedOption}
       onChange={handleChange}
       options={options}
+      isDisabled={isDisabled}
     />
   );
 }

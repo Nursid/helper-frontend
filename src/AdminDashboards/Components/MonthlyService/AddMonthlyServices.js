@@ -369,9 +369,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		{ label: "UP32PQ-8825", value: "UP32PQ-8825" },
 		{ label: "SELF", value: "SELF" }
 	  ]
-	  
-	
-
+	 
 	return (
 		<Fragment>
 
@@ -419,6 +417,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 										setSelcted={setServiceType}
 										initialValue={serviceType}
 										options={allservices}
+										isDisabled={data?.pending === "Running"}
 										/>
 										{errors?.serviceType && (
 										<span className='validationError'>
@@ -485,7 +484,9 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 									<Label for="serviceServeType">Monthly Service Type <span style={{color: "red"}}>*</span></Label>
 									<Input type="select" name="serviceServeType"
 										onChange={(e) => handleChange(e, 50)}
-										id="serviceServeType" value={formData.serviceServeType}>
+										id="serviceServeType" value={formData.serviceServeType}
+										disabled={data?.pending === "Running"}
+										>
 										<option value="" defaultChecked disabled>Select Serve Type</option>
 										<option value="Daily">Daily</option>
 										<option value="Alternative">Alternative</option>
@@ -508,6 +509,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 										id="feesPaidDateTime"
 										value={formData?.feesPaidDateTime}
 										min={today}
+										readOnly={data?.pending === "Running"}
 										/>
 										{errors?.feesPaidDateTime && (
 							<span className='validationError'>
@@ -534,6 +536,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 									options={GetAlltimeSlot}
 									className="basic-multi-select"
 									classNamePrefix="select"
+									isDisabled={data?.pending === "Running"}
 									/>
 							
 							{errors?.timeslot && (
@@ -553,6 +556,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
               options={getAllServiceProvider}
               className="basic-multi-select"
               classNamePrefix="select"
+			  isDisabled={data?.pending === "Running"}
             />
 			 {errors?.service_provider && (
               <span className='validationError'>
@@ -588,6 +592,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 						options={getAllSupervisor}
 						initialValue={supervisor}
 						setSelcted={setSupervisor}
+						isDisabled={data?.pending === "Running"}
 						/>
 						{errors?.supervisor && (
 							<span className='validationError'>

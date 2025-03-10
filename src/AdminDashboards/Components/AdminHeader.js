@@ -77,7 +77,7 @@ const AdminHeader = () => {
                 <Row>
                     <Col sm={6} lg={6} className={isMobile ? 'd-flex align-items-center justify-content-center' : 'd-flex align-items-center justify-content-start'}>
                         <div className="helperLogo">
-                            <img width={'150px'} src="https://mytotalhelper.com/webcss/images/logo.jpg" alt="" />
+                            <img  src="/main_logo.jpg" alt=""  />
                         </div>
                     </Col>
 
