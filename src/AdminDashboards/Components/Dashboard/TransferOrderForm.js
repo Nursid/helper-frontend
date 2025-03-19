@@ -32,7 +32,10 @@ const onsubmitDate =() => {
         [remark]: admin_remark,
         booktime:time,
         bookdate:date,
-        order_no:order_no
+        order_no:order_no,
+		checkintime: null,
+		checkouttime: null,
+		pending: 0
     }
 
     const apiUrl = `${API_URL}/order/assign/${order_no}`;

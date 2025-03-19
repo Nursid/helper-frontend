@@ -23,6 +23,7 @@ const AdminManageMaster = () => {
                     <TabContent activeTab={attendanceActive} >
                         <TabPane tabId="master">
                             <ManageService />
+                            {/* <Test /> */}
                         </TabPane>
                     </TabContent>
                 </div>

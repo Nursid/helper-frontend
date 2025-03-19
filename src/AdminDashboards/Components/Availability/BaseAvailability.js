@@ -22,6 +22,9 @@ import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButt
 import { GetAllServiceProvider } from '../../../Store/Actions/Dashboard/Authentication/ServiceProviderActions';
 import SelectBox from "../../Elements/SelectBox";
 
+
+
+
 const BaseAvailability = ({ availabilityType, title }) => {
 
     const { userRole } = useUserRoleContext();
@@ -313,8 +316,6 @@ const BaseAvailability = ({ availabilityType, title }) => {
       }
     }
  
-   
-
     useEffect(() => {
         getAllServicesProvider();
         dispatch(GetAvailability({ type: availabilityType }));

@@ -21,11 +21,16 @@ import InvoiceMonthlyService from './view/InvoiceMonthlyService'
 import CollapseDatatable from '../../Elements/CollapseDatatable'
 import { Form, Row, Col, Card, FormGroup, Label, Input,Table, Modal,
     ModalHeader, ModalBody } from 'reactstrap';
+import MasterUpdate from './MasterUpdate'
+import { useAuth } from '../../../Context/userAuthContext'
 
 const MonthService = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const { data } = useSelector(state => state.GetAllMonthlyServiceDataReducer)
+    const { currentUser, setCurrentUser } = useAuth();
+
+    console.log("----",currentUser.role)
     const [from, setFrom] = useState(null)
     const [customer, setTo] = useState(null)
     const [customerTypeOpen, setCustomerTypeOpenFunction] =useState(false)
@@ -133,17 +138,29 @@ const MonthService = () => {
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [editData,setEditData]=useState([])
+    const [showMasterModal, setShowMasterModal] = useState(false);
+    const [editMasterMode, setEditMasterMode] = useState(false);
+    const [editMasterData,setEditMasterData]=useState([])
     const toggleModal = () => {
         setShowModal(!showModal);
         setEditMode(false); 
         setEditData('')
     };
+
     const toggleEditMode = (data) => { 
         setShowModal(true); 
         setEditMode(true);
         setEditData(data)
     };
 
+    const MastertoggleEditMode = (data) => { 
+        setShowMasterModal(!showMasterModal); 
+        if(!data){
+            setEditMasterData('')
+        }else{
+            setEditMasterData(data)
+        }
+    };
 
     const InvoiceRef = useRef(null);
 
@@ -229,6 +246,33 @@ const MonthService = () => {
         axios.put(apiUrl, formData).then(response => {
         if (response.status === 200) {
             Swal.fire('Successfully!', "Your Order has been Canceled!", 'warning')
+            dispatch(GetAllMonthlyServiceAction())
+        } else {
+            Swal.fire({title:  response.data.message, icon: "error"})
+        } 			
+        }).catch(error => {
+        console.error('Error:', error);
+        });
+    }
+    })
+    };
+    const DeleteHandler = async (orderNo) =>{ 
+        Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to Delete this!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, Delete it!'
+          }).then(async (result) => {
+              if (result.isConfirmed) {
+        
+        const apiUrl =  `${API_URL}/monthly-service/master-delete/${orderNo}`;;
+        // Make a POST request using Axios
+        axios.delete(apiUrl).then(response => {
+        if (response.status === 200) {
+            Swal.fire('Successfully!', "Your Order has been Deleted!", 'warning')
             dispatch(GetAllMonthlyServiceAction())
         } else {
             Swal.fire({title:  response.data.message, icon: "error"})
@@ -491,6 +535,33 @@ const MonthService = () => {
                 </div>
             ),
         },
+        {
+            field: "action2",
+            headerName: "Master Action",
+            minWidth: 250,
+            renderCell: (params) => (
+                currentUser.role === "Super Admin" ? (
+                    <div className="d-flex gap-2">
+                        <Button 
+                            onClick={() => MastertoggleEditMode(params.row)} 
+                            variant="contained" 
+                            color="primary" 
+                            style={{ minWidth: "100px", maxWidth: "150px" }}
+                        >
+                            Master <BorderColorIcon />
+                        </Button> 
+                        <Button 
+                            onClick={() => DeleteHandler(params.row.orderNo)} 
+                            variant="contained" 
+                            color="error" 
+                            style={{ minWidth: "40px", maxWidth: "40px" }}
+                        > 
+                            <DeleteForeverIcon /> 
+                        </Button> 
+                    </div>
+                ) : null
+                    )
+              }      
     ];
 
     const CustomToolbar = () => {
@@ -669,6 +740,13 @@ const MonthService = () => {
                 modalTitle={editMode ? "Edit Monthly Service" : "Add Monthly Service"}
                 modal={showModal}
                 toggle={toggleModal}
+                size={"xl"}
+            />
+            <ModalComponent
+                data={<MasterUpdate toggleModal={MastertoggleEditMode} data={editMasterData}  />}
+                modalTitle={"Master Edit Monthly Service"}
+                modal={showMasterModal}
+                toggle={MastertoggleEditMode}
                 size={"xl"}
             />
 
