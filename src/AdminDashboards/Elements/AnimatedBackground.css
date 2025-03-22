@@ -122,6 +122,49 @@
   color: #ffff;
   margin: 1px 1px 1px 0px !important;
 }
+
+.class-green2 {
+  background-color: #27ae60 !important;
+  color: #ffff;
+  border-bottom: 1px solid #ffffff !important;
+  border-left: 1px solid #ffffff !important;
+  /* margin: 1px 1px 1px 0px !important; */
+}
+.class-red2 {
+  background-color: #f20606 !important;
+  color: #ffff;
+  border-bottom: 1px solid #ffffff !important;
+  border-left: 1px solid #ffffff !important
+}
+
+.Cancel-availability2{
+  background-color: #95a5a6 !important;
+  color: black !important;
+  border-bottom: 1px solid #ffffff !important;
+  border-left: 1px solid #ffffff !important
+}
+
+.completed-cell2 {
+  background-color: green !important;
+  color: black !important;
+  border-bottom: 1px solid #ffffff !important;
+  border-left: 1px solid #ffffff !important
+}
+
+.Running-availability2{
+  background-color: #f1c40f !important;
+  color: black !important;
+  border-bottom: 1px solid #ffffff !important;
+  border-left: 1px solid #ffffff !important
+}
+.class-monthly2{
+  background-color: #74b9ff !important;
+  color: black !important;
+  border-bottom: 1px solid #ffffff !important;
+  border-left: 1px solid #ffffff !important
+}
+
+
 .class-yellow {
   background-color: #e67e22 !important;
   color: #ffff;
@@ -153,4 +196,27 @@
 .activeNavItem {
   color: var(--blue) !important;
   background-color: var(--yellow) !important;
+}
+
+
+
+.Due-availability2{
+  background-color: #a29bfe !important;
+  color: black !important;
+  border-bottom: 1px solid #ffffff !important;
+  border-left: 1px solid #ffffff !important
+}
+
+.Hold-availability2{
+  background-color: #f10000;
+  color: black !important;
+  border-bottom: 1px solid #ffffff !important;
+  border-left: 1px solid #ffffff !important
+}
+
+.Pending-availability2{
+  background-color: #e67e22 !important;
+  color: black !important;
+  border-bottom: 1px solid #ffffff !important;
+  border-left: 1px solid #ffffff !important
 }

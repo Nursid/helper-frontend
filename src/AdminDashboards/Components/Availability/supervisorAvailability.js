@@ -20,6 +20,7 @@ import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector } from "@mui/x-data-grid";
 import SelectBox from "../../Elements/SelectBox";
+import CustomDataTable from "../ManageMaster/CustomDataTable";
 
 const SupervisorAvailability = () => {
 
@@ -95,20 +96,20 @@ const SupervisorAvailability = () => {
     const [statusClasses, setStatusClasses] = useState({}); // Cache for order statuses
 
     const getCellClassName = (params) => {
-      if (!params?.value) return 'Cancel-availability'; // Ensure value exists
-      if (params.value === 'p') return 'class-green'; // Ensure value exists
+      if (!params?.value) return 'Cancel-availability2'; // Ensure value exists
+      if (params.value === 'p') return 'class-green2'; // Ensure value exists
   
 
       if (params.value === 'Full day Leave' || params.value === 'Lunch' || params.value === 'lunch' || params.value === 'Half Day Leave') {
-        return 'class-red';
+        return 'class-red2';
       }
 
       if (params?.value === "Week Off" || params?.value === "Absent") {
-        return "Cancel-availability";
+        return "Cancel-availability2";
       }
 
       if (params?.value?.includes("MonthlyService")) {
-        return "class-monthly";
+        return "class-monthly2";
       }
   
       if (params?.value && !params.value.includes("MonthlyService")) {
@@ -135,12 +136,12 @@ const SupervisorAvailability = () => {
         const pendingStatus = GetStatus?.data?.data?.pending;
   
         const statusMap = {
-          0: "Running-availability",
-          1: "Hold-availability",
-          2: "Due-availability",
-          3: "Running-availability",
-          4: "Running-availability",
-          5: "Cancel-availability"
+          0: "Pending-availability2",
+          1: "Hold-availability2",
+          2: "Due-availability2",
+          3: "completed-cell2",
+          4: "Running-availability2",
+          5: "Cancel-availability2"
         };
   
         const status = statusMap[pendingStatus] || ''; // Map status to class name
@@ -161,87 +162,87 @@ const SupervisorAvailability = () => {
       
     const colums = [
 
-        {
-            field: "status",
-            headerName: "Status",
-            renderCell: (params) => (
-                <Button 
-                variant='contained' 
-                color='primary' 
-                onClick={() => toggleTransferData(params.row)}
-              >
-                Transfer
-              </Button>
-            ),
-            minWidth: 100,
-            editable: true,
-        },
-        { field: "id",  headerName: "Sr No", minWidth: 150, editable: true},
+        // {
+        //     field: "status",
+        //     headerName: "Status",
+        //     renderCell: (params) => (
+        //         <Button 
+        //         variant='contained' 
+        //         color='primary' 
+        //         onClick={() => toggleTransferData(params.row)}
+        //       >
+        //         Transfer
+        //       </Button>
+        //     ),
+        //     width: 100,
+        //     editable: true,
+        // },
+        { field: "id",  headerName: "Sr No", width: 150, editable: true},
 
-        { field: "name",  headerName: "Name", minWidth: 150, editable: true},
-        { field: "duty_hours",  headerName: "Duty Hours", minWidth: 150, editable: true},
-        {
-          field: "image",
-          headerName: "Image",
-          minWidth: 120,
-          renderCell: (params) => {
-            const url = params.row.image ? IMG_URL + params.row.image : "https://i.pinimg.com/564x/d5/b0/4c/d5b04cc3dcd8c17702549ebc5f1acf1a.jpg";
-            return (
-              <div style={{ width: "50px", height: "50px", overflow: "hidden" }}>
-                <img src={url} alt="Image" style={{ width: "100%", height: "100%" }} />
-              </div>
-            );
-          }
-        },
-        { field: "date",  headerName: "Date", minWidth: 150, editable: true
+        { field: "name",  headerName: "Name", width: 150, editable: true},
+        { field: "duty_hours",  headerName: "Duty Hours", width: 150, editable: true},
+        // {
+        //   field: "image",
+        //   headerName: "Image",
+        //   width: 120,
+        //   renderCell: (params) => {
+        //     const url = params.row.image ? IMG_URL + params.row.image : "https://i.pinimg.com/564x/d5/b0/4c/d5b04cc3dcd8c17702549ebc5f1acf1a.jpg";
+        //     return (
+        //       <div style={{ width: "50px", height: "50px", overflow: "hidden" }}>
+        //         <img src={url} alt="Image" style={{ width: "100%", height: "100%" }} />
+        //       </div>
+        //     );
+        //   }
+        // },
+        { field: "date",  headerName: "Date", width: 150, editable: true
          },
           {
             field: "07:00-07:30",
             headerName: "07:00-07:30 AM",
-            minWidth: 150,
+            width: 150,
             cellClassName: getCellClassName
         },
         {
           field: "07:30-08:00",
           headerName: "07:30-08:00 AM",
-          minWidth: 150,
+          width: 150,
           cellClassName: getCellClassName
       },
       {
         field: "08:00-08:30",
         headerName: "08:00-08:30 AM",
-        minWidth: 150,
+        width: 150,
         cellClassName: getCellClassName
     },
         {
           field: "08:30-09:00",
           headerName: "08:30-09:00 AM",
-          minWidth: 150,
+          width: 150,
           cellClassName: getCellClassName
       },
         {
           field: "09:00-09:30",
           headerName: "09:00-09:30 AM",
-          minWidth: 150,
+          width: 150,
           cellClassName: getCellClassName
       },
-        { field: "09:30-10:00", headerName: "09:30-10:00 AM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "10:00-10:30", headerName: "10:00-10:30 AM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "10:30-11:00", headerName: "10:30-11:00 AM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "11:00-11:30", headerName: "11:00-11:30 AM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "11:30-12:00", headerName: "11:30-12:00 AM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "12:00-12:30", headerName: "12:00-12:30 PM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "12:30-01:00", headerName: "12:30-01:00 PM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "01:00-01:30", headerName: "01:00-01:30 PM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "01:30-02:00", headerName: "01:30-02:00 PM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "02:00-02:30", headerName: "02:00-02:30 PM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "02:30-03:00", headerName: "02:30-03:00 PM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "03:00-03:30", headerName: "03:00-03:30 PM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "03:30-04:00", headerName: "03:30-04:00 PM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "04:00-04:30", headerName: "04:00-04:30 PM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "04:30-05:00", headerName: "04:30-05:00 PM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "05:00-05:30", headerName: "05:00-05:30 PM ", minWidth: 150, cellClassName: getCellClassName},
-        { field: "05:30-06:00", headerName: "05:30-06:00 PM ", minWidth: 150, cellClassName: getCellClassName},
+        { field: "09:30-10:00", headerName: "09:30-10:00 AM ", width: 150, cellClassName: getCellClassName},
+        { field: "10:00-10:30", headerName: "10:00-10:30 AM ", width: 150, cellClassName: getCellClassName},
+        { field: "10:30-11:00", headerName: "10:30-11:00 AM ", width: 150, cellClassName: getCellClassName},
+        { field: "11:00-11:30", headerName: "11:00-11:30 AM ", width: 150, cellClassName: getCellClassName},
+        { field: "11:30-12:00", headerName: "11:30-12:00 AM ", width: 150, cellClassName: getCellClassName},
+        { field: "12:00-12:30", headerName: "12:00-12:30 PM ", width: 150, cellClassName: getCellClassName},
+        { field: "12:30-01:00", headerName: "12:30-01:00 PM ", width: 150, cellClassName: getCellClassName},
+        { field: "01:00-01:30", headerName: "01:00-01:30 PM ", width: 150, cellClassName: getCellClassName},
+        { field: "01:30-02:00", headerName: "01:30-02:00 PM ", width: 150, cellClassName: getCellClassName},
+        { field: "02:00-02:30", headerName: "02:00-02:30 PM ", width: 150, cellClassName: getCellClassName},
+        { field: "02:30-03:00", headerName: "02:30-03:00 PM ", width: 150, cellClassName: getCellClassName},
+        { field: "03:00-03:30", headerName: "03:00-03:30 PM ", width: 150, cellClassName: getCellClassName},
+        { field: "03:30-04:00", headerName: "03:30-04:00 PM ", width: 150, cellClassName: getCellClassName},
+        { field: "04:00-04:30", headerName: "04:00-04:30 PM ", width: 150, cellClassName: getCellClassName},
+        { field: "04:30-05:00", headerName: "04:30-05:00 PM ", width: 150, cellClassName: getCellClassName},
+        { field: "05:00-05:30", headerName: "05:00-05:30 PM ", width: 150, cellClassName: getCellClassName},
+        { field: "05:30-06:00", headerName: "05:30-06:00 PM ", width: 150, cellClassName: getCellClassName},
     ]
 
     const GetAllSupervisor = async () => {
@@ -306,7 +307,7 @@ const SupervisorAvailability = () => {
         /> */}
 
 
-                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "25rem", minWidth: "25rem" }}>Supervisor Availability</h4>
+                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "25rem", width: "25rem" }}>Supervisor Availability</h4>
 
                 
 
@@ -359,7 +360,14 @@ const SupervisorAvailability = () => {
             </div>
 
             <div className="p-4">
-                <AdminDataTable rows={DataWithID(data)} columns={colums}  CustomToolbar={CustomToolbar} />
+                {/* <AdminDataTable rows={DataWithID(data)} columns={colums}  CustomToolbar={CustomToolbar} /> */}
+
+ <CustomDataTable
+                      columns={colums}
+                      rows={DataWithID(data)}
+                      frozenFields={['name']}
+                  />
+
             </div>
             </Fragment>
     )
