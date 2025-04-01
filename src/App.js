@@ -27,6 +27,8 @@ import Invoice from './Components/MemberInvoice';
 import Reports from './AdminDashboards/Components/Reports';
 import PrintCustomer from './AdminDashboards/Components/Customer/View/PrintCustomer';
 import MonthService from './AdminDashboards/Components/MonthlyService';
+import AdminEarning from './AdminDashboards/Components/Earning';
+
 
 function App() {
   return (
@@ -62,6 +64,7 @@ function App() {
             <Route path='support' element={<AdminComplain />} />
             <Route path='reports' element={<Reports />} />
             <Route path='monthly-service' element={<MonthService />} />
+            <Route path='earning' element={<AdminEarning />} />
           </Route>
         </Routes>
       </BrowserRouter>

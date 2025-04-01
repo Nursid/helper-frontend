@@ -20,7 +20,7 @@ import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector } from "@mui/x-data-grid";
 import SelectBox from "../../Elements/SelectBox";
-import CustomDataTable from "../ManageMaster/CustomDataTable";
+import CustomDataTable from "../../Elements/CustomDataTable";
 
 const SupervisorAvailability = () => {
 

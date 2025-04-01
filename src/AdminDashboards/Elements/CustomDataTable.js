@@ -10,20 +10,7 @@ const CustomDataTable = ({ columns, rows, frozenFields }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const rowsPerPage = 50;
 
-    // Mock params object for cellClassName
-    const mockParams = {
-        row: {}, // Mock row data (if needed)
-        value: "", // Mock cell value
-        field: "", // Mock field
-    };
 
-    // Log the class names for debugging
-    columns.forEach(column => {
-        if (column.cellClassName) {
-            const className = column.cellClassName(mockParams);
-            console.log(`Column: ${column.field}, Class Name: ${className}`);
-        }
-    });
 
     const filteredRows = rows.filter((row) =>
         columns.some((col) => {

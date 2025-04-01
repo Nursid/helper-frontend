@@ -29,8 +29,7 @@ const MonthService = () => {
     const dispatch = useDispatch()
     const { data } = useSelector(state => state.GetAllMonthlyServiceDataReducer)
     const { currentUser, setCurrentUser } = useAuth();
-
-    console.log("----",currentUser.role)
+    const token = currentUser.token
     const [from, setFrom] = useState(null)
     const [customer, setTo] = useState(null)
     const [customerTypeOpen, setCustomerTypeOpenFunction] =useState(false)
@@ -270,7 +269,12 @@ const MonthService = () => {
         
         const apiUrl =  `${API_URL}/monthly-service/master-delete/${orderNo}`;;
         // Make a POST request using Axios
-        axios.delete(apiUrl).then(response => {
+        axios.delete(apiUrl, {
+            headers: {
+                Authorization: `Bearer ${token}`, // Add the token here
+                "Content-Type": "application/json",
+            }
+        }).then(response => {
         if (response.status === 200) {
             Swal.fire('Successfully!', "Your Order has been Deleted!", 'warning')
             dispatch(GetAllMonthlyServiceAction())
