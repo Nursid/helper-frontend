@@ -109,20 +109,15 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
 
   useEffect(() => {
     const fetchData = async () => {
-      const [servicesRes, supervisorsRes, serviceProvidersRes] = await Promise.all([
+      const [servicesRes] = await Promise.all([
         axios.get(`${API_URL}/service/getall`),
-        axios.get(`${API_URL}/employee/getall/supervisor`),
-        // axios.get(`${API_URL}/service-provider/getall`),
       ]);
       if (servicesRes.status === 200) {
-        setAllServices(servicesRes.data.data.map((item) => ({ label: item.serviceName, value: item.serviceName })));
+        setAllServices(servicesRes.data.data.map((item) => ({ 
+          label: item.serviceName, 
+          value: item.serviceName 
+        })));
       }
-      if (supervisorsRes.status === 200) {
-        setAllSupervisors(supervisorsRes.data.data.map((item) => ({ label: item.name, value: item.name })));
-      }
-      // if (serviceProvidersRes.status === 200) {
-      //   setAllServiceProviders(serviceProvidersRes.data.data.map((item) => ({ label: item.name, value: item.id })));
-      // }
     };
     fetchData();
   }, []);
@@ -250,19 +245,58 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
     }
   };
 
-  useEffect(() => {
-    if (orderData.bookdate) {
-      const date = new Date();
-      const assignData = date.toISOString().split('T')[0]; // Corrected to call toISOString()
+  // Add this new function to fetch supervisors with filters
+  const getAllSupervisors = async (filterData) => {
+    try {
+      const queryParams = new URLSearchParams(filterData).toString();
+      const response = await axios.get(`${API_URL}/employee/getall/supervisor?${queryParams}`);
       
-      const filterData = {
-        date: assignData,
-        time_range: orderData.allot_time_range, // Assuming this is a valid property in orderData
-      };
-  
-      getAllServicesProvider(filterData);
+      if (response.status === 200) {
+        const transformedData = response.data.data.map(item => ({ 
+          label: item.name, 
+          value: item.name 
+        }));
+        setAllSupervisors(transformedData);
+      }
+    } catch (error) {
+      console.error("Error fetching supervisors:", error);
     }
-  }, [orderData.bookdate]);
+  };
+
+  // Add a function to handle date changes
+  const handleDateChange = (e) => {
+    handleInputChange(e, 50);
+    fetchProvidersAndSupervisors(e.target.value, timeslot?.value);
+  };
+
+  // Add a function to handle time slot changes
+  const handleTimeSlotChange = (selectedSlot) => {
+    setTimeslot(selectedSlot);
+    fetchProvidersAndSupervisors(formData.bookdate, selectedSlot.value);
+  };
+
+  // Add a common function to fetch both providers and supervisors
+  const fetchProvidersAndSupervisors = (date, timeRange) => {
+    if (!date || !timeRange) {
+      console.log("Date or time range is missing");
+      return;
+    }
+    
+    const filterData = {
+      date: date,
+      time_range: timeRange,
+    };
+
+    getAllServicesProvider(filterData);
+    getAllSupervisors(filterData);
+  };
+
+  // Add initial fetch on component mount if both values exist
+  useEffect(() => {
+    if (formData.bookdate && timeslot?.value) {
+      fetchProvidersAndSupervisors(formData.bookdate, timeslot.value);
+    }
+  }, []);
 
   return (
     <Fragment>
@@ -320,9 +354,9 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
                   <Input 
                   name="bookdate" 
                   type="date" 
-                  onChange={(e) => handleInputChange(e, 50)} 
+                  onChange={handleDateChange}
                   value={formData.bookdate} 
-                  min={new Date().toISOString().split('T')[0]} 
+                  // min={new Date().toISOString().split('T')[0]} 
                 />
 
                 </FormGroup>
@@ -358,7 +392,7 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
 					<FormGroup>
 						<Label>Time Slot</Label>
 						<SelectBox 
-							setSelcted={setTimeslot}
+							setSelcted={handleTimeSlotChange}
 							initialValue={timeslot}
 							options={getAlltimeSlot}
 							/>

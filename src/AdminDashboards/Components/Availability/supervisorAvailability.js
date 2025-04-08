@@ -177,10 +177,12 @@ const SupervisorAvailability = () => {
         //     width: 100,
         //     editable: true,
         // },
-        { field: "id",  headerName: "Sr No", width: 150, editable: true},
+        // { field: "id",  headerName: "Sr No", width: 150, editable: true},
 
         { field: "name",  headerName: "Name", width: 150, editable: true},
-        { field: "duty_hours",  headerName: "Duty Hours", width: 150, editable: true},
+        { field: "duty_hours",  headerName: "Duty Hours", width: 150, editable: true,
+            cellClassName: () => "class-gray"
+        },
         // {
         //   field: "image",
         //   headerName: "Image",
@@ -194,7 +196,8 @@ const SupervisorAvailability = () => {
         //     );
         //   }
         // },
-        { field: "date",  headerName: "Date", width: 150, editable: true
+        { field: "date",  headerName: "Date", width: 150, editable: true,
+            cellClassName: () => "class-gray"
          },
           {
             field: "07:00-07:30",

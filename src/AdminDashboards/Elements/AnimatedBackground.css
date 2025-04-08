@@ -136,6 +136,10 @@
   border-bottom: 1px solid #ffffff !important;
   border-left: 1px solid #ffffff !important
 }
+.class-gray {
+  border-left: 1px solid #c7c7c7  !important;
+  border-bottom: 1px solid #c7c7c7  !important;
+}
 
 .Cancel-availability2{
   background-color: #95a5a6 !important;

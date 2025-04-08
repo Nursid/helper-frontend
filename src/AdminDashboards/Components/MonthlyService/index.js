@@ -5,6 +5,7 @@ import { TabContent, TabPane } from 'reactstrap'
 import MonthService from './MonthService'
 import CarSchedule from './CarSchedule'
 import AdminNavItems from '../../Elements/AdminNavItems'
+import ExtendedService from './ExtendedService'
 // import ManageMonthService from './ManageMonthService'
 
 const MonthlyServices = () => {
@@ -20,11 +21,12 @@ const MonthlyServices = () => {
 
           <AdminNavItems />
           <div className="AttendenceTabs px-3">
-            <span className={` ${attendanceActive === "employee" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance(1) }}>Monthly Service</span>
+            <span className={` ${attendanceActive === 1 ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance(1) }}>Monthly Service</span>
 
             {/* {userRole && userRole.ManageMonthService ? <span className={` ${attendanceActive === "monthly-services" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("monthly-services") }}>Manage Monthly Service </span> : null} */}
 
-             <span className={` ${attendanceActive === "service-provider" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance(2) }}>Daily Schedule</span> 
+             <span className={` ${attendanceActive === 2 ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance(2) }}>Daily Schedule</span> 
+             <span className={` ${attendanceActive === 3 ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance(3) }}>ExtendedService</span> 
           </div>
 
 
@@ -34,6 +36,9 @@ const MonthlyServices = () => {
             </TabPane>
             <TabPane tabId={2}>
               <CarSchedule setActiveAttendance={setActiveAttendance} />
+            </TabPane>
+            <TabPane tabId={3}>
+              <ExtendedService setActiveAttendance={setActiveAttendance} />
             </TabPane>
 
             {/* <TabPane tabId="monthly-services">

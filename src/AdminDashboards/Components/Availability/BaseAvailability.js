@@ -202,7 +202,9 @@ const BaseAvailability = ({ availabilityType, title }) => {
         //     editable: true
         // },
 
-        { field: "name",  headerName: "Name", width: 150, editable: true,  pinned: 'left' },
+        { field: "name",  headerName: "Name", width: 150, editable: true,  pinned: 'left',
+          
+         },
         // {
         //   field: "image",
         //   headerName: "Image",
@@ -216,9 +218,14 @@ const BaseAvailability = ({ availabilityType, title }) => {
         //     );
         //   }
         // },
-        { field: "provider_type",  headerName: "Provider Type", width: 150, editable: true},
-        { field: "duty_hours",  headerName: "Duty Hours", width: 150, editable: true},
-        { field: "date",  headerName: "Date", width: 150, editable: true
+        { field: "provider_type",  headerName: "Provider Type", width: 150, editable: true,
+           cellClassName: () => "class-gray"
+        },
+        { field: "duty_hours",  headerName: "Duty Hours", width: 150, editable: true,
+           cellClassName: () => "class-gray"
+        },
+        { field: "date",  headerName: "Date", width: 150, editable: true,
+          cellClassName: () => "class-gray"
          },
           {
             field: "07:00-07:30",

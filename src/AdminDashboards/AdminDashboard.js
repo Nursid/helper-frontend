@@ -119,7 +119,7 @@ const AdminDashboard = () => {
           ...mergedItem,
           pending: getStatusByKey(item.pending),
           _id: data.indexOf(item) + 1,
-          date: moment(item.createdAt).format("D / M / Y"),
+          date: moment(item.createdAt).format("DD-MM-YYYY"),
           bookdate: moment(item.bookdate).format("DD-MM-YYYY"),
           userRole: userRole,
           member_id: (!customer.member_id) 
@@ -578,6 +578,7 @@ const AdminDashboard = () => {
       axios.put(apiUrl, formData).then(response => {
         if (response.status === 200) {
           Swal.fire('Successfully!', "Order Is on Running", 'success')
+          addcheckincheckoutlatetime();
           if (role === "service" || role === "supervisor") {
             const status = undefined;
             dispatch(GetAllOrders(status, currentUser.id, role));
@@ -737,6 +738,12 @@ const AdminDashboard = () => {
     { field: "service_name", headerName: "Service Type",minWidth: 150,  editable: false },
     { field: "booktime", headerName: "Booking Time", minWidth: 120,  editable: false },
     { field: "bookdate", headerName: "Booking Date", minWidth: 120,  editable: false },
+    {
+      field: "date",
+      headerName: "Created Date", 
+      minWidth: 120,
+      editable: false
+    },
     { field: "problem_des", headerName: "Service Description ", minWidth: 150,  editable: false, renderCell: (params) => (
         <Tooltip title={params.value}>
             <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
