@@ -589,7 +589,12 @@ const AdminDashboard = () => {
           Swal.fire({title:  response.data.message, icon: "error"})
         } 			
       }).catch(error => {
-        console.error('Error:', error);
+        console.error('Error:', error.response ? error.response.data.message : 'Internal Server Error');
+        Swal.fire({
+          title: error.response && error.response.data ? error.response.data.message : 'An unexpected error occurred',
+          text: error.message,
+          icon: "error"
+        });
       });
   };
   const check_out = async (order_no, piadamt, totalamt, servicep_id) =>{

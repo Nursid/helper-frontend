@@ -202,24 +202,30 @@ const MonthService = () => {
         });
     };
 
-    const check_out = async (orderNo, feesPaidDateTime) =>{    
+    const check_out = async (orderNo, feesPaidDateTime, data) => {    
         const formData = {
-        pending: 3,
-        checkouttime: moment(new Date()).format('DD/MM/YYYY, h:mm A'),
-        feesPaidDateTime: feesPaidDateTime
+            pending: 3,
+            checkouttime: moment(new Date()).format('DD/MM/YYYY, h:mm A'),
+            feesPaidDateTime: feesPaidDateTime
+        };
+        const apiUrl = `${API_URL}/monthly-service/checkout/${orderNo}`;
+        
+        try {
+            const response = await axios.put(apiUrl, formData);
+            if (response.status === 200) {
+                Swal.fire('Successfully!', "Your Order has been Completed!", 'success');
+                const checkDateSame = await getLatestMonthlyServiceByOrderNo(orderNo, feesPaidDateTime)
+                if(checkDateSame){
+                    await handleExtendedService(data, feesPaidDateTime);
+                }
+                dispatch(GetAllMonthlyServiceAction());
+            } else {
+                Swal.fire({ title: response.data.message, icon: "error" });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({ title: 'Error', text: error.response?.data?.message || error.message || 'An error occurred while checking out.', icon: 'error' });
         }
-        const apiUrl =  `${API_URL}/monthly-service/checkout/${orderNo}`;
-        // Make a POST request using Axios
-        axios.put(apiUrl, formData).then(response => {
-        if (response.status === 200) {
-            Swal.fire('Successfully!', "Your Order has been Completed!", 'success')
-            dispatch(GetAllMonthlyServiceAction())
-        } else {
-            Swal.fire({title:  response.data.message, icon: "error"})
-        } 			
-        }).catch(error => {
-        console.error('Error:', error);
-        });
     };
 
     const CancelHandler = async (orderNo, feesPaidDateTime) =>{ 
@@ -403,7 +409,7 @@ const MonthService = () => {
                     checkOutColor = 'red';
                     checkOutHandler =
                         today === feesPaidDate && pending !== "Cancel" && pending !== "Completed"
-                            ? () => check_out(orderNo, feesPaidDateTime)
+                            ? () => check_out(orderNo, feesPaidDateTime, params.row)
                             : null;
                 } else if (checkouttime) {
                     checkOutLabel = `Update Check Out ${checkouttime}`;
@@ -580,6 +586,21 @@ const MonthService = () => {
         );
     };
 
+    const getLatestMonthlyServiceByOrderNo = async (orderNo, date) => {
+        try {
+            const response = await axios.get(`${API_URL}/monthly-service/GetLatestMonthlyServiceByOrderNo/${orderNo}/${date}`);
+            if (response.status === 200) {
+                return response.data;
+            } else {
+                console.error('Error fetching latest monthly service:', response.data.message);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return null;
+        }
+    };
+
 
     const memberRef = useRef(null);
     const [memoData, setMemoData] = useState([]);
@@ -693,8 +714,62 @@ const MonthService = () => {
       }, []);
 
 
+      const handleExtendedService = async (rowData) => {
+        try {
+            const result = await Swal.fire({
+                title: 'Confirm Extension',
+                text: `Are you sure you want to extend the service for ${rowData.cust_name}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, extend it!',
+                cancelButtonText: 'Cancel'
+            });
+
+            if (result.isConfirmed) {
+                // Create payload from existing data
+                const payload = {
+                    ...rowData,
+                    feesPaidDateTime: moment(rowData.date, 'DD-MM-YYYY').format('YYYY-MM-DDTHH:mm'),
+                    checkintime: '',
+                    checkouttime: ''
+                };
+                
+                delete payload.pending;
+                delete payload.date;
+                delete payload._id;
+                delete payload.id;
+                
+                const response = await axios.post(`${API_URL}/monthly-service/add`, payload);
+                
+                if (response.data.status) {
+                    await Swal.fire({
+                        title: 'Success',
+                        text: 'Service extended successfully!',
+                        icon: 'success'
+                    });
+                    
+                } else {
+                    await Swal.fire({
+                        title: 'Error',
+                        text: response.data.message || 'An error occurred while extending the service.',
+                        icon: 'error'
+                    });
+                }
+            }
+        } catch (error) {
+            console.error("Error extending service:", error);
+            await Swal.fire({
+                title: 'Error',
+                text: error.response?.data?.message || error.message || 'An error occurred while extending the service.',
+                icon: 'error'
+            });
+        } 
+    };
+
+
     return (
         <Fragment>
+
             <div style={{ display: 'none' }}>
             {customerTypeOpen &&   <Modal className="modal-dialog-centered"
           isOpen={customerTypeOpen}

@@ -211,9 +211,9 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
             Swal.fire(response.data.message, '', 'error');
           }
         } catch (error) {
-          // Log error and show an error message
+          // Log error and show an actual error message
           console.error('Error:', error);
-          Swal.fire('An error occurred', 'Please try again later.', 'error');
+          Swal.fire('An error occurred', error.response.data.message || 'Please try again later.', 'error');
           setIsLoading(false)
         }
         setIsLoading(false)

@@ -26,7 +26,7 @@ const MonthlyServices = () => {
             {/* {userRole && userRole.ManageMonthService ? <span className={` ${attendanceActive === "monthly-services" ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance("monthly-services") }}>Manage Monthly Service </span> : null} */}
 
              <span className={` ${attendanceActive === 2 ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance(2) }}>Daily Schedule</span> 
-             <span className={` ${attendanceActive === 3 ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance(3) }}>ExtendedService</span> 
+             {/* <span className={` ${attendanceActive === 3 ? "AttendenceTabs_Active" : ""}`} onClick={() => { setActiveAttendance(3) }}>ExtendedService</span>  */}
           </div>
 
 
@@ -37,9 +37,9 @@ const MonthlyServices = () => {
             <TabPane tabId={2}>
               <CarSchedule setActiveAttendance={setActiveAttendance} />
             </TabPane>
-            <TabPane tabId={3}>
+            {/* <TabPane tabId={3}>
               <ExtendedService setActiveAttendance={setActiveAttendance} />
-            </TabPane>
+            </TabPane> */}
 
             {/* <TabPane tabId="monthly-services">
               <ManageMonthService setActiveAttendance={setActiveAttendance} />

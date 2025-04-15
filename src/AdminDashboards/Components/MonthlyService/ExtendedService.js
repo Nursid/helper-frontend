@@ -22,6 +22,7 @@ import { Form, Row, Col, Card, FormGroup, Label, Input,Table, Modal,
     ModalHeader, ModalBody } from 'reactstrap';
 import MasterUpdate from './MasterUpdate'
 import { useAuth } from '../../../Context/userAuthContext'
+import { GetAllServiceProvider } from '../../../Store/Actions/Dashboard/Authentication/ServiceProviderActions'
 
 const ExtendedService = () => {
     const navigate = useNavigate()
@@ -30,6 +31,10 @@ const ExtendedService = () => {
     const [loading, setLoading] = useState(false)
     const [processingOrderId, setProcessingOrderId] = useState(null)
     const { currentUser, setCurrentUser } = useAuth();
+    const [serviceProviderModal, setServiceProviderModal] = useState(false)
+    const [selectedOrder, setSelectedOrder] = useState(null)
+    const [selectedServiceProvider, setSelectedServiceProvider] = useState('')
+    const allServiceProviders = useSelector(state => state.GetAllServiceProviderReducer.data)
     
     const status= [
         {0: "Pending"},
@@ -75,47 +80,117 @@ const ExtendedService = () => {
     const handleExtendedService = async (rowData) => {
         setProcessingOrderId(rowData.orderNo);
         try {
-            Swal.fire({
+            const result = await Swal.fire({
                 title: 'Confirm Extension',
                 text: `Are you sure you want to extend the service for ${rowData.cust_name}?`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, extend it!',
                 cancelButtonText: 'Cancel'
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    // Create payload from existing data
-                    const payload = {
-                        ...rowData,
-                        feesPaidDateTime: moment(rowData.date, 'DD-MM-YYYY').format('YYYY-MM-DDTHH:mm') // Use the date from rowData in the format 'YYYY-MM-DDTHH:mm'
-                    };
-                    
-                    delete payload.pending;
-                    delete payload.date;
-                    delete payload._id;
-                    delete payload.id;
-                    
-                    const response = await axios.post(`${API_URL}/monthly-service/add`, payload);
-                    
-                    if (response.data.status) {
-                        Swal.fire({
-                            title: 'Success',
-                            text: 'Service extended successfully!',
-                            icon: 'success'
-                        });
-                        
-                        // Refresh data
-                        fetchLatestMonthlyServices();
-                    } else {
-                        throw new Error(response.data.message || 'Failed to extend service');
-                    }
-                }
             });
+
+            if (result.isConfirmed) {
+                // Create payload from existing data
+                const payload = {
+                    ...rowData,
+                    feesPaidDateTime: moment(rowData.date, 'DD-MM-YYYY').format('YYYY-MM-DDTHH:mm')
+                };
+                
+                delete payload.pending;
+                delete payload.date;
+                delete payload._id;
+                delete payload.id;
+                
+                const response = await axios.post(`${API_URL}/monthly-service/add`, payload);
+                
+                if (response.data.status) {
+                    await Swal.fire({
+                        title: 'Success',
+                        text: 'Service extended successfully!',
+                        icon: 'success'
+                    });
+                    
+                    // Refresh data
+                    fetchLatestMonthlyServices();
+                } else {
+                    await Swal.fire({
+                        title: 'Error',
+                        text: response.data.message || 'An error occurred while extending the service.',
+                        icon: 'error'
+                    });
+                }
+            }
         } catch (error) {
             console.error("Error extending service:", error);
+            await Swal.fire({
+                title: 'Error',
+                text: error.response?.data?.message || error.message || 'An error occurred while extending the service.',
+                icon: 'error'
+            });
+        } finally {
+            setProcessingOrderId(null);
+        }
+    };
+
+    // Handle Change Service Provider
+    const handleChangeServiceProvider = (rowData) => {
+        setSelectedOrder(rowData);
+        setSelectedServiceProvider('');
+        setServiceProviderModal(true);
+    };
+
+    // Update Service Provider
+    const updateServiceProvider = async () => {
+        if (!selectedServiceProvider) {
             Swal.fire({
                 title: 'Error',
-                text: error.message || 'An error occurred while extending the service.',
+                text: 'Please select a service provider',
+                icon: 'error'
+            });
+            return;
+        }
+
+        try {
+            setProcessingOrderId(selectedOrder.orderNo);
+            
+            const formattedDate = moment(selectedOrder.date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+            
+            // Create FormData with all existing data from the selected order
+            const formData = new FormData();
+            
+
+            // Add additional required data
+            formData.append('feesPaidDateTime', formattedDate);
+            formData.append('selectedTimeSlot', selectedOrder.selectedTimeSlot);
+            formData.append('service_provider', selectedServiceProvider);
+            formData.append('supervisor', selectedOrder.supervisor);
+        
+            
+            const apiUrl = `${API_URL}/monthly-service/update/${selectedOrder.orderNo}?date=${formattedDate}`;
+            const response = await axios.post(apiUrl, formData);
+            
+            if (response.data.status) {
+                setServiceProviderModal(false);
+                await Swal.fire({
+                    title: 'Success',
+                    text: 'Service provider updated successfully!',
+                    icon: 'success'
+                });
+                
+                // Refresh data
+                fetchLatestMonthlyServices();
+            } else {
+                await Swal.fire({
+                    title: 'Error',
+                    text: response.data.message || 'Failed to update service provider.',
+                    icon: 'error'
+                });
+            }
+        } catch (error) {
+            console.error("Error updating service provider:", error);
+            await Swal.fire({
+                title: 'Error',
+                text: error.response?.data?.message || error.message || 'Failed to update service provider.',
                 icon: 'error'
             });
         } finally {
@@ -145,7 +220,8 @@ const ExtendedService = () => {
         
     useEffect(() => {
         fetchLatestMonthlyServices();
-    }, []);
+        dispatch(GetAllServiceProvider());
+    }, [dispatch]);
 
     const column = [  
         { field: "cust_name", headerName: "Customer Name", minWidth: 120 },
@@ -171,7 +247,15 @@ const ExtendedService = () => {
                     >
                         {processingOrderId === params.row.orderNo ? 
                             'Processing...' : 'ExtendedService'}
-                    </Button>                
+                    </Button>
+                    <Button 
+                        variant="contained" 
+                        color="primary"
+                        onClick={() => handleChangeServiceProvider(params.row)}
+                        disabled={processingOrderId === params.row.orderNo}
+                    >
+                        Change Service Provider
+                    </Button>
                 </div>
             )
         }
@@ -211,6 +295,42 @@ const ExtendedService = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Service Provider Modal */}
+            <Modal isOpen={serviceProviderModal} toggle={() => setServiceProviderModal(!serviceProviderModal)}>
+                <ModalHeader toggle={() => setServiceProviderModal(!serviceProviderModal)}>
+                    Change Service Provider
+                </ModalHeader>
+                <ModalBody>
+                    <Form>
+                        <FormGroup>
+                            <Label for="serviceProvider">Select Service Provider</Label>
+                            <Input
+                                type="select"
+                                name="serviceProvider"
+                                id="serviceProvider"
+                                value={selectedServiceProvider}
+                                onChange={(e) => setSelectedServiceProvider(e.target.value)}
+                            >
+                                <option value="">Select Service Provider</option>
+                                {allServiceProviders.map((provider, index) => (
+                                    <option key={index} value={provider.name}>
+                                        {provider.name}
+                                    </option>
+                                ))}
+                            </Input>
+                        </FormGroup>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={updateServiceProvider}
+                            disabled={processingOrderId === (selectedOrder?.orderNo || null)}
+                        >
+                            {processingOrderId === (selectedOrder?.orderNo || null) ? 'Processing...' : 'Update'}
+                        </Button>
+                    </Form>
+                </ModalBody>
+            </Modal>
         </Fragment>
     )
 }
