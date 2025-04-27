@@ -32,7 +32,6 @@ const AdminNavItems = () => {
     { field: "Complain", title: "Support", icon: <FcSupport size={30} /> },
     { field: "Availability", title: "Availability", icon: <FaRegClock size={30} /> },
     { field: "OrderReports", title: "Reports", icon: <GoReport size={30} /> },
-    { field: "Earning", title: "Earning", icon: <GiPayMoney size={30} /> },
   ];
 
   return (

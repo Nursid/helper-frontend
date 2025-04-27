@@ -1,161 +1,42 @@
-import React, { Fragment, useState, useEffect } from "react";
-import AdminDataTable from "../../Elements/AdminDataTable";
-import { useUserRoleContext } from "../../../Context/RolesContext";
-import AdminNavItems from "../../Elements/AdminNavItems";
-import AnimatedBackground from "../../Elements/AnimatedBacground";
-// import { FaRegClock } from "react-icons/fa";
-import { GetAvailability } from "../../../Store/Actions/Dashboard/AvailabilityAction";
+import React, { Fragment, useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@mui/material';
-import  AddAvailability  from "./form/AddAvailability";
-import ModalComponent from "../../Elements/ModalComponent";
-import moment from "moment";
-import { AssignEmployeeAvailability } from "../../../Components/Modal";
 import { Input } from "reactstrap";
-import AdminHeader from "../AdminHeader";
-import TransferAvailability from "./form/TransferAvailability";
 import axios from "axios";
-import { API_URL , IMG_URL} from "../../../config";
-import { GridToolbarContainer } from "@mui/x-data-grid";
-import { GridToolbarExport } from "@mui/x-data-grid";
-import { GridToolbarQuickFilter, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector } from "@mui/x-data-grid";
-import { GetAllServiceProvider } from '../../../Store/Actions/Dashboard/Authentication/ServiceProviderActions';
 import SelectBox from "../../Elements/SelectBox";
 import CustomDataTable from "../../Elements/CustomDataTable";
+import { GetAvailability } from "../../../Store/Actions/Dashboard/AvailabilityAction";
+import { API_URL } from "../../../config";
 
-
+const timeSlots = [
+  "07:00-07:30", "07:30-08:00", "08:00-08:30", "08:30-09:00",
+  "09:00-09:30", "09:30-10:00", "10:00-10:30", "10:30-11:00",
+  "11:00-11:30", "11:30-12:00", "12:00-12:30", "12:30-01:00",
+  "01:00-01:30", "01:30-02:00", "02:00-02:30", "02:30-03:00",
+  "03:00-03:30", "03:30-04:00", "04:00-04:30", "04:30-05:00",
+  "05:00-05:30", "05:30-06:00"
+];
 
 const BaseAvailability = ({ availabilityType, title }) => {
-
-    const { userRole } = useUserRoleContext();
-    const { data } = useSelector(state => state.AvailabilityReducers[availabilityType]);
-    const [EmployeeAvailabilityModalOpen, setEmployeeAvailabilityModalOpen] = useState(false);
-    const [field, setField] = useState("");
-    const [mobileNo, setMobileNo] = useState("");
-    const [date, setDate] = useState("");
-    const [transferData, setTransferData] = useState([])
-    const [filterDate, setFilterDate] = useState("");
-    const dispatch = useDispatch();
-    const [from, setFrom] = useState(null)
-    const [to, setTo] = useState(null)
-    const [getAllServiceProvider, setGetAllServiceProvider] = useState([])
-    const [serviceProvider, setServiceProvider] = useState('')
-
+  const dispatch = useDispatch();
+  const { data } = useSelector(state => state.AvailabilityReducers[availabilityType]);
   
-   
-    const [Toggle, setToggle] = useState(false);
-    const toggleAddAvailability = () => setToggle(!Toggle);
-   
-    const [isTransfer, setToggleTransfer] = useState(false);
-    const toggleTransfer = () => setToggleTransfer(!isTransfer);
-    const toggleTransferData = (data) => {
-        setTransferData(data);
-        toggleTransfer();
-    
-    }
+  // State management
+  const [statusClasses, setStatusClasses] = useState({});
+  const [filterDate, setFilterDate] = useState("");
+  const [from, setFrom] = useState(null);
+  const [to, setTo] = useState(null);
+  const [getAllServiceProvider, setGetAllServiceProvider] = useState([]);
+  const [serviceProvider, setServiceProvider] = useState('');
+  // Toggle functions
 
-    const CustomToolbar = () => {
-      return (
-        <GridToolbarContainer>
-          <GridToolbarQuickFilter />
-          <GridToolbarColumnsButton />
-          <GridToolbarFilterButton />
-          <GridToolbarExport />
-          <GridToolbarDensitySelector />
-        </GridToolbarContainer>
-      );
-    };
 
-    const DataWithID = (data) => {
-        const NewData = [];  
-        if (data !== undefined) {
-            for (let item of data) {
-                // Extract availabilities
-                const availabilities = item.availabilities;
-                
-                if (availabilities.length > 0) {
-                    for (let availability of availabilities) {
-                        // Merge item with availability details
-                        let mergedItem = { ...item, ...availability };
-                        NewData.push({
-                            ...mergedItem,
-                            id: availability.id,
-                             "01:00-01:30": availability["01:00-01:30"] === 'leave' ? 'leave' : 'lunch'
-                        });
-                    }
-                } else {
-                    NewData.push({ ...item, id: item.id });
-                }
-            }
-        } else {
-            NewData.push({ id: 0 });
-        }
-        
-        return NewData;
-    };
-
-    const AssignDate = (field, data) =>{
-        setField(field);
-        setMobileNo(data.emp_id)
-        setDate(moment(data.date, "DD-MM-YYYY").format("YYYY-MM-DD")) 
-        setEmployeeAvailabilityModalOpen(!EmployeeAvailabilityModalOpen);
-    }
-
-   
-
-    const [statusClasses, setStatusClasses] = useState({}); // Cache for order statuses
-
-    const getCellClassName = (params) => {
-      if (!params?.value) return 'Cancel-availability2'; // Ensure value exists
-      if (params.value === 'p') return 'class-green2'; // Ensure value exists
-  
-
-      if (params.value === 'Full day Leave' || params.value === 'Lunch' || params.value === 'lunch' || params.value === 'Half Day Leave') {
-        return 'class-red2';
-      }
-
-      if (params?.value === "Week Off" || params?.value === "Absent") {
-        return "Cancel-availability2";
-      }
-
-      if (params?.value?.includes("MonthlyService")) {
-        const splitValue = params.value.split('-'); // Split the value by '-'
-        const lastPart = splitValue[splitValue.length - 1];
-        if (lastPart === "completed") {
-            return "completed-cell2"; // Apply green class if the value ends with "completed"
-          }
-        else if (lastPart === "pending") {
-            return "Running-availability2"; 
-          } 
-        else {
-          return "class-monthly2"; // Apply monthly class for other cases
-        }
-      }
-    
-      if (params?.value && !params.value.includes("MonthlyService")) {
-        const splitValue = params.value.split('-');  // Split by '-'
-        const numericPart = splitValue[1];           // Get the second part (the number)
-  
-        const statusAvailability = statusClasses[numericPart]; // Check cache first
-  
-        if (!statusAvailability) {
-          // If not cached, fetch the status asynchronously
-          fetchStatus(numericPart);
-          return ''; // Return empty string until status is fetched
-        }
-  
-        return statusAvailability; // Return cached status
-      }
-  
-      return '';
-    };
-
-  
-    const fetchStatus = async (order_no) => {
+    // Fetch order status
+    const fetchStatus = useCallback(async (order_no) => {
       try {
-        const GetStatus = await axios.get(`${API_URL}/order/getbyorderno/${order_no}`);
-        const pendingStatus = GetStatus?.data?.data?.pending;
-  
+        const response = await axios.get(`${API_URL}/order/getbyorderno/${order_no}`);
+        const orderData = response?.data?.data;
+        
         const statusMap = {
           0: "Pending-availability2",
           1: "Hold-availability2",
@@ -165,266 +46,317 @@ const BaseAvailability = ({ availabilityType, title }) => {
           5: "Cancel-availability2"
         };
   
-        const status = statusMap[pendingStatus] || ''; // Map status to class name
+        const status = statusMap[orderData?.pending] || '';
   
-        // Update state and cache the result for future use
-        setStatusClasses((prev) => ({
+        setStatusClasses(prev => ({
           ...prev,
-          [order_no]: status
+          [order_no]: {
+            className: status,
+            additionalData: {
+              piadamt: orderData?.piadamt || '',
+              service_name: orderData?.service_name,
+              customer_name: orderData?.NewCustomer?.name
+            }
+          }
         }));
+  
       } catch (error) {
         console.error("Error fetching order status", error);
-        setStatusClasses((prev) => ({
+        setStatusClasses(prev => ({
           ...prev,
-          [order_no]: '' // Cache empty string in case of error
+          [order_no]: {
+            className: '',
+            additionalData: {
+              piadamt: 'N/A',
+              service_name: 'Unknown',
+              customer_name: 'Unknown'
+            }
+          }
         }));
       }
-    };
+    }, []);
+
+  // Process data with IDs and calculate totals
+// Process data with IDs and calculate totals
+// Process data with IDs and calculate daily totals
+const DataWithID = useCallback((data) => {
+  if (!data) return [{ id: 0, totalAmount: '0.00' }];
+
+  const newData = [];
+  const dailyTotals = {}; // { date: { providerId: total } }
+
+  // First pass: calculate daily totals for each provider
+  data.forEach(item => {
+    item.availabilities?.forEach(availability => {
+      const date = availability.date;
+      const providerId = item.id;
       
-    const colums = [
+      // Initialize daily totals structure
+      dailyTotals[date] = dailyTotals[date] || {};
+      dailyTotals[date][providerId] = dailyTotals[date][providerId] || {
+        uniqueOrders: new Set(),
+        total: 0
+      };
 
-        // {
-        //     field: "status2",
-        //     headerName: "Status",
-        //     renderCell: (params) => (
-        //         <Button 
-        //         variant='contained' 
-        //         color='primary' 
-        //         size="small"
-        //         onClick={() => toggleTransferData(params.row)}
-        //         width={20}
-        //         height={20}
-        //       >
-        //         Transfer
-        //       </Button>
-        //     ),
-        //     width: 100,
-        //     editable: true
-        // },
-
-        { field: "name",  headerName: "Name", width: 150, editable: true,  pinned: 'left',
+      // Calculate for this date and provider
+      Object.values(availability).forEach(value => {
+        if (value?.includes?.('-') && !['leave', 'lunch', 'Week Off', 'Absent'].includes(value)) {
+          const [_, orderNo] = value.split('-');
           
-         },
-        // {
-        //   field: "image",
-        //   headerName: "Image",
-        //   width: 120,
-        //   renderCell: (params) => {
-        //     const url = params.row.image ? IMG_URL + params.row.image : "https://i.pinimg.com/564x/d5/b0/4c/d5b04cc3dcd8c17702549ebc5f1acf1a.jpg";
-        //     return (
-        //       <div style={{ width: "20px", height: "20px", overflow: "hidden" }}>
-        //         <img src={url} alt="Image" style={{ width: "100%", height: "100%" }} />
-        //       </div>
-        //     );
-        //   }
-        // },
-        { field: "provider_type",  headerName: "Provider Type", width: 150, editable: true,
-           cellClassName: () => "class-gray"
-        },
-        { field: "duty_hours",  headerName: "Duty Hours", width: 150, editable: true,
-           cellClassName: () => "class-gray"
-        },
-        { field: "date",  headerName: "Date", width: 150, editable: true,
-          cellClassName: () => "class-gray"
-         },
-          {
-            field: "07:00-07:30",
-            headerName: "07:00-07:30 AM",
-            width: 150,
-            cellClassName: getCellClassName
-        },
-        {
-          field: "07:30-08:00",
-          headerName: "07:30-08:00 AM",
-          width: 150,
-          cellClassName: getCellClassName
-      },
-      {
-        field: "08:00-08:30",
-        headerName: "08:00-08:30 AM",
-        width: 150,
-        cellClassName: getCellClassName
-    },
-        {
-          field: "08:30-09:00",
-          headerName: "08:30-09:00 AM",
-          width: 150,
-          cellClassName: getCellClassName
-      },
-        {
-          field: "09:00-09:30",
-          headerName: "09:00-09:30 AM",
-          width: 150,
-          cellClassName: getCellClassName
-      },
-        { field: "09:30-10:00", headerName: "09:30-10:00 AM ", width: 150, cellClassName: getCellClassName},
-        { field: "10:00-10:30", headerName: "10:00-10:30 AM ", width: 150, cellClassName: getCellClassName},
-        { field: "10:30-11:00", headerName: "10:30-11:00 AM ", width: 150, cellClassName: getCellClassName},
-        { field: "11:00-11:30", headerName: "11:00-11:30 AM ", width: 150, cellClassName: getCellClassName},
-        { field: "11:30-12:00", headerName: "11:30-12:00 AM ", width: 150, cellClassName: getCellClassName},
-        { field: "12:00-12:30", headerName: "12:00-12:30 PM ", width: 150, cellClassName: getCellClassName},
-        { field: "12:30-01:00", headerName: "12:30-01:00 PM ", width: 150, cellClassName: getCellClassName},
-        { field: "01:00-01:30", headerName: "01:00-01:30 PM ", width: 150, cellClassName: getCellClassName},
-        { field: "01:30-02:00", headerName: "01:30-02:00 PM ", width: 150, cellClassName: getCellClassName},
-        { field: "02:00-02:30", headerName: "02:00-02:30 PM ", width: 150, cellClassName: getCellClassName},
-        { field: "02:30-03:00", headerName: "02:30-03:00 PM ", width: 150, cellClassName: getCellClassName},
-        { field: "03:00-03:30", headerName: "03:00-03:30 PM ", width: 150, cellClassName: getCellClassName},
-        { field: "03:30-04:00", headerName: "03:30-04:00 PM ", width: 150, cellClassName: getCellClassName},
-        { field: "04:00-04:30", headerName: "04:00-04:30 PM ", width: 150, cellClassName: getCellClassName},
-        { field: "04:30-05:00", headerName: "04:30-05:00 PM ", width: 150, cellClassName: getCellClassName},
-        { field: "05:00-05:30", headerName: "05:00-05:30 PM ", width: 150, cellClassName: getCellClassName},
-        { field: "05:30-06:00", headerName: "05:30-06:00 PM ", width: 150, cellClassName: getCellClassName},
-    ]
-
-    const FilterData = async () => {
-      const data ={
-        from: from,
-        to: to,
-        emp_id: serviceProvider?.value,
-        type: availabilityType
-      }
-      if(!from || !to || !serviceProvider?.value){
-          return;
-      }
-  
-      try {
-        dispatch(GetAvailability(data))
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    const FilterData2 = async () => {
-     
-      const data = {
-        ...filterDate,
-        type: availabilityType
-
-      }
-
-      if(!data){
-
-          return;
-      }
-      console.log(data)
-  
-      try {
-        dispatch(GetAvailability(data))
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    const getAllServicesProvider = async (filterData) => {
-      try {
-        const queryParams = new URLSearchParams(filterData).toString()
-        const response = await axios.get(`${API_URL}/service-provider/getall?${queryParams}`);
-        if (response.status === 200) {
-        const transformedData = response.data.data.map(item => ({ label: item.name, value: item.id }));
-        setGetAllServiceProvider(transformedData);
+          if (orderNo && statusClasses[orderNo]?.additionalData) {
+            const payment = parseFloat(statusClasses[orderNo].additionalData.piadamt) || 0;
+            
+            // Only count each order once per provider per day
+            if (!dailyTotals[date][providerId].uniqueOrders.has(orderNo)) {
+              dailyTotals[date][providerId].uniqueOrders.add(orderNo);
+              dailyTotals[date][providerId].total += payment;
+            }
+          } else if (orderNo && !statusClasses[orderNo]) {
+            fetchStatus(orderNo);
+          }
         }
-      } catch (error) {
-        console.error("Error fetching service providers:", error);
-      }
-    }
- 
-    useEffect(() => {
-        getAllServicesProvider();
-        dispatch(GetAvailability({ type: availabilityType }));
-      }, []);  // Make sure dispatch is a stable reference
+      });
+    });
+  });
+
+  // Second pass: create rows with daily totals
+  data.forEach(item => {
+    const availabilities = item.availabilities || [];
     
+    if (availabilities.length > 0) {
+      availabilities.forEach(availability => {
+        const date = availability.date;
+        const processedTimeSlots = {};
+        
+        Object.keys(availability).forEach(key => {
+          const value = availability[key];
+          if (key.includes('-') && key.length > 5) {
+            if (value && !['leave', 'lunch', 'Week Off', 'Absent'].includes(value)) {
+              const [serviceName, orderNo] = value.split('-');
+              if (orderNo && statusClasses[orderNo]?.additionalData) {
+                processedTimeSlots[key] = `${serviceName}-${orderNo}-Amount-${statusClasses[orderNo].additionalData.piadamt}`;
+              } else {
+                processedTimeSlots[key] = value;
+              }
+            } else {
+              processedTimeSlots[key] = value;
+            }
+          } else {
+            processedTimeSlots[key] = '';
+          }
+        });
+
+        newData.push({
+          ...item,
+          ...availability,
+          ...processedTimeSlots,
+          id: availability.id,
+          // Show daily total for this provider
+          totalAmount: (dailyTotals[date]?.[item.id]?.total || 0).toFixed(2)
+        });
+      });
+    } else {
+      newData.push({ 
+        ...item, 
+        id: item.id,
+        totalAmount: '0.00'
+      });
+    }
+  });
+
+  return newData;
+}, [statusClasses, fetchStatus]);
+
+  // Cell class name determination
+  const getCellClassName = useCallback((params) => {
+    if (!params?.value) return 'Cancel-availability2';
+    if (params.value === 'p') return 'class-green2';
+
+    const specialClasses = {
+      'Full day Leave': 'class-red2',
+      'Lunch': 'class-red2',
+      'lunch': 'class-red2',
+      'Half Day Leave': 'class-red2',
+      'Week Off': 'Cancel-availability2',
+      'Absent': 'Cancel-availability2'
+    };
+
+    if (specialClasses[params.value]) return specialClasses[params.value];
+
+    if (params.value?.includes("MonthlyService")) {
+      const status = params.value.split('-').pop();
+      return status === "completed" ? "completed-cell2" : 
+             status === "pending" ? "Running-availability2" : "class-monthly2";
+    }
+
+    if (params.value?.includes('-')) {
+      const orderNo = params.value.split('-')[1];
+      return statusClasses[orderNo]?.className || '';
+    }
+
+    return '';
+  }, [statusClasses]);
 
 
-    return (
-        <Fragment>
-        {/* <ModalComponent
-            modalTitle={"Add Leave"}
-            modal={Toggle}
-            toggle={toggleAddAvailability}
-            data={<AddAvailability prop={toggleAddAvailability}  />}
-        /> */}
 
-        <ModalComponent
-            modalTitle={"Transfer"}
-            modal={isTransfer}
-            toggle={toggleTransfer}
-            data={<TransferAvailability prop={toggleTransfer} transferData={transferData} />}
-        />
+  // Filter data functions
+  const FilterData = useCallback(() => {
+    const filterParams = {
+      from,
+      to,
+      emp_id: serviceProvider?.value,
+      type: availabilityType
+    };
 
-        <AssignEmployeeAvailability
-            EmployeeAvailabilityModalOpen={EmployeeAvailabilityModalOpen}
-            EmployeeAvailabilityModalfunction={() => setEmployeeAvailabilityModalOpen(!EmployeeAvailabilityModalOpen)}
-            field={field}
-            mobile_no={mobileNo}
-            date={date}
-        />
+    if (!from || !to || !serviceProvider?.value) return;
+    dispatch(GetAvailability(filterParams));
+  }, [from, to, serviceProvider, availabilityType, dispatch]);
 
+  const FilterData2 = useCallback(() => {
+    const filterParams = {
+      ...filterDate,
+      type: availabilityType
+    };
 
-                <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "30rem", width: "30rem" }}> {title} </h4>
+    if (!filterDate) return;
+    dispatch(GetAvailability(filterParams));
+  }, [filterDate,statusClasses, availabilityType, dispatch]);
 
-                
+  // Fetch service providers
+  const getAllServicesProvider = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API_URL}/service-provider/getall`);
+      if (response.status === 200) {
+        const transformedData = response.data.data.map(item => ({ 
+          label: item.name, 
+          value: item.id 
+        }));
+        setGetAllServiceProvider(transformedData);
+      }
+    } catch (error) {
+      console.error("Error fetching service providers:", error);
+    }
+  }, []);
 
-            <div className='d-flex p-3 px-4 justify-content-between'>
-
-            <div className="d-flex">
-                <Input type="date" className="px-3" 
-                onChange={(e)=>setFilterDate({...filterDate, date: e.target.value})}
-                />
-                <Button variant='contained' color='primary' className="ml-4" style={{width: "200px"}}  onClick={FilterData2}> Search </Button>
-
-            </div>
-            </div>
-
-            <div className="flex flex-col justify-between w-full mb-3 ">
-                <div className="flex justify-between gap-6 items-center">
-                <div className="ml-4">
-                    <label htmlFor="startDate" className="text-light">From:</label>
-                    <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e)=>setFrom(e.target.value)}/>
-            </div>
-                    <div className="ml-4">
-                    <label htmlFor="endDate"  className="text-light mr-2" >To:</label>
-                    <Input id="endDate" type="date" onChange={(e)=>setTo(e.target.value)}/>
-            </div>
-                <div className="ml-4" style={{width: '12rem'}}>
-                                <label className="form-label text-light ml-2 mr-2" htmlFor="serviceRemark">
-                                    Service Provider
-                                </label>
-                                <SelectBox options={getAllServiceProvider}
-                                    setSelcted={setServiceProvider}
-                                    selectOption={serviceProvider}/>
-                    </div>
-                    <div className="ml-4" style={{marginTop: '32px'}}>
-                    <Button className="btn btn-primary" size="small" variant="contained" onClick={FilterData}
-                    >
-                    Search
-                    </Button>
-                </div>
-            </div>
-            </div>  
-
-            {/*
-              <div className={`border py-2 px-2  shadow rounded-2 cursor-p hoverThis text-white`}
-                 onClick={toggleAddAvailability}
-                >
-                Add Leave
-                </div>
-            */} 
-            
-            
-            <div className="p-4">
-                {/* <AdminDataTable rows={DataWithID(data)} columns={colums}  CustomToolbar={CustomToolbar} initialState={{
-    pinnedColumns: {
-      left: ['date'],  // Freezing the "date" column to the left
+  // Columns configuration
+  const columns = [
+    { 
+      field: "name", 
+      headerName: "Name", 
+      width: 150, 
+      editable: true,  
+      pinned: 'left' 
     },
-  }} /> */}
+    { 
+      field: "provider_type", 
+      headerName: "Provider Type", 
+      width: 150, 
+      editable: true,
+      cellClassName: () => "class-gray"
+    },
+    { 
+      field: "duty_hours", 
+      headerName: "Duty Hours", 
+      width: 150, 
+      editable: true,
+      cellClassName: () => "class-gray"
+    },
+    { 
+      field: "date", 
+      headerName: "Date", 
+      width: 150, 
+      editable: true,
+      cellClassName: () => "class-gray"
+    },
+    ...timeSlots.map(slot => ({
+      field: slot,
+      headerName: `${slot.replace('-', ' ')} ${parseInt(slot.split(':')[0]) < 12 ? 'AM' : 'PM'}`,
+      width: 150,
+      cellClassName: getCellClassName
+    })),
+    { 
+      field: "totalAmount", 
+      headerName: "Total Amount", 
+      width: 150,
+      cellClassName: () => "class-gray",
+      valueFormatter: (params) => `₹${params.value || '0.00'}`
+    }
+  ];
 
-          <CustomDataTable
-                      columns={colums}
-                      rows={DataWithID(data)}
-                      frozenFields={['name']}
-                  />
-            </div>
-            </Fragment>
-    )
-}
+  // Initial data fetch
+  useEffect(() => {
+    getAllServicesProvider();
+    dispatch(GetAvailability({ type: availabilityType }));
+  }, [availabilityType, dispatch, getAllServicesProvider,statusClasses]);
+
+  return (
+    <Fragment>
+
+      <h4 className='p-3 px-4 mt-3 bg-transparent text-white headingBelowBorder' style={{ maxWidth: "30rem" }}>
+        {title}
+      </h4>
+
+      <div className='d-flex p-3 px-4 justify-content-between'>
+        <div className="d-flex">
+          <Input 
+            type="date" 
+            className="px-3" 
+            onChange={(e) => setFilterDate({...filterDate, date: e.target.value})}
+          />
+          <Button 
+            variant='contained' 
+            color='primary' 
+            className="ml-4" 
+            style={{width: "200px"}}  
+            onClick={FilterData2}
+          >
+            Search
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col justify-between w-full mb-3">
+        <div className="flex justify-between gap-6 items-center">
+          <div className="ml-4">
+            <label htmlFor="startDate" className="text-light">From:</label>
+            <Input id="startDate" type="date" className="ml-2 mr-2" onChange={(e) => setFrom(e.target.value)}/>
+          </div>
+          <div className="ml-4">
+            <label htmlFor="endDate" className="text-light mr-2">To:</label>
+            <Input id="endDate" type="date" onChange={(e) => setTo(e.target.value)}/>
+          </div>
+          <div className="ml-4" style={{width: '12rem'}}>
+            <label className="form-label text-light ml-2 mr-2" htmlFor="serviceRemark">
+              Service Provider
+            </label>
+            <SelectBox 
+              options={getAllServiceProvider}
+              setSelcted={setServiceProvider}
+              selectOption={serviceProvider}
+            />
+          </div>
+          <div className="ml-4" style={{marginTop: '32px'}}>
+            <Button 
+              className="btn btn-primary" 
+              size="small" 
+              variant="contained" 
+              onClick={FilterData}
+            >
+              Search
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4">
+        <CustomDataTable
+          columns={columns}
+          rows={DataWithID(data)}
+          frozenFields={['name']}
+        />
+      </div>
+    </Fragment>
+  );
+};
 
 export default BaseAvailability;
