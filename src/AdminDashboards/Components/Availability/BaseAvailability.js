@@ -91,30 +91,45 @@ const DataWithID = useCallback((data) => {
       const date = availability.date;
       const providerId = item.id;
       
-      // Initialize daily totals structure
-      dailyTotals[date] = dailyTotals[date] || {};
-      dailyTotals[date][providerId] = dailyTotals[date][providerId] || {
-        uniqueOrders: new Set(),
-        total: 0
-      };
+      // Initialize daily totals structure if not exists
+      if (!dailyTotals[date]) {
+        dailyTotals[date] = {};
+      }
+      
+      if (!dailyTotals[date][providerId]) {
+        dailyTotals[date][providerId] = {
+          uniqueOrders: new Set(),
+          total: 0
+        };
+      }
 
-      // Calculate for this date and provider
-      Object.values(availability).forEach(value => {
-        if (value?.includes?.('-') && !['leave', 'lunch', 'Week Off', 'Absent'].includes(value)) {
-          const [_, orderNo] = value.split('-');
-          
-          if (orderNo && statusClasses[orderNo]?.additionalData) {
-            const payment = parseFloat(statusClasses[orderNo].additionalData.piadamt) || 0;
+      // Track unique orders and their amounts
+      const uniqueOrdersMap = {};
+
+      // First, collect all unique orders from all time slots
+      timeSlots.forEach(slot => {
+        const value = availability[slot];
+        if (value && value.includes('-') && !['leave', 'lunch', 'Week Off', 'Absent'].includes(value)) {
+          // Split the value to get service name and order number
+          const parts = value.split('-');
+          if (parts.length >= 2) {
+            const orderNo = parts[1];
             
-            // Only count each order once per provider per day
-            if (!dailyTotals[date][providerId].uniqueOrders.has(orderNo)) {
-              dailyTotals[date][providerId].uniqueOrders.add(orderNo);
-              dailyTotals[date][providerId].total += payment;
+            // If we have status info and it's not already in our uniqueOrdersMap
+            if (orderNo && statusClasses[orderNo]?.additionalData && !uniqueOrdersMap[orderNo]) {
+              const payment = parseFloat(statusClasses[orderNo].additionalData.piadamt) || 0;
+              uniqueOrdersMap[orderNo] = payment;
+            } else if (orderNo && !statusClasses[orderNo]) {
+              fetchStatus(orderNo);
             }
-          } else if (orderNo && !statusClasses[orderNo]) {
-            fetchStatus(orderNo);
           }
         }
+      });
+
+      // Now add up the unique order amounts
+      Object.keys(uniqueOrdersMap).forEach(orderNo => {
+        dailyTotals[date][providerId].uniqueOrders.add(orderNo);
+        dailyTotals[date][providerId].total += uniqueOrdersMap[orderNo];
       });
     });
   });
@@ -151,6 +166,7 @@ const DataWithID = useCallback((data) => {
           ...availability,
           ...processedTimeSlots,
           id: availability.id,
+          date: availability.date || item.date, // Preserve the date from availability or item
           // Show daily total for this provider
           totalAmount: (dailyTotals[date]?.[item.id]?.total || 0).toFixed(2)
         });
@@ -159,13 +175,14 @@ const DataWithID = useCallback((data) => {
       newData.push({ 
         ...item, 
         id: item.id,
+        date: item.date, // Preserve the date from item
         totalAmount: '0.00'
       });
     }
   });
 
   return newData;
-}, [statusClasses, fetchStatus]);
+}, [statusClasses, fetchStatus, timeSlots]);
 
   // Cell class name determination
   const getCellClassName = useCallback((params) => {

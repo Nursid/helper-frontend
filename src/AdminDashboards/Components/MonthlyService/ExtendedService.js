@@ -1,26 +1,18 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import BorderColorIcon from '@mui/icons-material/BorderColor'
 import { GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton, GridToolbarQuickFilter } from '@mui/x-data-grid'
 import { useNavigate } from 'react-router-dom/dist'
-import ModalComponent from '../../Elements/ModalComponent'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 import { Button } from '@mui/material'
 import Swal from 'sweetalert2'
 import { API_URL } from '../../../config'
+import { GetAllMonthlyServiceAction } from '../../../Store/Actions/Dashboard/EmployeeActions/GetAllMonthlyServices'
 import axios from 'axios'
-import AddMonthlyServices from './AddMonthlyServices'
 // import AnimatedBackground from '../../Elements/AnimatedBackground'
 import AnimatedBackground from '../../Elements/AnimatedBacground'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import { useReactToPrint } from 'react-to-print';
-import ViewMonthlyService from './view/ViewMonthly-Service'
-import InvoiceMonthlyService from './view/InvoiceMonthlyService'
 import CollapseDatatable from '../../Elements/CollapseDatatable'
 import { Form, Row, Col, Card, FormGroup, Label, Input,Table, Modal,
     ModalHeader, ModalBody } from 'reactstrap';
-import MasterUpdate from './MasterUpdate'
 import { useAuth } from '../../../Context/userAuthContext'
 import { GetAllServiceProvider } from '../../../Store/Actions/Dashboard/Authentication/ServiceProviderActions'
 
@@ -93,6 +85,8 @@ const ExtendedService = () => {
                 // Create payload from existing data
                 const payload = {
                     ...rowData,
+                    checkintime: '',
+                    checkouttime: '',
                     feesPaidDateTime: moment(rowData.date, 'DD-MM-YYYY').format('YYYY-MM-DDTHH:mm')
                 };
                 
@@ -112,6 +106,7 @@ const ExtendedService = () => {
                     
                     // Refresh data
                     fetchLatestMonthlyServices();
+                    dispatch(GetAllMonthlyServiceAction())
                 } else {
                     await Swal.fire({
                         title: 'Error',
