@@ -293,7 +293,7 @@ const MonthService = () => {
     }
     })
     };
-
+    
     const ResetCheckIn = async (orderNo, feesPaidDateTime) =>{ 
         Swal.fire({
               title: 'Are you sure?',
@@ -548,7 +548,7 @@ const MonthService = () => {
         {
             field: "action2",
             headerName: "Master Action",
-            minWidth: 250,
+            minWidth: 500,
             renderCell: (params) => (
                 currentUser.role === "Super Admin" ? (
                     <div className="d-flex gap-2">

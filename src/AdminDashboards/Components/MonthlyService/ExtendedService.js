@@ -192,6 +192,39 @@ const ExtendedService = () => {
             setProcessingOrderId(null);
         }
     };
+
+    const MasterHoldHandler = async (orderNo) =>{ 
+        Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to Master Hold this!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, Master Hold it!'
+          }).then(async (result) => {
+              if (result.isConfirmed) {
+        
+        const apiUrl =  `${API_URL}/monthly-service/master-hold/${orderNo}`;;
+        // Make a POST request using Axios
+        axios.put(apiUrl, {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        }).then(response => {
+        if (response.status === 200) {
+            Swal.fire('Successfully!', "Your Order has been Master Hold!", 'warning')
+            dispatch(GetAllMonthlyServiceAction())
+        } else {
+            Swal.fire({title:  response.data.message, icon: "error"})
+        } 			
+        }).catch(error => {
+        console.error('Error:', error);
+        });
+    }
+    })
+    };
+
     
     // Extract fetchLatestMonthlyServices into a named function to be able to call it from handleExtendedService
     const fetchLatestMonthlyServices = async () => {
@@ -231,7 +264,7 @@ const ExtendedService = () => {
         {
             field: "action",
             headerName: "Action",
-            minWidth: 550,
+            minWidth: 650,
             renderCell: (params) => (
                 <div className="d-flex gap-2">
                     <Button 
@@ -251,6 +284,14 @@ const ExtendedService = () => {
                     >
                         Change Service Provider
                     </Button>
+                    
+                    <Button 
+                            onClick={() => MasterHoldHandler(params.row.orderNo)} 
+                            variant="contained" 
+                            color="error" 
+                        > 
+                            Master Hold 
+                        </Button> 
                 </div>
             )
         }
