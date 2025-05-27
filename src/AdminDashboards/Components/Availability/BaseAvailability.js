@@ -75,7 +75,6 @@ const BaseAvailability = ({ availabilityType, title }) => {
         }));
       }
     }, []);
-
   // Process data with IDs and calculate totals
 // Process data with IDs and calculate totals
 // Process data with IDs and calculate daily totals
@@ -110,6 +109,11 @@ const DataWithID = useCallback((data) => {
       timeSlots.forEach(slot => {
         const value = availability[slot];
         if (value && value.includes('-') && !['leave', 'lunch', 'Week Off', 'Absent'].includes(value)) {
+          // Skip MonthlyService entries for amount calculation
+          if (value.includes('MonthlyService')) {
+            return;
+          }
+          
           // Split the value to get service name and order number
           const parts = value.split('-');
           if (parts.length >= 2) {
