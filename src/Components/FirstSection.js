@@ -7,6 +7,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
 import { useService } from '../Store/context/serviceProvider';
+
+
 const FirstSection = () => {
     const navigate = useNavigate();
     // State to track the selected location

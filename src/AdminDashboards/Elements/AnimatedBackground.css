@@ -224,3 +224,8 @@
   border-bottom: 1px solid #ffffff !important;
   border-left: 1px solid #ffffff !important
 }
+
+ .expired-cell {
+  background-color: #8B0000 !important;
+  color: #ffffff;
+}

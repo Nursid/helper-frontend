@@ -29,6 +29,13 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 	const [supervisor, setSupervisor] = useState(data?.supervisor || '')
 	const dispatch = useDispatch();
 	const [GetAlltimeSlot , setGetAlltimeSlot] = useState([])
+	
+	// New states for additional amount functionality
+	const [showAdditionalAmount, setShowAdditionalAmount] = useState(false);
+	const [additionalAmount, setAdditionalAmount] = useState('');
+	const [totalAdditionalAmount, setTotalAdditionalAmount] = useState(0); // Track total additional amount added
+	const [currentSessionAdditionalAmount, setCurrentSessionAdditionalAmount] = useState(0); // Track additional amount for this session only
+	
 	const [formData, setFormData] = useState({
         cust_name: data.cust_name || "",
         mobile_no: data.mobile_no || "",
@@ -282,10 +289,33 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 					}
 					
 					 else{
-						if(formData.piadamt){
-							const res = await axios.post(`${API_URL}/api/add-balance`, AddAccountAmount1)
+						// For updates, determine which amount to send based on additional amount logic
+						const isEmptyTotalAmount = (!data?.totalamt || data?.totalamt === "" || data?.totalamt === null || data?.totalamt === undefined);
+						const amountToSend = isEmptyTotalAmount ? formData?.piadamt : currentSessionAdditionalAmount;
+
+						// Only send to add-balance based on multiple conditions
+						const shouldCallAddBalance = (
+							formData?.paymethod && (
+								// Case 1: If totalamt is empty/null/undefined - always call
+								isEmptyTotalAmount ||
+								// Case 2: If totalamt is not null AND additional amount is not null - call
+								(!isEmptyTotalAmount && currentSessionAdditionalAmount > 0)
+								// Case 3: If totalamt is not null AND additional amount is null - don't call (implicit - not included)
+							)
+						);
+
+						if(shouldCallAddBalance){
+							const AddAccountAmountUpdate = {
+								...AddAccountAmount1,
+								amount: amountToSend // Send appropriate amount based on condition
+							};
+							const res = await axios.post(`${API_URL}/api/add-balance`, AddAccountAmountUpdate);
 						}
 					}
+					
+					// Reset current session additional amount after successful submission
+					setCurrentSessionAdditionalAmount(0);
+					
 					dispatch(GetAllMonthlyServiceAction())
 
 					Swal.fire(
@@ -325,7 +355,62 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 	};
 	const today = new Date().toISOString().split('T')[0];
 
+	// Function to handle plus button click
+	const handlePlusButtonClick = () => {
+		setShowAdditionalAmount(true);
+	};
 
+	// Function to handle additional amount input change
+	const handleAdditionalAmountChange = (e) => {
+		const value = e.target.value;
+		if (value === '' || (Number(value) >= 0 && value.length <= 10)) {
+			setAdditionalAmount(value);
+		}
+	};
+
+	// Function to add additional amount to security deposit
+	const addAdditionalAmount = () => {
+		if (additionalAmount && parseFloat(additionalAmount) > 0) {
+			const currentPaidAmount = parseFloat(formData.piadamt) || 0;
+			const newPaidAmount = currentPaidAmount + parseFloat(additionalAmount);
+			const addedAmount = parseFloat(additionalAmount);
+			
+			setFormData((prev) => ({ 
+				...prev, 
+				piadamt: newPaidAmount.toString()
+			}));
+			
+			// Update total additional amount for display
+			setTotalAdditionalAmount(prev => prev + addedAmount);
+			
+			// Update current session additional amount for API
+			setCurrentSessionAdditionalAmount(prev => prev + addedAmount);
+			
+			// Reset additional amount states
+			setAdditionalAmount('');
+			setShowAdditionalAmount(false);
+			
+			Swal.fire({
+				title: 'Amount Added!',
+				text: `₹${addedAmount} has been added to security deposit. New total: ₹${newPaidAmount}`,
+				icon: 'success',
+				timer: 3000,
+				showConfirmButton: false
+			});
+		} else {
+			Swal.fire({
+				title: 'Invalid Amount',
+				text: 'Please enter a valid amount greater than 0',
+				icon: 'error'
+			});
+		}
+	};
+
+	// Function to cancel additional amount input
+	const cancelAdditionalAmount = () => {
+		setAdditionalAmount('');
+		setShowAdditionalAmount(false);
+	};
 
 	const handleChangeFileUpload = (e) => {
 		const { name, files } = e.target;
@@ -746,27 +831,80 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 							<Col md={6}>
 							<FormGroup>
 								<Label>Security Deposit </Label>
-								<Input name="piadamt" type="number" onChange={(e) => handleChange(e, 7)} value={formData.piadamt} placeholder="Security Deposit " />
+								<div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+									<Input 
+										name="piadamt" 
+										type="number" 
+										onChange={(e) => handleChange(e, 7)} 
+										value={formData.piadamt} 
+										placeholder="Security Deposit" 
+										style={{ flex: 1 }}
+									/>
+									<Button 
+										color="success" 
+										size="sm" 
+										onClick={handlePlusButtonClick}
+										disabled={showAdditionalAmount}
+										style={{ 
+											width: '40px', 
+											height: '40px', 
+											borderRadius: '50%', 
+											display: 'flex', 
+											alignItems: 'center', 
+											justifyContent: 'center',
+											fontSize: '18px',
+											fontWeight: 'bold'
+										}}
+									>
+										+
+									</Button>
+								</div>
+								
+								{/* Additional Amount Input */}
+								{showAdditionalAmount && (
+									<div style={{ marginTop: '10px', padding: '10px', border: '1px solid #ddd', borderRadius: '5px', backgroundColor: '#f9f9f9' }}>
+										<Label style={{ fontSize: '12px', marginBottom: '5px', display: 'block' }}>Add Additional Amount</Label>
+										<div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+											<Input
+												type="number"
+												placeholder="Enter additional amount"
+												value={additionalAmount}
+												onChange={handleAdditionalAmountChange}
+												style={{ flex: 1 }}
+												autoFocus
+											/>
+											<Button 
+												color="primary" 
+												size="sm" 
+												onClick={addAdditionalAmount}
+												disabled={!additionalAmount || parseFloat(additionalAmount) <= 0}
+											>
+												Add
+											</Button>
+											<Button 
+												color="secondary" 
+												size="sm" 
+												onClick={cancelAdditionalAmount}
+											>
+												Cancel
+											</Button>
+										</div>
+									</div>
+								)}
+								
+								{/* Show total additional amount added in this session */}
+								{totalAdditionalAmount > 0 && (
+									<div style={{ 
+										marginTop: '5px', 
+										fontSize: '12px', 
+										color: '#28a745', 
+										fontWeight: 'bold' 
+									}}>
+										✓ New additional amount to be added: ₹{currentSessionAdditionalAmount}
+									</div>
+								)}
 							</FormGroup>
 							</Col>
-							{/* <Col md={6}>
-							<FormGroup>
-								<Label>Balance Amount</Label>
-								<Input name="totalamt" type="number" value={formData.totalamt} placeholder="Balance Amount" readOnly />
-							</FormGroup>
-							</Col>
-
-							<Col md={12}>
-								<FormGroup>
-									<Label for="specialInterest">Special Instructions</Label>
-									<Input type="textarea" name="specialInterest"
-										onChange={(e) => handleChange(e, 200)}
-										id="specialInterest"
-										placeholder="Enter special Instructions"
-										value={formData.specialInterest}
-										/>
-								</FormGroup>
-							</Col> */}
 							
                             <Button onClick={onsubmit} className='bg-primary text-white' disabled={isLoadingSubmit}>  {data.length > 0 ? "Update" : "Submit"} </Button>
                         </Row>

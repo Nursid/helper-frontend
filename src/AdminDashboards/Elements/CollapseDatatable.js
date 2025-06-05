@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useState } from 'react';
 import './AnimatedBackground.css';
+import moment from 'moment';
 
 // History component to render the history data
 
@@ -15,9 +16,16 @@ const CollapseDatatable = ({ rows, columns, CustomToolbar, ...args }) => {
 
   const getRowClassName = (params) => {
     const status = params.row.pending;
-    if (status === "Completed") {
+    const isExpiredDate = params.row.ExpiredDate;
+    const isExpired = moment(isExpiredDate, "DD-MM-YYYY").isBefore(moment(), 'day');
+
+    if (isExpired) {
+      return "expired-cell";
+    }
+    else if (status === "Completed") {
       return "complete-cell";
-    } else if (status === "Running") {
+    } 
+    else if (status === "Running") {
       return "running-cell";
     } else if (status === "Cancel") {
       return "cancel-cell";
@@ -28,6 +36,7 @@ const CollapseDatatable = ({ rows, columns, CustomToolbar, ...args }) => {
     } else if (status === "Pending") {
       return "pending-cell";
     }
+    
     return "";
   };
 

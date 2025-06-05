@@ -17,6 +17,13 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
   const [isLoading, setIsLoading] = useState(false)
   const [getAlltimeSlot, setGetAlltimeSlot] = useState([])
   const [timeslot, setTimeslot] = useState(orderData?.allot_time_range || '')
+  
+  // New states for additional amount
+  const [showAdditionalAmount, setShowAdditionalAmount] = useState(false);
+  const [additionalAmount, setAdditionalAmount] = useState('');
+  const [totalAdditionalAmount, setTotalAdditionalAmount] = useState(0); // Track total additional amount added
+  const [currentSessionAdditionalAmount, setCurrentSessionAdditionalAmount] = useState(0); // Track additional amount for this session only
+  
   const [formData, setFormData] = useState({
     user_type: orderData?.user_type || '',
     name: orderData?.NewCustomer?.name || '',
@@ -123,21 +130,28 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
   }, []);
 
   const handleSubmit = async (e) => {
-   
       e.preventDefault();
-      setIsLoading(true)
+      
+      // Prevent double submission
+      if (isLoading) {
+        return;
+      }
+      
+      setIsLoading(true);
+      
+      try {
         let errors = {};
 
-      if (!formData?.name) {
-              errors.name = "Name is required";
-          }
-      if (!formData?.mobile) {
-              errors.mobile = "Mobile No. is required";
-          }
-      if (!formData?.service_name) {
-              errors.service_name = "Service type is required";
-          }
-      if (formData.paymethod) {
+        if (!formData?.name) {
+          errors.name = "Name is required";
+        }
+        if (!formData?.mobile) {
+          errors.mobile = "Mobile No. is required";
+        }
+        if (!formData?.service_name) {
+          errors.service_name = "Service type is required";
+        }
+        if (formData.paymethod) {
           if (!formData.netpayamt || formData.netpayamt <= 0) {
             errors.netpayamt = "Total Amount is required ";
           }
@@ -147,19 +161,19 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
           if (!formData.paymethod) {
             errors.paymethod = "Payment method is required";
           }	
-      }
-
-      if (errors && Object.keys(errors).length === 0) {
-        // Form is valid, handle form submission here
-        console.log("Form submitted successfully!");
-        setIsLoading(false)
-        } else {
-        // Form is invalid, display validation errors
-        console.log("Validation Errors:", errors);
-        setErrors(errors);
-        setIsLoading(false)
-        return false;
         }
+
+        if (Object.keys(errors).length > 0) {
+          // Form is invalid, display validation errors
+          console.log("Validation Errors:", errors);
+          setErrors(errors);
+          setIsLoading(false);
+          return;
+        }
+
+        // Form is valid, clear any existing errors
+        setErrors({});
+        console.log("Form submitted successfully!");
 
         const data ={
           ...formData,
@@ -173,9 +187,13 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
           allot_time_range: timeslot.value
         }
 
+        // Determine which amount to send to add-balance API
+        const isEmptyTotalAmount = (orderData?.piadamt === "" || orderData?.piadamt === null || orderData?.piadamt === undefined);
+        const amountToSend = isEmptyTotalAmount ? formData.piadamt : currentSessionAdditionalAmount;
+
         const AddAccountAmount = {
           payment_mode: formData?.paymethod?.value,
-          amount: formData?.piadamt,
+          amount: amountToSend, // Send original amount if totalamt is empty, otherwise send additional amount
           order_no: orderData.order_no,
           person_name: orderData?.NewCustomer?.name,
           about_payment: formData?.service_name?.value,
@@ -189,12 +207,20 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
           
           // Check if the response is successful
           if (response.status === 200) {
-            setIsLoading(false)
+            // Only send to add-balance based on multiple conditions
+            const shouldCallAddBalance = (isEmptyTotalAmount ||
+                 (!isEmptyTotalAmount && currentSessionAdditionalAmount > 0)
+            );
 
-            if(formData.paymethod){
-                // Add balance
-                await axios.post(`${API_URL}/api/add-balance`, AddAccountAmount);
+            console.log("shouldCallAddBalance", shouldCallAddBalance);
+
+            if (shouldCallAddBalance) {
+              // Add the appropriate amount to balance
+              await axios.post(`${API_URL}/api/add-balance`, AddAccountAmount);
             }
+            
+            // Reset current session additional amount after successful submission
+            setCurrentSessionAdditionalAmount(0);
             
             // Call the provided function prop
             prop();
@@ -213,10 +239,14 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         } catch (error) {
           // Log error and show an actual error message
           console.error('Error:', error);
-          Swal.fire('An error occurred', error.response.data.message || 'Please try again later.', 'error');
-          setIsLoading(false)
+          Swal.fire('An error occurred', error.response?.data?.message || 'Please try again later.', 'error');
+        } finally {
+          setIsLoading(false);
         }
-        setIsLoading(false)
+      } catch (validationError) {
+        console.error('Validation error:', validationError);
+        setIsLoading(false);
+      }
         
   };
 
@@ -297,6 +327,64 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
       fetchProvidersAndSupervisors(formData.bookdate, timeslot.value);
     }
   }, []);
+
+  // Function to handle plus button click
+  const handlePlusButtonClick = () => {
+    setShowAdditionalAmount(true);
+  };
+
+  // Function to handle additional amount input change
+  const handleAdditionalAmountChange = (e) => {
+    const value = e.target.value;
+    if (value === '' || (Number(value) >= 0 && value.length <= 10)) {
+      setAdditionalAmount(value);
+    }
+  };
+
+  // Function to add additional amount to paid amount
+  const addAdditionalAmount = () => {
+    if (additionalAmount && parseFloat(additionalAmount) > 0) {
+      const currentPaidAmount = parseFloat(formData.piadamt) || 0;
+      const newPaidAmount = currentPaidAmount + parseFloat(additionalAmount);
+      const addedAmount = parseFloat(additionalAmount);
+      
+      setFormData((prev) => ({ 
+        ...prev, 
+        piadamt: newPaidAmount.toString(),
+        totalamt: (parseFloat(prev.netpayamt) || 0) - newPaidAmount
+      }));
+      
+      // Update total additional amount for display
+      setTotalAdditionalAmount(prev => prev + addedAmount);
+      
+      // Update current session additional amount for API
+      setCurrentSessionAdditionalAmount(prev => prev + addedAmount);
+      
+      // Reset additional amount states
+      setAdditionalAmount('');
+      setShowAdditionalAmount(false);
+      
+      Swal.fire({
+        title: 'Amount Added!',
+        text: `₹${addedAmount} has been added to paid amount. New total: ₹${newPaidAmount}`,
+        icon: 'success',
+        timer: 3000,
+        showConfirmButton: false
+      });
+    } else {
+      Swal.fire({
+        title: 'Invalid Amount',
+        text: 'Please enter a valid amount greater than 0',
+        icon: 'error'
+      });
+    }
+  };
+
+  // Function to cancel additional amount input
+  const cancelAdditionalAmount = () => {
+    setAdditionalAmount('');
+    setShowAdditionalAmount(false);
+  };
 
   return (
     <Fragment>
@@ -561,12 +649,85 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         <Col md={6}>
           <FormGroup>
             <Label>Paid Amount</Label>
-            <Input name="piadamt" type="number" onChange={(e) => handleInputChange(e, 7)} value={formData.piadamt} placeholder="Paid Amount" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Input 
+                name="piadamt" 
+                type="number" 
+                onChange={(e) => handleInputChange(e, 7)} 
+                value={formData.piadamt} 
+                placeholder="Paid Amount" 
+                style={{ flex: 1 }}
+                readOnly={orderData.piadamt != null}
+              />
+              <Button 
+                color="success" 
+                size="sm" 
+                onClick={handlePlusButtonClick}
+                disabled={showAdditionalAmount}
+                style={{ 
+                  width: '40px', 
+                  height: '40px', 
+                  borderRadius: '50%', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  fontSize: '18px',
+                  fontWeight: 'bold'
+                }}
+              >
+                +
+              </Button>
+            </div>
+            
+            {/* Additional Amount Input */}
+            {showAdditionalAmount && (
+              <div style={{ marginTop: '10px', padding: '10px', border: '1px solid #ddd', borderRadius: '5px', backgroundColor: '#f9f9f9' }}>
+                <Label style={{ fontSize: '12px', marginBottom: '5px', display: 'block' }}>Add Additional Amount</Label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Input
+                    type="number"
+                    placeholder="Enter additional amount"
+                    value={additionalAmount}
+                    onChange={handleAdditionalAmountChange}
+                    style={{ flex: 1 }}
+                    autoFocus
+                  />
+                  <Button 
+                    color="primary" 
+                    size="sm" 
+                    onClick={addAdditionalAmount}
+                    disabled={!additionalAmount || parseFloat(additionalAmount) <= 0}
+                  >
+                    Add
+                  </Button>
+                  <Button 
+                    color="secondary" 
+                    size="sm" 
+                    onClick={cancelAdditionalAmount}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+            
             {errors?.piadamt && (
-							<span className='validationError'>
-								{errors?.piadamt}
-							</span>
-						)}
+              <span className='validationError'>
+                {errors?.piadamt}
+              </span>
+            )}
+            
+            {/* Show total additional amount added in this session */}
+            {totalAdditionalAmount > 0 && (
+              <div style={{ 
+                marginTop: '5px', 
+                fontSize: '12px', 
+                color: '#28a745', 
+                fontWeight: 'bold' 
+              }}>
+                ✓ New additional amount to be added: ₹{currentSessionAdditionalAmount}
+              </div>
+            )}
           </FormGroup>
         </Col>
         <Col md={6}>

@@ -57,7 +57,7 @@ const ExtendedService = () => {
                 NewData.push({
                     ...item,
                     _id: data.indexOf(item),
-                    date: moment(item.feesPaidDateTime).format("DD-MM-YYYY"),
+                    ExpiredDate: moment(item.feesPaidDateTime).format("DD-MM-YYYY"),
                     pending: getStatusByKey(item.pending),
                 });
             }
@@ -87,11 +87,11 @@ const ExtendedService = () => {
                     ...rowData,
                     checkintime: '',
                     checkouttime: '',
-                    feesPaidDateTime: moment(rowData.date, 'DD-MM-YYYY').format('YYYY-MM-DDTHH:mm')
+                    feesPaidDateTime: moment(rowData.ExpiredDate, 'DD-MM-YYYY').format('YYYY-MM-DDTHH:mm')
                 };
                 
                 delete payload.pending;
-                delete payload.date;
+                delete payload.ExpiredDate;
                 delete payload._id;
                 delete payload.id;
                 
@@ -148,7 +148,7 @@ const ExtendedService = () => {
         try {
             setProcessingOrderId(selectedOrder.orderNo);
             
-            const formattedDate = moment(selectedOrder.date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+            const formattedDate = moment(selectedOrder.ExpiredDate, 'DD-MM-YYYY').format('YYYY-MM-DD');
             
             // Create FormData with all existing data from the selected order
             const formData = new FormData();
@@ -254,7 +254,7 @@ const ExtendedService = () => {
     const column = [  
         { field: "cust_name", headerName: "Customer Name", minWidth: 120 },
         { field: "mobile_no", headerName: "Mobile", minWidth: 120 },
-        { field: "date", headerName: "Date", minWidth: 120 },
+        { field: "ExpiredDate", headerName: "Expired Date", minWidth: 120 },
         { field: "orderNo", headerName: "OrderNo ", minWidth: 120 },
         { field: "serviceType", headerName: "Service ", minWidth: 120 },
         { field: "serviceServeType", headerName: "Monthly Service Type", minWidth: 120 },
