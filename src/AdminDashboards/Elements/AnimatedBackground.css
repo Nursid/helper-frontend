@@ -225,7 +225,12 @@
   border-left: 1px solid #ffffff !important
 }
 
- .expired-cell {
+.expired-cell {
   background-color: #8B0000 !important;
+  color: #ffffff;
+}
+
+.rejected {
+  background-color: #fe0404 !important;
   color: #ffffff;
 }

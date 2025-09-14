@@ -151,17 +151,17 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
         if (!formData?.service_name) {
           errors.service_name = "Service type is required";
         }
-        if (formData.paymethod) {
-          if (!formData.netpayamt || formData.netpayamt <= 0) {
-            errors.netpayamt = "Total Amount is required ";
-          }
-          if (!formData.piadamt || formData.piadamt <= 0) {
-            errors.piadamt = "Paid Amount is required ";
-          }
-          if (!formData.paymethod) {
-            errors.paymethod = "Payment method is required";
-          }	
-        }
+        // if (formData.paymethod) {
+        //   if (!formData.netpayamt || formData.netpayamt <= 0) {
+        //     errors.netpayamt = "Total Amount is required ";
+        //   }
+        //   if (!formData.piadamt || formData.piadamt <= 0) {
+        //     errors.piadamt = "Paid Amount is required ";
+        //   }
+        //   if (!formData.paymethod) {
+        //     errors.paymethod = "Payment method is required";
+        //   }	
+        // }
 
         if (Object.keys(errors).length > 0) {
           // Form is invalid, display validation errors
@@ -657,7 +657,6 @@ const UpdateOrderForm = ({ orderData, prop, GetAllOrders, role, currentUser }) =
                 value={formData.piadamt} 
                 placeholder="Paid Amount" 
                 style={{ flex: 1 }}
-                readOnly={orderData.piadamt != null}
               />
               <Button 
                 color="success" 

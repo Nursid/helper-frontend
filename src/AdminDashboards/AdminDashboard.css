@@ -325,6 +325,13 @@ button.dropdownMenu-btn-header.btn.btn-secondary {
   background-color: green !important;
   color: black !important;
 }
+
+.serstatus {
+  background-color: #3498db !important;
+  color: white !important;
+}
+
+
 .running-cell {
   background-color: yellow !important;
   color: black !important;

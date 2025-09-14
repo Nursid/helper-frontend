@@ -9,12 +9,22 @@ const AdminDataTable = ({ rows, columns, CustomToolbar, ...args }) => {
     const getRowClassName = (params) => {
         const status = params.row.pending || params.row.status; // Check for 'pending' or 'status'
 
+        const serstatus = params.row.serstatus;
+        const service_status = params.row.service_status;
+
         const debit_amount = params.row.debit_amount;
         const credit_amount = params.row.credit_amount;
         
         if (status === "Completed") {
             return "complete-cell";
-        } else if (status === "Running") {
+        }
+        else if (serstatus && status === "Pending") {
+            return "serstatus"; // New case for 'Present'
+        }
+        else if (service_status === "rejected") {
+            return "rejected"; // New case for 'Present'
+        }
+        else if (status === "Running") {
             return "running-cell";
         } else if (status === "Cancel") {
             return "cancel-cell";
@@ -42,6 +52,7 @@ const AdminDataTable = ({ rows, columns, CustomToolbar, ...args }) => {
         else if (credit_amount) {
             return "complete-cell"; // New case for 'Present'
         }
+        
         return "";
     };
 

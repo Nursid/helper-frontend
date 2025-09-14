@@ -64,6 +64,7 @@ const AdminDashboard = () => {
     }
   }, [role, currentUser.id, dispatch]);
 
+
   useEffect(() => {
     dispatch(GetAllInventry())
     dispatch(GetAllAllotedItems())
@@ -109,7 +110,8 @@ const AdminDashboard = () => {
       for (let item of data) {
         const NewCustomer = item.NewCustomer || {}; // Ensure NewCustomer is an object
         const customer = NewCustomer.customer || {}; // Ensure customer is an Object
-        const mergedItem = { ...item, ...NewCustomer, ...customer };
+        const orderserviceprovider = item?.orderserviceprovider
+        const mergedItem = { ...item, ...NewCustomer, ...customer, ...orderserviceprovider };
         const serviceProviderNames = item?.orderserviceprovider
         ? item?.orderserviceprovider.map((osp) => osp?.service_provider?.name).join(", ")
         : "";
@@ -631,14 +633,80 @@ const AdminDashboard = () => {
         console.error('Error:', error);
       });
   };
+
+  const handleProviderResponse = async (order_no, action) => {
+    
+    try{
+      const formData = {
+        order_no: order_no,
+        provider_id: currentUser.id,
+        action: action
+      }
+
+      const respose = await axios.post(`${API_URL}/order/provider-response`, formData)
+
+      if(respose.status === 200){
+        Swal.fire('Successfully!', respose.data.message, 'success')
+        if (role === "service" || role === "supervisor") {
+          const status = undefined;
+          dispatch(GetAllOrders(status, currentUser.id, role));
+        } else {
+          dispatch(GetAllOrders());
+        }
+      }else{
+        Swal.fire({title: respose.data.message, icon: "error"})
+      }
+    }
+    catch(error){
+      Swal.fire({title: error.response.data.message, icon: "error"})
+    }
+  }
   
   const columns = [
     {
       field: "Status",
       headerName: "Status",
       renderCell: (params) => {
-          const { pending, order_no, piadamt, totalamt, checkintime, checkouttime, servicep_id, service_name } = params.row;
-          
+          const { pending, order_no, piadamt, totalamt, checkintime, checkouttime, servicep_id, service_name, orderserviceprovider, service_status } = params.row;
+ 
+          // if(role === "service"){
+          // Check if any provider in orderserviceprovider has status "pending"
+          // const providerStatus = Array.isArray(orderserviceprovider) && orderserviceprovider.some(
+          //   (item) => item?.status === "pending"
+          // );
+
+          // Agar abhi pending hai to accept/reject buttons dikhaye
+          if (service_status === "pending") {
+              return (
+                  <div className="d-flex flex-row align-items-center">
+                      <Button 
+                          variant="contained" 
+                          color="success" 
+                          size="small" 
+                          onClick={() => handleProviderResponse(order_no, "accept")}
+                          style={{ marginRight: "8px" }}
+                      >
+                          Accept
+                      </Button>
+                      <Button 
+                          variant="contained" 
+                          color="error" 
+                          size="small" 
+                          onClick={() => handleProviderResponse(order_no, "reject")}
+                      >
+                          Reject
+                      </Button>
+                  </div>
+              );
+          }
+          if (service_status === "rejected") {
+            return (
+              <div className="d-flex flex-row align-items-center">
+                <Button variant="contained" color="error" size="small">Rejected</Button>
+              </div>
+            );
+          }
+          // }
           let checkInLabel = '';
           let checkInColor = '';
           let checkInHandler = null;
