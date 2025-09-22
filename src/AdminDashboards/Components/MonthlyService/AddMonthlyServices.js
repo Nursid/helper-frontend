@@ -88,6 +88,7 @@ const AddMonthlyServices = ({toggleModal, data}) => {
 		{label: "Monthly Cleaning", value: "Monthly Cleaning"},
 		{label: "Gardening service", value: "Gardening service"},
 		{label: "Miscellaneous", value: "Miscellaneous"},
+		{label: "fish aquarium cleaning", value: "fish aquarium cleaning"},
 	]);
 	const payMethodOptions = [
 		{ label: 'Cash', value: 'Cash' },
